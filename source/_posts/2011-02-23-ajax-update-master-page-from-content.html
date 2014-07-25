@@ -21,48 +21,19 @@ categories:
 		</ul>
 	</p>
 	<p><strong>1. Create an updatepanel in masterpage which holds the website header.</strong><br />
-		{% codeblock lang:html %}
-<div class="title">
-    <h1>
-        <asp:UpdatePanel ID="UpdatePanelWebsiteHeader" runat="server"ChildrenAsTriggers="false" UpdateMode="Conditional">
-            <ContentTemplate>
-                <asp:Label ID="lblWebsiteHeader" runat="server" Text="Label">My ASP.NET Application</asp:Label>
-            </ContentTemplate>
-        </asp:UpdatePanel>                    
-    </h1>
-</div>
-		{% endcodeblock %}
+		{% gist 6f81102e5150de2491bb updatePanel.aspx %}
 	<br />
 	Make Sure the two properties of UpdatePanel <strong>"ChildrenAsTriggers"</strong> is set to false and <strong>"UpdateMode"</strong> is set to conditional, to prevent the unneccessary updation of updatepanel from its child controls. <br />
 	</p><p>
 	<strong>2. Create a method in MasterPage codebehind which changes the website header.</strong><br /><br />
-	{% codeblock lang:csharp %}
-public void ChangeWebsiteHeader(string newHeader)
-{
-    lblWebsiteHeader.Text = newHeader;
-    //Calling the Update method of UpdatePanel will trigger the Updatepanel
-    UpdatePanelWebsiteHeader.Update();
-}
-	{% endcodeblock %}
+	{% gist 6f81102e5150de2491bb updatePanel.cs %}
 	<br />
 	<strong>3. Create the content page with master page reference and an update panel which holds controls to triggers the header change.</strong><br />
-{% codeblock %}
-<%@ Page Title="Home Page" Language="C#" MasterPageFile="~/Site.master" AutoEventWireup="true"CodeFile="Default.aspx.cs" Inherits="_Default" %>
-<%@ MasterType VirtualPath="~/Site.master" %>
-{% endcodeblock %}
-{% codeblock lang:html %}
-<asp:UpdatePanel ID="UpdatePanelChangeHeader" runat="server" UpdateMode="Conditional">
-    <ContentTemplate>
-        <p>Enter the Website Header: <asp:TextBox ID="txtHeader" runat="server" /> </p>
-        <asp:Button ID="btnChangeHeader" runat="server" Text="Change Header" onclick="btnChangeHeader_Click" />
-    </ContentTemplate>
-</asp:UpdatePanel>
-{% endcodeblock %}
+{% gist 6f81102e5150de2491bb masterPage.aspx %}
+
+{% gist 6f81102e5150de2491bb changeHandler.cs %}
+
 		<br /><strong>4. Call the MasterPage method from content page.</strong><br />
-	{% codeblock lang:csharp %}
-protected void btnChangeHeader_Click(object sender, EventArgs e)
-{   
-    Master.ChangeWebsiteHeader(Server.HtmlEncode(txtHeader.Text));
-}
-	{% endcodeblock %}
+	{% gist 6f81102e5150de2491bb contentTemplate.aspx %}
+  
 		<br /><strong>Summary:</strong><br />In this blog we have seen how can we update the master page from the content page using ajax update panel. You can download the source code from <a href="http://www.box.net/shared/gpa9dlo668">here</a><br /> <br/>

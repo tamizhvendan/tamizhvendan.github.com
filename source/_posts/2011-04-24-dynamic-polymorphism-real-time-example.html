@@ -12,73 +12,23 @@ categories:
 <div><div><div><div><div><div>In this blog post we are going to see, how to achieve dynamic polymorphism in c# using interfaces through a small game simulator called "War".<br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="http://3.bp.blogspot.com/-F-5wRIWJiKE/TbOvdE6MOnI/AAAAAAAAAGM/r1vs5p8LzUE/s1600/WarForm.png" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="221px" src="http://3.bp.blogspot.com/-F-5wRIWJiKE/TbOvdE6MOnI/AAAAAAAAAGM/r1vs5p8LzUE/s320/WarForm.png" width="320px" /></a></div><br />
 <p>The simulator is simple and straight forward to play. The user just need to select a weapon and click on "Attack".<br /> </br>
 <p>Let me explain some theoretical background about "Dynamic Polymorphism" before dive into implementing the Game simulator. To put in a simple terms, Dynamic Polymorphism means changing the behavior at run time. Let us see an example of what does it mean. If a dog smells a cat, it will bark and if it smells a food, it will salivate. Here, the smelling sense of the dog is same. But depending on what does it smell, it change its behavior. Hope now you are aware of what is mean by dynamic polymorphism. Just stop reading and think what is the dynamic polymorphic behavior here in the "War" simulator.</p>.<br />Yes, you are absolutely correct!! The Attacking behavior is the dynamic polymorphic behavior. The behavior of attack button will vary with respect to the weapon the user has chosen.&nbsp; <br /><br />Fine.. Lets dive into the code!!<br /><br /><h4>Step1: Design the Main Form</h4><ol><li>Create a new Windows Forms Application and name it as "War"</li><li>Rename the "Form1.cs" file to "MainForm.cs" and Click "Yes" to let the Visual Studio to do the renaming for you.</li><li>Add a groupbox control and change its "Text" Property to "Weapon"</li><li>Add three radio button controls inside the groupbox and change their "Text" Property to Sword, Gun and bomb respectively.</li><li>Add a button control and change its "Text" property to "Attack!!".</li><li>Rename the "Name " property of all the controls added to some meaningful names like rboSword for Sword Radiobutton</li><li>The Final Finished will look like the screenshot in the beginning of this blog.&nbsp;&nbsp; </li></ol><h4>Step 2: Create an Interface called IWeapon</h4><ol><li>Right click on the Project name "War" in the solution explorer and add a new interface file called "IWeapon.cs"</li><li>This interface IWeapon will have a public method called "Attack" which defines a contract so that all the Weapon we are going to create should implement this IWeapon interface and provide the implementation code for the Attack() method</li></ol></div>
-{% codeblock lang:csharp %}
-public interface IWeapon 
-{ 
-    void Attack(); 
-}
-{% endcodeblock %}
+{% gist 062dc9ce4593c16aaf82 IWeapon.cs %}
+
 </div><h4>Step3: Create the concrete Weapon Classes&nbsp;</h4><ol><li>Add three class files to the "War" Project with the names "Sword.cs", ""Gun.cs", "Bomb.cs"</li><li>These classes represents the actual weapons and that we are going use in our simulator. Each of these classes will implement the IWeapon interface and provide the implementation code for the "Attack()" method.</li><li>Modify the class files as follows</li></ol></div>
-<h6>Sword.cs</h6>
-{% codeblock lang:csharp %}
-public class Sword : IWeapon    
-{       
-    public void Attack() 
-    {            
-        System.Windows.Forms.MessageBox.Show("Sword!!");        
-    }    
-}
-{% endcodeblock %}
-<h6>Gun.cs</h6>
-{% codeblock lang:csharp %}
-public class Gun : IWeapon    
-{       
-    public void Attack() 
-    {            
-        System.Windows.Forms.MessageBox.Show("Gun!!");        
-    }    
-}
-{% endcodeblock %}
-<h6>Bomb.cs</h6>
-{% codeblock lang:csharp %}
-public class Bomb : IWeapon    
-{       
-    public void Attack() 
-    {
-        System.Windows.Forms.MessageBox.Show("Bomb!!");        
-    }    
-}
-{% endcodeblock %}
+
+{% gist 062dc9ce4593c16aaf82 Sword.cs %}
+
+{% gist 062dc9ce4593c16aaf82 Gun.cs %}
+
+{% gist 062dc9ce4593c16aaf82 Bomb.cs %}
+
 </div>
 The Attack() method will show a message box with a text saying the weapon name being used.<br /><br />
 <h4>Step 4: Program the "War" Simulator Main Form</h4><br />Now the stage is set for the real show. Let us wire the code of MainForm.cs and make the "War" simulator.<br /><ol><li>Add a private instance variable of type IWeapon in the MainForm class and initialize with the sword class. This will hold the reference of current weapon being used Note: Sword is the default weapon.
-{% codeblock lang:csharp %}
-public partial class MainForm : Form
-{
-	private IWeapon weapon = new Sword();	
-}
-{% endcodeblock %}
+{% gist 062dc9ce4593c16aaf82 MainForm.cs %}
 </li>
 <li>Now we are going to add event handlers for the weapons radiobuttons. They will change the reference stored in the instance variable "weapon" to the respective Weapons class. Add the checked change event for all the radio button and their event handlers will look like as follows.
-{% codeblock lang:csharp %}
-private void rboSword_CheckedChanged(object sender, EventArgs e)
-{
-	weapon = new Sword();
-}
-private void rboGun_CheckedChanged(object sender, EventArgs e)
-{
-	weapon = new Gun();
-}
-private void rboBomb_CheckedChanged(object sender, EventArgs e)
-{
-	weapon = new Bomb();
-}
-{% endcodeblock %}
+{% gist 062dc9ce4593c16aaf82 ChangeWeaponHandler.cs %}
 	</li><li>Add the Click event handler for the "Attack" button. This event handler will simply call the Attack() method of the instance variable "weapon"<br />
-{% codeblock lang:csharp %}
-private void btnAttack_Click(object sender, EventArgs e)
-{
-	weapon.Attack();
-}
-{% endcodeblock %}
+{% gist 062dc9ce4593c16aaf82 AttackHandler.cs %}
 </li></ol></div><b>Summary</b><br />In this blog we have seen a basic real time example on implementing dynamic polymorphism.<b> </b>You can download the source code of this sample from <a href="http://www.box.net/shared/y12zyr2d66">here</a>.</div></div>
