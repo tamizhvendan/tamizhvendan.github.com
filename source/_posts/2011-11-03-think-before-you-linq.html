@@ -1,0 +1,55 @@
+---
+layout: post
+title: "Think Before You LINQ"
+date: 2011-11-03
+comments: true
+categories:
+ - Programming
+ - C#
+---
+
+<div class='post'>
+<div>
+<p>LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness and the power it offers to the code are simply amazing. In general when we think of abstractions, we tend to think towards expressiveness and <a href="http://martinfowler.com/bliki/FluentInterface.html">fluent interfaces</a> and get carried away.</p>
+
+<p>Efficiency of an abstraction is often an afterthought (Based on my experience, correct me if am wrong) and also it is very hard to define an abstraction which should be efficient for all the real world problems it address. When we encountered any efficiency issue in an abstraction, it is our primary responsibility to get rid of it.</p>
+
+<p>Let us assume that you have found an efficiency issue with an abstraction. How would you troubleshoot it? Think! I believe, awareness of internals of the abstraction would be the prime prerequisite to circumvent the problem.&nbsp; Hence as a professional developer we should be aware of what is happening under the hood when we use LINQ or any such kind of abstractions. Though we are not going to employ this in most of our coding efforts, I feel it would be an ideal weapon that we should keep in our arsenal.</p>
+
+<p>I have encountered one of such efficiency issue with LINQ and it really made me to think twice (even thrice) before applying LINQ to solve the problems. Let me explain it through a simple example. Here is the problem which I am going to solve through LINQ.</p>
+
+<p>“I need a method that should take a collection of numbers as its parameter and write all the numbers in the console. If the collection contains only one number it should not write anything”</p>
+
+<p>Here is the code snippet which address this problem and along with the output.
+	<br>
+  <img src="http://4.bp.blogspot.com/-22Zod3zjsX0/TrJi6zjlU9I/AAAAAAAAALc/oK_RVfhUQOs/s1600/1.PNG" alt="">
+</p>
+
+<p>I have used two abstractions on this function, one is the LINQ extension method “Count” and the other one is iterating through the enumeration abstraction. Would you able to find an efficiency issue lurking on this very simple function? Kudos if you find it out.
+</p>
+
+<p>Let me give a small background about LINQ extension methods and Enumeration. Most of the LINQ extension methods are using lazy execution internally and computes the enumeration on demand basis. However some extension methods (Count, Sum) collectively called <a href="http://code.msdn.microsoft.com/LINQ-Aggregate-Operators-c51b3869">Aggregate Operators</a> causes immediate execution instead of lazy execution on the enumeration. We can we make an enumeration to enumerate lazily by using <a href="http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx">“yield”</a> statements. Enough theory, &nbsp;let us see some code which shows the efficiency issue associated with the function that we have seen earlier</p>
+
+<br>
+<div>
+  <img src="http://2.bp.blogspot.com/-Gfsxz8fP4WU/TrJi642QHRI/AAAAAAAAALk/OsojBB--7jM/s1600/2.PNG">
+</div>
+
+
+<p>I have added some code in “PrintMe” method to log how it is actually getting executed. Also I have added the “GetNumbers” method which lazily creates a list of numbers using yield statement. </p>
+
+<p>Now can you able to find the exact issue associated with the method “PrintMe”? The red lines are areas of concern. The list is yielded twice!! One while using the Aggregate Operator of LINQ “Count” which causes immediate execution results enumeration all the yields and the second one is yielding the list once again lazily when enumerating through “foreach” loop.</p>
+
+<p>Though it is just a matter of nanoseconds in this example, it may be possible candidate of bottleneck in real world. So, whenever you are doing more than one operation on LINQ or an enumeration or both combined, do not forget think about efficiency. <em>In fact we should give a special attention to the speed of our algorithm when we are actually coding it.</em> (Refer <a href="http://pragprog.com/the-pragmatic-programmer">Pragmatic Programmer</a>, Chapter 6, While You Are Coding)</p>
+
+<p>I hope now you are ready to think about efficiency when you code. Here in our case we can get rid of the efficiency issue by converting the enumeration of number to an array or a list using LINQ <a href="http://code.msdn.microsoft.com/LINQ-Conversion-Operators-e4e59714">convertor operators</a> ToArray or ToList respectively. Like aggregate operators it causes immediate execution and converts the enumeration to the target type. Then we can do the operations on the converted target. Here is the code snippet of that with the output.</p>
+
+<br>
+<img src="http://3.bp.blogspot.com/-sJ0FDYxkl9Y/TrJi63comkI/AAAAAAAAALg/iPn8h9xdVOQ/s1600/3.PNG" alt="">
+
+<p>The modified code now iterate through the list only once!!</p>
+
+<h4>Summary:</h4>
+
+<p>Would you use powerful weapons to get rid of smaller problems, certainly not? LINQ is such kind of powerful weapon which is meant to solve powerful problems. So, think twice before using LINQ and don’t use it blindly. Efficiency Matters!! &nbsp;</p>
+</div></div>

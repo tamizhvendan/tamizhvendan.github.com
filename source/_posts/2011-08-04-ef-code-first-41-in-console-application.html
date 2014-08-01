@@ -1,0 +1,65 @@
+---
+layout: post
+title: "EF Code First 4.1  in Console Application"
+date: 2011-08-04
+comments: true
+categories:
+ - Data Access
+ - Entity Framework
+---
+
+<div class='post'>
+<div>
+		<p>Whenever I learn any new things in .Net or experimenting with something, I always prefer to use <em>Console Applications.</em> I personally feel it helps me to concentrate more on what actually I am trying to learn or experiment without any sort of distractions. Moreover it keeps things simple. </p>
+	
+		<p>I would like to do the same while learning EF Code First 4.1. Though most of articles in web explain EF with respect to ASP.NET MVC, I favor learning it through my own way using console application without creating any controllers and views!!</p>
+	
+	<h4>Following are the prerequisites to work with EF Code First 4.1</h4>
+	<ul>
+		<li>
+			<a href="http://weblogs.asp.net/scottgu/archive/2011/03/15/visual-studio-2010-sp1.aspx">Visual Studio 2010 SP1</a>
+		</li>
+		<li>
+			<a href="http://blogs.msdn.com/b/adonet/archive/2011/04/11/ef-4-1-released.aspx">Entity Framework 4.1</a>
+		</li>
+		<li>
+			<a href="http://weblogs.asp.net/scottgu/archive/2011/01/11/vs-2010-sp1-and-sql-ce.aspx">SQL CE</a> or SQL Express (SQL CE would be an ideal option for learning purpose)
+		</li>
+			
+	</ul>
+
+	<h4>Show me the Code!</h4>
+		<p>After creating a console application project, the initial step would be adding references to the following assemblies.
+			<ul>	
+				<li>EntityFramework (Version 4.1)</li>
+				<li>System.Data.Entity</li>
+				<li>System.ComponentModel.DataAnnotations</li>
+			</ul>	
+		</p>	
+		
+		<p>Now it’s time to defining the model and the data context. To keep it simple, I am going to define only one model “User”.</p>
+			<a href="http://4.bp.blogspot.com/-FxoouXlWKxw/TjqAva1qsWI/AAAAAAAAAJM/5PLCVnNFhDQ/s1600/User.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="260px" src="http://4.bp.blogspot.com/-FxoouXlWKxw/TjqAva1qsWI/AAAAAAAAAJM/5PLCVnNFhDQ/s320/User.PNG" t$="true" width="320px" /></a>
+		<p>The data context would be as following.</p>
+
+		<a href="http://3.bp.blogspot.com/-2pLPCQePVKY/TjqAwJ-QD4I/AAAAAAAAAJU/X66hDdCw6eo/s1600/MyDataContext.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="169px" src="http://3.bp.blogspot.com/-2pLPCQePVKY/TjqAwJ-QD4I/AAAAAAAAAJU/X66hDdCw6eo/s320/MyDataContext.PNG" t$="true" width="320px" /></a>
+		<p>This basic infrastructure is sufficient to run the console application. However as we are using the data context for learning purpose, we might change the model often and doing so will make it inconsistent with the database created automatically when you run the application for the first time. </p>
+		<p> We can circumvent this situation by creating new Data Context initialize class that inherits from <em>DropCreateDatabaseIfModelChanges</em>&lt;TContext&gt; where TContext is the data context that you want to sync with the database always. This class also offers an override function <em>“Seed”</em> using which we can fill the database with some initial data.</p>
+
+		<p>The finished code of DataContext initialize class will be like the following.</p>
+		<a href="http://2.bp.blogspot.com/-fFqQJzPBGkY/TjqAwOW4nMI/AAAAAAAAAJY/DDY_VyYQHfI/s1600/MyDataContextInit.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="262px" src="http://2.bp.blogspot.com/-fFqQJzPBGkY/TjqAwOW4nMI/AAAAAAAAAJY/DDY_VyYQHfI/s320/MyDataContextInit.PNG" t$="true" width="320px" /></a>
+		<p>This datacontext initialize class would create the database whenever the database model changes and create two users by default. Now it’s time to code our Main method.</p>
+		<p>Here we go. Pay close attention to the first statement in the Main method that initializes the database with an instance of DataContextInit class that we have created.</p>
+		<a href="http://4.bp.blogspot.com/-jl5r5Sk7m0Q/TjqAvdAJRPI/AAAAAAAAAJQ/elZcjzTNgEE/s1600/EFConsoleApp.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="223px" src="http://4.bp.blogspot.com/-jl5r5Sk7m0Q/TjqAvdAJRPI/AAAAAAAAAJQ/elZcjzTNgEE/s320/EFConsoleApp.PNG" t$="true" width="320px" /></a>
+		
+		<p>Now you can run the application without any configurations. The default behavior of EF Code First will create the database with the same name as your data context name here “MyDataContext” in the SQL Express server installed in the local machine. If you wish to change this default behavior and wanted to use SQL CE instead of SQL Express just add an App.Config to the project and create a connection string with the name of your data context as follows.</p>
+
+		<a href="http://4.bp.blogspot.com/-YUZyAGX2KyA/TjqAvBuEd4I/AAAAAAAAAJI/p_UjE-K_lR8/s1600/Configuration.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="65px" src="http://4.bp.blogspot.com/-YUZyAGX2KyA/TjqAvBuEd4I/AAAAAAAAAJI/p_UjE-K_lR8/s320/Configuration.PNG" t$="true" width="320px" /></a>
+
+		<p>That’s it. “Ctrl+F5” and here is the output</p>
+
+		<a href="http://3.bp.blogspot.com/-l0IfgWCGZfQ/TjqAwX_8pnI/AAAAAAAAAJc/RLcjASqgaBo/s1600/Output.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="117px" src="http://3.bp.blogspot.com/-l0IfgWCGZfQ/TjqAwX_8pnI/AAAAAAAAAJc/RLcjASqgaBo/s320/Output.PNG" t$="true" width="320px" /></a>
+
+		<h4>Summary</h4>
+		<p>In this blog post we have explore the basic foundation on how to work with EF CodeFirst using console application. If you want to get your dirty with EF Code First without any distraction Console Application is a better one. You can download the sample code used in this blog post from <a href="http://www.box.net/shared/s0yu8b4sebp3dh9ru5gb">here.</a>
+		</div>
+	</div>

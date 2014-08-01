@@ -1,0 +1,93 @@
+---
+layout: post
+title: "Going Declarative in C#"
+date: 2011-11-22
+comments: false
+categories:
+ - Programming
+ - C#
+---
+
+<div class='post'>
+    <div>
+        <br />
+        <div><span lang="EN-IN"><a href="http://en.wikipedia.org/wiki/Declarative_programming"><span >Declarative programming</span></a></span><span lang="EN-IN" > can often be a simpler, more concise way to describe the behaviour of a software program than </span><span lang="EN-IN"><a href="http://en.wikipedia.org/wiki/Imperative_programming"><span >imperative programming</span></a></span><span lang="EN-IN" >. I am an admirer of declarative aspects of programming ever since I have started writing SQL queries. We always do our best to write code that is easier to read and maintain. Declarative style is one of the proven ways to write clean code. </span><span lang="EN-IN"><a href="http://msdn.microsoft.com/en-us/library/bb308959.aspx"><span >LINQ</span></a></span><span lang="EN-IN" > is an excellent example of declarative style programming that enables the developers to simply state what they want to do. When I am learning </span><span lang="EN-IN"><a href="http://learnyouahaskell.com/higher-order-functions"><span >higher order functions in Haskell</span></a></span><span lang="EN-IN" >, I have found the interrelationship between the higher order functions and the LINQ. It really made me to think in a different way to solve a problem. Through this blog post I would like to share my experiments on </span><span lang="EN-IN"><a href="http://en.wikipedia.org/wiki/Higher-order_function"><span >higher order functions</span></a></span><span lang="EN-IN" > in C#.</span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Let me start with a very simple requirement. </span></div>
+        <div align="center" class="MsoNormal" style="line-height: 150%; text-align: center;"><i style="mso-bidi-font-style: normal;"><span lang="EN-IN" >Write a program to print the even numbers present in the given n numbers</span></i></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The code implementation fairly straight forward as below</span></div>
+        <div class="separator" style="clear: both; text-align: center;"><a href="http://2.bp.blogspot.com/-F8d-q0yfDxQ/TsutZtHjXFI/AAAAAAAAAMM/VZOQO-TrRkM/s1600/PrintEvenNumbers.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
+            <img border="0" src="http://2.bp.blogspot.com/-F8d-q0yfDxQ/TsutZtHjXFI/AAAAAAAAAMM/VZOQO-TrRkM/s320/PrintEvenNumbers.PNG" /></a></div>
+        <div align="center" class="MsoNormal" style="line-height: 150%; text-align: center;"><span lang="EN-IN" >
+            <br />
+        </span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Fine. Let me add some more twist to the code by adding two more requirements.</span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i style="mso-bidi-font-style: normal;">Modify the program implemented above to print odd numbers and multiples of four present in the given n numbers</i></span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To be honest, If I have encountered this requirements before I have learnt Higher Order Functions my implementation would be as follows.</span></div>
+        <div class="separator" style="clear: both; text-align: center;"><a href="http://2.bp.blogspot.com/-6Yj8HNUD34s/Tsutfjqe-AI/AAAAAAAAAMU/Oq7SKgTBOyA/s1600/TwoMoreReq.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
+            <img src="http://2.bp.blogspot.com/-6Yj8HNUD34s/Tsutfjqe-AI/AAAAAAAAAMU/Oq7SKgTBOyA/s320/TwoMoreReq.PNG" /></a></div>
+        <div align="center" class="MsoNormal" style="line-height: 150%; text-align: center;"><span lang="EN-IN" >
+            <br />
+        </span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If you look at the above implementation with a critical eye, you can find a potential candidate of duplication. Let me explain the common pattern that is being used in the implemented PrintXXXX functions.</span></div>
+        <div class="MsoListParagraphCxSpFirst" style="line-height: 150%; margin-left: .75in; mso-add-space: auto; mso-list: l0 level1 lfo1; text-align: justify; text-indent: -.25in;"><span lang="EN-IN" >1.<span style="font: normal normal normal 7pt/normal 'Times New Roman';">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-IN" >For each number in the numbers enumerable </span></div>
+        <div class="MsoListParagraphCxSpMiddle" style="line-height: 150%; margin-left: 1.25in; mso-add-space: auto; mso-list: l0 level2 lfo1; text-align: justify; text-indent: -.25in;"><span lang="EN-IN" >a.<span style="font: normal normal normal 7pt/normal 'Times New Roman';">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-IN" >Decide whether the number should be printed or not (<b style="mso-bidi-font-weight: normal;">Deciding</b>)</span></div>
+        <div class="MsoListParagraphCxSpMiddle" style="line-height: 150%; margin-left: 1.25in; mso-add-space: auto; mso-list: l0 level2 lfo1; text-align: justify; text-indent: -.25in;"><span lang="EN-IN" >b.<span style="font: normal normal normal 7pt/normal 'Times New Roman';">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span lang="EN-IN" >Print the number if it is passes the above decision (<b style="mso-bidi-font-weight: normal;">Doing</b>)</span></div>
+        <div class="MsoListParagraphCxSpMiddle" style="line-height: 150%; text-align: justify;">
+            <br />
+        </div>
+        <div class="separator" style="clear: both; text-align: center;"><a href="http://1.bp.blogspot.com/-9xr-Hu8TT7U/TsutkGNc9SI/AAAAAAAAAMc/_JeMMy5u1RY/s1600/Duplication.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
+            <img src="http://1.bp.blogspot.com/-9xr-Hu8TT7U/TsutkGNc9SI/AAAAAAAAAMc/_JeMMy5u1RY/s320/Duplication.PNG" /></a></div>        
+        </div>
+        <div class="MsoListParagraphCxSpMiddle" style="line-height: 150%; margin-left: 0in; mso-add-space: auto; text-align: justify; text-indent: .5in;"><span lang="EN-IN" >All the three functions iterate over the numbers enumerable and print the numbers. The only thing which actually differentiates the functions is deciding which numbers to be printed.</span></div>
+        <div class="MsoListParagraphCxSpMiddle" style="line-height: 150%; margin-left: 0in; mso-add-space: auto; text-align: justify; text-indent: .5in;">
+            <br />
+        </div>
+        <div class="MsoListParagraphCxSpMiddle" style="line-height: 150%; margin-left: 0in; mso-add-space: auto; text-align: justify; text-indent: .5in;"><span lang="EN-IN" >Now the question is how can we eliminate this duplication????</span></div>
+        <div class="MsoListParagraphCxSpMiddle" style="line-height: 150%; margin-left: 0in; mso-add-space: auto; text-align: justify; text-indent: .5in;">
+            <br />
+        </div>
+        <div class="MsoListParagraphCxSpMiddle" style="line-height: 150%; margin-left: 0in; mso-add-space: auto; text-align: justify; text-indent: .5in;"><span lang="EN-IN" >It’s where higher order functions come into picture. If we move the deciding part of the function away from its implementation then we can easily achieve it.&nbsp;&nbsp; Here we go! The brand new implementation of Print would be </span></div>
+        <div class="MsoListParagraphCxSpMiddle" style="line-height: 150%; margin-left: 0in; mso-add-space: auto; text-align: justify; text-indent: .5in;">
+            <br />
+        </div>
+        <div class="separator" style="clear: both; text-align: center;"><a href="http://2.bp.blogspot.com/-9RF4Km0s1NA/TsutoVD_WkI/AAAAAAAAAMk/GWASEODqJTk/s1600/HigherOrderPrint.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
+            <img border="0" height="202" src="http://2.bp.blogspot.com/-9RF4Km0s1NA/TsutoVD_WkI/AAAAAAAAAMk/GWASEODqJTk/s320/HigherOrderPrint.PNG" width="320" /></a></div>
+        <div align="center" class="MsoListParagraphCxSpMiddle" style="line-height: 150%; margin-left: 0in; mso-add-space: auto; text-align: center; text-indent: .5in;"><span lang="EN-IN" >
+            <br />
+        </span></div>
+        <div class="MsoListParagraphCxSpLast" style="line-height: 150%; margin-left: .75in; mso-add-space: auto; text-align: justify;">
+            <br />
+        </div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In the new implementation we have just isolated the deciding part of the function from its implementation and parameterize it as function delegate that takes an integer as its input and return a Boolean value.&nbsp; In the client code (Main function) we are actually just calling the print function and declaratively telling it to print only those numbers which satisfies the given condition. As we separated the deciding part from the actual implementation, we can easily accommodate any future requirements like “<i style="mso-bidi-font-style: normal;">Printing multiples of five, printing only single digit numbers</i>” by declarative calling the Print function like as below</span></div>
+        <div class="separator" style="clear: both; text-align: center;"><a href="http://4.bp.blogspot.com/-iunnD2jPXv8/TsutsrFa_4I/AAAAAAAAAMs/oE81RX5J8gY/s1600/AccomodatedRequirement.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
+            <img border="0" height="135" src="http://4.bp.blogspot.com/-iunnD2jPXv8/TsutsrFa_4I/AAAAAAAAAMs/oE81RX5J8gY/s320/AccomodatedRequirement.PNG" width="320" /></a></div>
+        <div align="center" class="MsoNormal" style="line-height: 150%; text-align: center;"><span lang="EN-IN" >
+            <br />
+        </span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Cool.. Isn’t it ? Let me complicate the things little more. What would you do if you want to call this Print method across different classes?. A notorious option would be creating a </span><span lang="EN-IN"><a href="http://en.wikipedia.org/wiki/Utility_class"><span >Utility class</span></a></span><span lang="EN-IN" > with the Print method and calling it from the other classes. We can also solve these using </span><span lang="EN-IN"><a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx"><span >Extension methods</span></a></span><span lang="EN-IN" > which results a clean readable code like as below</span></div>
+        <div class="separator" style="clear: both; text-align: center;"><a href="http://4.bp.blogspot.com/-DZVepYydQ84/TsutwLqz__I/AAAAAAAAAM0/eNlsA0F2jzI/s1600/ExtensionMethod.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
+            <img border="0" height="185" src="http://4.bp.blogspot.com/-DZVepYydQ84/TsutwLqz__I/AAAAAAAAAM0/eNlsA0F2jzI/s320/ExtensionMethod.PNG" width="320" /></a></div>
+        <div align="center" class="MsoNormal" style="line-height: 150%; text-align: center;"><span lang="EN-IN" >
+            <br />
+        </span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; So far, so good. We have started with a single function and then we added two more, then eliminated the duplication using Higher Order functions and finally we have made the code readable by using extension method. </span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Okay. Now “<i style="mso-bidi-font-style: normal;">I want to print the strings which starts with ‘s’ in the given n strings </i>”. Pardon me for complicating things, I will stop by this one.</span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; It is almost logically similar to what we have done so far. Instead of numbers here it is string. How can we put it into action?. Thanks to </span><span lang="EN-IN"><a href="http://msdn.microsoft.com/en-us/library/512aeb7t%28v=vs.80%29.aspx"><span >Generics</span></a></span><span lang="EN-IN" >. We can easily achieve this by modifying the extension method to support generic type as below</span></div>
+        <div class="separator" style="clear: both; text-align: center;"><a href="http://3.bp.blogspot.com/-Cwp_3vrURcU/Tsut-VkAqjI/AAAAAAAAAM8/UrutESWMdw4/s1600/GenericExtensionMethod.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
+            <img border="0" height="174" src="http://3.bp.blogspot.com/-Cwp_3vrURcU/Tsut-VkAqjI/AAAAAAAAAM8/UrutESWMdw4/s320/GenericExtensionMethod.PNG" width="320" /></a></div>
+        <div align="center" class="MsoNormal" style="line-height: 150%; text-align: center;"><span lang="EN-IN" >
+            <br />
+        </span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; That’s it. Now you are free to play with all sort of logic you want. You can play with different set of conditions to print the elements or even you can also use different collection of your custom classes. And all can be done declaratively!!</span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Now its time to reveal to the interrelationship exists between the LINQ and the higher order functions. All the LINQ methods are actually using these Print extension methods kind of extension methods under the hood and makes the life of developer easily but letting them to work declaratively. </span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span lang="EN-IN"><a href="http://msdn.microsoft.com/en-us/library/system.threading.tasks.parallel.aspx"><span >Parallel Class</span></a></span><span lang="EN-IN" > a new addition in C# 4.0, also uses higher order functions and enables the developer to say “Hey CLR, I wanna run these methods parallel”. </span></div>
+        <div class="separator" style="clear: both; text-align: center;"><a href="http://3.bp.blogspot.com/-oghYOKAdsl4/TsuuMGSPzJI/AAAAAAAAANE/YVpPV4cfTOU/s1600/Parallel+Invoke.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;">
+            <img border="0" height="141" src="http://3.bp.blogspot.com/-oghYOKAdsl4/TsuuMGSPzJI/AAAAAAAAANE/YVpPV4cfTOU/s320/Parallel+Invoke.PNG" width="320" /></a></div>
+        <div align="center" class="MsoNormal" style="line-height: 150%; text-align: center;"><span lang="EN-IN" >
+            <br />
+        </span></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Awesome! No new thread creation and no verbose. </span></div>
+        <div ><b style="mso-bidi-font-weight: normal;"><span lang="EN-IN" >Summary</span></b></div>
+        <div ><span lang="EN-IN" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Declarative Programming is powerful tool. It creates more readable, cleaner code and also saves the possibility of logical mistakes in multiple similar algorithms. That means fewer mistakes now and in the future.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></div>
+    </div>
+</div>
