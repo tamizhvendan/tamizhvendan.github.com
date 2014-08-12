@@ -9,13 +9,49 @@ categories:
 ---
 
 <div class='post'>
-<div>
-	<p>In this blog post we are going to explore how to create the data access layer as aclass library using Entity Framework 4.0. By defining the data access layer asclass library, you can reuse it across many applications just by adding areference to the class library. In my next blog post, we'll explore how to consumethe library in an application. </p>
-	<p>Entity Framework 4.0 enables the developer toconcentrate on the business logic and business objects without bothering how ithas been manipulated at the database level. You can find a very good tutorial onEntity Framework <a href="http://www.dotnetcurry.com/ShowArticle.aspx?ID=599">here</a> to get started.This blog post uses a sample database named "HRD" which has two tables, Employee and Department. </p>
-	<h4>Step 1: Create a Class Library</h4>Create a new class library project with the name "HRD.DataAccess" and click "Ok". After creating a new project delete the "Class1.cs" which is created by default.<a href="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s1600/1.Class-Library-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }"><img alt="" border="0" id="BLOGGER_PHOTO_ID_5588018340315745234" src="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s400/1.Class-Library-Creation.PNG"/></a>
-	<h4>Step 2: Create the Entity class using the entity framework</h4> <p>Right click on the project name "HRD.DataAccess" and select "Add -&gt; New item".Select "Data" under installed templates and then select "ADO.NET Data Entity Model". Type the name as "HrdModel.edmx" and click "Add". </p> <a href="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s1600/2.%2BEdmx-File-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }"><img alt="" border="0" id="BLOGGER_PHOTO_ID_5588018736147760674" src="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s400/2.%2BEdmx-File-Creation.PNG" /> </a> <p>In the Entity Data Model Wizard select "Generate from database" and click "Next"<a href="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s1600/3.%2BEntity%2BData%2BModel%2BWizard.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }"><img alt="" border="0" id="BLOGGER_PHOTO_ID_5588018866271107970" src="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s400/3.%2BEntity%2BData%2BModel%2BWizard.PNG"/></a></p>In the next step select the database name "PCName\sqlexpress.HRD.dbo" and select "Next"<a href="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s1600/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG"><img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019738534634002" src="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s400/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG"/></a>
-	<p>In the next step select the tables names "Department" &amp; "Employee" and click "Finish"<a href="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s1600/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG"><img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019795895543346" src="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s400/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG" /></a> </p> Now we have created the entity model which represent the Object/Relation mapping<a href="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s1600/6.%2BEDMX%2BSuccessful%2BCreation.PNG"><img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019838615201234" src="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s400/6.%2BEDMX%2BSuccessful%2BCreation.PNG" style="cursor: pointer; height: 289px; width: 400px;" /></a> <h4>Step 3: Building the class library</h4><ol><li>Select "Build-&gt;Configuration Manager"</li><li>Change the Configuration of the Project "HRD.DataAccess" to "Release". By default it is "Debug"</li><li>Click "Close"</li><li>Select "Build-&gt;Build HRD.DataAccess"</li></ol>Thats it!!. Now we have the DataAccess Library ready!! We can reuse it across different .Net Applications 
-	<p>
-	<h4>Summary</h4>In this blog we have explored the way of creating the DataAccess class library using entity framework.in my next blog, we'd explore on how to consume the data access library in an application. 
-</h4>
-</div></div>
+    <div>
+        <p>In this blog post we are going to explore how to create the data access layer as a class library using Entity Framework 4.0. By defining the data access layer as class library, you can reuse it across many applications just by adding areference to the class library. In my next blog post, we'll explore how to consume the library in an application. </p>
+        <p>Entity Framework 4.0 enables the developer to concentrate on the business logic and business objects without bothering how it has been manipulated at the database level. You can find a very good tutorial onEntity Framework <a href="http://www.dotnetcurry.com/ShowArticle.aspx?ID=599">here</a> to get started.This blog post uses a sample database named "HRD" which has two tables, Employee and Department. </p>
+
+        <h4>Step 1: Create a Class Library</h4>
+
+        <p>Create a new class library project with the name "HRD.DataAccess" and click "Ok". After creating a new project delete the "Class1.cs" which is created by default.</p>
+        <a href="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s1600/1.Class-Library-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
+            <img alt="" border="0" id="Img1" src="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s400/1.Class-Library-Creation.PNG" /></a>
+
+        <h4>Step 2: Create the Entity class using the entity framework</h4>
+
+        <p>Right click on the project name "HRD.DataAccess" and select "Add -&gt; New item".Select "Data" under installed templates and then select "ADO.NET Data Entity Model". Type the name as "HrdModel.edmx" and click "Add". </p>
+        <a href="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s1600/2.%2BEdmx-File-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588018736147760674" src="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s400/2.%2BEdmx-File-Creation.PNG" />
+        </a>
+
+        <p>In the Entity Data Model Wizard select "Generate from database" and click "Next"</p>
+        <a href="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s1600/3.%2BEntity%2BData%2BModel%2BWizard.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
+            <img alt="" border="0" id="Img2" src="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s400/3.%2BEntity%2BData%2BModel%2BWizard.PNG" /></a>
+
+        <p>In the next step select the database name "PCName\sqlexpress.HRD.dbo" and select "Next"</p>
+        <a href="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s1600/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019738534634002" src="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s400/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG" /></a>
+
+        <p>In the next step select the tables names "Department" &amp; "Employee" and click "Finish"</p>
+        <a href="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s1600/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019795895543346" src="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s400/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG" /></a>
+
+        <p>Now we have created the entity model which represent the Object/Relation mapping</p>
+        <a href="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s1600/6.%2BEDMX%2BSuccessful%2BCreation.PNG">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019838615201234" src="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s400/6.%2BEDMX%2BSuccessful%2BCreation.PNG" style="cursor: pointer; height: 289px; width: 400px;" /></a>
+
+        <h4>Step 3: Building the class library</h4>
+        <ol>
+            <li>Select "Build-&gt;Configuration Manager"</li>
+            <li>Change the Configuration of the Project "HRD.DataAccess" to "Release". By default it is "Debug"</li>
+            <li>Click "Close"</li>
+            <li>Select "Build-&gt;Build HRD.DataAccess"</li>
+        </ol>
+        That's it!!. Now we have the DataAccess Library ready!! We can reuse it across different .Net Applications 
+	
+        <h4>Summary</h4>
+        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="{% post_url 2011-04-01-entity-framework-40-as-class-library %}">next blog</a>, we'd be exploring on how to consume the data access library in an application. </p>
+    </div>
+</div>

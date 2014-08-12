@@ -9,9 +9,41 @@ categories:
 ---
 
 <div class='post'>
-<div></a>As the continuation of my previous <a href="{% post_url 2011-03-25-entity-framework-40-class-library-part %}">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.<p>Consuming the Data Access Library created using Entity Framework 4.0 involves the following two steps.<br /><ol><li>Adding reference to the class library</li><li>Adding the connection string in the config file (App.config or Web.config)</li></ol>Let us see how can we do these steps using a console application. To keep things simple I have opt for a console application. It holds the same for an ASP.NET , Windows Form, WPF,WCF, etc.</p><h3>Console Application Creation</h3>Create a new console application called "HrdConsoleApp"<br /><a href="http://1.bp.blogspot.com/-jd1uE7HyzUY/TZw4OSKgKVI/AAAAAAAAAFw/O0t-17BazAk/s1600/1.ConsoleAppCreation.PNG" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="221px" src="http://1.bp.blogspot.com/-jd1uE7HyzUY/TZw4OSKgKVI/AAAAAAAAAFw/O0t-17BazAk/s320/1.ConsoleAppCreation.PNG" width="320px" /></a><br /><a href="https://ch1blogs/blogs/211239/files/2011/04/1consoleappcreation.PNG" title="1consoleappcreation.PNG"></a><br /><br /><b>Add a reference to the Class library</b><br /><br />Right click on references and refer the class library "HRD.DataAccess" that we have created in the last blog. <br /><div class="separator" style="clear: both; text-align: center;"><a href="http://4.bp.blogspot.com/-238LBeCcS-8/TZw4UoXoTyI/AAAAAAAAAF0/Z-wMwpTZD1k/s1600/2.ReferenceLibrary.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="267px" src="http://4.bp.blogspot.com/-238LBeCcS-8/TZw4UoXoTyI/AAAAAAAAAF0/Z-wMwpTZD1k/s320/2.ReferenceLibrary.PNG" width="320px" /></a></div><b></b><br /><br />Add reference to System.Data.Entity Library<br /><a href="http://4.bp.blogspot.com/-TIhl2OiTt68/TZw59TQrQ6I/AAAAAAAAAF8/WM5ffjSpETo/s1600/5.DataEntityReference.PNG" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="267px" src="http://4.bp.blogspot.com/-TIhl2OiTt68/TZw59TQrQ6I/AAAAAAAAAF8/WM5ffjSpETo/s320/5.DataEntityReference.PNG" width="320px" /></a><a href="https://ch1blogs/blogs/211239/files/2011/04/5dataentityreference.PNG" title="5dataentityreference.PNG"><br /></a><br /><br />Add the App.Config file to the console application by right clicking on the project name in the solution explorer and select "Add-&gt;New Item". Then Copy the connection string from the App.Config file created in the HrdDataAccess Class library Project created earlier and paste it in the App.config file created in the previous step.<br /><a href="http://2.bp.blogspot.com/-ZqMXJ5KdLy8/TZw4Y1uECQI/AAAAAAAAAF4/fIcRIy1se5c/s1600/3.AppConfigCreation.PNG" style="clear: left; float: left; margin-bottom: 1em; margin-right: 1em;"><img src="http://2.bp.blogspot.com/-ZqMXJ5KdLy8/TZw4Y1uECQI/AAAAAAAAAF4/fIcRIy1se5c/s320/3.AppConfigCreation.PNG" /></img><br /><p><a href="http://4.bp.blogspot.com/-TIhl2OiTt68/TZw59TQrQ6I/AAAAAAAAAF8/WM5ffjSpETo/s1600/5.DataEntityReference.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"></a></p>
-<a href="http://2.bp.blogspot.com/-HgFzRYacpQA/TZw6IqMd5oI/AAAAAAAAAGA/q_IiJsTNYvU/s1600/4.AppConfig.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img src="http://2.bp.blogspot.com/-HgFzRYacpQA/TZw6IqMd5oI/AAAAAAAAAGA/q_IiJsTNYvU/s320/4.AppConfig.PNG"/></a><a href="http://2.bp.blogspot.com/-ZqMXJ5KdLy8/TZw4Y1uECQI/AAAAAAAAAF4/fIcRIy1se5c/s1600/3.AppConfigCreation.PNG" imageanchor="1"></a><p>Thats all now it is all set to access the database with only minimal amount of code.. Here we go!!</p><br /><h3>Code Please!</h3>
-<br />
-{% gist 7794bb7ac98d6de3b962 %}
+    <div>
+        <p>As the continuation of my previous <a href="{% post_url 2011-03-25-entity-framework-40-class-library-part %}">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
 
-	<br /><b>Output</b> <br /><br /><div class="separator" style="clear: both; text-align: center;"><a href="http://1.bp.blogspot.com/-Fooy-W2-OCQ/TZw6M7tVqTI/AAAAAAAAAGE/tJ5UYVi5LRI/s1600/6.Output.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="161px" src="http://1.bp.blogspot.com/-Fooy-W2-OCQ/TZw6M7tVqTI/AAAAAAAAAGE/tJ5UYVi5LRI/s320/6.Output.PNG" width="320px" /></a></div><a href="https://ch1blogs/blogs/211239/files/2011/04/6output.PNG" title="6output.PNG"><br /></a><br /><br /><b>Summary:</b><br /><br />In this blog series (Part 1 and Part 2) we have seen how to create the data access layer using Entity Framework 4.0 as class library and how to consume it in an application. With the introduction of Entity Framework developing the code for data access layer is no longer a tidy and time consuming job!!</div></div>
+        <p>Consuming the Data Access Library created using Entity Framework 4.0 involves the following two steps.</p>
+        <ol>
+            <li>Adding reference to the class library</li>
+            <li>Adding the connection string in the config file (App.config or Web.config)</li>
+        </ol>
+        <p>Let us see how can we do these steps using a console application. To keep things simple I have opt for a console application. It holds the same for an ASP.NET , Windows Form, WPF,WCF, etc.</p>
+
+        <h4>Console Application Creation</h4>
+        <p>Create a new console application called "HrdConsoleApp"</p>
+        <img src="http://1.bp.blogspot.com/-jd1uE7HyzUY/TZw4OSKgKVI/AAAAAAAAAFw/O0t-17BazAk/s1600/1.ConsoleAppCreation.PNG" />
+
+        <h4>Add a reference to the Class library</h4>
+        <p>Right click on references and refer the class library "HRD.DataAccess" that we have created in the last blog.</p>
+        <img src="http://4.bp.blogspot.com/-238LBeCcS-8/TZw4UoXoTyI/AAAAAAAAAF0/Z-wMwpTZD1k/s1600/2.ReferenceLibrary.PNG" />
+
+        <p>Add reference to System.Data.Entity Library</p>
+        <img src="http://4.bp.blogspot.com/-TIhl2OiTt68/TZw59TQrQ6I/AAAAAAAAAF8/WM5ffjSpETo/s1600/5.DataEntityReference.PNG" />
+
+        <p>Add the App.Config file to the console application by right clicking on the project name in the solution explorer and select "Add-&gt;New Item". Then Copy the connection string from the App.Config file created in the HrdDataAccess Class library Project created earlier and paste it in the App.config file created in the previous step.</p>
+        <img src="http://2.bp.blogspot.com/-ZqMXJ5KdLy8/TZw4Y1uECQI/AAAAAAAAAF4/fIcRIy1se5c/s1600/3.AppConfigCreation.PNG" />
+
+        <img src="http://2.bp.blogspot.com/-HgFzRYacpQA/TZw6IqMd5oI/AAAAAAAAAGA/q_IiJsTNYvU/s1600/4.AppConfig.PNG" />
+        <p>That's all now it is all set to access the database with only minimal amount of code.. Here we go!!</p>
+        <h4>Code Please!</h4>
+        {% gist 7794bb7ac98d6de3b962 %}
+
+        <h4>Output</h4>
+        <img src="http://1.bp.blogspot.com/-Fooy-W2-OCQ/TZw6M7tVqTI/AAAAAAAAAGE/tJ5UYVi5LRI/s1600/6.Output.PNG" />
+
+        <h4>Summary:</h4>
+        <p>
+            In this blog series (Part 1 and Part 2) we have seen how to create the data access layer using Entity Framework 4.0 as class library and how to consume it in an application. With the introduction of Entity Framework developing the code for data access layer is no longer a tidy and time consuming job!!
+        </p>
+    </div>
+</div>
