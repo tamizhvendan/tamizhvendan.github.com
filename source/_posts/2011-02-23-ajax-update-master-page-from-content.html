@@ -8,32 +8,35 @@ categories:
 ---
 
 <div class='post'>
-<div>In this blog post we are going to see how can we update the master page from content page using ajax updatepanel in <a href="http://www.amazon.com/Beginning-ASP-NET-VB-Wrox-Programmer/dp/0470502215?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">ASP.NET</a>.<br />
-	The sample website we are going to build will have a content page which allows to change the header of the website(which is present in master page) via Ajax. 
-	<p><img height="169px" src="http://codeasp.net/Assets/Uploaded-CMS-Files/c15554a1-7e4e-498b-9c5e-a1365cf4643aAjaxifyMasterPage1.PNG" width="358px" /><img height="143px" src="http://codeasp.net/Assets/Uploaded-CMS-Files/8feb0ea9-adf4-4bc6-99ae-4c9b28ed1cc1AjaxifyMasterPage2.PNG" width="334px" /></p>
-	<br />
-	<p>The tasks involved in creating this website are as follows:
-		<ul>
-		<li>Create an updatepanel in masterpage which holds the website header.</li>
-		<li>Create a method in MasterPage codebehind which changes the website header.</li>
-		<li>Create the content page with master page reference and an update panel which holds controls to triggers the header change.</li>
-		<li>Call the MasterPage method from content page.</li>
-		</ul>
-	</p>
-	<p><strong>1. Create an updatepanel in masterpage which holds the website header.</strong><br />
-		{% gist 6f81102e5150de2491bb updatePanel.aspx %}
-	<br />
-	Make Sure the two properties of UpdatePanel <strong>"ChildrenAsTriggers"</strong> is set to false and <strong>"UpdateMode"</strong> is set to conditional, to prevent the unneccessary updation of updatepanel from its child controls. <br />
-	</p><p>
-	<strong>2. Create a method in MasterPage codebehind which changes the website header.</strong><br /><br />
-	{% gist 6f81102e5150de2491bb updatePanel.cs %}
-	<br />
-	<strong>3. Create the content page with master page reference and an update panel which holds controls to triggers the header change.</strong><br />
-{% gist 6f81102e5150de2491bb masterPage.aspx %}
+    <div>
+        <p>
+            In this blog post we are going to see how can we update the master page from content page using ajax updatepanel in <a href="http://www.amazon.com/Beginning-ASP-NET-VB-Wrox-Programmer/dp/0470502215?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">ASP.NET</a>.
+            The sample website we are going to build will have a content page which allows to change the header of the website(which is present in master page) via Ajax.
+        </p>
+        <img src="http://codeasp.net/Assets/Uploaded-CMS-Files/c15554a1-7e4e-498b-9c5e-a1365cf4643aAjaxifyMasterPage1.PNG" width="358px" /><img src="http://codeasp.net/Assets/Uploaded-CMS-Files/8feb0ea9-adf4-4bc6-99ae-4c9b28ed1cc1AjaxifyMasterPage2.PNG" />
+        <p>The tasks involved in creating this website are as follows: </p>
 
-{% gist 6f81102e5150de2491bb changeHandler.cs %}
+        <ul>
+            <li>Create an updatepanel in masterpage which holds the website header.</li>
+            <li>Create a method in MasterPage codebehind which changes the website header.</li>
+            <li>Create the content page with master page reference and an update panel which holds controls to triggers the header change.</li>
+            <li>Call the MasterPage method from content page.</li>
+        </ul>
+        <h3>1. Create an updatepanel in masterpage which holds the website header.</h3>
+        {% gist 6f81102e5150de2491bb updatePanel.aspx %}	
+            <p>Make Sure the two properties of UpdatePanel <strong>"ChildrenAsTriggers"</strong> is set to false and <strong>"UpdateMode"</strong> is set to conditional, to prevent the unneccessary updation of updatepanel from its child controls.</p>
 
-		<br /><strong>4. Call the MasterPage method from content page.</strong><br />
-	{% gist 6f81102e5150de2491bb contentTemplate.aspx %}
-  
-		<br /><strong>Summary:</strong><br />In this blog we have seen how can we update the master page from the content page using ajax update panel. You can download the source code from <a href="http://www.box.net/shared/gpa9dlo668">here</a><br /> <br/>
+        <h3>2. Create a method in MasterPage codebehind which changes the website header.</h3>
+        {% gist 6f81102e5150de2491bb updatePanel.cs %}
+
+            <h3>3. Create the content page with master page reference and an update panel which holds controls to triggers the header change.</h3>
+        {% gist 6f81102e5150de2491bb masterPage.aspx %}
+            {% gist 6f81102e5150de2491bb changeHandler.cs %}
+
+            <h3>4. Call the MasterPage method from content page.</h3>
+        {% gist 6f81102e5150de2491bb contentTemplate.aspx %}
+
+            <h3>Summary:</h3>
+        <p>In this blog we have seen how can we update the master page from the content page using ajax update panel. You can download the source code from <a href="http://www.box.net/shared/gpa9dlo668">here</a></p>
+    </div>
+</div>
