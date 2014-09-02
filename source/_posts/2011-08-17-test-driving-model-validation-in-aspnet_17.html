@@ -10,67 +10,88 @@ categories:
 ---
 
 <div class='post'>
-<div>
-<p style="text-align: justify;">
- In <a href="{% post_url 2011-08-13-test-driving-model-validation-in-aspnet %}">Part-1</a>of this small blog post series, we have explored a way to do the TDD of controller’s responsibility in the context of model validation. In this Part-2 we are going to see <strong>“How to do the TDD of Model Validation”</strong>
-</p>
+    <p>
+    <p>
+        In <a href="{% post_url 2011-08-13-test-driving-model-validation-in-aspnet %}">Part-1</a>of this small blog post series, 
+            we have explored a way to do the TDD of controller’s responsibility in the context of model validation. 
+            In this Part-2 we are going to see <strong>“How to do the TDD of Model Validation”</strong>
+    </p>
 
-<p style="text-align: justify;">
- Before getting into the business let us have a quick look at how ASP.NET MVC3 does the model validation. Internally when making an Http POST/GET request, MVC3 makes use of a helper class <strong><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validator.aspx">Validator</a></strong> located in the namespace <em>System.ComponentModel.DataAnnotations.</em> Validator can be used to validate the models based on the <strong><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationattribute.aspx">ValidationAttribute</a></strong> attributes associate with the model. After validating MVC3 adds the validation results to the controller’s <em>ModelState</em> Property by the <em>AddModelError</em> method which in turn sets the<em> ModelState.IsValid</em> property (Refer <a href="{% post_url 2011-08-13-test-driving-model-validation-in-aspnet %}">Part-1</a>). We are actually going to make use of this <em>Validator</em> helper class going to test drive the model validation. 
-</p>
+    <p>
+        Before getting into the business let us have a quick look at how ASP.NET MVC3 does the model validation. 
+            Internally when making an Http POST/GET request, MVC3 makes use of a helper class 
+            <strong><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validator.aspx">Validator</a></strong>
+        located in the namespace <em>System.ComponentModel.DataAnnotations.</em>
+        Validator can be used to validate the models based on the <strong>
+            <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationattribute.aspx">ValidationAttribute</a></strong>
+        attributes associate with the model. After validating MVC3 adds the validation results to the controller’s <em>ModelState</em>
+        Property by the <em>AddModelError</em> method which in turn sets the<em> ModelState.IsValid</em> property 
+            (Refer <a href="{% post_url 2011-08-13-test-driving-model-validation-in-aspnet %}">Part-1</a>). We are actually going to make use of this <em>Validator</em>
+        helper class going to test drive the model validation. 
+    </p>
 
-  <h4>Let us start with a small requirement</h4>
-<div style="text-align: center;">
- <em>“Employee name should not be empty”</em>
+    <h4>Let us start with a small requirement</h4>
+    <p>
+        <em>“Employee name should not be empty”</em>
+    </p>
+
+    <p>The corresponding unit test will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://4.bp.blogspot.com/-3Ql_dP2wJkE/Tku0g78apHI/AAAAAAAAAKw/gV-lTvda50I/s1600/UnitTest1.PNG" />
+    </div>
+
+    <p>ValidateObject Method determines whether the specified object is valid using the validation context and throws a ValidationException if the object is invalid.</p>
+
+
+    <p>Employee Model will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-URfST5ZPMwo/Tku0gsJJAxI/AAAAAAAAAKs/5K0GYH1ObLs/s1600/Emp1.PNG" />
+    </div>
+
+    <p>
+        When you run the test “EmployeeNameShouldNotBeEmpty”, it will <strong><span style="color: red;">Fail</span></strong> with the error message 
+        <em>“System.ComponentModel.DataAnnotations.ValidationException was expected”</em>. Now it’s time to make it <strong>
+            <span style="color: #00b050;">Pass. </span></strong>Thanks to <em>RequiredAttribute</em> we can make the test the pass without much effort. 
+        Just decorate the Name property with the <em>[Required]</em> Attribute. That’s it. Now run the test and it will 
+        <strong><span style="color: #00b050;">Pass.</span></strong> As there is no scope for Refactoring, we will be ignoring it.
+    </p>
+
+    <p>Well, we have done the TDD of model validation. Now let’s move onto the next requirement.</p>
+    <p>
+        <em>“Employee age should be greater than 30”</em>
+    </p>
+    <br />
+    <p>
+        Let’s write the unit test for this requirement.
+    </p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://3.bp.blogspot.com/-cXpXTstCDr4/Tku0hg4cWDI/AAAAAAAAAK0/hahJBKoWOLI/s1600/UnitTest2.PNG" />
+    </div>
+
+    <p>When we run the test, we’d get a failing test with error message “System.ComponentModel.DataAnnotations.ValidationException was expected”</p>
+
+    <p>Like <em>RequiredAttribute</em> we don’t have any AgeLimit Attribute to make the test pass. However we can create such kind of CustomAttributes. 
+        Another approach would be making use of <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.ivalidatableobject.aspx">
+            <em>IValiadatableObject</em></a></p>
+
+    <p>I will be using the latter option in this blog post, if you are interested in creating custom attribute refer this <a href="http://www.devtrends.co.uk/blog/the-complete-guide-to-validation-in-asp.net-mvc-3-part-2">blog post</a></p>
+
+    <p>Here we go; the modified Employee model will look like as follows </p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://1.bp.blogspot.com/-zAsuau_JXwA/Tku0iUzEgFI/AAAAAAAAAK4/J1t3gYaECmw/s1600/Emp2.PNG" />
+    </div>
+
+    <p>
+        The <em>Validator</em> helper class will invoke the Validate method of the model if the model passed to the <em>ValidateObject</em> 
+        Method implements the <em>IValidatableObject</em>.
+    </p>
+
+    <p>Hurrah! Now you will be getting a passing test. We have done the TDD of Model Validation. </p>
+    <h3>Summary</h3>
+    <p>The bottom-line is we should not combine the unit tests of model validation with the controller’s unit tests and both should be kept separate. 
+        You can download the source code which we’ve seen in this blog post series from <a href="http://www.box.net/shared/73e9m5d2ufyi6pazfq4j">here</a></p>
 </div>
-<br />
- <p>The corresponding unit test will be like as follows</p>
- 
- <div class="separator" style="clear: both; text-align: center;">
- <a href="http://4.bp.blogspot.com/-3Ql_dP2wJkE/Tku0g78apHI/AAAAAAAAAKw/gV-lTvda50I/s1600/UnitTest1.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="200px" qaa="true" src="http://4.bp.blogspot.com/-3Ql_dP2wJkE/Tku0g78apHI/AAAAAAAAAKw/gV-lTvda50I/s320/UnitTest1.PNG" width="320px" /></a></div>
-
-
- <p style="text-align: justify;">ValidateObject Method determines whether the specified object is valid using the validation context and throws a ValidationException if the object is invalid.</p>
-
-
- <p>Employee Model will be like as follows</p>
- 
- <div class="separator" style="clear: both; text-align: center;">
- <a href="http://4.bp.blogspot.com/-URfST5ZPMwo/Tku0gsJJAxI/AAAAAAAAAKs/5K0GYH1ObLs/s1600/Emp1.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" qaa="true" src="http://4.bp.blogspot.com/-URfST5ZPMwo/Tku0gsJJAxI/AAAAAAAAAKs/5K0GYH1ObLs/s1600/Emp1.PNG" /></a></div>
-
-<p style="text-align: justify;">
-
- When you run the test “EmployeeNameShouldNotBeEmpty”, it will <strong><span style="color: red;">Fail</span></strong> with the error message <em>“System.ComponentModel.DataAnnotations.ValidationException was expected”</em>. Now it’s time to make it <strong><span style="color: #00b050;">Pass. </span></strong>Thanks to <em>RequiredAttribute</em> we can make the test the pass without much effort. Just decorate the Name property with the <em>[Required]</em> Attribute. That’s it. Now run the test and it will <strong><span style="color: #00b050;">Pass.</span></strong> As there is no scope for Refactoring, we will be ignoring it.
-</p>
-
- <p>Well, we have done the TDD of model validation. Now let’s move onto the next requirement. </p>
- <div style="text-align: center;">
- <em>“Employee age should be greater than 30”</em>
-</div>
-<br />
- <p style="text-align: justify;"> 
- Let’s write the unit test for this requirement.
- </p>
- 
- <div class="separator" style="clear: both; text-align: center;">
- <a href="http://3.bp.blogspot.com/-cXpXTstCDr4/Tku0hg4cWDI/AAAAAAAAAK0/hahJBKoWOLI/s1600/UnitTest2.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="83px" qaa="true" src="http://3.bp.blogspot.com/-cXpXTstCDr4/Tku0hg4cWDI/AAAAAAAAAK0/hahJBKoWOLI/s320/UnitTest2.PNG" width="320px" /></a></div>
- 
- <p>When we run the test, we’d get a failing test with error message “System.ComponentModel.DataAnnotations.ValidationException was expected”</p>
-
- <p>Like <em>RequiredAttribute</em> we don’t have any AgeLimit Attribute to make the test pass. However we can create such kind of CustomAttributes. Another approach would be making use of <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.ivalidatableobject.aspx"><em>IValiadatableObject</em></a></p>
-
- <p style="text-align: justify;">I will be using the latter option in this blog post, if you are interested in creating custom attribute refer this <a href="http://www.devtrends.co.uk/blog/the-complete-guide-to-validation-in-asp.net-mvc-3-part-2">blog post</a></p>
-
- <p>Here we go; the modified Employee model will look like as follows </p>
-
- <div class="separator" style="clear: both; text-align: center;">
- <a href="http://1.bp.blogspot.com/-zAsuau_JXwA/Tku0iUzEgFI/AAAAAAAAAK4/J1t3gYaECmw/s1600/Emp2.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="119px" qaa="true" src="http://1.bp.blogspot.com/-zAsuau_JXwA/Tku0iUzEgFI/AAAAAAAAAK4/J1t3gYaECmw/s320/Emp2.PNG" width="320px" /></a></div>
-
- <p>
- The <em>Validator</em> helper class will invoke the Validate method of the model if the model passed to the <em>ValidateObject</em> Method implements the <em>IValidatableObject</em>.</p>
-
- <p>Hurrah! Now you will be getting a passing test. We have done the TDD of Model Validation. </p>
- <h3>Summary</h3>
- <p>The bottom-line is we should not combine the unit tests of model validation with the controller’s unit tests and both should be kept separate. You can download the source code which we’ve seen in this blog post series from </span><a href="http://www.box.net/shared/73e9m5d2ufyi6pazfq4j"><span style="font-family: Calibri;">here</span></a></p>
- </div>
- </div>

@@ -8,24 +8,72 @@ categories:
 ---
 
 <div class='post'>
-<p>In my previous blog posts <a href="{% post_url 2011-06-24-aspnet-mvc-3-ajax-part-i %}">Part 1</a>, <a href="{% post_url 2011-06-26-ajax-mvc3-ajax-part-ii-adding-animation %}">Part 2</a> we have explored how to use the <em>Ajax.ActionLink()</em> helper method to implement a basic Ajax request. In this blog post we have are going to see an another useful helper method <em>Ajax.BeginForm()</em></p>
-<p>
-We will be implementing the following scenario using the <em>Ajax.BeginForm()</em>. The scenario would be having a view consisting of a simple form with name and email field.<a href="http://3.bp.blogspot.com/-ymtu1zLXx3A/TjkOu1RpS_I/AAAAAAAAAIs/dbURJFeRGeA/s1600/AjaxBeginForm1.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" height="320px" src="http://3.bp.blogspot.com/-ymtu1zLXx3A/TjkOu1RpS_I/AAAAAAAAAIs/dbURJFeRGeA/s320/AjaxBeginForm1.PNG" width="249px" /></a>
-<p>Upon clicking the “Submit” button, the data will be sent back to the server via Ajax Post request and get a confirmation like this.</p><a href="http://4.bp.blogspot.com/-SvRqB-F2Yu4/TjkOuy-BpiI/AAAAAAAAAIw/er75G6DKkcU/s1600/AjaxBeginForm2.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://4.bp.blogspot.com/-SvRqB-F2Yu4/TjkOuy-BpiI/AAAAAAAAAIw/er75G6DKkcU/s1600/AjaxBeginForm2.PNG" /></a> <p>ASP.NET MVC3 offers an intutive way to submitting/posting the form data to server via ajax using <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a> helper method. Lets start developing the scenario by first defining the Model (Not using TDD to keep this blog post simple).</p>
-{% gist 546d5c4d9476826dfe14 PersonalDetail.cs %}
-<p>To keep things simple, Our PersonalDetailsController will be having only two action methods. One will handling the “Get” request for Creating PersonalDetail and the other one for handling “Post” request for Creating PersonalDetail.
-</p>
-{% gist 546d5c4d9476826dfe14 PersonalDetailController.cs %}
 
-	<p>Now, the stage is set to play using ajax. The View for Creating new PersonalDetail using Ajax is similar to that of using oridinary post back except one factor. We need to replace the Html.BeginForm helper method with the <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a></p>
+    <p>
+        In my previous blog posts 
+	    <a href="{% post_url 2011-06-24-aspnet-mvc-3-ajax-part-i %}">Part 1</a>, 
+	    <a href="{% post_url 2011-06-26-ajax-mvc3-ajax-part-ii-adding-animation %}">Part 2</a>
+        we have explored how to use the <em>Ajax.ActionLink()</em> helper method to implement a basic Ajax request. 
+	    In this blog post we have are going to see an another useful helper method <em>Ajax.BeginForm()</em>
+    </p>
 
-	<p>Ajax.BeginForm method has 11 overloads. On this blog post we are going to use the following overload. <em>Ajax.BeginForm(string actionName, string controllerName, AjaxOptions ajaxOptions)</em>
-		<p>The actionName and controllerName points to the handler which is going to handle the ajax request and the ajaxOptions defines the behaviour of the ajax request. The View for Creating PersonalDetail will look like this</p>
+    <p>
+        We will be implementing the following scenario using the <em>Ajax.BeginForm()</em>. 
+    The scenario would be having a view consisting of a simple form with name and email field.
+    </p>
+    <div style="clear: both; text-align: center">
+        <img src="http://3.bp.blogspot.com/-ymtu1zLXx3A/TjkOu1RpS_I/AAAAAAAAAIs/dbURJFeRGeA/s1600/AjaxBeginForm1.PNG" />
+    </div>
 
-		<div class="MsoNormal" style="margin: 0in 0in 10pt; text-align: justify; text-indent: 0.5in;"><div closure_uid_lmpfp9="213"><span style="font-family: Calibri;"><span style="mso-no-proof: yes;"><b style="mso-bidi-font-weight: normal;"><span closure_uid_lmpfp9="212" style="mso-tab-count: 1;">&nbsp;&nbsp;&nbsp;&nbsp;</span><span style="mso-spacerun: yes;">&nbsp;&nbsp;</span><span style="mso-spacerun: yes;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></b></span><b style="mso-bidi-font-weight: normal;"></b></span></div></div><div class="MsoNormal" style="margin: 0in 0in 10pt; text-align: justify;"><div class="separator" style="border-bottom: medium none; border-left: medium none; border-right: medium none; border-top: medium none; clear: both; text-align: center;"><a href="http://2.bp.blogspot.com/-MbuiTU8NMKU/TjkOurokTOI/AAAAAAAAAIo/9FvQ9vtIDzw/s1600/AjaxBeginFormView.PNG" imageanchor="1" style="margin-left: 1em; margin-right: 1em;"><img border="0" src="http://2.bp.blogspot.com/-MbuiTU8NMKU/TjkOurokTOI/AAAAAAAAAIo/9FvQ9vtIDzw/s1600/AjaxBeginFormView.PNG" t$="true" /></a></div>
-		<p>That’s it!! All you need to do is to enclose your form into an Ajax.BeginForm method wired with the necessary configurations. In this example the ajax form method takes care of wiring up submit form action to the given action method of the controller and update the result which it receives from the server using the <em>UpdateTargetId</em>. You can also play with the Ajax request by adding a loading animation as I have mentioned in <a href="{% post_url 2011-06-26-ajax-mvc3-ajax-part-ii-adding-animation %}">Part II blog post</a>. <strong>Note:</strong> Dont forget to add references to the jQuery script files</p>
-		
-	 	<h4>Summary:</h4>
-		 <p>In this blog post we have seen a very basic way to create Ajax forms in ASP.NET MVC3. You can download the source code of this blog post from <a href="http://www.box.net/shared/kvktovzz5fiihtxemvr0">here</a></p>
-		</div>
+    <p>Upon clicking the “Submit” button, the data will be sent back to the server via Ajax Post request and get a confirmation like this.</p>
+    <div style="clear: both; text-align: center">
+        <img src="http://4.bp.blogspot.com/-SvRqB-F2Yu4/TjkOuy-BpiI/AAAAAAAAAIw/er75G6DKkcU/s1600/AjaxBeginForm2.PNG" />
+    </div>
+
+    <p>
+        ASP.NET MVC3 offers an intuitive way to submitting/posting the form data to server via ajax using 
+        <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a> helper method. 
+        Lets start developing the scenario by first defining the Model (Not using TDD to keep this blog post simple).
+    </p>
+
+    {% gist 546d5c4d9476826dfe14 PersonalDetail.cs %}
+
+    <p>
+        To keep things simple, Our PersonalDetailsController will be having only two action methods. 
+        One will handling the “Get” request for Creating PersonalDetail and the other one for handling “Post” request for Creating PersonalDetail.
+    </p>
+
+    {% gist 546d5c4d9476826dfe14 PersonalDetailController.cs %}
+
+	<p>
+        Now, the stage is set to play using ajax. The View for Creating new PersonalDetail using Ajax is similar to that of using ordinary post back except one factor. 
+        We need to replace the Html.BeginForm helper method with the 
+        <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a>
+    </p>
+
+    <p>
+        Ajax.BeginForm method has 11 overloads. On this blog post we are going to use the following overload. 
+        <em>Ajax.BeginForm(string actionName, string controllerName, AjaxOptions ajaxOptions)</em>
+    </p>
+
+    <p>
+        The actionName and controllerName points to the handler which is going to handle the ajax request and the ajaxOptions defines the behavior of the ajax request. 
+        The View for Creating PersonalDetail will look like this
+    </p>
+
+    <div style="clear: both; text-align: center">
+        <img src="http://2.bp.blogspot.com/-MbuiTU8NMKU/TjkOurokTOI/AAAAAAAAAIo/9FvQ9vtIDzw/s1600/AjaxBeginFormView.PNG" />
+    </div>
+
+    <p>That’s it!! All you need to do is to enclose your form into an Ajax.BeginForm method wired with the necessary configurations. 
+        In this example the ajax form method takes care of wiring up submit form action to the given action method of the controller and 
+        update the result which it receives from the server using the <em>UpdateTargetId</em>. 
+        You can also play with the Ajax request by adding a loading animation as I have mentioned in 
+        <a href="{% post_url 2011-06-26-ajax-mvc3-ajax-part-ii-adding-animation %}">Part II blog post</a>. 
+        <strong>Note:</strong> Dont forget to add references to the jQuery script files</p>
+
+    <h4>Summary:</h4>
+    <p>In this blog post we have seen a very basic way to create Ajax forms in ASP.NET MVC3. 
+        You can download the source code of this blog post from <a href="http://www.box.net/shared/kvktovzz5fiihtxemvr0">here</a></p>
+</div>
 	
