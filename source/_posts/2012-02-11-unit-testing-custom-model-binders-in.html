@@ -35,9 +35,7 @@ categories:
     <br />{% img center /images/UnitTesting_ModelBinders/ControllerContext.png %}        
         <p>ControllerContext uses the constructor dependency injection to get rid of the direct dependency on <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontextbase.aspx">HttpContextBase</a> and we are going to exploit this to do unit testing. Using a mocking framework we can easily create a mock of HttpContetBase and drive the unit test.</p>
     <p>The Session property of the HttpContextBase is of type <a href="http://msdn.microsoft.com/en-us/library/system.web.httpsessionstatebase.aspx">HttpSessionStateBase</a> which can also be mocked.</p>
-    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="http://sweettam.blogspot.in/2012/02/unit-testing-with-sessions-in-aspnet.html">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
-    <br />{% img center /images/UnitTesting_ModelBinders/UnitTest.png %}
-        
-        <p>I hope the test code is self-explanatory.</p>
+    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="{% post_url 2012-02-02-unit-testing-with-sessions-in-aspnet %}">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
+    <br />{% img center /images/UnitTesting_ModelBinders/UnitTest.png %}      
 
 </div>
