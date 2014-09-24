@@ -1,0 +1,119 @@
+---
+layout: post
+title: "An interesting JSON Model Binding behaviour in ASP.NET MVC3"
+date: 2012-04-13
+comments: true
+categories:
+ - Programming
+ - ASP.NET MVC
+ - Craftsmanship
+---
+
+<div class='post'>
+    <h3>Introduction</h3>
+    <p>
+        <a href="http://msdn.microsoft.com/en-us/library/dd410405.aspx">Model Binding</a> is one of the coolest feature in ASP.NET MVC3.
+        Like a magic wand, your form element values, <a href="http://www.json.org/">JSON values</a>, also query string values automatically get converted to the equivalent C# object and
+        makes the life of the developer easier.
+    </p> <p>
+        The default behaviour of MVC3 model binding works well in more common scenarios.
+        But in certain cases it wont work as expected, and in such situations we need to <a href="http://odetocode.com/blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx">
+            write
+            custom model binders
+        </a>. Two weeks before while I was working with model binding on JSON values, I’ve encountered an interesting behaviour of JSON model binding.
+    </p>
+
+    <p>
+        If a JSON property contains a string, it get bind to a string property of the equivalent C# object. But if that same JSON property contains a empty string, while model binding,
+        the equivalent C# object’s property is assigned to null and not to empty string! The same happened with arrays. If it contains elements, it get bind without any problems.
+        But if the array is empty it get bind to null!!
+    </p> <p>
+        In this blog post, we are going to get rid of this intriguing behaviour by writing a Custom JSON model binder.
+        Hope it would be useful and save you some hairs {% emoji smile %}
+
+        <h3>The Sample Application – “MyMobileStore”</h3>
+    <p>
+        In this blog post we are going to see a small application called “MyMobileStore”. This sample app has two features. One will help you to search the mobiles
+        in the “MyMobileStore” by using the company name and the mobile types. An another feature will help you to find out the sales details of the mobiles from a given
+        company for the specified mobile types.
+    </p>
+
+    <h3>Show me the code</h3>
+    <p>Core classes</p>
+    <p>{% img center /images/JsonModelBinding/CoreClasses.png  %}</p>
+    <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
+    <p>
+    <p>{% img center /images/JsonModelBinding/MobileController.png  %}</p>
+    <p>
+        Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
+        the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
+    </p>
+    <p>
+    <p>{% img center /images/JsonModelBinding/MobileFilter.png  %}</p>
+    </p> <p>
+        The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
+        One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
+        action method blank to keep it simple. Both actions returns a JSON result to make them consumed by ajax.
+    </p>
+
+    <p><em>(Note: I’ve violated some design principles in the sample code as I just wanted to make this blog post as simple as possible) </em></p>
+
+    <h3>The Problem (Opportunity in my language)</h3>
+    <p>
+        In a good world, if the user selected either or both the company name and the mobiles types to be filtered, then our controller in “MyMobileStore”
+        will happily accepts them as a parameter and continue its work without any mishaps.
+    </p>
+
+    <p>{% img center /images/JsonModelBinding/Problem.png  %}</p>
+    <p>
+        But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
+        reference exception and breaks the functionality!!
+    </p>
+    <p>{% img center /images/JsonModelBinding/BadWorld.png  %}</p>
+    <p>{% img center /images/JsonModelBinding/NullException.png  %}</p>
+
+    <p>
+        <em>
+            (Now you might have understood why I added a tweak in the number of mobile types
+            {% emoji smile %})
+        </em>
+    </p>
+    <h3>Possible Solutions</h3>
+    <ol>
+        <li>Perform null check inside the “SearchMobiles” action method and assign empty array.</li>
+        <li>Write a Custom Model Binder for “MobileFilter” and perform the null check inside the model binding logic</li>
+    </ol>
+    <p>
+        Though the option 1 is a simple and straightforward thing, what would you do if the “SalesDetails” action method works with the mobile types collection.
+        You certainly need to duplicate the null checking inside it also. Let us assume that we have some more action methods in our “MyMobileStore” which has “MobileFilter”
+        as their parameter. Do you still duplicate the null check there ?. Think!!
+    </p>
+    <p>
+        If you do so, I am sorry my dear friend, you are violating the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> principle and creating
+        <a href="http://pragprog.com/the-pragmatic-programmer/extracts/software-entropy">a broken window</a> in your codebase! So, lets go ahead and write
+        <a href="http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882">clean code</a> by making use of Custom Model Binder for our “MobileFilter”.
+    </p>
+
+    <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
+    <p>
+        {% img center /images/JsonModelBinding/MobileFilterModelBinder.png  %}
+    </p>
+
+    <p>
+        Our custom model binder is very simple, it just makes use of Default Model binding behaviour. After the default behaviour has been done,
+        it checks for null values using <a href="http://msdn.microsoft.com/en-us/library/ms173224.aspx">Null-Coalescing operator</a> and assign empty values if
+        the values are null.
+    </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
+
+    <p>
+        {% img center /images/JsonModelBinding/Global.png  %}
+    </p>
+    <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
+    <p>
+        {% img center /images/JsonModelBinding/NoMoreBadWorld.png  %}
+    </p> 
+    <h3>Conclusion</h3> 
+    <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
+        binding problems. In my next blog post I would share my experiences in how to unit test this custom model binders. 
+    You can download the source code that I have used in this blog post from <a href="http://www.box.com/s/16dbb662bb2f94babe27">here</a></p>
+</div>
