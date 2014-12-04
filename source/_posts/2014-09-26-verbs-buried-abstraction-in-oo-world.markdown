@@ -10,7 +10,7 @@ In Object Oriented Programming, the problem domain is being modeled as objects(n
 
 Let me share it through an example 
 
-Lets rewind the time machine to travel back to 2006 (.NET Framework version 2.0) which doesn't have `LINQ` support. You are asked to solve the following problem statement
+Lets rewind the time machine to travel back to 2006 (.NET 2.0) which doesn't have `LINQ` support. You are asked to solve the following problem statement
 
 > You are working on a Student Management Application. Each student is having a name and an age. You are asked to create module to sort the Students based on their name
 
