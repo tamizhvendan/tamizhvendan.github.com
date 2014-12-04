@@ -1,0 +1,230 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>A hybrid application using ASP.NET MVC3 and Node.js - Tamizh's Thoughts</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="A Hybrid Application Using ASP.NET MVC3 and Node.js Each and every technology has its pros and cons and there is no silver bullet! If you would ask &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="Tamizh's Thoughts" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 106.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 124.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 124.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 118.0%'>data access</a> <a href='/blog/categories/entity-framework' style='font-size: 130.0%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 106.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 106.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 106.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 118.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 112.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 112.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 106.0%'>others</a> <a href='/blog/categories/programming' style='font-size: 136.0%'>programming</a> <a href='/blog/categories/unit-testing' style='font-size: 130.0%'>unit testing</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">A Hybrid Application Using ASP.NET MVC3 and Node.js</h1>
+	<div class="entry-content" itemprop="articleBody"><div class='post'>
+    <div>
+        Each and every technology has its pros and cons and there is
+        <a href="http://people.eecs.ku.edu/~saiedian/Teaching/Sp08/816/Papers/Background-Papers/no-silver-bullet.pdf">no silver bullet!</a><br />
+
+        <br />If you would ask me what you have learnt in your profession so far, I would say the above line as the first one. One technology / platform / language is good at
+        solving one kind of problems and bad at solving other kind of problems. The key is leveraging existing <em>platforms</em> with <em>languages</em> targeted at
+        specific problems and applications to solve the business problems in hand.<br /><br />Three months ago I
+        have come across <a href="http://www.infoq.com/presentations/10-Ways-to-Better-Code-Neal-Ford">an excellent presentation</a> from Neil Ford “10 ways to improve your
+        code”. As a 8th way he talks about “Polyglot Programming”. Its about picking the right tool to do the right job. I am inspired by this presentation and started
+        exploring the “right tools”.<br /><br />In the pursuit of “Right tools”, I’ve come across the young awesome framework <a href="http://nodejs.org/">node.js</a> which is
+        really cool and perfect for real-time applications. On the other hand frameworks like <a href="http://www.asp.net/mvc">ASP.NET MVC3</a> is not meant for creating real-time
+        applications and they address different set of other problems. <br /><br />In this blog post, I going to share my recent exploration on leveraging node.js in an
+        ASP.NET MVC3 application using a “Chat” feature. Though we can achieve it using <a href="http://signalr.net/">SignalR</a>, I’ve preferred node.js as it is a right tool
+        for the chat feature IMO also I wanted to get my hands dirty in creating a hybrid application.<br /><strong><br /></strong><br /><strong>The Node.js Part</strong>
+        <br /><br /><a href="http://lh5.ggpht.com/-HLh-ldizDJ0/T8kHC3Ao5_I/AAAAAAAAAZA/vI0DypFIKh8/s1600-h/image%25255B4%25255D.png">
+                        <img src="http://lh6.ggpht.com/-rcbRWOlpeBc/T8kHHp32UJI/AAAAAAAAAZI/ypOCgUHMrN0/image_thumb%25255B2%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="589" />
+                    </a><br /><br />The chat server that we are going to use in the MVC3 application has been created using <a href="http://socket.io/">socket.io</a> which makes web-socket programming insanely easy!<br />Its listen for three events<br /><ul><li><em>join</em> – It will be triggered when a new user joined the chat and it broadcast the user name to all the connected users  </li><li><em>message</em> – It willed be triggered when an user send a message in the chat application and broadcast it to the other users  </li><li><em>disconnect</em>– It willed be triggered when an user closes the chat or closes the browser </li></ul>That’s it bang!<br /><strong><br /></strong><br /><strong>The ASP.NET MVC3 side</strong><br /><br /><a href="http://lh6.ggpht.com/-pQEJCXkjOuw/T8kHJFR0zVI/AAAAAAAAAZQ/FTqswQ8XvtY/s1600-h/image%25255B9%25255D.png"><img alt="image" border="0" height="197" src="http://lh6.ggpht.com/-TMmsX9z4rRc/T8kHLTRTuYI/AAAAAAAAAZY/MQurv3YzYIw/image_thumb%25255B5%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="387" /></a><br /><br />The controller side of Chat just renders the “Index view”. The index view has the following javascript code, and it completes the client side part of the chat application<br /><br /><a href="http://lh5.ggpht.com/-QnLwJvxMIR8/T8kHMoTx1qI/AAAAAAAAAZg/VYhVayPULm4/s1600-h/image%25255B14%25255D.png"><img alt="image" border="0" height="403" src="http://lh5.ggpht.com/-XxmqzAqX1i8/T8kHQ1J07tI/AAAAAAAAAZo/sMw8RevtD9k/image_thumb%25255B8%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="530" /></a><br /><strong><br /></strong><br />
+        <strong>Chat feature in Action</strong><br /><br />
+        <a href="http://lh3.ggpht.com/-OoM7_UDFHzQ/T8kHSZP8R8I/AAAAAAAAAZw/QcXNptcqe1I/s1600-h/image%25255B17%25255D.png">
+            <img src="http://lh5.ggpht.com/-B4IkFTFavZI/T8kHVZP234I/AAAAAAAAAZ4/IGC3r-10yBA/image_thumb%25255B9%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh3.ggpht.com/-xWwrw06nVTk/T8kHW9r2X1I/AAAAAAAAAaA/-g8XAZDm-Qg/s1600-h/image%25255B21%25255D.png">
+                <img src="http://lh3.ggpht.com/-F7UPYcQXT14/T8kHZfq0W8I/AAAAAAAAAaI/hLP9g4s8QGA/image_thumb%25255B11%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-OI01pFQYBEs/T8kHaT3_bmI/AAAAAAAAAaQ/GM-QdsQzTVU/s1600-h/image%25255B25%25255D.png">
+            <img src="http://lh4.ggpht.com/-VIPYKbYG-rs/T8kHbgnYkBI/AAAAAAAAAaY/24TJhDEHqA8/image_thumb%25255B13%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-_jFs2OzmBx0/T8kHczZpZBI/AAAAAAAAAag/-FMnxb_cD9w/s1600-h/image%25255B29%25255D.png">
+            <img alt="image" src="http://lh4.ggpht.com/-KwvpW47kGxI/T8kHeUKp3BI/AAAAAAAAAao/GP4naqkNkvc/image_thumb%25255B15%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh4.ggpht.com/-YNLo_UVoZf0/T8kHfwe76BI/AAAAAAAAAaw/dq8JfcSfYRE/s1600-h/image%25255B33%25255D.png">
+            <img alt="image" src="http://lh3.ggpht.com/-tcpQUHyW58I/T8kHhrerqxI/AAAAAAAAAa4/ZEJOJK8swnk/image_thumb%25255B17%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-j4AUmiQEA5k/T8kHioICVWI/AAAAAAAAAbA/ZAuJNXh4oZ4/s1600-h/image%25255B37%25255D.png">
+            <img src="http://lh3.ggpht.com/-KoM6ka9qFxc/T8kHkUP0AGI/AAAAAAAAAbI/ZuGQ-d8KKS8/image_thumb%25255B19%25255D.png?imgmax=800" />
+        </a></div><strong><br /></strong><br /><strong>Summary</strong><br /><br />The objective behind this blog post is just to share the knowledge that I’ve gained in my recent exploration and its just a proof of concept of how to leverage node.js in an MVC3 application. The bottom-line is “Identify and pick the right tool to do the right job”. If you want to play with the source code, don’t forget to clone <a href="https://github.com/tamizhvendan/a-hybrid-app">the repository </a>
+    </div>
+</div></div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2014
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

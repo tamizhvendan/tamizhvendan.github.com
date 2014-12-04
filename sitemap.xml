@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2014/09/26/verbs-buried-abstraction-in-oo-world/</loc>
+    <lastmod>2014-09-26T12:44:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/</loc>
+    <lastmod>2013-08-08T11:39:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/</loc>
+    <lastmod>2012-06-01T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2012/05/19/jade-visualizer-using-nodejs-and/</loc>
+    <lastmod>2012-05-19T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2012/04/13/interesting-json-model-binding/</loc>
+    <lastmod>2012-04-13T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/</loc>
+    <lastmod>2012-03-04T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in/</loc>
+    <lastmod>2012-02-11T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/</loc>
+    <lastmod>2012-02-02T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/12/29/2012-year-of-aspirations/</loc>
+    <lastmod>2011-12-29T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/11/22/going-declarative-in-c/</loc>
+    <lastmod>2011-11-22T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/11/03/think-before-you-linq/</loc>
+    <lastmod>2011-11-03T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/09/15/practice-practice-practice/</loc>
+    <lastmod>2011-09-15T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/</loc>
+    <lastmod>2011-08-17T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/08/13/test-driving-model-validation-in-aspnet/</loc>
+    <lastmod>2011-08-13T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/08/04/ef-code-first-41-in-console-application/</loc>
+    <lastmod>2011-08-04T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/08/03/using-ajaxbeginform-aspnet-mvc3-ajax/</loc>
+    <lastmod>2011-08-03T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/07/27/journey-towards-software-craftsmanship/</loc>
+    <lastmod>2011-07-27T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/07/13/observer-pattern-using-delegates-vs/</loc>
+    <lastmod>2011-07-13T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/</loc>
+    <lastmod>2011-06-26T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/</loc>
+    <lastmod>2011-06-24T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/04/24/dynamic-polymorphism-real-time-example/</loc>
+    <lastmod>2011-04-24T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/04/01/entity-framework-40-as-class-library/</loc>
+    <lastmod>2011-04-01T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/03/25/entity-framework-40-class-library-part/</loc>
+    <lastmod>2011-03-25T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/02/23/ajax-update-master-page-from-content/</loc>
+    <lastmod>2011-02-23T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/02/10/in-this-blog-we-are-going-to-see-how/</loc>
+    <lastmod>2011-02-10T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/02/07/creating-webpage-like-igoogle-using/</loc>
+    <lastmod>2011-02-07T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/01/07/programmatic-solution-for-real-time/</loc>
+    <lastmod>2011-01-07T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/2011/01/05/thank-god/</loc>
+    <lastmod>2011-01-05T00:00:00+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/archives/</loc>
+    <lastmod>2014-12-04T20:16:37+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/</loc>
+    <lastmod>2014-12-04T20:16:37+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.tamizhvendan.in/blog/categories/</loc>
+    <lastmod>2014-12-04T20:16:37+05:30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  
+</urlset>

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: data access | Tamizh's Thoughts]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/data-access/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2014-12-04T20:16:37+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[EF Code First 4.1  in Console Application]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/08/04/ef-code-first-41-in-console-application/"/>
+    <updated>2011-08-04T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/08/04/ef-code-first-41-in-console-application</id>
+    <content type="html"><![CDATA[<div class="post">
+	<div>
+		<p>
+			Whenever I learn any new things in .Net or experimenting with something, I always prefer to use <em>Console Applications.</em>
+			I personally feel it helps me to concentrate more on what actually I am trying to learn or experiment without any sort of distractions. 
+			Moreover it keeps things simple.
+		</p>
+
+		<p>
+			I would like to do the same while learning EF Code First 4.1. 
+			Though most of articles in web explain EF with respect to ASP.NET MVC, 
+			I favor learning it through my own way using console application without creating any controllers and views!!
+		</p>
+
+		<h4>Following are the prerequisites to work with EF Code First 4.1</h4>
+		<ul>
+			<li>
+				<a href="http://weblogs.asp.net/scottgu/archive/2011/03/15/visual-studio-2010-sp1.aspx">Visual Studio 2010 SP1</a>
+			</li>
+			<li>
+				<a href="http://blogs.msdn.com/b/adonet/archive/2011/04/11/ef-4-1-released.aspx">Entity Framework 4.1</a>
+			</li>
+			<li>
+				<a href="http://weblogs.asp.net/scottgu/archive/2011/01/11/vs-2010-sp1-and-sql-ce.aspx">SQL CE</a> or 
+				SQL Express (SQL CE would be an ideal option for learning purpose)
+			</li>
+
+		</ul>
+
+		<h4>Show me the Code!</h4>
+		<p>After creating a console application project, the initial step would be adding references to the following assemblies.</p>
+		<ul>
+			<li>EntityFramework (Version 4.1)</li>
+			<li>System.Data.Entity</li>
+			<li>System.ComponentModel.DataAnnotations</li>
+		</ul>		
+
+		<p>Now it’s time to defining the model and the data context. To keep it simple, I am going to define only one model “User”.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-FxoouXlWKxw/TjqAva1qsWI/AAAAAAAAAJM/5PLCVnNFhDQ/s1600/User.PNG" alt="" />
+		</div>
+
+		<p>The data context would be as following.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://3.bp.blogspot.com/-2pLPCQePVKY/TjqAwJ-QD4I/AAAAAAAAAJU/X66hDdCw6eo/s1600/MyDataContext.PNG" alt="" />
+		</div>
+
+		<p>
+			This basic infrastructure is sufficient to run the console application. However as we are using the data context for learning purpose, 
+			we might change the model often and doing so will make it inconsistent with the database created automatically when you run the application for the first time.
+		</p>
+
+		<p>
+			We can circumvent this situation by creating new Data Context initialize class that inherits from <em>DropCreateDatabaseIfModelChanges</em>
+			&lt;TContext&gt; where TContext is the data context that you want to sync with the database always. 
+			This class also offers an override function <em>“Seed”</em> using which we can fill the database with some initial data.
+		</p>
+
+		<p>The finished code of DataContext initialize class will be like the following.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://2.bp.blogspot.com/-fFqQJzPBGkY/TjqAwOW4nMI/AAAAAAAAAJY/DDY_VyYQHfI/s1600/MyDataContextInit.PNG" alt="" />
+		</div>
+
+		<p>
+			This datacontext initialize class would create the database whenever the database model changes and create two users by default. 
+			Now it’s time to code our Main method.
+		</p>
+		<p>
+			Here we go. Pay close attention to the first statement in the Main method that initializes the database with an instance of DataContextInit 
+			class that we have created.
+		</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-jl5r5Sk7m0Q/TjqAvdAJRPI/AAAAAAAAAJQ/elZcjzTNgEE/s1600/EFConsoleApp.PNG" alt="" />
+		</div>
+
+
+		<p>
+			Now you can run the application without any configurations. The default behavior of EF Code First will create the database 
+			with the same name as your data context name here “MyDataContext” in the SQL Express server installed in the local machine. 
+			If you wish to change this default behavior and wanted to use SQL CE instead of SQL Express just add an App.Config to 
+			the project and create a connection string with the name of your data context as follows.
+		</p>
+
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-YUZyAGX2KyA/TjqAvBuEd4I/AAAAAAAAAJI/p_UjE-K_lR8/s1600/Configuration.PNG" alt="" />
+		</div>
+
+
+
+		<p>That’s it. “Ctrl+F5” and here is the output</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://3.bp.blogspot.com/-l0IfgWCGZfQ/TjqAwX_8pnI/AAAAAAAAAJc/RLcjASqgaBo/s1600/Output.PNG" alt="" />
+		</div>
+
+
+		<h4>Summary</h4>
+		<p>
+			In this blog post we have explore the basic foundation on how to work with EF CodeFirst using console application. 
+			If you want to get your dirty with EF Code First without any distraction Console Application is a better one. 
+			You can download the sample code used in this blog post from <a href="http://www.box.net/shared/s0yu8b4sebp3dh9ru5gb">here.</a>
+	
+
+</p></div></div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Entity Framework 4.0 As Class Library - Part 2]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/04/01/entity-framework-40-as-class-library/"/>
+    <updated>2011-04-01T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/04/01/entity-framework-40-as-class-library</id>
+    <content type="html"><![CDATA[<div class="post">
+    <div>
+        <p>As the continuation of my previous <a href="/blog/2011/03/25/entity-framework-40-class-library-part/">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
+
+        <p>Consuming the Data Access Library created using Entity Framework 4.0 involves the following two steps.</p>
+        <ol>
+            <li>Adding reference to the class library</li>
+            <li>Adding the connection string in the config file (App.config or Web.config)</li>
+        </ol>
+        <p>Let us see how can we do these steps using a console application. To keep things simple I have opt for a console application. It holds the same for an ASP.NET , Windows Form, WPF,WCF, etc.</p>
+
+        <h4>Console Application Creation</h4>
+        <p>Create a new console application called "HrdConsoleApp"</p>
+        <img src="http://1.bp.blogspot.com/-jd1uE7HyzUY/TZw4OSKgKVI/AAAAAAAAAFw/O0t-17BazAk/s1600/1.ConsoleAppCreation.PNG" />
+
+        <h4>Add a reference to the Class library</h4>
+        <p>Right click on references and refer the class library "HRD.DataAccess" that we have created in the last blog.</p>
+        <img src="http://4.bp.blogspot.com/-238LBeCcS-8/TZw4UoXoTyI/AAAAAAAAAF0/Z-wMwpTZD1k/s1600/2.ReferenceLibrary.PNG" />
+
+        <p>Add reference to System.Data.Entity Library</p>
+        <img src="http://4.bp.blogspot.com/-TIhl2OiTt68/TZw59TQrQ6I/AAAAAAAAAF8/WM5ffjSpETo/s1600/5.DataEntityReference.PNG" />
+
+        <p>Add the App.Config file to the console application by right clicking on the project name in the solution explorer and select "Add-&gt;New Item". Then Copy the connection string from the App.Config file created in the HrdDataAccess Class library Project created earlier and paste it in the App.config file created in the previous step.</p>
+        <img src="http://2.bp.blogspot.com/-ZqMXJ5KdLy8/TZw4Y1uECQI/AAAAAAAAAF4/fIcRIy1se5c/s1600/3.AppConfigCreation.PNG" />
+
+        <img src="http://2.bp.blogspot.com/-HgFzRYacpQA/TZw6IqMd5oI/AAAAAAAAAGA/q_IiJsTNYvU/s1600/4.AppConfig.PNG" />
+        <p>That's all now it is all set to access the database with only minimal amount of code.. Here we go!!</p>
+        <h4>Code Please!</h4>
+        <div><script src='https://gist.github.com/7794bb7ac98d6de3b962.js'></script>
+<noscript><pre><code>using System;
+using System.Linq;
+using HRD.DataAccess;
+namespace HrdConsoleApp
+{
+    class Program
+    { 
+        static void Main(string[] args) 
+        { 
+            var hrdEntities = new HRDEntities(); 
+            foreach (Employee employee in hrdEntities.Employees)
+            { 
+                Console.WriteLine(&quot;Name: &quot; + employee.Name); 
+                Console.WriteLine(&quot;Department: &quot; + employee.Department.Name); 
+                Console.WriteLine(&quot;########################&quot;); 
+            } 
+        } 
+    }
+}</code></pre></noscript></div>
+
+
+        <h4>Output</h4>
+        <img src="http://1.bp.blogspot.com/-Fooy-W2-OCQ/TZw6M7tVqTI/AAAAAAAAAGE/tJ5UYVi5LRI/s1600/6.Output.PNG" />
+
+        <h4>Summary:</h4>
+        <p>
+            In this blog series (Part 1 and Part 2) we have seen how to create the data access layer using Entity Framework 4.0 as class library and how to consume it in an application. With the introduction of Entity Framework developing the code for data access layer is no longer a tidy and time consuming job!!
+        </p>
+    </div>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Entity Framework 4.0 - Class library - Part 1]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/03/25/entity-framework-40-class-library-part/"/>
+    <updated>2011-03-25T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/03/25/entity-framework-40-class-library-part</id>
+    <content type="html"><![CDATA[<div class="post">
+    <div>
+        <p>In this blog post we are going to explore how to create the data access layer as a class library using Entity Framework 4.0. By defining the data access layer as class library, you can reuse it across many applications just by adding areference to the class library. In my next blog post, we'll explore how to consume the library in an application. </p>
+        <p>Entity Framework 4.0 enables the developer to concentrate on the business logic and business objects without bothering how it has been manipulated at the database level. You can find a very good tutorial onEntity Framework <a href="http://www.dotnetcurry.com/ShowArticle.aspx?ID=599">here</a> to get started.This blog post uses a sample database named "HRD" which has two tables, Employee and Department. </p>
+
+        <h4>Step 1: Create a Class Library</h4>
+
+        <p>Create a new class library project with the name "HRD.DataAccess" and click "Ok". After creating a new project delete the "Class1.cs" which is created by default.</p>
+        <a href="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s1600/1.Class-Library-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
+            <img alt="" border="0" id="Img1" src="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s400/1.Class-Library-Creation.PNG" /></a>
+
+        <h4>Step 2: Create the Entity class using the entity framework</h4>
+
+        <p>Right click on the project name "HRD.DataAccess" and select "Add -&gt; New item".Select "Data" under installed templates and then select "ADO.NET Data Entity Model". Type the name as "HrdModel.edmx" and click "Add". </p>
+        <a href="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s1600/2.%2BEdmx-File-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588018736147760674" src="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s400/2.%2BEdmx-File-Creation.PNG" />
+        </a>
+
+        <p>In the Entity Data Model Wizard select "Generate from database" and click "Next"</p>
+        <a href="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s1600/3.%2BEntity%2BData%2BModel%2BWizard.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
+            <img alt="" border="0" id="Img2" src="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s400/3.%2BEntity%2BData%2BModel%2BWizard.PNG" /></a>
+
+        <p>In the next step select the database name "PCName\sqlexpress.HRD.dbo" and select "Next"</p>
+        <a href="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s1600/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019738534634002" src="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s400/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG" /></a>
+
+        <p>In the next step select the tables names "Department" &amp; "Employee" and click "Finish"</p>
+        <a href="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s1600/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019795895543346" src="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s400/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG" /></a>
+
+        <p>Now we have created the entity model which represent the Object/Relation mapping</p>
+        <a href="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s1600/6.%2BEDMX%2BSuccessful%2BCreation.PNG">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019838615201234" src="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s400/6.%2BEDMX%2BSuccessful%2BCreation.PNG" style="cursor: pointer; height: 289px; width: 400px;" /></a>
+
+        <h4>Step 3: Building the class library</h4>
+        <ol>
+            <li>Select "Build-&gt;Configuration Manager"</li>
+            <li>Change the Configuration of the Project "HRD.DataAccess" to "Release". By default it is "Debug"</li>
+            <li>Click "Close"</li>
+            <li>Select "Build-&gt;Build HRD.DataAccess"</li>
+        </ol>
+        That's it!!. Now we have the DataAccess Library ready!! We can reuse it across different .Net Applications 
+	
+        <h4>Summary</h4>
+        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="/blog/2011/04/01/entity-framework-40-as-class-library/">next blog</a>, we'd be exploring on how to consume the data access library in an application. </p>
+    </div>
+</div>
+]]></content>
+  </entry>
+  
+</feed>

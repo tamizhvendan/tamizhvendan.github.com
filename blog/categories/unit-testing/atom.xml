@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: unit testing | Tamizh's Thoughts]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/unit-testing/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2014-12-04T20:16:37+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/"/>
+    <updated>2012-03-04T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2012/03/04/unit-testing-html-helpers-in-aspnet</id>
+    <content type="html"><![CDATA[<div class="post">
+    <p>Would you like if your unit test have an assertion like this ?</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh5.ggpht.com/-Z7XXVGQ3sX4/T1J73ct1gqI/AAAAAAAAASQ/qw-uSNrLoOE/image_thumb3.png?imgmax=800" />
+    </div>
+    <p>
+        IMHO having a unit test assertion like this with a long magical string value would become a maintenance problem with additional logic being added.
+        It breaks with even minor changes like “adding an extra whitespace” though it is logically correct(Browsers ignores the whitespaces while rendering html)!.
+        It is harder to debug to!!
+    </p>
+    <p>
+        How can we get rid of this long string assertion ? Is there any better way to do assertion against this long magical string ejected from a
+        <a href="http://stephenwalther.com/blog/archive/2009/03/03/chapter-6-understanding-html-helpers.aspx">HtmlHelper</a> ? One thing which strikes on my mind when I come
+        across this problem is why don’t we parse the string as an xml and assert against the xml element instead. It might appear like laborious at the first sight,
+        but by making use of <a href="http://msdn.microsoft.com/en-us/library/system.xml.linq.xelement.aspx">XElement</a> and
+        <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a> we can easily do that.
+    </p>
+
+    <p>In the blog post we are going to see how can we implement this in a more cleaner way. </p>
+
+    <p>Okay.. Enough texts.. Its time to see some code!!</p>
+
+    <p>
+        The first step is to convert the “html string” returned by the html helper to XElement. Generally most of the helpers returns
+        <a href="http://stackoverflow.com/questions/2293357/what-is-an-mvchtmlstring-and-when-should-i-use-it">MvcHtmlString</a>, So, we can easily achieve this
+        by writing an extension method called “ToXElement” on MvcHtmlString.
+    </p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-cwtnsV7pl2c/T1J763QmH1I/AAAAAAAAASg/6QKxAEGZ5uM/image_thumb%25255B2%25255D.png?imgmax=800" />
+    </div>
+
+    <p>That’s it! All set to redefine the way custom html helpers are being tested. </p>
+
+    <p>Fine, Let us see it in action. We will start with a handy HtmlHelper method called “Button” which would render a “Html button tag” and here is the test to assert it.</p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-Zl-hH4zYH1A/T1J7_Y9Qr3I/AAAAAAAAASw/PyWZZJMadV0/image_thumb%25255B10%25255D.png?imgmax=800" />
+    </div>
+    <p>
+        The first test uses the ToXElement extension method and assert against the XElement’s properties whereas the second test uses the
+        “magical string with tags added” to do the assertion. Now you may feel what’s wrong with this guy the second test look clean to me,
+        why he is making fuss about it. Yes you are correct, the second one looks clean. But it appears to be clean as the requirement in hand is very simple.
+    </p>
+    <p>IMHO the custom html helpers that we are building in our real world application won’t be as simple as having a button tag with just plain caption in it. </p>
+    <p>Fine, lets see the real world. Voice from your team lead <em></em></p>
+    <p>
+        <em>
+            Hey! the Button HtmlHelper you designed has did a tremendous job. Can you make a small change on it so that it would
+            <strong>generate a button with a class attribute having the value ‘appbutton’ by default</strong>.
+            We need it because it make the button styling consistent with rest of our application ”
+        </em>
+    </p>
+
+    <p>Let us implement the feature by starting with the test for it</p>
+    <p>
+        <a href="http://lh4.ggpht.com/-HScL-9YaD1s/T1J8Awk2YbI/AAAAAAAAAS4/Q3E6JlpRItM/s1600-h/image%25255B23%25255D.png">
+            <img src="http://lh5.ggpht.com/-MyHzxXBfdCM/T1J8DL_KgbI/AAAAAAAAATA/Vvt1j4k-KYo/image_thumb%25255B14%25255D.png?imgmax=800" />
+        </a>
+    </p>
+    <p>
+        Now tell me is the second test clean ? I don’t think so. The generate html string is bit long now also having double quotes inside double quotes makes it hard to read.
+        At the same time the first test remains robust and clean.
+    </p>
+
+    <p>
+        Still not convinced, okay just go up and see the very first test that we have wrote to test the button caption.
+        Do you think the <strong>hard way test</strong> with the “<strong>long magical string</strong>” still pass ??
+    </p>
+
+    <p style="text-align: center; color: #ff0000; font-weight: bold">It would fail</p>
+
+    <p>Why ?? Here is the error message </p>
+    <p>
+        <a href="http://lh5.ggpht.com/-K6RjhSEMhLA/T1J8EpZAZ-I/AAAAAAAAATI/TUutsjz0XdE/s1600-h/image%25255B28%25255D.png">
+            <img src="http://lh4.ggpht.com/-SpmB-mDwffk/T1J8HO3Np4I/AAAAAAAAATQ/oKxboMdbr6I/image_thumb%25255B17%25255D.png?imgmax=800" />
+        </a>
+    </p>
+    <p>Now what would you do, if you decided to persist with the “long magical string”, then your action would be editing the test as below</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh6.ggpht.com/-RJKnvJ5K8dI/T1J8LTJG_iI/AAAAAAAAATg/TAKyOA5Ej9w/image_thumb%25255B21%25255D.png?imgmax=800" />
+    </div>
+    <p>Nice job. Now tell me what is the difference between this one and the below one</p>
+    <div style="text-align: center;clear:both">
+        <a href="http://lh6.ggpht.com/-ps4dX_FO-B0/T1J8MhVBtwI/AAAAAAAAATo/u003U24qiBo/s1600-h/image%25255B42%25255D.png">
+            <img src="http://lh3.ggpht.com/-i5zAV0v0JfY/T1J8O7pNIiI/AAAAAAAAATw/Fuo_4WMsFzk/image_thumb%25255B27%25255D.png?imgmax=800" />
+        </a>
+    </div>
+    <p>
+        Apart from the test method name everything is same. Is the test clean ? Is the test clearly saying what it is trying to assert ?
+        What would happen if we got the requirement to add one more attribute or even more? Think !!
+    </p>
+
+    <p>But at the same time the tests which written using XElement assertion would remain healthy and their test method name mean what it is testing </p>
+    <p>
+        <a href="http://lh6.ggpht.com/-t5GRHpUvWSI/T1J8Qh6dvqI/AAAAAAAAAT4/WaaIvzaEKCY/s1600-h/image%25255B47%25255D.png">
+            <img src="http://lh3.ggpht.com/-fQ_eFoBZqnE/T1J8TPZgtFI/AAAAAAAAAUA/1wGDDsT5J8Y/image_thumb%25255B30%25255D.png?imgmax=800" />
+        </a>
+    </p>
+    <p>I leave it you to decide which one is cleaner. </p>
+    <h4>Summary</h4>
+    <p>Here is the implementation of “Button HtmlHelper” that we unit tested so far</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-lg0jE79JCVI/T1J8Y3QGqOI/AAAAAAAAAUQ/gif78dMv6XI/image_thumb%25255B33%25255D.png?imgmax=800" />
+    </div>
+    <p>
+        My humble request to the readers of this blog post, please take care of your “Unit tests” and give some more importance to it.
+        An hour spent upfront would save a day in future.
+    </p>
+    <p>“Beauty is in the eye of the beholder”, If you have a better idea to do the same, kindly leave a comment, I am open to learn from you.</p>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Unit Testing Custom Model Binders in MVC3]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in/"/>
+    <updated>2012-02-11T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in</id>
+    <content type="html"><![CDATA[<div class="post">
+    <p>
+        In <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
+        with Sessions in MVC3 using Custom model binders. In this blog post we are going to see how to do unit test the model binder itself.
+    </p>
+    <p>
+        One remarkable thing which everybody hails in MVC3 is its extensibility and its testability. You can extend/customize the components in the 
+        framework and also you can unit test them with ease.
+    </p>
+    <p>
+        Before getting into unit testing the custom model binder, Lets have a closer look at 
+            the <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.imodelbinder.bindmodel.aspx">BindModel</a> method
+    </p>
+    <br />
+    <img class="center" src="/images/UnitTesting_ModelBinders/BindModel.png">
+       
+        <p>
+            In the BindModel method we are making use of Session property in the HttpContext object which is in turn a property of 
+            the <a href="http://msdn.microsoft.com/en-us/library/dd492673.aspx">ControllerContext</a> object that is passed to the BindModel method as 
+            a parameter by the MVC3 framework. In order to unit test this method we need to have to control over the HttpContext property of 
+            the ControllerContext and the Session property of the HttpContext.
+    </p>
+
+    <p>How to get control over those properties ? Thanks to <a href="http://msdn.microsoft.com/en-us/library/dd460098.aspx">a constructor of ControllerContext</a></p>
+    <br /><img class="center" src="/images/UnitTesting_ModelBinders/ControllerContext.png">        
+        <p>ControllerContext uses the constructor dependency injection to get rid of the direct dependency on <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontextbase.aspx">HttpContextBase</a> and we are going to exploit this to do unit testing. Using a mocking framework we can easily create a mock of HttpContetBase and drive the unit test.</p>
+    <p>The Session property of the HttpContextBase is of type <a href="http://msdn.microsoft.com/en-us/library/system.web.httpsessionstatebase.aspx">HttpSessionStateBase</a> which can also be mocked.</p>
+    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
+    <br /><img class="center" src="/images/UnitTesting_ModelBinders/UnitTest.png">      
+
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Unit Testing with Sessions in ASP.NET MVC3]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/"/>
+    <updated>2012-02-02T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet</id>
+    <content type="html"><![CDATA[<div class="post">
+    <h3>Introduction</h3>
+        
+        <p>While talking to my friend regarding his project, he told me about how he is doing unit testing which involves sessions in ASP.NET MVC3. 
+            His team is actually using a “HttpSimulator” which simulates the web request and then the do unit test by verifying the session by interacting 
+            with the simulator. When digging further I have come to know that this way of unit testing session objects are influenced 
+            from the “ASP.NET Webforms”. It reminds me the talk of <a href="http://www.infoq.com/presentations/Functional-Thinking">Neil Ford on 
+                Function Thinking</a>. In that video he talks about an analogy called “Axe and Chain Saw” to explain our way of thinking as
+        </p>
+        <blockquote>When we give a chain saw to people who were cutting trees by axe, they would tend to use chain saw in the same way as the use Axe. 
+            Which is obviously inefficient. So we should understand at the capabilities of the tool in our hand before we using it</blockquote>
+       
+        <p>ASP.NET MVC3 is far better than Web Forms when it comes to unit testing. We don’t need to use a simulator to test against our sessions. 
+            There is a better way to do this MVC3 and in this blog post we are going to explore it.<p />
+       
+        <h4>Time for Code</h4>       
+        <p>Shopping Cart is the first thing that strikes our mind when we want to quote an example for using Http session. 
+        So, I am going to show an app called “MyShop” a mini shopping site through which I am going to explain the concepts involved. 
+        The application flow would be as follows</p>
+        
+            <img class="center" src="/images/UnitTesting_With_Session/Cart.png">
+            <img class="center" src="/images/UnitTesting_With_Session/Cart2.png">       
+        
+
+        <h4>Models</h4>
+        
+        <p>The models are simple, straight forward and self explanatory.</p>
+    <img class="center" src="/images/UnitTesting_With_Session/model.png">  
+    <img class="center" src="/images/UnitTesting_With_Session/CartCsharp.png">    
+        <p>I’ve tried my level best to keep the model as simple as possible. 
+        So, Cart in MyShop will have only two public methods. One to add a product to the Cart’s Line and another one to retrieve all the 
+        products inside the Cart’s line.</p>
+        
+        <h4>The CartController Version 1.0</h4>
+        <img class="center" src="/images/UnitTesting_With_Session/CartController.png"> 
+        <p>In this CartController version 1.0 we have two public methods Index and AddToCart which are dependent on HttpSession object. 
+            This dependency inside the methods is actually preventing us from unit testing the CartController in simple way and we have no 
+            choice other than implementing a “Http Simulator” to unit test these two methods. As I said before there is better to do is! Here we go!!</p>
+        
+        <h4>The CartController Version 2.0</h4>
+        <img class="center" src="/images/UnitTesting_With_Session/CartController2.png"> 
+    <p>No more Sessions!!.. Yeah.. We have got rid of the dependency on the session object by adding a new parameter called cart. Now you can use easily unit test the CartController as follows</p>
+        <img class="center" src="/images/UnitTesting_With_Session/UnitTest.png"> 
+        <p>Okay we made it easy for unit testing by moving the dependency out of the method and introduced the cart as the parameter. But how does my MVC3 framework will know the cart parameter should come from session object ?… Good Catch!! and here comes the magic called custom ModelBinder</p>
+       
+        <h4>ModelBinder – A brief background</h4>
+        <p>Model binding is an exciting feature in MVC3 framework which automatically creates the C# objects directly from Http request and 
+            pass it to the Action methods in controller as parameter values. It uses a default model binder which looks at the form values, 
+            query string values that are submitted with the Http Request and create the model object.</p>
+        <h4>CartModelBinder</h4>
+        
+        <p>In our case, we need to have a object of Cart which is populated from the Session object and not from the HttpRequest. 
+            The default model binder used by MVC3 has no idea about session object. So, Its our responsibility to tell to the MVC3 framework
+        </p>
+        
+        <p>“<em>Hey! If there is any parameter of type Cart in controller action method, then use my own custom model binder called CartModelBinder to create the object</em>”</p>
+        <p>There are two steps to do the above said operation</p>
+        <p>1. Creating the custom model binder by inheriting the IModelBinder interface</p>
+        <img class="center" src="/images/UnitTesting_With_Session/CartModelBinder.png"> 
+        <p>2. Registering our custom model binder in the Global.asax.cs file</p>
+        <img class="center" src="/images/UnitTesting_With_Session/AppStart.png"> 
+        <p>
+        That’s all.. MVC3 takes care of rest</p>
+        
+        <h4>Summary</h4>
+        <p>In this blog post we have explored how we can get rid of “Http Simulator” to unit test the controllers which involves Session objects using 
+            custom model binder. You can download the working example of “MyShop” showcased in this blog post 
+            from <a href="http://www.box.com/s/b9lf2heukyivh68921jj">here</a>. 
+            Refer <a href="/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
+            unit testing with the custom model binder itself.</p>
+
+</p></div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Test Driving Model Validation in ASP.NET MVC3 - Part 2]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/"/>
+    <updated>2011-08-17T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/08/17/test-driving-model-validation-in-aspnet_17</id>
+    <content type="html"><![CDATA[<div class="post">
+    <p>
+    <p>
+        In <a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>of this small blog post series, 
+            we have explored a way to do the TDD of controller’s responsibility in the context of model validation. 
+            In this Part-2 we are going to see <strong>“How to do the TDD of Model Validation”</strong>
+    </p>
+
+    <p>
+        Before getting into the business let us have a quick look at how ASP.NET MVC3 does the model validation. 
+            Internally when making an Http POST/GET request, MVC3 makes use of a helper class 
+            <strong><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validator.aspx">Validator</a></strong>
+        located in the namespace <em>System.ComponentModel.DataAnnotations.</em>
+        Validator can be used to validate the models based on the <strong>
+            <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationattribute.aspx">ValidationAttribute</a></strong>
+        attributes associate with the model. After validating MVC3 adds the validation results to the controller’s <em>ModelState</em>
+        Property by the <em>AddModelError</em> method which in turn sets the<em> ModelState.IsValid</em> property 
+            (Refer <a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>). We are actually going to make use of this <em>Validator</em>
+        helper class going to test drive the model validation. 
+    </p>
+
+    <h4>Let us start with a small requirement</h4>
+    <p>
+        <em>“Employee name should not be empty”</em>
+    </p>
+
+    <p>The corresponding unit test will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://4.bp.blogspot.com/-3Ql_dP2wJkE/Tku0g78apHI/AAAAAAAAAKw/gV-lTvda50I/s1600/UnitTest1.PNG" />
+    </div>
+
+    <p>ValidateObject Method determines whether the specified object is valid using the validation context and throws a ValidationException if the object is invalid.</p>
+
+
+    <p>Employee Model will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-URfST5ZPMwo/Tku0gsJJAxI/AAAAAAAAAKs/5K0GYH1ObLs/s1600/Emp1.PNG" />
+    </div>
+
+    <p>
+        When you run the test “EmployeeNameShouldNotBeEmpty”, it will <strong><span style="color: red;">Fail</span></strong> with the error message 
+        <em>“System.ComponentModel.DataAnnotations.ValidationException was expected”</em>. Now it’s time to make it <strong>
+            <span style="color: #00b050;">Pass. </span></strong>Thanks to <em>RequiredAttribute</em> we can make the test the pass without much effort. 
+        Just decorate the Name property with the <em>[Required]</em> Attribute. That’s it. Now run the test and it will 
+        <strong><span style="color: #00b050;">Pass.</span></strong> As there is no scope for Refactoring, we will be ignoring it.
+    </p>
+
+    <p>Well, we have done the TDD of model validation. Now let’s move onto the next requirement.</p>
+    <p>
+        <em>“Employee age should be greater than 30”</em>
+    </p>
+    <br />
+    <p>
+        Let’s write the unit test for this requirement.
+    </p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://3.bp.blogspot.com/-cXpXTstCDr4/Tku0hg4cWDI/AAAAAAAAAK0/hahJBKoWOLI/s1600/UnitTest2.PNG" />
+    </div>
+
+    <p>When we run the test, we’d get a failing test with error message “System.ComponentModel.DataAnnotations.ValidationException was expected”</p>
+
+    <p>Like <em>RequiredAttribute</em> we don’t have any AgeLimit Attribute to make the test pass. However we can create such kind of CustomAttributes. 
+        Another approach would be making use of <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.ivalidatableobject.aspx">
+            <em>IValiadatableObject</em></a></p>
+
+    <p>I will be using the latter option in this blog post, if you are interested in creating custom attribute refer this <a href="http://www.devtrends.co.uk/blog/the-complete-guide-to-validation-in-asp.net-mvc-3-part-2">blog post</a></p>
+
+    <p>Here we go; the modified Employee model will look like as follows </p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://1.bp.blogspot.com/-zAsuau_JXwA/Tku0iUzEgFI/AAAAAAAAAK4/J1t3gYaECmw/s1600/Emp2.PNG" />
+    </div>
+
+    <p>
+        The <em>Validator</em> helper class will invoke the Validate method of the model if the model passed to the <em>ValidateObject</em> 
+        Method implements the <em>IValidatableObject</em>.
+    </p>
+
+    <p>Hurrah! Now you will be getting a passing test. We have done the TDD of Model Validation. </p>
+    <h3>Summary</h3>
+    <p>The bottom-line is we should not combine the unit tests of model validation with the controller’s unit tests and both should be kept separate. 
+        You can download the source code which we’ve seen in this blog post series from <a href="http://www.box.net/shared/73e9m5d2ufyi6pazfq4j">here</a></p>
+
+</p></div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Test Driving Model Validation in ASP.NET MVC3 - Part 1]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/08/13/test-driving-model-validation-in-aspnet/"/>
+    <updated>2011-08-13T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/08/13/test-driving-model-validation-in-aspnet</id>
+    <content type="html"><![CDATA[<div class="post">
+    <div>
+        <p>
+            Entity Framework 4.1(EF4.1) provides in-built support for defining the validation
+             constraints in model through Data Annotation attributes and Fluent API. It’s
+             one of the cool features provided by EF4.1 that enables the developers to define
+             validation rules of the model in an easy and more maintainable way. In addition
+             to that MVC3 framework makes use of these validation model and supports both
+             client and server side validation without writing any code!
+        </p>
+
+        <p>
+            I’m in the early days of practicing Test Driven Development (TDD). Fortunately I
+             have got an opportunity to implement TDD in my current assignment. I feel I am
+             much oriented and focused towards the solution while using TDD. Also it makes
+             me to critique my design and the way I do the coding. I would like to be a
+             better programmer and looking forward to improve myself and hence TDD suits me
+             more. Learning TDD and practicing it is totally different! Yes, in theory it
+             is very easy to read and understand TDD. But when you practice it, you will
+             encounter many more interesting things about TDD and in fact it’s where you can
+             actually learn TDD.
+        </p>
+
+        <p>
+            Okay, how to do TDD with Controller's responsibility in the context of Model validation in MVC3. Well, it is easy but
+                we should understand and find out what exactly we want to test and the way to test them. Many articles and blog posts suggest doing it through the controller.
+                Is it really a good approach to test the model validation through controller?&nbsp;&nbsp; Kindly think of it for a moment. 
+                I feel it is not a right way to deal this stuff.&nbsp;
+        </p>
+
+        <p>
+            Let me explain it through a small example. Consider an Employee model which has two properties Name and Age&nbsp;and an EmployeeController responsible for doing
+            CRUD on Employee Model. What is the responsibility of EmployeeController when creating a new Employee data? It should check whether the posted employee model is 
+            valid or not, if it is valid add to the database else return the view with the validation errors. MVC3 framework makes life easy by automatically validating the 
+            Posted model and set the <b>IsValid</b> Property of the ModelState and also add validation errors to the model. Hence controller's job is very easy as follows
+        </p>
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img border="0" src="http://2.bp.blogspot.com/-gMWdWyjaBxQ/TkYnWEIpWQI/AAAAAAAAAKI/mvc7iTeatok/s1600/Employee.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img src="http://1.bp.blogspot.com/-DSw1qdzt9ZA/TkYYuJLxKGI/AAAAAAAAAJw/5k1AerK1wiE/s1600/EmpControllerResponsibility.png" />
+        </div>
+        <h4>Corresponding TestCases</h4>
+
+        <ul>
+            <li>When creating a new employee, if the passed employee data is valid, it should be added to the database</li>
+            <li>When creating a new employee, if the passed employee data is InValid, it should not add to the database and show the view with validation errors.</li>
+        </ul>
+        <br />
+        <p>The first unit test will be as following:</p>
+
+        &lt;<div style="clear: both; text-align: center;">
+            <img src="http://3.bp.blogspot.com/-XEBOUhl7_WM/TkYgBqYX9VI/AAAAAAAAAJ0/wqKLvm_NGnw/s1600/EmpControllerUnitTest1.png" />
+        </div>
+
+        <p>
+            This unit test makes use of the following fake Database implementation.
+        </p>
+
+        <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-c1GRZq3f1Ms/TkYiTwN9z4I/AAAAAAAAAJ4/lma-KtsMK6Q/s1600/fakeDatabase.png" />
+        </div>
+        <p>
+            To keep this blog post simple, I am not showcasing the TDD steps which I have done here and the EmployeeController Code would be as follows.
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img src="http://1.bp.blogspot.com/-QRcFWLWNsmg/TkYkHGAoWnI/AAAAAAAAAJ8/FEit5wZZWs0/s1600/EmpController.png" />
+        </div>
+        
+        <p>
+            Employee Controller makes use of an InMemory Database (Simplest option!!) &nbsp;which implements the IRepository interface.&nbsp;
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://1.bp.blogspot.com/-xy_kB-hQk9o/TkYlRVdooZI/AAAAAAAAAKA/nnxYCWTdTLg/s1600/IRepository.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://2.bp.blogspot.com/-yU6djR74NeA/TkYlXKnjBOI/AAAAAAAAAKE/eXcZL2_7qew/s1600/InMemoryDb.png" />
+        </div>
+        
+        <p>
+            I have done all the wire ups to make the first unit test pass. (Pardon me! For the sake of simplicity of this blog post I've violated TDD rules. 
+            Hope you can infer the TDD steps from the coding samples). Its time to &nbsp;move to the next unit test and here comes a bottleneck. &nbsp; &nbsp;
+        </p>
+
+        <p>
+            You may wonder what it is that. There comes a feature of ASP.NET MVC 3 framework. During HTTP post action the framework validates the employee model 
+            and sets the EmployeeController's Property <em>ModelState.IsValid</em> to true or false. <b>It occurs only during HTTP post. </b>
+            In our unit test code we are actually calling the action methods of the controller and not making any HTTP post. 
+            So, the ModalState is always true whenever we call the action methods of a controller from a unit testing code.&nbsp;
+        </p>
+
+        <p>
+            In our second test case, we need to setup a controller in such a way that its ModelState property is InValid. 
+            We can do this by adding a ModelError to the ModelState property of the EmployeeController. In fact it is what MVC3 framework is doing under the 
+            hood when making HTTP post.&nbsp;
+        </p>
+
+        <div style="clear: both; text-align: center;">
+                <img src="http://4.bp.blogspot.com/-iVcBB1yZRLI/TkYrDW5JloI/AAAAAAAAAKM/li_PACoQS1E/s1600/EmpControllerUnitTest2.png" />
+        </div>
+        
+        <p>
+            Now we Test drived the controller's responsibility in the context of model validation. 
+            In my <a href="/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/">next blog post</a> &nbsp;
+            I'd showcase how to test drive the model validation itself.
+        </p>
+
+    </div>
+</div>
+]]></content>
+  </entry>
+  
+</feed>

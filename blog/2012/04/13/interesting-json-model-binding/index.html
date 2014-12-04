@@ -1,0 +1,299 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>An interesting JSON Model Binding behaviour in ASP.NET MVC3 - Tamizh's Thoughts</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="An Interesting JSON Model Binding Behaviour in ASP.NET MVC3 Introduction Model Binding is one of the coolest feature in ASP.NET MVC3. Like a magic &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="Tamizh's Thoughts" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2012/04/13/interesting-json-model-binding/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 106.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 124.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 124.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 118.0%'>data access</a> <a href='/blog/categories/entity-framework' style='font-size: 130.0%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 106.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 106.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 106.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 118.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 112.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 112.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 106.0%'>others</a> <a href='/blog/categories/programming' style='font-size: 136.0%'>programming</a> <a href='/blog/categories/unit-testing' style='font-size: 130.0%'>unit testing</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">An Interesting JSON Model Binding Behaviour in ASP.NET MVC3</h1>
+	<div class="entry-content" itemprop="articleBody"><div class='post'>
+    <h3>Introduction</h3>
+    <p>
+        <a href="http://msdn.microsoft.com/en-us/library/dd410405.aspx">Model Binding</a> is one of the coolest feature in ASP.NET MVC3.
+        Like a magic wand, your form element values, <a href="http://www.json.org/">JSON values</a>, also query string values automatically get converted to the equivalent C# object and
+        makes the life of the developer easier.
+    </p> <p>
+        The default behaviour of MVC3 model binding works well in more common scenarios.
+        But in certain cases it wont work as expected, and in such situations we need to <a href="http://odetocode.com/blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx">
+            write
+            custom model binders
+        </a>. Two weeks before while I was working with model binding on JSON values, I’ve encountered an interesting behaviour of JSON model binding.
+    </p>
+
+    <p>
+        If a JSON property contains a string, it get bind to a string property of the equivalent C# object. But if that same JSON property contains a empty string, while model binding,
+        the equivalent C# object’s property is assigned to null and not to empty string! The same happened with arrays. If it contains elements, it get bind without any problems.
+        But if the array is empty it get bind to null!!
+    </p> <p>
+        In this blog post, we are going to get rid of this intriguing behaviour by writing a Custom JSON model binder.
+        Hope it would be useful and save you some hairs <i class='emoji smile'></i>
+
+        <h3>The Sample Application – “MyMobileStore”</h3>
+    <p>
+        In this blog post we are going to see a small application called “MyMobileStore”. This sample app has two features. One will help you to search the mobiles
+        in the “MyMobileStore” by using the company name and the mobile types. An another feature will help you to find out the sales details of the mobiles from a given
+        company for the specified mobile types.
+    </p>
+
+    <h3>Show me the code</h3>
+    <p>Core classes</p>
+    <p><img class="center" src="/images/JsonModelBinding/CoreClasses.png" title="" ></p>
+    <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
+    <p>
+    <p><img class="center" src="/images/JsonModelBinding/MobileController.png" title="" ></p>
+    <p>
+        Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
+        the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
+    </p>
+    <p>
+    <p><img class="center" src="/images/JsonModelBinding/MobileFilter.png" title="" ></p>
+    </p> <p>
+        The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
+        One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
+        action method blank to keep it simple. Both actions returns a JSON result to make them consumed by ajax.
+    </p>
+
+    <p><em>(Note: I’ve violated some design principles in the sample code as I just wanted to make this blog post as simple as possible) </em></p>
+
+    <h3>The Problem (Opportunity in my language)</h3>
+    <p>
+        In a good world, if the user selected either or both the company name and the mobiles types to be filtered, then our controller in “MyMobileStore”
+        will happily accepts them as a parameter and continue its work without any mishaps.
+    </p>
+
+    <p><img class="center" src="/images/JsonModelBinding/Problem.png" title="" ></p>
+    <p>
+        But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
+        reference exception and breaks the functionality!!
+    </p>
+    <p><img class="center" src="/images/JsonModelBinding/BadWorld.png" title="" ></p>
+    <p><img class="center" src="/images/JsonModelBinding/NullException.png" title="" ></p>
+
+    <p>
+        <em>
+            (Now you might have understood why I added a tweak in the number of mobile types
+            <i class='emoji smile'></i>)
+        </em>
+    </p>
+    <h3>Possible Solutions</h3>
+    <ol>
+        <li>Perform null check inside the “SearchMobiles” action method and assign empty array.</li>
+        <li>Write a Custom Model Binder for “MobileFilter” and perform the null check inside the model binding logic</li>
+    </ol>
+    <p>
+        Though the option 1 is a simple and straightforward thing, what would you do if the “SalesDetails” action method works with the mobile types collection.
+        You certainly need to duplicate the null checking inside it also. Let us assume that we have some more action methods in our “MyMobileStore” which has “MobileFilter”
+        as their parameter. Do you still duplicate the null check there ?. Think!!
+    </p>
+    <p>
+        If you do so, I am sorry my dear friend, you are violating the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> principle and creating
+        <a href="http://pragprog.com/the-pragmatic-programmer/extracts/software-entropy">a broken window</a> in your codebase! So, lets go ahead and write
+        <a href="http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882">clean code</a> by making use of Custom Model Binder for our “MobileFilter”.
+    </p>
+
+    <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
+    <p>
+        <img class="center" src="/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
+    </p>
+
+    <p>
+        Our custom model binder is very simple, it just makes use of Default Model binding behaviour. After the default behaviour has been done,
+        it checks for null values using <a href="http://msdn.microsoft.com/en-us/library/ms173224.aspx">Null-Coalescing operator</a> and assign empty values if
+        the values are null.
+    </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
+
+    <p>
+        <img class="center" src="/images/JsonModelBinding/Global.png" title="" >
+    </p>
+    <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
+    <p>
+        <img class="center" src="/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
+    </p> 
+    <h3>Conclusion</h3> 
+    <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
+        binding problems. In my next blog post I would share my experiences in how to unit test this custom model binders. 
+    You can download the source code that I have used in this blog post from <a href="http://www.box.com/s/16dbb662bb2f94babe27">here</a></p>
+</div></div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2014
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2012/04/13/interesting-json-model-binding/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2012/04/13/interesting-json-model-binding/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

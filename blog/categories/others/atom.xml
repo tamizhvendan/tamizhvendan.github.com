@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: others | Tamizh's Thoughts]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/others/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2014-12-04T20:16:37+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Thank God !!]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/01/05/thank-god/"/>
+    <updated>2011-01-05T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/01/05/thank-god</id>
+    <content type="html"><![CDATA[<div class="post">
+    <div>
+        <p>I do google whenever had difficulties while coding (Typical style of Programming
+        isn’t it ???)</p>
+        <p>During those never ending google searches I usually land up in the blog posts which
+        salvage my difficulties.</p>
+        
+        <p>I wonder what would be the life of programmers if there is no such blogs exists!!</p>
+        
+        <p>Fine.. I don’t wanna write an essay describing my first blog. In simple words, I
+        just wanted to put all my knowledge gained under single roof and share with the
+        developers across the globe.</p>
+        <p>So, Here We Go !!</p>
+        <div><script src='https://gist.github.com/b9256c6eef44561dc8b5.js'></script>
+<noscript><pre><code>namespace Earth.Developers
+{
+    class Tamizhvendan
+    {
+        public static void Main(string[] args)
+        {
+            System.Console.WriteLine(&quot;Hearty Thanks to all blog writers &quot; + 
+                                        &quot;across the globe who inspired me to write this blog !!&quot;);
+        }
+    }
+}</code></pre></noscript></div>
+
+    </div>
+</div>
+]]></content>
+  </entry>
+  
+</feed>

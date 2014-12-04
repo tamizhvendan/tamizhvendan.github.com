@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: c# | Tamizh's Thoughts]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/c-number/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2014-12-04T20:16:37+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Going Declarative in C#]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/11/22/going-declarative-in-c/"/>
+    <updated>2011-11-22T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/11/22/going-declarative-in-c</id>
+    <content type="html"><![CDATA[<div class="post">
+
+    <p>
+        <a href="http://en.wikipedia.org/wiki/Declarative_programming">Declarative programming</a> is a simpler, more concise way to describe the 
+            behavior of a software program than <a href="http://en.wikipedia.org/wiki/Imperative_programming">imperative programming</a>. 
+            I am an admirer of declarative aspects of programming ever since I have started writing SQL queries. We always do our best to write code 
+            that is easier to read and maintain. Declarative style is one of the proven ways to write clean code. 
+            <a href="http://msdn.microsoft.com/en-us/library/bb308959.aspx">LINQ</a> is an excellent example of declarative style programming that 
+            enables the developers to simply state what they want to do. When I was learning <a href="http://learnyouahaskell.com/higher-order-functions">higher order functions in Haskell</a>, I have found the interrelationship between the higher order functions and the LINQ. 
+            It really made me to think in a different way to solve a problem. 
+            Through this blog post I would like to share my experiments on <a href="http://en.wikipedia.org/wiki/Higher-order_function">higher order functions</a> in C#.
+    </p>
+
+    <p>Let me start with a very simple requirement. </p>
+    <blockquote>Write a program to print the even numbers present in the given n numbers</blockquote>
+    <p>The code implementation fairly straight forward as below</p>
+    <div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://2.bp.blogspot.com/-F8d-q0yfDxQ/TsutZtHjXFI/AAAAAAAAAMM/VZOQO-TrRkM/s1600/PrintEvenNumbers.PNG" />
+    </div>
+
+    <p>Nothing fancy about this trivial thing. Let me add some more twist to the code by adding two more requirements.</p>
+    <blockquote>Modify the program implemented above to print odd numbers and multiples of four present in the given n numbers</blockquote>
+
+    <p>To be honest, If I have encountered this requirements before I have learnt Higher Order Functions my implementation would be as follows.</p>
+    <br />
+    <div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://2.bp.blogspot.com/-6Yj8HNUD34s/Tsutfjqe-AI/AAAAAAAAAMU/Oq7SKgTBOyA/s1600/TwoMoreReq.PNG" />
+    </div>
+    
+    <p>If you look at the above implementation with a critical eye, you can find a potential candidate of duplication. 
+        Let me explain the common pattern that is being used in the implemented PrintXXXX functions. 
+        For each number in the numbers enumerable we are doing the following</p>
+    <ul>
+        <li>Deciding whether the number should be printed or not <em>(Deciding)</em></li>  
+        <li>Printing the number if it is passes the above decision <em>(Doing)</em></li>  
+    </ul>    
+<br />
+    <div class="separator" style="clear: both; text-align: center;">
+        <img src="http://1.bp.blogspot.com/-9xr-Hu8TT7U/TsutkGNc9SI/AAAAAAAAAMc/_JeMMy5u1RY/s1600/Duplication.PNG" />
+    </div>
+<p>All the three functions iterate over the numbers enumerable and print the numbers. The only thing which actually differentiates the functions is deciding which numbers to be printed.</p>
+<p>Now the question is how can we eliminate this duplication????</p>
+<p>It’s where higher order functions come into picture. If we move the deciding part of the function away from its implementation then we can easily achieve it.&nbsp;&nbsp; Here we go! The brand new implementation of Print would be </p>
+
+<br /><div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://2.bp.blogspot.com/-9RF4Km0s1NA/TsutoVD_WkI/AAAAAAAAAMk/GWASEODqJTk/s1600/HigherOrderPrint.PNG" />
+</div>
+
+
+<p>In the new implementation we have just isolated the deciding part of the function from its implementation and parameterize it as function delegate that takes an integer as its input and return a Boolean value.&nbsp; In the client code (Main function) we are actually just calling the print function and declaratively telling it to print only those numbers which satisfies the given condition. As we separated the deciding part from the actual implementation, we can easily accommodate any future requirements like “<i style="mso-bidi-font-style: normal;">Printing multiples of five, printing only single digit numbers</i>” by declarative calling the Print function like as below</p>
+<br /><div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://4.bp.blogspot.com/-iunnD2jPXv8/TsutsrFa_4I/AAAAAAAAAMs/oE81RX5J8gY/s1600/AccomodatedRequirement.PNG" />
+</div>
+
+<p>Cool.. Isn’t it ? Let me complicate the things little more. What would you do if you want to call this Print method across different classes?. A notorious option would be creating a <a href="http://en.wikipedia.org/wiki/Utility_class">Utility class</a> with the Print method and calling it from the other classes. We can also solve these using <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">Extension methods</a> which results a clean readable code like as below</p>
+<br /><div class="separator" style="clear: both; text-align: center;">
+    <img border="0" src="http://4.bp.blogspot.com/-DZVepYydQ84/TsutwLqz__I/AAAAAAAAAM0/eNlsA0F2jzI/s1600/ExtensionMethod.PNG" />
+</div>
+
+<p>So far, so good. We have started with a single function and then we added two more, then eliminated the duplication using Higher Order functions and 
+    finally we have made the code readable by using extension method. </p>
+<p>Okay. Now “<i>I want to print the strings which starts with ‘s’ in the given n strings </i>”. Pardon me for complicating things, I will stop by this one.</p>
+<p>It is almost logically similar to what we have done so far. Instead of numbers here it is string. How can we put it into action?. 
+    Thanks to <a href="http://msdn.microsoft.com/en-us/library/512aeb7t%28v=vs.80%29.aspx">Generics</a>. We can easily achieve this by modifying the extension method to support generic type as below</p>
+    <br />
+<div class="separator" style="clear: both; text-align: center;">
+   <img border="0" src="http://3.bp.blogspot.com/-Cwp_3vrURcU/Tsut-VkAqjI/AAAAAAAAAM8/UrutESWMdw4/s1600/GenericExtensionMethod.PNG" />
+</div>
+
+
+<div>That’s it. Now you are free to play with all sort of logic you want. You can play with different set of conditions to print the elements or even you can also use different collection of your custom classes. And all can be done declaratively!!</div>
+<div>Now its time to reveal to the interrelationship exists between the LINQ and the higher order functions. All the LINQ methods are actually using these Print extension methods kind of extension methods under the hood and makes the life of developer easily but letting them to work declaratively. </div>
+<div><a href="http://msdn.microsoft.com/en-us/library/system.threading.tasks.parallel.aspx">Parallel Class</a> a new addition in C# 4.0, also uses higher order functions and enables the developer to say “Hey CLR, I wanna run these methods parallel”. </div>
+<br /><div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://3.bp.blogspot.com/-oghYOKAdsl4/TsuuMGSPzJI/AAAAAAAAANE/YVpPV4cfTOU/s1600/Parallel+Invoke.PNG" />
+</div>
+
+<p>Awesome! No new thread creation and no verbose. </p>
+<h4>Summary</h4>
+<p>Declarative Programming is powerful tool. It creates more readable, cleaner code and also reduces the possibility of logical mistakes in 
+    multiple similar algorithms. That means fewer mistakes now and in the future.</p>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Think Before You LINQ]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/11/03/think-before-you-linq/"/>
+    <updated>2011-11-03T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/11/03/think-before-you-linq</id>
+    <content type="html"><![CDATA[<div class="post">
+<div>
+<p>LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness and the power it offers to the code are simply amazing. In general when we think of abstractions, we tend to think towards expressiveness and <a href="http://martinfowler.com/bliki/FluentInterface.html">fluent interfaces</a> and get carried away.</p>
+
+<p>Efficiency of an abstraction is often an afterthought (Based on my experience, correct me if am wrong) and also it is very hard to define an abstraction which should be efficient for all the real world problems it address. When we encountered any efficiency issue in an abstraction, it is our primary responsibility to get rid of it.</p>
+
+<p>Let us assume that you have found an efficiency issue with an abstraction. How would you troubleshoot it? Think! I believe, awareness of internals of the abstraction would be the prime prerequisite to circumvent the problem.&nbsp; Hence as a professional developer we should be aware of what is happening under the hood when we use LINQ or any such kind of abstractions. Though we are not going to employ this in most of our coding efforts, I feel it would be an ideal weapon that we should keep in our arsenal.</p>
+
+<p>I have encountered one of such efficiency issue with LINQ and it really made me to think twice (even thrice) before applying LINQ to solve the problems. Let me explain it through a simple example. Here is the problem which I am going to solve through LINQ.</p>
+
+<p>“I need a method that should take a collection of numbers as its parameter and write all the numbers in the console. If the collection contains only one number it should not write anything”</p>
+
+<p>Here is the code snippet which address this problem and along with the output.
+	<br />
+  <img src="http://4.bp.blogspot.com/-22Zod3zjsX0/TrJi6zjlU9I/AAAAAAAAALc/oK_RVfhUQOs/s1600/1.PNG" alt="" />
+</p>
+
+<p>I have used two abstractions on this function, one is the LINQ extension method “Count” and the other one is iterating through the enumeration abstraction. Would you able to find an efficiency issue lurking on this very simple function? Kudos if you find it out.
+</p>
+
+<p>Let me give a small background about LINQ extension methods and Enumeration. Most of the LINQ extension methods are using lazy execution internally and computes the enumeration on demand basis. However some extension methods (Count, Sum) collectively called <a href="http://code.msdn.microsoft.com/LINQ-Aggregate-Operators-c51b3869">Aggregate Operators</a> causes immediate execution instead of lazy execution on the enumeration. We can we make an enumeration to enumerate lazily by using <a href="http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx">“yield”</a> statements. Enough theory, &nbsp;let us see some code which shows the efficiency issue associated with the function that we have seen earlier</p>
+
+<br />
+<div>
+  <img src="http://2.bp.blogspot.com/-Gfsxz8fP4WU/TrJi642QHRI/AAAAAAAAALk/OsojBB--7jM/s1600/2.PNG" />
+</div>
+
+
+<p>I have added some code in “PrintMe” method to log how it is actually getting executed. Also I have added the “GetNumbers” method which lazily creates a list of numbers using yield statement. </p>
+
+<p>Now can you able to find the exact issue associated with the method “PrintMe”? The red lines are areas of concern. The list is yielded twice!! One while using the Aggregate Operator of LINQ “Count” which causes immediate execution results enumeration all the yields and the second one is yielding the list once again lazily when enumerating through “foreach” loop.</p>
+
+<p>Though it is just a matter of nanoseconds in this example, it may be possible candidate of bottleneck in real world. So, whenever you are doing more than one operation on LINQ or an enumeration or both combined, do not forget think about efficiency. <em>In fact we should give a special attention to the speed of our algorithm when we are actually coding it.</em> (Refer <a href="http://pragprog.com/the-pragmatic-programmer">Pragmatic Programmer</a>, Chapter 6, While You Are Coding)</p>
+
+<p>I hope now you are ready to think about efficiency when you code. Here in our case we can get rid of the efficiency issue by converting the enumeration of number to an array or a list using LINQ <a href="http://code.msdn.microsoft.com/LINQ-Conversion-Operators-e4e59714">convertor operators</a> ToArray or ToList respectively. Like aggregate operators it causes immediate execution and converts the enumeration to the target type. Then we can do the operations on the converted target. Here is the code snippet of that with the output.</p>
+
+<br />
+<img src="http://3.bp.blogspot.com/-sJ0FDYxkl9Y/TrJi63comkI/AAAAAAAAALg/iPn8h9xdVOQ/s1600/3.PNG" alt="" />
+
+<p>The modified code now iterate through the list only once!!</p>
+
+<h4>Summary:</h4>
+
+<p>Would you use powerful weapons to get rid of smaller problems, certainly not? LINQ is such kind of powerful weapon which is meant to solve powerful problems. So, think twice before using LINQ and don’t use it blindly. Efficiency Matters!! &nbsp;</p>
+</div></div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Observer Pattern using Delegates V/s Observer Pattern using Events and Delegates]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/07/13/observer-pattern-using-delegates-vs/"/>
+    <updated>2011-07-13T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/07/13/observer-pattern-using-delegates-vs</id>
+    <content type="html"><![CDATA[<div class="post">
+	<p>
+		Most of the articles and texts in C# demonstrate the observer pattern using events and delegates. When going through one such text, a thought come across my mind. Why we are going for events when we can easily achieve the multicasting using Delegates alone. After some R&amp;D, I found it out why and hence this blog post.
+	</p>
+	<p>I am going to explain this “why” using a Weather Station example. To keep things simple, the Weather Station that we are going to see will keep track of only the temperature. Whenever the temperature changes, it simplify notifies its subscribers with the new temperature. Flash News is one of the subscribers which show the temperature in flash news. News Feed, another subscriber which adds the temperature information to the news feed. Fine, enough theory! It’s time to see the code.</p>
+	<p>Here is the implementation of Observer Pattern using Delegates alone. </p>
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    class WeatherStation
+    {
+        private int _temperature;
+        public TemperatureReporter Reporter { get; set; }
+
+        public int Temperature
+        {
+            get { return _temperature; }
+            set
+            {
+                if (Reporter != null)
+                {
+                    Reporter(value);
+                }
+                _tempearture = value;
+            }
+        }
+    }
+
+    class NewsFeed
+    {
+        WeatherStation weatherStation;
+
+        public void AddTemperatureInfoToFeed(int temperature)
+        {
+            Console.WriteLine(&quot;News Feed: New temperature &quot; + temperature + &quot; added to feed.&quot;);
+        }
+
+        public NewsFeed(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+            weatherStation.Reporter += AddTemperatureInfoToFeed;
+        }
+    }
+
+    class FlashNews
+    {
+        WeatherStation weatherStation;
+
+        public void ShowTemperatureInfoInFlashNews(int temperature)
+        {
+            Console.WriteLine(&quot;Flash News: New temperature is &quot; + temperature + &quot;.&quot;);
+        }
+
+        public FlashNews(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+            weatherStation.Reporter += ShowTemperatureInfoInFlashNews;
+        }
+    }
+}</code></pre></noscript></div>
+
+
+	<h4>The Main Program</h4>
+
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=Program.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    public delegate void TemperatureReporter(int tempearture);
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Observer Pattern Using Delegates
+            WeatherStation weatherStation = new WeatherStation();
+            FlashNews flashNews = new FlashNews(weatherStation);
+            NewsFeed newsFeed = new NewsFeed(weatherStation);
+            weatherStation.Temperature = 30;
+            weatherStation.Temperature = 15;
+            weatherStation.Temperature = 45;
+        }
+    }
+}</code></pre></noscript></div>
+
+	<h4>The output</h4>
+	<div style="clear: both; text-align: center;">
+		<img src="http://1.bp.blogspot.com/-LjDx8rPsr50/Th0bSdtTyHI/AAAAAAAAAHk/dMBuF4GLgD0/s1600/delegates-output.PNG" /></div>
+	<p>Hurrah! It’s working as expected. Both subscribers are get notified. We can implement the observer pattern using delegates alone. Stop for a minute and go through the code, is the implementation robust? Kudos if you are able to find the shortcomings of this implementation. If not continue reading. </p>
+	<p>Think of a world where everyone is good. There is no need of police, no need of court either. But it is not the case. You may wonder why I am mentioning this here. This analogy holds true for the objective of this blog post too. There is no need of using events in the c# programming world if all the subscribers are good. Miserably, here also it is not the case. Hence we are going for events instead of using delegates alone. </p>
+	<h4>Drawbacks of using delegates alone</h4>
+	<ul>
+		<li>A subscriber can replace other subscribers by reassigning the delegate</li>
+		<li>A subscriber can clear all other subscribers also (by setting the delegate to null). </li>
+		<li>A subscriber can broadcast to other subscribers by invoking the delegate</li>
+	</ul>
+	Clearly all the above 3 drawbacks violates the Observer Pattern.Here is our evil subscriber code implementation. 
+<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    class EvilSubscriber
+    {
+        WeatherStation weatherStation;
+
+        public void EvilMessage(int temperature)
+        {
+            Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
+        }
+
+        public EvilSubscriber(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+
+            // Broadcast to all the subscriber
+            weatherStation.Reporter(60);
+
+            // Reassign the subscriber            
+            weatherStation.Reporter = EvilMessage;
+
+            // Replace all the subscribers            
+            weatherStation.Reporter = null;
+        }
+    }
+}</code></pre></noscript></div>
+
+
+	<p>Hope now you understand the need of a better implementation of observer pattern. Here comes the salvage. Event! Use event along with delegates. With event in place, compiler will not allow the evil subscriber to get compiled. </p>
+	<h4>Robust implementation of Weather Station using events</h4>
+
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub2.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{ 
+    class WeatherStation2 
+    { 
+        private int _tempearture; 
+        
+        public event TemperatureReporter Reporter; 
+        
+        public int Temperature 
+        { 
+            get 
+            { 
+                return _tempearture; 
+            } 
+            set 
+            { 
+                if (Reporter != null) 
+                { 
+                    Reporter(value); 
+                } 
+                _tempearture = value; 
+            } 
+        }
+    } 
+    
+    class NewsFeed2 
+    { 
+        WeatherStation2 weatherStation; 
+        
+        public void AddTemperatureInfoToFeed(int temperature) 
+        { 
+            Console.WriteLine(&quot;News Feed2: New temperature &quot; + temperature + &quot; added to feed.&quot;); 
+        } 
+        
+        public NewsFeed2(WeatherStation2 weatherStation) 
+        { 
+            this.weatherStation = weatherStation; 
+            weatherStation.Reporter += AddTemperatureInfoToFeed; 
+        } 
+    } 
+    
+    class FlashNews2 
+    { 
+        
+        WeatherStation2 weatherStation; 
+        
+        public void ShowTemperatureInfoInFlashNews(int temperature) 
+        { 
+            Console.WriteLine(&quot;Flash News2: New temperature is &quot; + temperature + &quot;.&quot;); 
+        } 
+        
+        public FlashNews2(WeatherStation2 weatherStation) 
+        { 
+            this.weatherStation = weatherStation; weatherStation.Reporter += ShowTemperatureInfoInFlashNews; 
+        } 
+    } 
+}    			</code></pre></noscript></div>
+
+
+	<p>The unfortunate evil subscriber no longer compiles with events!</p>
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber2.cs'></script>
+<noscript><pre><code>class EvilSubscriber2
+{
+    WeatherStation2 weatherStation;
+
+    public void EvilMessage(int temperature)
+    {
+        Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
+    }
+
+    public EvilSubscriber2(WeatherStation2 weatherStation)
+    {
+        this.weatherStation = weatherStation;
+
+        // Broadcast to all the subscriber         
+        weatherStation.Reporter(60); // Compiler Error                
+
+        // Reassign the subscriber                
+        weatherStation.Reporter = EvilMessage; // Compiler Error  
+
+        // Replace all the subscribers                 
+        weatherStation.Reporter = null; // Compiler Error    
+    }
+}</code></pre></noscript></div>
+
+	<br />
+	You&nbsp;can download the source code from <a href="http://www.box.net/shared/kunno1y9noj26qodstnz">here</a>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Dynamic Polymorphism - A Real time example]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/04/24/dynamic-polymorphism-real-time-example/"/>
+    <updated>2011-04-24T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/04/24/dynamic-polymorphism-real-time-example</id>
+    <content type="html"><![CDATA[<div class="post">
+    <div>
+        <p>
+            In this blog post we are going to see, how to achieve dynamic polymorphism in c# using interfaces through a 
+            small game simulator called "War".
+        </p>
+
+        <div style="text-align: center">
+            <img src="http://3.bp.blogspot.com/-F-5wRIWJiKE/TbOvdE6MOnI/AAAAAAAAAGM/r1vs5p8LzUE/s1600/WarForm.png" />
+        </div>
+
+
+        <p>The simulator is simple and straight forward to play. The user just need to select a weapon and click on "Attack".</p>
+
+        <p>
+            Let me explain some theoretical background about "Dynamic Polymorphism" before dive into implementing the Game simulator. 
+            To put in a simple terms, Dynamic Polymorphism means changing the behavior at run time. 
+            Let us see an example of what does it mean. If a dog smells a cat, it will bark and if it smells a food, it will salivate. 
+            Here, the smelling sense of the dog is same. But depending on what does it smell, it change its behavior. 
+            Hope now you are aware of what is mean by dynamic polymorphism. 
+            Just stop reading and think what is the dynamic polymorphic behavior here in the "War" simulator.
+        </p>
+
+        <p>
+            Yes, you are absolutely correct!! The Attacking behavior is the dynamic polymorphic behavior. 
+            The behavior of attack button will vary with respect to the weapon the user has chosen.
+        </p>
+
+        <p>Fine.. Lets dive into the code!!</p>
+
+        <h4>Step1: Design the Main Form</h4>
+
+        <ol>
+            <li>Create a new Windows Forms Application and name it as "War"</li>
+            <li>Rename the "Form1.cs" file to "MainForm.cs" and Click "Yes" to let the Visual Studio to do the renaming for you.</li>
+            <li>Add a groupbox control and change its "Text" Property to "Weapon"</li>
+            <li>Add three radio button controls inside the groupbox and change their "Text" Property to Sword, Gun and bomb respectively.</li>
+            <li>Add a button control and change its "Text" property to "Attack!!".</li>
+            <li>Rename the "Name " property of all the controls added to some meaningful names like rboSword for Sword Radiobutton</li>
+            <li>The Final Finished will look like the screenshot in the beginning of this blog.&nbsp;&nbsp; </li>
+        </ol>
+
+        <h4>Step 2: Create an Interface called IWeapon</h4>
+
+        <ol>
+            <li>Right click on the Project name "War" in the solution explorer and add a new interface file called "IWeapon.cs"</li>
+            <li>This interface IWeapon will have a public method called "Attack" which defines a contract so that all the Weapon we are going to create should implement this IWeapon interface and provide the implementation code for the Attack() method</li>
+        </ol>
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=IWeapon.cs'></script>
+<noscript><pre><code>public interface IWeapon 
+{ 
+    void Attack(); 
+}</code></pre></noscript></div>
+
+
+
+        <h4>Step3: Create the concrete Weapon Classes&nbsp;</h4>
+        <ol>
+            <li>Add three class files to the "War" Project with the names "Sword.cs", ""Gun.cs", "Bomb.cs"</li>
+            <li>These classes represents the actual weapons and that we are going use in our simulator. Each of these classes will implement the IWeapon interface and provide the implementation code for the "Attack()" method.</li>
+            <li>Modify the class files as follows</li>
+        </ol>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Sword.cs'></script>
+<noscript><pre><code>public class Sword : IWeapon    
+{       
+    public void Attack() 
+    {            
+        System.Windows.Forms.MessageBox.Show(&quot;Sword!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Gun.cs'></script>
+<noscript><pre><code>public class Gun : IWeapon    
+{       
+    public void Attack() 
+    {            
+        System.Windows.Forms.MessageBox.Show(&quot;Gun!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Bomb.cs'></script>
+<noscript><pre><code>public class Bomb : IWeapon    
+{       
+    public void Attack() 
+    {
+        System.Windows.Forms.MessageBox.Show(&quot;Bomb!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <p>The Attack() method will show a message box with a text saying the weapon name being used.</p>
+
+        <h4>Step 4: Program the "War" Simulator Main Form</h4>
+        <p>Now the stage is set for the real show. Let us wire the code of MainForm.cs and make the "War" simulator.</p>
+        <ol>
+            <li>Add a private instance variable of type IWeapon in the MainForm class and initialize with the sword class. 
+                This will hold the reference of current weapon being used Note: Sword is the default weapon.
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=MainForm.cs'></script>
+<noscript><pre><code>public partial class MainForm : Form
+{
+	private IWeapon weapon = new Sword();	
+}</code></pre></noscript></div>
+
+            </li>
+            <li>Now we are going to add event handlers for the weapons radio buttons. 
+                They will change the reference stored in the instance variable "weapon" to the respective Weapons class. 
+                Add the checked change event for all the radio button and their event handlers will look like as follows.
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=ChangeWeaponHandler.cs'></script>
+<noscript><pre><code>private void rboSword_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Sword();
+}
+private void rboGun_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Gun();
+}
+private void rboBomb_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Bomb();
+}</code></pre></noscript></div>
+
+            </li>
+            <li>Add the Click event handler for the "Attack" button. 
+                This event handler will simply call the Attack() method of the instance variable "weapon"
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=AttackHandler.cs'></script>
+<noscript><pre><code>private void btnAttack_Click(object sender, EventArgs e)
+{
+	weapon.Attack();
+}</code></pre></noscript></div>
+
+            </li>
+        </ol>
+
+        <b>Summary</b>
+        <p>In this blog we have seen a basic real time example on implementing dynamic polymorphism. You can download the source code of this sample from <a href="http://www.box.net/shared/y12zyr2d66">here</a>.</p>
+    </div>
+</div>
+]]></content>
+  </entry>
+  
+</feed>

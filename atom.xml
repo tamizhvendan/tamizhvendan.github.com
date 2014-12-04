@@ -1,0 +1,1837 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Tamizh's Thoughts]]></title>
+  <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2014-12-04T20:16:37+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Verbs - Buried abstraction in OO World]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2014/09/26/verbs-buried-abstraction-in-oo-world/"/>
+    <updated>2014-09-26T12:44:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2014/09/26/verbs-buried-abstraction-in-oo-world</id>
+    <content type="html"><![CDATA[<p>In Object Oriented Programming, the problem domain is being modeled as objects(nouns) which collaborate with one another in the form of messages(verbs). We are actually creating abstractions and through which we are solving the problems in an organized and cleaner way. But this way of creating abstractions does not scale in all the scenarios.</p>
+
+<p>Let me share it through an example </p>
+
+<p>Lets rewind the time machine to travel back to 2006 (.NET 2.0) which doesn’t have <code>LINQ</code> support. You are asked to solve the following problem statement</p>
+
+<blockquote>
+  <p>You are working on a Student Management Application. Each student is having a name and an age. You are asked to create module to sort the Students based on their name</p>
+</blockquote>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Student.cs"></script>
+<noscript><pre><code>public class Student
+{
+  public int Age { get; set; }
+  public string Name { get; set; }
+}</code></pre></noscript></div>
+
+<p>To sort based on Name we need to write a comparer which compares two student names and return some integer</p>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=StudentNameComparer.cs"></script>
+<noscript><pre><code>public class StudentNameComparer : IComparer&lt;Student&gt;
+{
+  public int Compare(Student x, Student y)
+  {
+    return string.Compare(x.Name, y.Name, StringComparison.CurrentCulture);
+  }
+}</code></pre></noscript></div>
+
+<p>Then in the main program we will be doing the sorting using <code>Array.Sort</code> method</p>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Program.cs"></script>
+<noscript><pre><code>class Program
+{
+  static void Main(string[] args)
+  {
+    List&lt;Student&gt; students = new List&lt;Student&gt;();
+
+    // Populate Students List here	
+
+    Student[] studentsSortedByName = students.ToArray();       
+
+    Array.Sort(studentsSortedByName, new StudentNameComparer());
+  }
+}</code></pre></noscript></div>
+
+<p>Hmmm. You might think what is a big deal in it ? But there is! Let me complicate the scenario by adding a new requirement</p>
+
+<blockquote>
+  <p>You also asked to do sorting based on Age!</p>
+</blockquote>
+
+<p>How do you do it ?</p>
+
+<p>Well! Just create yet another Comparer which compares the age</p>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=StudentAgeComparer.cs"></script>
+<noscript><pre><code>public class StudentAgeComparer : IComparer&lt;Student&gt;
+{
+  public int Compare(Student x, Student y)
+  {
+    if (x.Age == y.Age)
+    {
+      return 0;
+    }
+    if (x.Age &lt; y.Age)
+    {
+      return -1;
+    }
+      return 1;
+  }
+}</code></pre></noscript></div>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Program1.cs"></script>
+<noscript><pre><code>class Program1
+{
+  static void Main(string[] args)
+  {
+    List&lt;Student&gt; students = new List&lt;Student&gt;();
+	
+    // Populate Students List here	
+
+    Student[] studentsSortedByAge = students.ToArray();       
+
+    Array.Sort(studentsSortedByAge, new StudentAgeComparer());
+  }
+}</code></pre></noscript></div>
+
+<p>So much of code to do the trivial thing, isn’t it ?</p>
+
+<p>Let us dig deep to figure out what is wrong here. First let us start with the comparers <code>StudentAgeComparer</code> and <code>StudentNameComparer</code>. These comparers (nouns) actually escorting the method <code>Compare</code> (verb) and not doing anything productive apart from this. In OO world a verb should always be associated with a noun and because of this way of abstraction, we are adding an unnecessary complexity to the code. </p>
+
+<p>Just think of yet another scenario where want to sort the student by rank, customer by name, product by name. We need to write so much comparers!</p>
+
+<h3 id="verbs-to-the-rescue">Verbs to the rescue</h3>
+
+<p>Let us see the student sorting scenario from a different perspective. In this new pair of (functional)eyes we see the same scenario as</p>
+
+<ul>
+  <li><strong>Order</strong> <em>Student</em> by <strong>Name</strong>  </li>
+  <li><strong>Order</strong> <em>Student</em> by <strong>Age</strong>  </li>
+  <li><strong>Order</strong> <em>Customer</em> by <strong>Name</strong>  </li>
+  <li><strong>Order</strong> <em>Product</em> by <strong>Name</strong>  </li>
+</ul>
+
+<p>i.e the verb <strong>Order</strong> is common across all the scenario. </p>
+
+<p>The only thing which is changing is <em>what we are ordering</em> and <em>by which property</em>. Let us model things based on this verb abstraction.</p>
+
+<p>PseudoCode</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">OrderBy&lt;Student&gt;(s -&gt; s.Name)
+</span><span class="line">OrderBy&lt;Student&gt;(s -&gt; s.Age)
+</span><span class="line">OrderBy&lt;Customer&gt;(c -&gt; c.Name)
+</span><span class="line">OrderBy&lt;Product&gt;(p -&gt; p.Name)</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here OrderBy is a function which models the verb (Order). Two things to note</p>
+
+<ul>
+  <li>OrderBy is generic and it can act on any types of objects (Student, Customer, Product,…)</li>
+  <li>OrderBy doesn’t know which property to choose so, we need to tell explicitly.</li>
+</ul>
+
+<p>So, what we gained because of this ?</p>
+
+<p>Let us go back to the initial requirement</p>
+
+<blockquote>
+  <p>You are working on a Student Management Application. Each student is having a name and an age. You are asked to create module to sort the Students based on their name and age</p>
+</blockquote>
+
+<p>Now change the time machine to land in 2014. We have <code>LINQ</code> support in <code>C#</code> now which supports verbs (functions) as first class citizens</p>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Program2.cs"></script>
+<noscript><pre><code>class Program2
+{
+  static void Main(string[] args)
+  {
+    List&lt;Student&gt; students = new List&lt;Student&gt;();
+
+    // Populate Students List here	
+
+    var studentsSortedByName = Enumerable.OrderBy(students, s =&gt; s.Name);
+    var studentsSortedByAge = Enumerable.OrderBy(students, s =&gt; s.Age);
+  }
+}</code></pre></noscript></div>
+
+<p>Just two lines instead of two comparers. All we did is just changed the way we create abstractions. Let me explain it using some visuals.</p>
+
+<p><img class="center" src="http://blog.tamizhvendan.in/images/VerbsInOoWorld/Students_Sorted_By_Name.png" title="" /></p>
+
+<p>OrderBy is an abstraction which does only one thing, that is order the objects in an ascending order and does it to the perfection. But to use this abstraction we need to provide two inputs, the objects and a function which provides the propery by which the objects to be sorted </p>
+
+<p>Does it closely resemble what we have seen earlier in the pseudocode ? Since it is generic, we can also use it for all other objects (Product, Customer, etc.,) too !</p>
+
+<p><img class="center" src="http://blog.tamizhvendan.in/images/VerbsInOoWorld/Students_Sorted_By_Age.png" title="" /></p>
+
+<h4 id="summary">Summary</h4>
+
+<p>Verbs(functions) are not silver bullets and they are not the replacement of Nouns(objects). But by choosing our abstraction wisely we can achieve great things with lesser lines of code and in turn release the code with lesser bugs <i class="emoji smile"></i> </p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[If your fsharp code compiles it usually works]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/"/>
+    <updated>2013-08-08T11:39:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works</id>
+    <content type="html"><![CDATA[<div class="post">
+
+  <p>
+    When I first started learning fsharp, one of the astounding fact that hit my mind was <em>&#8220;If the code compiles it usually works!&#8221;</em> For a guy who is coming from c# and java Programming background it was bit weird! After delving deep into f# I have found it very useful and inspired by its awesomeness. In this blog-post I&#8217;ll be covering some of my experiences that I come across while learning this great feature!  
+  </p>
+
+  <h3>Fever Diagnosis Program</h3>
+  <p>
+    Let us consider a simple fever diagnosis program. If your temperature is greater than 37.5 Celsius or 99.0 Fahrenheit then you are suffering from fever else you are all right.  
+  </p>
+
+  <h3>Defining Temperature Types</h3>
+  <p>One of the cool feature that I like about f# is its less verbosity. You can do lot of magic things with less lines of code! Consider our fever diagnosis program, A temperature can be either in Celsius or in Fahrenheit. Here is the equivalent type defined in f#</p>
+
+    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Temperature.fs'></script>
+<noscript><pre><code>type Temperature = 
+  | Celsius of double
+  | Fahrenheit of double</code></pre></noscript></div>
+
+
+  <p>Just 3 lines of code!</p>
+  <p>The type Temperature has been defined as a <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Discriminated_Unions">discriminated union.</a> In brief, Discriminated union represent data that can take on one of a few different types of results.</p> <p>Also in this 3 lines we have described the strongly typed alias for temperature in both Celsius and in Fahrenheit. With this code in place if you want to describe a temperature in Celsius or in Fahrenheit all you need to use the following syntax</p>
+
+    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Declaration.fs'></script>
+<noscript><pre><code>let tempInCelsius = Celsius 10.8
+let tempInFahernheit = Fahrenheit 10.6</code></pre></noscript></div>
+
+
+  <p>By defining strongly typed cases like this we can make our code cleaner and preventing ourselves from various logic errors that we usually do when we interpret the values of these types. Though we can achieve the same in c# by the following code, it is very elegant to do in f# </p>
+
+    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Temperature.cs'></script>
+<noscript><pre><code>public abstract class Temperature 
+{
+  public double Value { get; private set; }
+
+  protected Temperature(double value) 
+  {
+    Value = value;
+  }
+}
+
+public class Celsius : Temperature
+{
+  public Celsius (double value) : base(value)
+  {
+
+  }
+}
+
+public class Fahrenheit : Temperature
+{
+  public Fahrenheit (double value) : base(value)
+  {
+    
+  }
+} 
+
+public class Program 
+{
+  public static void Main() 
+  {
+    Temperature tempInCelsius = new Celsius(10.8);
+    Temperature tempInFahernheit = new Fahrenheit(10.6);
+  }  
+}</code></pre></noscript></div>
+
+
+<p>34 lines of code to achieve the same!!</p>
+
+<h3>Let&#8217;s diagnosis fever</h3>
+<p>With the types for the two representation of temperature in place, our next step is to check the values and find out whether the concerned person is having fever or not. You can do this in f# by using <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Pattern_Matching_Basics">pattern matching</a></p>
+<div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=HasFever.fs'></script>
+<noscript><pre><code>let hasFever temperature =
+  match temperature with 
+  | Celsius value -&gt; (value &gt; 37.5)
+  | Fahrenheit value -&gt; (value &gt; 99.0)</code></pre></noscript></div>
+
+
+<p>f# automatically takes care of decomposing our data into appropriate data structure and all we need to concentrate on our business logic. For a beginner the syntax might look intimidating at first sight but if we use it quite some time you will fell in love with f#</p> 
+
+<h4>How can I call this function?</h4>
+<div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=CallingHasFever.fs'></script>
+<noscript><pre><code>hasFever (Celsius 10.5)
+hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
+
+
+<p>Based on the type we are passing in the hasFever function, the corresponding pattern will be matched then the value is decomposed and verified with their respective numbers. Code is prettier, isn&#8217;t it ?</p>
+
+<h3>What&#8217;s the big deal in it?</h3>
+<p>You might think apart from reducing the lines of code what else f# adds ?. Great! I was exactly like you when I first come across it. Later I&#8217;ve found out it how it can help us to save some hairs ;-) </p>
+
+<p>Let us assume that we forget to handle Fahrenheit in hasFever function</p>
+    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=CompilerError.fs'></script>
+<noscript><pre><code>let hasFever temperature =
+  match temperature with 
+  | Celsius value -&gt; (value &gt; 37.5)</code></pre></noscript></div>
+
+<p>Typically in C# if we missed to handle one of the cases like this we won&#8217;t be getting any compiler error and It&#8217;d crash the application in the runtime. But in f#, the above code would result in following compiler error</p>
+<pre>warning FS0025: Incomplete pattern matches on this expression, For example, the value 'Fahrenheit (_)' may indicate a case not covered by the pattern(s)</pre>
+<p>So, if you make any logical error like this is your f# code, compiler will show compile time errors and prevents you from building buggy code!</p>
+
+<h3>Summary</h3>
+<p>If you follow the idioms of f#, it will let you write a better code and even if do some logical error the compiler will come as a rescue!. You can check the source code live in <a href="http://www.tryfsharp.org/create/tamizhvendan/fever_diagnosis.fsx">tryfsharp</a> </p>
+</div>]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[A hybrid application using ASP.NET MVC3 and Node.js]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/"/>
+    <updated>2012-06-01T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2012/06/01/hybrid-application-using-aspnet-mvc3</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <div>
+        Each and every technology has its pros and cons and there is
+        <a href="http://people.eecs.ku.edu/~saiedian/Teaching/Sp08/816/Papers/Background-Papers/no-silver-bullet.pdf">no silver bullet!</a><br />
+
+        <br />If you would ask me what you have learnt in your profession so far, I would say the above line as the first one. One technology / platform / language is good at
+        solving one kind of problems and bad at solving other kind of problems. The key is leveraging existing <em>platforms</em> with <em>languages</em> targeted at
+        specific problems and applications to solve the business problems in hand.<br /><br />Three months ago I
+        have come across <a href="http://www.infoq.com/presentations/10-Ways-to-Better-Code-Neal-Ford">an excellent presentation</a> from Neil Ford “10 ways to improve your
+        code”. As a 8th way he talks about “Polyglot Programming”. Its about picking the right tool to do the right job. I am inspired by this presentation and started
+        exploring the “right tools”.<br /><br />In the pursuit of “Right tools”, I’ve come across the young awesome framework <a href="http://nodejs.org/">node.js</a> which is
+        really cool and perfect for real-time applications. On the other hand frameworks like <a href="http://www.asp.net/mvc">ASP.NET MVC3</a> is not meant for creating real-time
+        applications and they address different set of other problems. <br /><br />In this blog post, I going to share my recent exploration on leveraging node.js in an
+        ASP.NET MVC3 application using a “Chat” feature. Though we can achieve it using <a href="http://signalr.net/">SignalR</a>, I’ve preferred node.js as it is a right tool
+        for the chat feature IMO also I wanted to get my hands dirty in creating a hybrid application.<br /><strong><br /></strong><br /><strong>The Node.js Part</strong>
+        <br /><br /><a href="http://lh5.ggpht.com/-HLh-ldizDJ0/T8kHC3Ao5_I/AAAAAAAAAZA/vI0DypFIKh8/s1600-h/image%25255B4%25255D.png">
+                        <img src="http://lh6.ggpht.com/-rcbRWOlpeBc/T8kHHp32UJI/AAAAAAAAAZI/ypOCgUHMrN0/image_thumb%25255B2%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="589" />
+                    </a><br /><br />The chat server that we are going to use in the MVC3 application has been created using <a href="http://socket.io/">socket.io</a> which makes web-socket programming insanely easy!<br />Its listen for three events<br /><ul><li><em>join</em> – It will be triggered when a new user joined the chat and it broadcast the user name to all the connected users  </li><li><em>message</em> – It willed be triggered when an user send a message in the chat application and broadcast it to the other users  </li><li><em>disconnect</em>– It willed be triggered when an user closes the chat or closes the browser </li></ul>That’s it bang!<br /><strong><br /></strong><br /><strong>The ASP.NET MVC3 side</strong><br /><br /><a href="http://lh6.ggpht.com/-pQEJCXkjOuw/T8kHJFR0zVI/AAAAAAAAAZQ/FTqswQ8XvtY/s1600-h/image%25255B9%25255D.png"><img alt="image" border="0" height="197" src="http://lh6.ggpht.com/-TMmsX9z4rRc/T8kHLTRTuYI/AAAAAAAAAZY/MQurv3YzYIw/image_thumb%25255B5%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="387" /></a><br /><br />The controller side of Chat just renders the “Index view”. The index view has the following javascript code, and it completes the client side part of the chat application<br /><br /><a href="http://lh5.ggpht.com/-QnLwJvxMIR8/T8kHMoTx1qI/AAAAAAAAAZg/VYhVayPULm4/s1600-h/image%25255B14%25255D.png"><img alt="image" border="0" height="403" src="http://lh5.ggpht.com/-XxmqzAqX1i8/T8kHQ1J07tI/AAAAAAAAAZo/sMw8RevtD9k/image_thumb%25255B8%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="530" /></a><br /><strong><br /></strong><br />
+        <strong>Chat feature in Action</strong><br /><br />
+        <a href="http://lh3.ggpht.com/-OoM7_UDFHzQ/T8kHSZP8R8I/AAAAAAAAAZw/QcXNptcqe1I/s1600-h/image%25255B17%25255D.png">
+            <img src="http://lh5.ggpht.com/-B4IkFTFavZI/T8kHVZP234I/AAAAAAAAAZ4/IGC3r-10yBA/image_thumb%25255B9%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh3.ggpht.com/-xWwrw06nVTk/T8kHW9r2X1I/AAAAAAAAAaA/-g8XAZDm-Qg/s1600-h/image%25255B21%25255D.png">
+                <img src="http://lh3.ggpht.com/-F7UPYcQXT14/T8kHZfq0W8I/AAAAAAAAAaI/hLP9g4s8QGA/image_thumb%25255B11%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-OI01pFQYBEs/T8kHaT3_bmI/AAAAAAAAAaQ/GM-QdsQzTVU/s1600-h/image%25255B25%25255D.png">
+            <img src="http://lh4.ggpht.com/-VIPYKbYG-rs/T8kHbgnYkBI/AAAAAAAAAaY/24TJhDEHqA8/image_thumb%25255B13%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-_jFs2OzmBx0/T8kHczZpZBI/AAAAAAAAAag/-FMnxb_cD9w/s1600-h/image%25255B29%25255D.png">
+            <img alt="image" src="http://lh4.ggpht.com/-KwvpW47kGxI/T8kHeUKp3BI/AAAAAAAAAao/GP4naqkNkvc/image_thumb%25255B15%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh4.ggpht.com/-YNLo_UVoZf0/T8kHfwe76BI/AAAAAAAAAaw/dq8JfcSfYRE/s1600-h/image%25255B33%25255D.png">
+            <img alt="image" src="http://lh3.ggpht.com/-tcpQUHyW58I/T8kHhrerqxI/AAAAAAAAAa4/ZEJOJK8swnk/image_thumb%25255B17%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-j4AUmiQEA5k/T8kHioICVWI/AAAAAAAAAbA/ZAuJNXh4oZ4/s1600-h/image%25255B37%25255D.png">
+            <img src="http://lh3.ggpht.com/-KoM6ka9qFxc/T8kHkUP0AGI/AAAAAAAAAbI/ZuGQ-d8KKS8/image_thumb%25255B19%25255D.png?imgmax=800" />
+        </a></div><strong><br /></strong><br /><strong>Summary</strong><br /><br />The objective behind this blog post is just to share the knowledge that I’ve gained in my recent exploration and its just a proof of concept of how to leverage node.js in an MVC3 application. The bottom-line is “Identify and pick the right tool to do the right job”. If you want to play with the source code, don’t forget to clone <a href="https://github.com/tamizhvendan/a-hybrid-app">the repository </a>
+    </div>
+</div>]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Jade Visualizer using Node.js and Socket.io]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2012/05/19/jade-visualizer-using-nodejs-and/"/>
+    <updated>2012-05-19T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2012/05/19/jade-visualizer-using-nodejs-and</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <p><strong>Hurrah! Finally I made it</strong></p> <blockquote> 
+    <p><em>“None of my inventions came by accident. I see a worthwhile need to be met and I make trial after trial until it comes. 
+        What it boils down to is one per cent inspiration and ninety-nine per cent perspiration”&nbsp; - Thomas Alva Edison</em></p></blockquote> 
+    <p>Today I’m very glad and excited to announce my little contribution to the open source community called 
+    <a href="http://jade-visualizer.herokuapp.com/">“Jade-Visualizer”</a> a web-based visualizer/translator which targets the beginners 
+    of <a href="http://jade-lang.com/">Jade</a> (A widely used <a href="http://nodejs.org">Node.js</a> view engine) to learn it effectively. </p> 
+    <p>Its the inspiration from good bloggers, kindled me to <a href="http://blog.tamizhvendan.in/blog/2011/01/05/thank-god/">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133"></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122"></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96"></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li></ul> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li></ul> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p>
+</div>]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[An interesting JSON Model Binding behaviour in ASP.NET MVC3]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2012/04/13/interesting-json-model-binding/"/>
+    <updated>2012-04-13T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2012/04/13/interesting-json-model-binding</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <h3>Introduction</h3>
+    <p>
+        <a href="http://msdn.microsoft.com/en-us/library/dd410405.aspx">Model Binding</a> is one of the coolest feature in ASP.NET MVC3.
+        Like a magic wand, your form element values, <a href="http://www.json.org/">JSON values</a>, also query string values automatically get converted to the equivalent C# object and
+        makes the life of the developer easier.
+    </p> <p>
+        The default behaviour of MVC3 model binding works well in more common scenarios.
+        But in certain cases it wont work as expected, and in such situations we need to <a href="http://odetocode.com/blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx">
+            write
+            custom model binders
+        </a>. Two weeks before while I was working with model binding on JSON values, I’ve encountered an interesting behaviour of JSON model binding.
+    </p>
+
+    <p>
+        If a JSON property contains a string, it get bind to a string property of the equivalent C# object. But if that same JSON property contains a empty string, while model binding,
+        the equivalent C# object’s property is assigned to null and not to empty string! The same happened with arrays. If it contains elements, it get bind without any problems.
+        But if the array is empty it get bind to null!!
+    </p> <p>
+        In this blog post, we are going to get rid of this intriguing behaviour by writing a Custom JSON model binder.
+        Hope it would be useful and save you some hairs <i class='emoji smile'></i>
+
+        <h3>The Sample Application – “MyMobileStore”</h3>
+    <p>
+        In this blog post we are going to see a small application called “MyMobileStore”. This sample app has two features. One will help you to search the mobiles
+        in the “MyMobileStore” by using the company name and the mobile types. An another feature will help you to find out the sales details of the mobiles from a given
+        company for the specified mobile types.
+    </p>
+
+    <h3>Show me the code</h3>
+    <p>Core classes</p>
+    <p><img class="center" src="http://blog.tamizhvendan.in/images/JsonModelBinding/CoreClasses.png" title="" ></p>
+    <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
+    <p>
+    <p><img class="center" src="http://blog.tamizhvendan.in/images/JsonModelBinding/MobileController.png" title="" ></p>
+    <p>
+        Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
+        the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
+    </p>
+    <p>
+    <p><img class="center" src="http://blog.tamizhvendan.in/images/JsonModelBinding/MobileFilter.png" title="" ></p>
+    </p> <p>
+        The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
+        One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
+        action method blank to keep it simple. Both actions returns a JSON result to make them consumed by ajax.
+    </p>
+
+    <p><em>(Note: I’ve violated some design principles in the sample code as I just wanted to make this blog post as simple as possible) </em></p>
+
+    <h3>The Problem (Opportunity in my language)</h3>
+    <p>
+        In a good world, if the user selected either or both the company name and the mobiles types to be filtered, then our controller in “MyMobileStore”
+        will happily accepts them as a parameter and continue its work without any mishaps.
+    </p>
+
+    <p><img class="center" src="http://blog.tamizhvendan.in/images/JsonModelBinding/Problem.png" title="" ></p>
+    <p>
+        But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
+        reference exception and breaks the functionality!!
+    </p>
+    <p><img class="center" src="http://blog.tamizhvendan.in/images/JsonModelBinding/BadWorld.png" title="" ></p>
+    <p><img class="center" src="http://blog.tamizhvendan.in/images/JsonModelBinding/NullException.png" title="" ></p>
+
+    <p>
+        <em>
+            (Now you might have understood why I added a tweak in the number of mobile types
+            <i class='emoji smile'></i>)
+        </em>
+    </p>
+    <h3>Possible Solutions</h3>
+    <ol>
+        <li>Perform null check inside the “SearchMobiles” action method and assign empty array.</li>
+        <li>Write a Custom Model Binder for “MobileFilter” and perform the null check inside the model binding logic</li>
+    </ol>
+    <p>
+        Though the option 1 is a simple and straightforward thing, what would you do if the “SalesDetails” action method works with the mobile types collection.
+        You certainly need to duplicate the null checking inside it also. Let us assume that we have some more action methods in our “MyMobileStore” which has “MobileFilter”
+        as their parameter. Do you still duplicate the null check there ?. Think!!
+    </p>
+    <p>
+        If you do so, I am sorry my dear friend, you are violating the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> principle and creating
+        <a href="http://pragprog.com/the-pragmatic-programmer/extracts/software-entropy">a broken window</a> in your codebase! So, lets go ahead and write
+        <a href="http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882">clean code</a> by making use of Custom Model Binder for our “MobileFilter”.
+    </p>
+
+    <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
+    <p>
+        <img class="center" src="http://blog.tamizhvendan.in/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
+    </p>
+
+    <p>
+        Our custom model binder is very simple, it just makes use of Default Model binding behaviour. After the default behaviour has been done,
+        it checks for null values using <a href="http://msdn.microsoft.com/en-us/library/ms173224.aspx">Null-Coalescing operator</a> and assign empty values if
+        the values are null.
+    </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
+
+    <p>
+        <img class="center" src="http://blog.tamizhvendan.in/images/JsonModelBinding/Global.png" title="" >
+    </p>
+    <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
+    <p>
+        <img class="center" src="http://blog.tamizhvendan.in/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
+    </p> 
+    <h3>Conclusion</h3> 
+    <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
+        binding problems. In my next blog post I would share my experiences in how to unit test this custom model binders. 
+    You can download the source code that I have used in this blog post from <a href="http://www.box.com/s/16dbb662bb2f94babe27">here</a></p>
+</div>]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/"/>
+    <updated>2012-03-04T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2012/03/04/unit-testing-html-helpers-in-aspnet</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <p>Would you like if your unit test have an assertion like this ?</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh5.ggpht.com/-Z7XXVGQ3sX4/T1J73ct1gqI/AAAAAAAAASQ/qw-uSNrLoOE/image_thumb3.png?imgmax=800">
+    </div>
+    <p>
+        IMHO having a unit test assertion like this with a long magical string value would become a maintenance problem with additional logic being added.
+        It breaks with even minor changes like “adding an extra whitespace” though it is logically correct(Browsers ignores the whitespaces while rendering html)!.
+        It is harder to debug to!!
+    </p>
+    <p>
+        How can we get rid of this long string assertion ? Is there any better way to do assertion against this long magical string ejected from a
+        <a href="http://stephenwalther.com/blog/archive/2009/03/03/chapter-6-understanding-html-helpers.aspx">HtmlHelper</a> ? One thing which strikes on my mind when I come
+        across this problem is why don’t we parse the string as an xml and assert against the xml element instead. It might appear like laborious at the first sight,
+        but by making use of <a href="http://msdn.microsoft.com/en-us/library/system.xml.linq.xelement.aspx">XElement</a> and
+        <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a> we can easily do that.
+    </p>
+
+    <p>In the blog post we are going to see how can we implement this in a more cleaner way. </p>
+
+    <p>Okay.. Enough texts.. Its time to see some code!!</p>
+
+    <p>
+        The first step is to convert the “html string” returned by the html helper to XElement. Generally most of the helpers returns
+        <a href="http://stackoverflow.com/questions/2293357/what-is-an-mvchtmlstring-and-when-should-i-use-it">MvcHtmlString</a>, So, we can easily achieve this
+        by writing an extension method called “ToXElement” on MvcHtmlString.
+    </p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-cwtnsV7pl2c/T1J763QmH1I/AAAAAAAAASg/6QKxAEGZ5uM/image_thumb%25255B2%25255D.png?imgmax=800">
+    </div>
+
+    <p>That’s it! All set to redefine the way custom html helpers are being tested. </p>
+
+    <p>Fine, Let us see it in action. We will start with a handy HtmlHelper method called “Button” which would render a “Html button tag” and here is the test to assert it.</p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-Zl-hH4zYH1A/T1J7_Y9Qr3I/AAAAAAAAASw/PyWZZJMadV0/image_thumb%25255B10%25255D.png?imgmax=800">
+    </div>
+    <p>
+        The first test uses the ToXElement extension method and assert against the XElement’s properties whereas the second test uses the
+        “magical string with tags added” to do the assertion. Now you may feel what’s wrong with this guy the second test look clean to me,
+        why he is making fuss about it. Yes you are correct, the second one looks clean. But it appears to be clean as the requirement in hand is very simple.
+    </p>
+    <p>IMHO the custom html helpers that we are building in our real world application won’t be as simple as having a button tag with just plain caption in it. </p>
+    <p>Fine, lets see the real world. Voice from your team lead <em></em></p>
+    <p>
+        <em>
+            Hey! the Button HtmlHelper you designed has did a tremendous job. Can you make a small change on it so that it would
+            <strong>generate a button with a class attribute having the value ‘appbutton’ by default</strong>.
+            We need it because it make the button styling consistent with rest of our application ”
+        </em>
+    </p>
+
+    <p>Let us implement the feature by starting with the test for it</p>
+    <p>
+        <a href="http://lh4.ggpht.com/-HScL-9YaD1s/T1J8Awk2YbI/AAAAAAAAAS4/Q3E6JlpRItM/s1600-h/image%25255B23%25255D.png">
+            <img src="http://lh5.ggpht.com/-MyHzxXBfdCM/T1J8DL_KgbI/AAAAAAAAATA/Vvt1j4k-KYo/image_thumb%25255B14%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>
+        Now tell me is the second test clean ? I don’t think so. The generate html string is bit long now also having double quotes inside double quotes makes it hard to read.
+        At the same time the first test remains robust and clean.
+    </p>
+
+    <p>
+        Still not convinced, okay just go up and see the very first test that we have wrote to test the button caption.
+        Do you think the <strong>hard way test</strong> with the “<strong>long magical string</strong>” still pass ??
+    </p>
+
+    <p style="text-align: center; color: #ff0000; font-weight: bold">It would fail</p>
+
+    <p>Why ?? Here is the error message </p>
+    <p>
+        <a href="http://lh5.ggpht.com/-K6RjhSEMhLA/T1J8EpZAZ-I/AAAAAAAAATI/TUutsjz0XdE/s1600-h/image%25255B28%25255D.png">
+            <img src="http://lh4.ggpht.com/-SpmB-mDwffk/T1J8HO3Np4I/AAAAAAAAATQ/oKxboMdbr6I/image_thumb%25255B17%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>Now what would you do, if you decided to persist with the “long magical string”, then your action would be editing the test as below</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh6.ggpht.com/-RJKnvJ5K8dI/T1J8LTJG_iI/AAAAAAAAATg/TAKyOA5Ej9w/image_thumb%25255B21%25255D.png?imgmax=800">
+    </div>
+    <p>Nice job. Now tell me what is the difference between this one and the below one</p>
+    <div style="text-align: center;clear:both">
+        <a href="http://lh6.ggpht.com/-ps4dX_FO-B0/T1J8MhVBtwI/AAAAAAAAATo/u003U24qiBo/s1600-h/image%25255B42%25255D.png">
+            <img src="http://lh3.ggpht.com/-i5zAV0v0JfY/T1J8O7pNIiI/AAAAAAAAATw/Fuo_4WMsFzk/image_thumb%25255B27%25255D.png?imgmax=800">
+        </a>
+    </div>
+    <p>
+        Apart from the test method name everything is same. Is the test clean ? Is the test clearly saying what it is trying to assert ?
+        What would happen if we got the requirement to add one more attribute or even more? Think !!
+    </p>
+
+    <p>But at the same time the tests which written using XElement assertion would remain healthy and their test method name mean what it is testing </p>
+    <p>
+        <a href="http://lh6.ggpht.com/-t5GRHpUvWSI/T1J8Qh6dvqI/AAAAAAAAAT4/WaaIvzaEKCY/s1600-h/image%25255B47%25255D.png">
+            <img src="http://lh3.ggpht.com/-fQ_eFoBZqnE/T1J8TPZgtFI/AAAAAAAAAUA/1wGDDsT5J8Y/image_thumb%25255B30%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>I leave it you to decide which one is cleaner. </p>
+    <h4>Summary</h4>
+    <p>Here is the implementation of “Button HtmlHelper” that we unit tested so far</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-lg0jE79JCVI/T1J8Y3QGqOI/AAAAAAAAAUQ/gif78dMv6XI/image_thumb%25255B33%25255D.png?imgmax=800">
+    </div>
+    <p>
+        My humble request to the readers of this blog post, please take care of your “Unit tests” and give some more importance to it.
+        An hour spent upfront would save a day in future.
+    </p>
+    <p>“Beauty is in the eye of the beholder”, If you have a better idea to do the same, kindly leave a comment, I am open to learn from you.</p>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Unit Testing Custom Model Binders in MVC3]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in/"/>
+    <updated>2012-02-11T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <p>
+        In <a href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
+        with Sessions in MVC3 using Custom model binders. In this blog post we are going to see how to do unit test the model binder itself.
+    </p>
+    <p>
+        One remarkable thing which everybody hails in MVC3 is its extensibility and its testability. You can extend/customize the components in the 
+        framework and also you can unit test them with ease.
+    </p>
+    <p>
+        Before getting into unit testing the custom model binder, Lets have a closer look at 
+            the <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.imodelbinder.bindmodel.aspx">BindModel</a> method
+    </p>
+    <br />
+    <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_ModelBinders/BindModel.png">
+       
+        <p>
+            In the BindModel method we are making use of Session property in the HttpContext object which is in turn a property of 
+            the <a href="http://msdn.microsoft.com/en-us/library/dd492673.aspx">ControllerContext</a> object that is passed to the BindModel method as 
+            a parameter by the MVC3 framework. In order to unit test this method we need to have to control over the HttpContext property of 
+            the ControllerContext and the Session property of the HttpContext.
+    </p>
+
+    <p>How to get control over those properties ? Thanks to <a href="http://msdn.microsoft.com/en-us/library/dd460098.aspx">a constructor of ControllerContext</a></p>
+    <br /><img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_ModelBinders/ControllerContext.png">        
+        <p>ControllerContext uses the constructor dependency injection to get rid of the direct dependency on <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontextbase.aspx">HttpContextBase</a> and we are going to exploit this to do unit testing. Using a mocking framework we can easily create a mock of HttpContetBase and drive the unit test.</p>
+    <p>The Session property of the HttpContextBase is of type <a href="http://msdn.microsoft.com/en-us/library/system.web.httpsessionstatebase.aspx">HttpSessionStateBase</a> which can also be mocked.</p>
+    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
+    <br /><img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_ModelBinders/UnitTest.png">      
+
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Unit Testing with Sessions in ASP.NET MVC3]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/"/>
+    <updated>2012-02-02T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <h3>Introduction</h3>
+        
+        <p>While talking to my friend regarding his project, he told me about how he is doing unit testing which involves sessions in ASP.NET MVC3. 
+            His team is actually using a “HttpSimulator” which simulates the web request and then the do unit test by verifying the session by interacting 
+            with the simulator. When digging further I have come to know that this way of unit testing session objects are influenced 
+            from the “ASP.NET Webforms”. It reminds me the talk of <a href="http://www.infoq.com/presentations/Functional-Thinking">Neil Ford on 
+                Function Thinking</a>. In that video he talks about an analogy called “Axe and Chain Saw” to explain our way of thinking as
+        </p>
+        <blockquote>When we give a chain saw to people who were cutting trees by axe, they would tend to use chain saw in the same way as the use Axe. 
+            Which is obviously inefficient. So we should understand at the capabilities of the tool in our hand before we using it</blockquote>
+       
+        <p>ASP.NET MVC3 is far better than Web Forms when it comes to unit testing. We don’t need to use a simulator to test against our sessions. 
+            There is a better way to do this MVC3 and in this blog post we are going to explore it.<p/>
+       
+        <h4>Time for Code</h4>       
+        <p>Shopping Cart is the first thing that strikes our mind when we want to quote an example for using Http session. 
+        So, I am going to show an app called “MyShop” a mini shopping site through which I am going to explain the concepts involved. 
+        The application flow would be as follows</p>
+        
+            <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/Cart.png">
+            <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/Cart2.png">       
+        
+
+        <h4>Models</h4>
+        
+        <p>The models are simple, straight forward and self explanatory.</p>
+    <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/model.png">  
+    <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/CartCsharp.png">    
+        <p>I’ve tried my level best to keep the model as simple as possible. 
+        So, Cart in MyShop will have only two public methods. One to add a product to the Cart’s Line and another one to retrieve all the 
+        products inside the Cart’s line.</p>
+        
+        <h4>The CartController Version 1.0</h4>
+        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/CartController.png"> 
+        <p>In this CartController version 1.0 we have two public methods Index and AddToCart which are dependent on HttpSession object. 
+            This dependency inside the methods is actually preventing us from unit testing the CartController in simple way and we have no 
+            choice other than implementing a “Http Simulator” to unit test these two methods. As I said before there is better to do is! Here we go!!</p>
+        
+        <h4>The CartController Version 2.0</h4>
+        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/CartController2.png"> 
+    <p>No more Sessions!!.. Yeah.. We have got rid of the dependency on the session object by adding a new parameter called cart. Now you can use easily unit test the CartController as follows</p>
+        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/UnitTest.png"> 
+        <p>Okay we made it easy for unit testing by moving the dependency out of the method and introduced the cart as the parameter. But how does my MVC3 framework will know the cart parameter should come from session object ?… Good Catch!! and here comes the magic called custom ModelBinder</p>
+       
+        <h4>ModelBinder – A brief background</h4>
+        <p>Model binding is an exciting feature in MVC3 framework which automatically creates the C# objects directly from Http request and 
+            pass it to the Action methods in controller as parameter values. It uses a default model binder which looks at the form values, 
+            query string values that are submitted with the Http Request and create the model object.</p>
+        <h4>CartModelBinder</h4>
+        
+        <p>In our case, we need to have a object of Cart which is populated from the Session object and not from the HttpRequest. 
+            The default model binder used by MVC3 has no idea about session object. So, Its our responsibility to tell to the MVC3 framework
+        </p>
+        
+        <p>“<em>Hey! If there is any parameter of type Cart in controller action method, then use my own custom model binder called CartModelBinder to create the object</em>”</p>
+        <p>There are two steps to do the above said operation</p>
+        <p>1. Creating the custom model binder by inheriting the IModelBinder interface</p>
+        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/CartModelBinder.png"> 
+        <p>2. Registering our custom model binder in the Global.asax.cs file</p>
+        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/AppStart.png"> 
+        <p>
+        That’s all.. MVC3 takes care of rest</p>
+        
+        <h4>Summary</h4>
+        <p>In this blog post we have explored how we can get rid of “Http Simulator” to unit test the controllers which involves Session objects using 
+            custom model binder. You can download the working example of “MyShop” showcased in this blog post 
+            from <a href="http://www.box.com/s/b9lf2heukyivh68921jj">here</a>. 
+            Refer <a href="http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
+            unit testing with the custom model binder itself.</p>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[2012 – A year of aspirations]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/12/29/2012-year-of-aspirations/"/>
+    <updated>2011-12-29T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/12/29/2012-year-of-aspirations</id>
+    <content type="html"><![CDATA[<div class='post'>
+<div dir="ltr" style="text-align: left;" trbidi="on"><div align="justify"><br /></div><div align="justify">2011 has been a magnificent year for me both professionally and personally. The most significant thing about the year 2011 was the time that I have spent with my mentor, team mate and a good friend <a href="http://www.linkedin.com/pub/jijesh-mohan/a/488/545">Jijesh Mohan</a>. I have started the year with full of ambitions but with the uncertainty of how to achieve them. Though I have worked really hard to achieve those ambitions, I failed plenty of times while trying to reach the next level and the reason is absence of direction. Jijesh shared his experience with me and helped a lot in understanding various aspects of programming, software development and much more. Hearty thanks Jijesh <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="http://lh4.ggpht.com/-n3NYjmGhjro/TvyccIdnG0I/AAAAAAAAANY/-8YxbNYlPjU/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" /> . The difference you made in my life as a programmer can not be expressed just by words.&nbsp; <br /><br /></div><div align="justify">It was a tough decision to make, but I have decided to leave Cognizant to explore different real time problems which are totally outside my comfort zone. I would like to thank my cherished manager&nbsp; <a href="http://www.linkedin.com/pub/ramakrishnan-venkatasubramanian/8/85/6a0">Ramakrishnan</a>, and beloved leads <a href="http://in.linkedin.com/pub/vijay-krishnan-ramaswamy/43/738/766">Vijay</a> and <a href="http://www.facebook.com/profile.php?id=100003088519900">Karthik</a>. Thank you all three for the inspiration, responsibilities and freedom you offered me to explore, learn, apply and adopt new technologies on various assignments. The trust you had in me helped a lot to shape up my professional career. I will surely miss you.<br /><br /></div><div align="justify"><strong>What’s Next ?</strong></div><div align="justify"><br />I will be joining <a href="http://www.advisory.com/">Advisory Board</a> in the first week on February 2012. I am very excited about it as it is a position that enable me to solve complex problems which involves huge volumes of data.&nbsp; <br /><br /></div><div align="justify"><strong>Goals </strong></div><div align="justify"><br />The one thing which keep me passionate and crazy about Computer Science is <strong>It is a path with no destination</strong>. One good lesson which I have learned last year is having goals like WaterFall model will not keep you valuable in the market. Like the requirements, the technologies are also volatile so the right way I believe is <strong>being Agile </strong>and the bottom line is set big goals, but make constant corrections along the way. My focus for the year 2012 would be</div><ul><li> <div align="justify">Javascript, HTML5, interactive Web Applications</div></li><li> <div align="justify">Functional Programming</div></li><li> <div align="justify">Working with huge volume of data</div></li><li> <div align="justify">Agile Methodologies</div></li><li> <div align="justify">Open Source Contributions</div></li><li> <div align="justify">Knowledge sharing through blogs and webinars</div></li></ul><div align="justify">Wish you all a very happy and prosperous new year.</div></div></div>]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Going Declarative in C#]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/11/22/going-declarative-in-c/"/>
+    <updated>2011-11-22T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/11/22/going-declarative-in-c</id>
+    <content type="html"><![CDATA[<div class='post'>
+
+    <p>
+        <a href="http://en.wikipedia.org/wiki/Declarative_programming">Declarative programming</a> is a simpler, more concise way to describe the 
+            behavior of a software program than <a href="http://en.wikipedia.org/wiki/Imperative_programming">imperative programming</a>. 
+            I am an admirer of declarative aspects of programming ever since I have started writing SQL queries. We always do our best to write code 
+            that is easier to read and maintain. Declarative style is one of the proven ways to write clean code. 
+            <a href="http://msdn.microsoft.com/en-us/library/bb308959.aspx">LINQ</a> is an excellent example of declarative style programming that 
+            enables the developers to simply state what they want to do. When I was learning <a href="http://learnyouahaskell.com/higher-order-functions">higher order functions in Haskell</a>, I have found the interrelationship between the higher order functions and the LINQ. 
+            It really made me to think in a different way to solve a problem. 
+            Through this blog post I would like to share my experiments on <a href="http://en.wikipedia.org/wiki/Higher-order_function">higher order functions</a> in C#.
+    </p>
+
+    <p>Let me start with a very simple requirement. </p>
+    <blockquote>Write a program to print the even numbers present in the given n numbers</blockquote>
+    <p>The code implementation fairly straight forward as below</p>
+    <div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://2.bp.blogspot.com/-F8d-q0yfDxQ/TsutZtHjXFI/AAAAAAAAAMM/VZOQO-TrRkM/s1600/PrintEvenNumbers.PNG" />
+    </div>
+
+    <p>Nothing fancy about this trivial thing. Let me add some more twist to the code by adding two more requirements.</p>
+    <blockquote>Modify the program implemented above to print odd numbers and multiples of four present in the given n numbers</blockquote>
+
+    <p>To be honest, If I have encountered this requirements before I have learnt Higher Order Functions my implementation would be as follows.</p>
+    <br />
+    <div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://2.bp.blogspot.com/-6Yj8HNUD34s/Tsutfjqe-AI/AAAAAAAAAMU/Oq7SKgTBOyA/s1600/TwoMoreReq.PNG"/>
+    </div>
+    
+    <p>If you look at the above implementation with a critical eye, you can find a potential candidate of duplication. 
+        Let me explain the common pattern that is being used in the implemented PrintXXXX functions. 
+        For each number in the numbers enumerable we are doing the following</p>
+    <ul>
+        <li>Deciding whether the number should be printed or not <em>(Deciding)</em></li>  
+        <li>Printing the number if it is passes the above decision <em>(Doing)</em></li>  
+    </ul>    
+<br />
+    <div class="separator" style="clear: both; text-align: center;">
+        <img src="http://1.bp.blogspot.com/-9xr-Hu8TT7U/TsutkGNc9SI/AAAAAAAAAMc/_JeMMy5u1RY/s1600/Duplication.PNG">
+    </div>
+<p>All the three functions iterate over the numbers enumerable and print the numbers. The only thing which actually differentiates the functions is deciding which numbers to be printed.</p>
+<p>Now the question is how can we eliminate this duplication????</p>
+<p>It’s where higher order functions come into picture. If we move the deciding part of the function away from its implementation then we can easily achieve it.&nbsp;&nbsp; Here we go! The brand new implementation of Print would be </p>
+
+<br /><div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://2.bp.blogspot.com/-9RF4Km0s1NA/TsutoVD_WkI/AAAAAAAAAMk/GWASEODqJTk/s1600/HigherOrderPrint.PNG"/>
+</div>
+
+
+<p>In the new implementation we have just isolated the deciding part of the function from its implementation and parameterize it as function delegate that takes an integer as its input and return a Boolean value.&nbsp; In the client code (Main function) we are actually just calling the print function and declaratively telling it to print only those numbers which satisfies the given condition. As we separated the deciding part from the actual implementation, we can easily accommodate any future requirements like “<i style="mso-bidi-font-style: normal;">Printing multiples of five, printing only single digit numbers</i>” by declarative calling the Print function like as below</p>
+<br /><div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://4.bp.blogspot.com/-iunnD2jPXv8/TsutsrFa_4I/AAAAAAAAAMs/oE81RX5J8gY/s1600/AccomodatedRequirement.PNG" />
+</div>
+
+<p>Cool.. Isn’t it ? Let me complicate the things little more. What would you do if you want to call this Print method across different classes?. A notorious option would be creating a <a href="http://en.wikipedia.org/wiki/Utility_class">Utility class</a> with the Print method and calling it from the other classes. We can also solve these using <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">Extension methods</a> which results a clean readable code like as below</p>
+<br /><div class="separator" style="clear: both; text-align: center;">
+    <img border="0" src="http://4.bp.blogspot.com/-DZVepYydQ84/TsutwLqz__I/AAAAAAAAAM0/eNlsA0F2jzI/s1600/ExtensionMethod.PNG" />
+</div>
+
+<p>So far, so good. We have started with a single function and then we added two more, then eliminated the duplication using Higher Order functions and 
+    finally we have made the code readable by using extension method. </p>
+<p>Okay. Now “<i>I want to print the strings which starts with ‘s’ in the given n strings </i>”. Pardon me for complicating things, I will stop by this one.</p>
+<p>It is almost logically similar to what we have done so far. Instead of numbers here it is string. How can we put it into action?. 
+    Thanks to <a href="http://msdn.microsoft.com/en-us/library/512aeb7t%28v=vs.80%29.aspx">Generics</a>. We can easily achieve this by modifying the extension method to support generic type as below</p>
+    <br />
+<div class="separator" style="clear: both; text-align: center;">
+   <img border="0" src="http://3.bp.blogspot.com/-Cwp_3vrURcU/Tsut-VkAqjI/AAAAAAAAAM8/UrutESWMdw4/s1600/GenericExtensionMethod.PNG" />
+</div>
+
+
+<div>That’s it. Now you are free to play with all sort of logic you want. You can play with different set of conditions to print the elements or even you can also use different collection of your custom classes. And all can be done declaratively!!</div>
+<div>Now its time to reveal to the interrelationship exists between the LINQ and the higher order functions. All the LINQ methods are actually using these Print extension methods kind of extension methods under the hood and makes the life of developer easily but letting them to work declaratively. </div>
+<div><a href="http://msdn.microsoft.com/en-us/library/system.threading.tasks.parallel.aspx">Parallel Class</a> a new addition in C# 4.0, also uses higher order functions and enables the developer to say “Hey CLR, I wanna run these methods parallel”. </div>
+<br /><div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://3.bp.blogspot.com/-oghYOKAdsl4/TsuuMGSPzJI/AAAAAAAAANE/YVpPV4cfTOU/s1600/Parallel+Invoke.PNG" />
+</div>
+
+<p>Awesome! No new thread creation and no verbose. </p>
+<h4>Summary</h4>
+<p>Declarative Programming is powerful tool. It creates more readable, cleaner code and also reduces the possibility of logical mistakes in 
+    multiple similar algorithms. That means fewer mistakes now and in the future.</p>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Think Before You LINQ]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/11/03/think-before-you-linq/"/>
+    <updated>2011-11-03T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/11/03/think-before-you-linq</id>
+    <content type="html"><![CDATA[<div class='post'>
+<div>
+<p>LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness and the power it offers to the code are simply amazing. In general when we think of abstractions, we tend to think towards expressiveness and <a href="http://martinfowler.com/bliki/FluentInterface.html">fluent interfaces</a> and get carried away.</p>
+
+<p>Efficiency of an abstraction is often an afterthought (Based on my experience, correct me if am wrong) and also it is very hard to define an abstraction which should be efficient for all the real world problems it address. When we encountered any efficiency issue in an abstraction, it is our primary responsibility to get rid of it.</p>
+
+<p>Let us assume that you have found an efficiency issue with an abstraction. How would you troubleshoot it? Think! I believe, awareness of internals of the abstraction would be the prime prerequisite to circumvent the problem.&nbsp; Hence as a professional developer we should be aware of what is happening under the hood when we use LINQ or any such kind of abstractions. Though we are not going to employ this in most of our coding efforts, I feel it would be an ideal weapon that we should keep in our arsenal.</p>
+
+<p>I have encountered one of such efficiency issue with LINQ and it really made me to think twice (even thrice) before applying LINQ to solve the problems. Let me explain it through a simple example. Here is the problem which I am going to solve through LINQ.</p>
+
+<p>“I need a method that should take a collection of numbers as its parameter and write all the numbers in the console. If the collection contains only one number it should not write anything”</p>
+
+<p>Here is the code snippet which address this problem and along with the output.
+	<br>
+  <img src="http://4.bp.blogspot.com/-22Zod3zjsX0/TrJi6zjlU9I/AAAAAAAAALc/oK_RVfhUQOs/s1600/1.PNG" alt="">
+</p>
+
+<p>I have used two abstractions on this function, one is the LINQ extension method “Count” and the other one is iterating through the enumeration abstraction. Would you able to find an efficiency issue lurking on this very simple function? Kudos if you find it out.
+</p>
+
+<p>Let me give a small background about LINQ extension methods and Enumeration. Most of the LINQ extension methods are using lazy execution internally and computes the enumeration on demand basis. However some extension methods (Count, Sum) collectively called <a href="http://code.msdn.microsoft.com/LINQ-Aggregate-Operators-c51b3869">Aggregate Operators</a> causes immediate execution instead of lazy execution on the enumeration. We can we make an enumeration to enumerate lazily by using <a href="http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx">“yield”</a> statements. Enough theory, &nbsp;let us see some code which shows the efficiency issue associated with the function that we have seen earlier</p>
+
+<br>
+<div>
+  <img src="http://2.bp.blogspot.com/-Gfsxz8fP4WU/TrJi642QHRI/AAAAAAAAALk/OsojBB--7jM/s1600/2.PNG">
+</div>
+
+
+<p>I have added some code in “PrintMe” method to log how it is actually getting executed. Also I have added the “GetNumbers” method which lazily creates a list of numbers using yield statement. </p>
+
+<p>Now can you able to find the exact issue associated with the method “PrintMe”? The red lines are areas of concern. The list is yielded twice!! One while using the Aggregate Operator of LINQ “Count” which causes immediate execution results enumeration all the yields and the second one is yielding the list once again lazily when enumerating through “foreach” loop.</p>
+
+<p>Though it is just a matter of nanoseconds in this example, it may be possible candidate of bottleneck in real world. So, whenever you are doing more than one operation on LINQ or an enumeration or both combined, do not forget think about efficiency. <em>In fact we should give a special attention to the speed of our algorithm when we are actually coding it.</em> (Refer <a href="http://pragprog.com/the-pragmatic-programmer">Pragmatic Programmer</a>, Chapter 6, While You Are Coding)</p>
+
+<p>I hope now you are ready to think about efficiency when you code. Here in our case we can get rid of the efficiency issue by converting the enumeration of number to an array or a list using LINQ <a href="http://code.msdn.microsoft.com/LINQ-Conversion-Operators-e4e59714">convertor operators</a> ToArray or ToList respectively. Like aggregate operators it causes immediate execution and converts the enumeration to the target type. Then we can do the operations on the converted target. Here is the code snippet of that with the output.</p>
+
+<br>
+<img src="http://3.bp.blogspot.com/-sJ0FDYxkl9Y/TrJi63comkI/AAAAAAAAALg/iPn8h9xdVOQ/s1600/3.PNG" alt="">
+
+<p>The modified code now iterate through the list only once!!</p>
+
+<h4>Summary:</h4>
+
+<p>Would you use powerful weapons to get rid of smaller problems, certainly not? LINQ is such kind of powerful weapon which is meant to solve powerful problems. So, think twice before using LINQ and don’t use it blindly. Efficiency Matters!! &nbsp;</p>
+</div></div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Practice, Practice, Practice !!]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/09/15/practice-practice-practice/"/>
+    <updated>2011-09-15T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/09/15/practice-practice-practice</id>
+    <content type="html"><![CDATA[<div class='post'>
+<div>
+	<p>In the pursuit of becoming a better programmer, I have come across lot of good things, which in fact have a lot of positive impact on my thinking, attitude and the way I approach a problem. &nbsp;One of such thing is the book “<a href="http://pragprog.com/book/cfcar2/the-passionate-programmer">Passionate Programmer</a>” which I am currently reading. It is all about creating a remarkable career in software development. If you are a developer, it is a highly recommended book. &nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+	<p>There are a lot of impressive tips we can learn from this book of wisdom. One of Such tip is “Practice, Practice, and Practice!!” It talks about how to practice as a software developer. Though it seems like a mighty task, the author “Chad Fowler” convey this by breaking the might task into the following three category (Divide and Conquer Approach).</p>
+
+<dl>
+	<dt>Physical/Coordination</dt>
+	<dd>
+		<ul>
+			<li>Learn and master the unexplored areas of the language that you are working with. Say for example, Regular Expressions</li>
+			<li>Dig your language’s API and don’t reinvent the wheel</li>
+		</ul>
+	</dd>
+	<dt>Sight Reading</dt>
+	<dd>
+		<ul>
+			<li>Learn by reading the code </li>
+			<li>Pick any of your favorite open source, explore it understand and learn the tips and tricks of the trade</li>
+			<li>Add some new feature</li>
+			<li>Be sure to vary the software you work with</li>
+		</ul>
+	</dd>
+	<dt>Improvisation</dt>
+	<dd>
+		<ul>
+			<li>Takes some structure or constraint and creating something new, on the fly on top of that structure. For example pick a simple program and try to write it with the self-imposed constraints</li>
+			<li>Play with <a href="http://codekata.pragprog.com/">Code Katas</a></li>
+		</ul>
+	</dd> 
+</dl>
+
+<h4>It’s time for action</h4>
+
+<p>I believe these three very fundamental aspects makes a lot of difference. So, I’ve decided to get my hands dirty with these three things and here is my list of to dos.</p>
+
+<dl>
+	<dt>Physical/Coordination – (I pick C# as its my primary language in my current role)</dt>
+	<dd>
+		<ul>
+			<li>Regular Expressions</li>
+			<li>Dynamic Programming</li>
+			<li>Multithreading</li>
+			<li>Parallel Programming</li>
+			<li>LINQ</li>
+			<li>Reflection</li>
+			<li>Streams and Networking</li>
+			<li>Entity Framework</li>
+			<li>Data Structures and Algorithms</li>
+			<li>Customizing MVC3 Framework</li>
+		</ul>
+	</dd>
+	<dt>Sight Reading</dt>
+	<dd>
+		<ul>
+			<li>Exploring ASP.NET MVC3 source code</li>
+			<li>Exploring Nunit source Code</li>
+			<li>Blog my understanding during this exploration</li>
+		</ul>
+	</dd>
+	<dt>Improvisation</dt>
+	<dd>
+		<ul>
+			<li>Make most of Code Katas</li>
+			<li>Active participation in Technical Forums</li>
+		</ul>
+	</dd>
+</dl>	
+</div>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Test Driving Model Validation in ASP.NET MVC3 - Part 2]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/"/>
+    <updated>2011-08-17T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/08/17/test-driving-model-validation-in-aspnet_17</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <p>
+    <p>
+        In <a href="http://blog.tamizhvendan.in/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>of this small blog post series, 
+            we have explored a way to do the TDD of controller’s responsibility in the context of model validation. 
+            In this Part-2 we are going to see <strong>“How to do the TDD of Model Validation”</strong>
+    </p>
+
+    <p>
+        Before getting into the business let us have a quick look at how ASP.NET MVC3 does the model validation. 
+            Internally when making an Http POST/GET request, MVC3 makes use of a helper class 
+            <strong><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validator.aspx">Validator</a></strong>
+        located in the namespace <em>System.ComponentModel.DataAnnotations.</em>
+        Validator can be used to validate the models based on the <strong>
+            <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationattribute.aspx">ValidationAttribute</a></strong>
+        attributes associate with the model. After validating MVC3 adds the validation results to the controller’s <em>ModelState</em>
+        Property by the <em>AddModelError</em> method which in turn sets the<em> ModelState.IsValid</em> property 
+            (Refer <a href="http://blog.tamizhvendan.in/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>). We are actually going to make use of this <em>Validator</em>
+        helper class going to test drive the model validation. 
+    </p>
+
+    <h4>Let us start with a small requirement</h4>
+    <p>
+        <em>“Employee name should not be empty”</em>
+    </p>
+
+    <p>The corresponding unit test will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://4.bp.blogspot.com/-3Ql_dP2wJkE/Tku0g78apHI/AAAAAAAAAKw/gV-lTvda50I/s1600/UnitTest1.PNG" />
+    </div>
+
+    <p>ValidateObject Method determines whether the specified object is valid using the validation context and throws a ValidationException if the object is invalid.</p>
+
+
+    <p>Employee Model will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-URfST5ZPMwo/Tku0gsJJAxI/AAAAAAAAAKs/5K0GYH1ObLs/s1600/Emp1.PNG" />
+    </div>
+
+    <p>
+        When you run the test “EmployeeNameShouldNotBeEmpty”, it will <strong><span style="color: red;">Fail</span></strong> with the error message 
+        <em>“System.ComponentModel.DataAnnotations.ValidationException was expected”</em>. Now it’s time to make it <strong>
+            <span style="color: #00b050;">Pass. </span></strong>Thanks to <em>RequiredAttribute</em> we can make the test the pass without much effort. 
+        Just decorate the Name property with the <em>[Required]</em> Attribute. That’s it. Now run the test and it will 
+        <strong><span style="color: #00b050;">Pass.</span></strong> As there is no scope for Refactoring, we will be ignoring it.
+    </p>
+
+    <p>Well, we have done the TDD of model validation. Now let’s move onto the next requirement.</p>
+    <p>
+        <em>“Employee age should be greater than 30”</em>
+    </p>
+    <br />
+    <p>
+        Let’s write the unit test for this requirement.
+    </p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://3.bp.blogspot.com/-cXpXTstCDr4/Tku0hg4cWDI/AAAAAAAAAK0/hahJBKoWOLI/s1600/UnitTest2.PNG" />
+    </div>
+
+    <p>When we run the test, we’d get a failing test with error message “System.ComponentModel.DataAnnotations.ValidationException was expected”</p>
+
+    <p>Like <em>RequiredAttribute</em> we don’t have any AgeLimit Attribute to make the test pass. However we can create such kind of CustomAttributes. 
+        Another approach would be making use of <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.ivalidatableobject.aspx">
+            <em>IValiadatableObject</em></a></p>
+
+    <p>I will be using the latter option in this blog post, if you are interested in creating custom attribute refer this <a href="http://www.devtrends.co.uk/blog/the-complete-guide-to-validation-in-asp.net-mvc-3-part-2">blog post</a></p>
+
+    <p>Here we go; the modified Employee model will look like as follows </p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://1.bp.blogspot.com/-zAsuau_JXwA/Tku0iUzEgFI/AAAAAAAAAK4/J1t3gYaECmw/s1600/Emp2.PNG" />
+    </div>
+
+    <p>
+        The <em>Validator</em> helper class will invoke the Validate method of the model if the model passed to the <em>ValidateObject</em> 
+        Method implements the <em>IValidatableObject</em>.
+    </p>
+
+    <p>Hurrah! Now you will be getting a passing test. We have done the TDD of Model Validation. </p>
+    <h3>Summary</h3>
+    <p>The bottom-line is we should not combine the unit tests of model validation with the controller’s unit tests and both should be kept separate. 
+        You can download the source code which we’ve seen in this blog post series from <a href="http://www.box.net/shared/73e9m5d2ufyi6pazfq4j">here</a></p>
+</div>]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Test Driving Model Validation in ASP.NET MVC3 - Part 1]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/08/13/test-driving-model-validation-in-aspnet/"/>
+    <updated>2011-08-13T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/08/13/test-driving-model-validation-in-aspnet</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <div>
+        <p>
+            Entity Framework 4.1(EF4.1) provides in-built support for defining the validation
+             constraints in model through Data Annotation attributes and Fluent API. It’s
+             one of the cool features provided by EF4.1 that enables the developers to define
+             validation rules of the model in an easy and more maintainable way. In addition
+             to that MVC3 framework makes use of these validation model and supports both
+             client and server side validation without writing any code!
+        </p>
+
+        <p>
+            I’m in the early days of practicing Test Driven Development (TDD). Fortunately I
+             have got an opportunity to implement TDD in my current assignment. I feel I am
+             much oriented and focused towards the solution while using TDD. Also it makes
+             me to critique my design and the way I do the coding. I would like to be a
+             better programmer and looking forward to improve myself and hence TDD suits me
+             more. Learning TDD and practicing it is totally different! Yes, in theory it
+             is very easy to read and understand TDD. But when you practice it, you will
+             encounter many more interesting things about TDD and in fact it’s where you can
+             actually learn TDD.
+        </p>
+
+        <p>
+            Okay, how to do TDD with Controller&#8217;s responsibility in the context of Model validation in MVC3. Well, it is easy but
+                we should understand and find out what exactly we want to test and the way to test them. Many articles and blog posts suggest doing it through the controller.
+                Is it really a good approach to test the model validation through controller?&nbsp;&nbsp; Kindly think of it for a moment. 
+                I feel it is not a right way to deal this stuff.&nbsp;
+        </p>
+
+        <p>
+            Let me explain it through a small example. Consider an Employee model which has two properties Name and Age&nbsp;and an EmployeeController responsible for doing
+            CRUD on Employee Model. What is the responsibility of EmployeeController when creating a new Employee data? It should check whether the posted employee model is 
+            valid or not, if it is valid add to the database else return the view with the validation errors. MVC3 framework makes life easy by automatically validating the 
+            Posted model and set the <b>IsValid</b> Property of the ModelState and also add validation errors to the model. Hence controller&#8217;s job is very easy as follows
+        </p>
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img border="0" src="http://2.bp.blogspot.com/-gMWdWyjaBxQ/TkYnWEIpWQI/AAAAAAAAAKI/mvc7iTeatok/s1600/Employee.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img src="http://1.bp.blogspot.com/-DSw1qdzt9ZA/TkYYuJLxKGI/AAAAAAAAAJw/5k1AerK1wiE/s1600/EmpControllerResponsibility.png" />
+        </div>
+        <h4>Corresponding TestCases</h4>
+
+        <ul>
+            <li>When creating a new employee, if the passed employee data is valid, it should be added to the database</li>
+            <li>When creating a new employee, if the passed employee data is InValid, it should not add to the database and show the view with validation errors.</li>
+        </ul>
+        <br />
+        <p>The first unit test will be as following:</p>
+
+        <<div style="clear: both; text-align: center;">
+            <img src="http://3.bp.blogspot.com/-XEBOUhl7_WM/TkYgBqYX9VI/AAAAAAAAAJ0/wqKLvm_NGnw/s1600/EmpControllerUnitTest1.png" />
+        </div>
+
+        <p>
+            This unit test makes use of the following fake Database implementation.
+        </p>
+
+        <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-c1GRZq3f1Ms/TkYiTwN9z4I/AAAAAAAAAJ4/lma-KtsMK6Q/s1600/fakeDatabase.png" />
+        </div>
+        <p>
+            To keep this blog post simple, I am not showcasing the TDD steps which I have done here and the EmployeeController Code would be as follows.
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img src="http://1.bp.blogspot.com/-QRcFWLWNsmg/TkYkHGAoWnI/AAAAAAAAAJ8/FEit5wZZWs0/s1600/EmpController.png" />
+        </div>
+        
+        <p>
+            Employee Controller makes use of an InMemory Database (Simplest option!!) &nbsp;which implements the IRepository interface.&nbsp;
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://1.bp.blogspot.com/-xy_kB-hQk9o/TkYlRVdooZI/AAAAAAAAAKA/nnxYCWTdTLg/s1600/IRepository.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://2.bp.blogspot.com/-yU6djR74NeA/TkYlXKnjBOI/AAAAAAAAAKE/eXcZL2_7qew/s1600/InMemoryDb.png" />
+        </div>
+        
+        <p>
+            I have done all the wire ups to make the first unit test pass. (Pardon me! For the sake of simplicity of this blog post I&#8217;ve violated TDD rules. 
+            Hope you can infer the TDD steps from the coding samples). Its time to &nbsp;move to the next unit test and here comes a bottleneck. &nbsp; &nbsp;
+        </p>
+
+        <p>
+            You may wonder what it is that. There comes a feature of ASP.NET MVC 3 framework. During HTTP post action the framework validates the employee model 
+            and sets the EmployeeController&#8217;s Property <em>ModelState.IsValid</em> to true or false. <b>It occurs only during HTTP post. </b>
+            In our unit test code we are actually calling the action methods of the controller and not making any HTTP post. 
+            So, the ModalState is always true whenever we call the action methods of a controller from a unit testing code.&nbsp;
+        </p>
+
+        <p>
+            In our second test case, we need to setup a controller in such a way that its ModelState property is InValid. 
+            We can do this by adding a ModelError to the ModelState property of the EmployeeController. In fact it is what MVC3 framework is doing under the 
+            hood when making HTTP post.&nbsp;
+        </p>
+
+        <div style="clear: both; text-align: center;">
+                <img src="http://4.bp.blogspot.com/-iVcBB1yZRLI/TkYrDW5JloI/AAAAAAAAAKM/li_PACoQS1E/s1600/EmpControllerUnitTest2.png" />
+        </div>
+        
+        <p>
+            Now we Test drived the controller&#8217;s responsibility in the context of model validation. 
+            In my <a href="http://blog.tamizhvendan.in/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/">next blog post</a> &nbsp;
+            I&#8217;d showcase how to test drive the model validation itself.
+        </p>
+
+    </div>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[EF Code First 4.1  in Console Application]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/08/04/ef-code-first-41-in-console-application/"/>
+    <updated>2011-08-04T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/08/04/ef-code-first-41-in-console-application</id>
+    <content type="html"><![CDATA[<div class='post'>
+	<div>
+		<p>
+			Whenever I learn any new things in .Net or experimenting with something, I always prefer to use <em>Console Applications.</em>
+			I personally feel it helps me to concentrate more on what actually I am trying to learn or experiment without any sort of distractions. 
+			Moreover it keeps things simple.
+		</p>
+
+		<p>
+			I would like to do the same while learning EF Code First 4.1. 
+			Though most of articles in web explain EF with respect to ASP.NET MVC, 
+			I favor learning it through my own way using console application without creating any controllers and views!!
+		</p>
+
+		<h4>Following are the prerequisites to work with EF Code First 4.1</h4>
+		<ul>
+			<li>
+				<a href="http://weblogs.asp.net/scottgu/archive/2011/03/15/visual-studio-2010-sp1.aspx">Visual Studio 2010 SP1</a>
+			</li>
+			<li>
+				<a href="http://blogs.msdn.com/b/adonet/archive/2011/04/11/ef-4-1-released.aspx">Entity Framework 4.1</a>
+			</li>
+			<li>
+				<a href="http://weblogs.asp.net/scottgu/archive/2011/01/11/vs-2010-sp1-and-sql-ce.aspx">SQL CE</a> or 
+				SQL Express (SQL CE would be an ideal option for learning purpose)
+			</li>
+
+		</ul>
+
+		<h4>Show me the Code!</h4>
+		<p>After creating a console application project, the initial step would be adding references to the following assemblies.</p>
+		<ul>
+			<li>EntityFramework (Version 4.1)</li>
+			<li>System.Data.Entity</li>
+			<li>System.ComponentModel.DataAnnotations</li>
+		</ul>		
+
+		<p>Now it’s time to defining the model and the data context. To keep it simple, I am going to define only one model “User”.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-FxoouXlWKxw/TjqAva1qsWI/AAAAAAAAAJM/5PLCVnNFhDQ/s1600/User.PNG" alt="" />
+		</div>
+
+		<p>The data context would be as following.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://3.bp.blogspot.com/-2pLPCQePVKY/TjqAwJ-QD4I/AAAAAAAAAJU/X66hDdCw6eo/s1600/MyDataContext.PNG" alt="" />
+		</div>
+
+		<p>
+			This basic infrastructure is sufficient to run the console application. However as we are using the data context for learning purpose, 
+			we might change the model often and doing so will make it inconsistent with the database created automatically when you run the application for the first time.
+		</p>
+
+		<p>
+			We can circumvent this situation by creating new Data Context initialize class that inherits from <em>DropCreateDatabaseIfModelChanges</em>
+			&lt;TContext&gt; where TContext is the data context that you want to sync with the database always. 
+			This class also offers an override function <em>“Seed”</em> using which we can fill the database with some initial data.
+		</p>
+
+		<p>The finished code of DataContext initialize class will be like the following.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://2.bp.blogspot.com/-fFqQJzPBGkY/TjqAwOW4nMI/AAAAAAAAAJY/DDY_VyYQHfI/s1600/MyDataContextInit.PNG" alt="" />
+		</div>
+
+		<p>
+			This datacontext initialize class would create the database whenever the database model changes and create two users by default. 
+			Now it’s time to code our Main method.
+		</p>
+		<p>
+			Here we go. Pay close attention to the first statement in the Main method that initializes the database with an instance of DataContextInit 
+			class that we have created.
+		</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-jl5r5Sk7m0Q/TjqAvdAJRPI/AAAAAAAAAJQ/elZcjzTNgEE/s1600/EFConsoleApp.PNG" alt="" />
+		</div>
+
+
+		<p>
+			Now you can run the application without any configurations. The default behavior of EF Code First will create the database 
+			with the same name as your data context name here “MyDataContext” in the SQL Express server installed in the local machine. 
+			If you wish to change this default behavior and wanted to use SQL CE instead of SQL Express just add an App.Config to 
+			the project and create a connection string with the name of your data context as follows.
+		</p>
+
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-YUZyAGX2KyA/TjqAvBuEd4I/AAAAAAAAAJI/p_UjE-K_lR8/s1600/Configuration.PNG" alt="" />
+		</div>
+
+
+
+		<p>That’s it. “Ctrl+F5” and here is the output</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://3.bp.blogspot.com/-l0IfgWCGZfQ/TjqAwX_8pnI/AAAAAAAAAJc/RLcjASqgaBo/s1600/Output.PNG" alt="" />
+		</div>
+
+
+		<h4>Summary</h4>
+		<p>
+			In this blog post we have explore the basic foundation on how to work with EF CodeFirst using console application. 
+			If you want to get your dirty with EF Code First without any distraction Console Application is a better one. 
+			You can download the sample code used in this blog post from <a href="http://www.box.net/shared/s0yu8b4sebp3dh9ru5gb">here.</a>
+	</div>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Using Ajax.BeginForm – ASP.NET MVC3 Ajax – Part III]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/08/03/using-ajaxbeginform-aspnet-mvc3-ajax/"/>
+    <updated>2011-08-03T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/08/03/using-ajaxbeginform-aspnet-mvc3-ajax</id>
+    <content type="html"><![CDATA[<div class='post'>
+
+    <p>
+        In my previous blog posts 
+	    <a href="http://blog.tamizhvendan.in/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">Part 1</a>, 
+	    <a href="http://blog.tamizhvendan.in/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/">Part 2</a>
+        we have explored how to use the <em>Ajax.ActionLink()</em> helper method to implement a basic Ajax request. 
+	    In this blog post we have are going to see an another useful helper method <em>Ajax.BeginForm()</em>
+    </p>
+
+    <p>
+        We will be implementing the following scenario using the <em>Ajax.BeginForm()</em>. 
+    The scenario would be having a view consisting of a simple form with name and email field.
+    </p>
+    <div style="clear: both; text-align: center">
+        <img src="http://3.bp.blogspot.com/-ymtu1zLXx3A/TjkOu1RpS_I/AAAAAAAAAIs/dbURJFeRGeA/s1600/AjaxBeginForm1.PNG" />
+    </div>
+
+    <p>Upon clicking the “Submit” button, the data will be sent back to the server via Ajax Post request and get a confirmation like this.</p>
+    <div style="clear: both; text-align: center">
+        <img src="http://4.bp.blogspot.com/-SvRqB-F2Yu4/TjkOuy-BpiI/AAAAAAAAAIw/er75G6DKkcU/s1600/AjaxBeginForm2.PNG" />
+    </div>
+
+    <p>
+        ASP.NET MVC3 offers an intuitive way to submitting/posting the form data to server via ajax using 
+        <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a> helper method. 
+        Lets start developing the scenario by first defining the Model (Not using TDD to keep this blog post simple).
+    </p>
+
+    <div><script src='https://gist.github.com/546d5c4d9476826dfe14.js?file=PersonalDetail.cs'></script>
+<noscript><pre><code>using System.ComponentModel.DataAnnotations;
+namespace UsingAjaxForms.Models
+{
+    public class PersonalDetail
+    {
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string Email { get; set; }
+    }
+}</code></pre></noscript></div>
+
+
+    <p>
+        To keep things simple, Our PersonalDetailsController will be having only two action methods. 
+        One will handling the “Get” request for Creating PersonalDetail and the other one for handling “Post” request for Creating PersonalDetail.
+    </p>
+
+    <div><script src='https://gist.github.com/546d5c4d9476826dfe14.js?file=PersonalDetailController.cs'></script>
+<noscript><pre><code>using System.Web.Mvc;
+using UsingAjaxForms.Models;
+namespace UsingAjaxForms.Controllers
+{
+    public class PersonalDetailController : Controller
+    {
+        public ActionResult Create()
+        {
+            var personalDetail = new PersonalDetail();
+            return View(personalDetail);
+        }
+
+        [HttpPost]
+        public string Create(PersonalDetail personalDetails)
+        {
+            return &quot;Hi &quot; + personalDetails.Name + &quot;!. Thanks for providing the details.&quot;;
+        }
+    }
+}</code></pre></noscript></div>
+
+
+	<p>
+        Now, the stage is set to play using ajax. The View for Creating new PersonalDetail using Ajax is similar to that of using ordinary post back except one factor. 
+        We need to replace the Html.BeginForm helper method with the 
+        <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a>
+    </p>
+
+    <p>
+        Ajax.BeginForm method has 11 overloads. On this blog post we are going to use the following overload. 
+        <em>Ajax.BeginForm(string actionName, string controllerName, AjaxOptions ajaxOptions)</em>
+    </p>
+
+    <p>
+        The actionName and controllerName points to the handler which is going to handle the ajax request and the ajaxOptions defines the behavior of the ajax request. 
+        The View for Creating PersonalDetail will look like this
+    </p>
+
+    <div style="clear: both; text-align: center">
+        <img src="http://2.bp.blogspot.com/-MbuiTU8NMKU/TjkOurokTOI/AAAAAAAAAIo/9FvQ9vtIDzw/s1600/AjaxBeginFormView.PNG" />
+    </div>
+
+    <p>That’s it!! All you need to do is to enclose your form into an Ajax.BeginForm method wired with the necessary configurations. 
+        In this example the ajax form method takes care of wiring up submit form action to the given action method of the controller and 
+        update the result which it receives from the server using the <em>UpdateTargetId</em>. 
+        You can also play with the Ajax request by adding a loading animation as I have mentioned in 
+        <a href="http://blog.tamizhvendan.in/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/">Part II blog post</a>. 
+        <strong>Note:</strong> Dont forget to add references to the jQuery script files</p>
+
+    <h4>Summary:</h4>
+    <p>In this blog post we have seen a very basic way to create Ajax forms in ASP.NET MVC3. 
+        You can download the source code of this blog post from <a href="http://www.box.net/shared/kvktovzz5fiihtxemvr0">here</a></p>
+</div>
+	]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[A journey towards software craftsmanship]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/07/27/journey-towards-software-craftsmanship/"/>
+    <updated>2011-07-27T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/07/27/journey-towards-software-craftsmanship</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <div>
+        <p>Programming has been my passion right from the day I have seen computer. After nearly 3.7 years of experience (2 years of freelancing and 1.7 years of Industry), I found that there are lot of areas in programming where I need to improve myself especially in the art of software craftsmanship. Programming is really an art!!</p>
+        <p>Fine, I have the passion and wish to move to the next level but the key is get started and focusing my efforts on a right path. After some extensive internet searches and fruitful discussions with my colleagues, I have drawn a road map. I feel it is worth sharing through this blog as it might help someone who aspires to reach the next level in programming. </p>
+        <p>We can’t become Einstein in single night. We can’t become Sachin just by scoring a match winning century in a single match either. Likewise we can’t become a Master in Software Craftsmanship by just creating a single Killer Application. It takes a lot of efforts, passion, endurance persistence, temperament and a well-defined path to reach the top. </p>
+        <p>As a programmer/developer we all know very well about the benefits of Code Reuse. Have you ever thought of <i>Experience Reuse!! </i>Just think about it for some minutes. Obviously there is no replacement/substitute for Experience but what’s wrong in learning from others experience. It requires both hard work and smart work to make it to the next level. Here I am mentioning about smart work. Why are we doing the same mistakes which some people did already in their lives? <span style="mso-spacerun: yes;">&nbsp;</span>Why don’t we just learn it from them and get rid of those recurring mistakes. Come on, we are programmers, be smarter. Let’s learn from the some of the masters in the field and do some new mistakes.</p>
+        <p>Before start mentioning about those masters, I would like to thank my colleague “Jijesh Mohan” who has helped a lot and inspired me to start the journey (Now I hope, you will know what is mean by Experience Reuse). Here is the list of Masters.</p>
+    </div>
+    <ul>
+        <li><a href="http://blog.objectmentor.com/">Robert C Martin</a></li>
+        <li><a href="http://pragdave.pragprog.com/">Dave Thomas</a></li>
+        <li><a href="http://martinfowler.com/">Martin Fowler</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/Ward_Cunningham">Ward Cunningham</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/Kent_Beck">Kent Beck</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/Grady_Booch">Grady Booch</a></li>
+        <li><a href="http://www.joelonsoftware.com/">Joel Spolsky</a></li>
+        <li><a href="http://www.catb.org/~esr/">Eric S Raymond</a></li>
+    </ul>
+    <p>One great thing about all these excellent folks is they share their knowledge, either through Books or through their blogs. We are very fortunate. Now it’s our turn to learn from their wisdom and move forward.</p>
+    <blockquote><p>The man who does not read good books has no advantage over the man who can&#8217;t read them.</p><footer><strong>Mark Twain</strong></footer></blockquote><div>I have found the following magnificent books in the quest</div>
+    <ul>
+        <li>Pragmatic Programmer – Andrew Hunt, Dave Thomas</li>
+        <ul>
+            <li>Must Read for every programmer. In my perspective it is the Bible of Programming</li>
+        </ul>
+        <li>Clean Code – Robert C Martin</li>
+        <li>Refactoring – Martin Fowler</li>
+        <li>Art of Unix Programming – Eric S Raymond</li>
+    </ul>
+    <p>I’ve read the Pragmatic Programmer and all others are in my “To-Read” list. I am really searching for words in dictionary to describe about “Pragmatic Programmer”. It is a “Gem”.</p>
+    <p>When it comes to blogs, we have “Google Reader”. Just subscribe to the blog posts of these eminent people through Google Reader and learn the art of programming.</p>
+    <p>The stage has been setup. No one can ride bicycle by reading a book on “How to Ride Bicycle”. What books and blog posts would offer us is knowledge. In addition to knowledge to move further we need another thing called “Practice”. Yes get your hands dirty. Experiment, Research, Critique, Analyse, involve in healthy debates with your colleagues on various aspects of software craftsmanship, work and feel passionate about your work.</p>
+    <p>I have pledged myself to follow the best practices in all my development works and no compromise on the quality of the code I write. In nutshell, I am going to care about my craft, think about my work and strive for excellence.</p>
+    <p>I am in the very early stage of becoming a better programmer and looking forward to listen to your suggestions and inputs on this. When we grow older, we will be stronger. With all blessings and hope, the journey begins!</p>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Observer Pattern using Delegates V/s Observer Pattern using Events and Delegates]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/07/13/observer-pattern-using-delegates-vs/"/>
+    <updated>2011-07-13T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/07/13/observer-pattern-using-delegates-vs</id>
+    <content type="html"><![CDATA[<div class='post'>
+	<p>
+		Most of the articles and texts in C# demonstrate the observer pattern using events and delegates. When going through one such text, a thought come across my mind. Why we are going for events when we can easily achieve the multicasting using Delegates alone. After some R&amp;D, I found it out why and hence this blog post.
+	</p>
+	<p>I am going to explain this “why” using a Weather Station example. To keep things simple, the Weather Station that we are going to see will keep track of only the temperature. Whenever the temperature changes, it simplify notifies its subscribers with the new temperature. Flash News is one of the subscribers which show the temperature in flash news. News Feed, another subscriber which adds the temperature information to the news feed. Fine, enough theory! It’s time to see the code.</p>
+	<p>Here is the implementation of Observer Pattern using Delegates alone. </p>
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    class WeatherStation
+    {
+        private int _temperature;
+        public TemperatureReporter Reporter { get; set; }
+
+        public int Temperature
+        {
+            get { return _temperature; }
+            set
+            {
+                if (Reporter != null)
+                {
+                    Reporter(value);
+                }
+                _tempearture = value;
+            }
+        }
+    }
+
+    class NewsFeed
+    {
+        WeatherStation weatherStation;
+
+        public void AddTemperatureInfoToFeed(int temperature)
+        {
+            Console.WriteLine(&quot;News Feed: New temperature &quot; + temperature + &quot; added to feed.&quot;);
+        }
+
+        public NewsFeed(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+            weatherStation.Reporter += AddTemperatureInfoToFeed;
+        }
+    }
+
+    class FlashNews
+    {
+        WeatherStation weatherStation;
+
+        public void ShowTemperatureInfoInFlashNews(int temperature)
+        {
+            Console.WriteLine(&quot;Flash News: New temperature is &quot; + temperature + &quot;.&quot;);
+        }
+
+        public FlashNews(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+            weatherStation.Reporter += ShowTemperatureInfoInFlashNews;
+        }
+    }
+}</code></pre></noscript></div>
+
+
+	<h4>The Main Program</h4>
+
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=Program.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    public delegate void TemperatureReporter(int tempearture);
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Observer Pattern Using Delegates
+            WeatherStation weatherStation = new WeatherStation();
+            FlashNews flashNews = new FlashNews(weatherStation);
+            NewsFeed newsFeed = new NewsFeed(weatherStation);
+            weatherStation.Temperature = 30;
+            weatherStation.Temperature = 15;
+            weatherStation.Temperature = 45;
+        }
+    }
+}</code></pre></noscript></div>
+
+	<h4>The output</h4>
+	<div style="clear: both; text-align: center;">
+		<img src="http://1.bp.blogspot.com/-LjDx8rPsr50/Th0bSdtTyHI/AAAAAAAAAHk/dMBuF4GLgD0/s1600/delegates-output.PNG" /></div>
+	<p>Hurrah! It’s working as expected. Both subscribers are get notified. We can implement the observer pattern using delegates alone. Stop for a minute and go through the code, is the implementation robust? Kudos if you are able to find the shortcomings of this implementation. If not continue reading. </p>
+	<p>Think of a world where everyone is good. There is no need of police, no need of court either. But it is not the case. You may wonder why I am mentioning this here. This analogy holds true for the objective of this blog post too. There is no need of using events in the c# programming world if all the subscribers are good. Miserably, here also it is not the case. Hence we are going for events instead of using delegates alone. </p>
+	<h4>Drawbacks of using delegates alone</h4>
+	<ul>
+		<li>A subscriber can replace other subscribers by reassigning the delegate</li>
+		<li>A subscriber can clear all other subscribers also (by setting the delegate to null). </li>
+		<li>A subscriber can broadcast to other subscribers by invoking the delegate</li>
+	</ul>
+	Clearly all the above 3 drawbacks violates the Observer Pattern.Here is our evil subscriber code implementation. 
+<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    class EvilSubscriber
+    {
+        WeatherStation weatherStation;
+
+        public void EvilMessage(int temperature)
+        {
+            Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
+        }
+
+        public EvilSubscriber(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+
+            // Broadcast to all the subscriber
+            weatherStation.Reporter(60);
+
+            // Reassign the subscriber            
+            weatherStation.Reporter = EvilMessage;
+
+            // Replace all the subscribers            
+            weatherStation.Reporter = null;
+        }
+    }
+}</code></pre></noscript></div>
+
+
+	<p>Hope now you understand the need of a better implementation of observer pattern. Here comes the salvage. Event! Use event along with delegates. With event in place, compiler will not allow the evil subscriber to get compiled. </p>
+	<h4>Robust implementation of Weather Station using events</h4>
+
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub2.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{ 
+    class WeatherStation2 
+    { 
+        private int _tempearture; 
+        
+        public event TemperatureReporter Reporter; 
+        
+        public int Temperature 
+        { 
+            get 
+            { 
+                return _tempearture; 
+            } 
+            set 
+            { 
+                if (Reporter != null) 
+                { 
+                    Reporter(value); 
+                } 
+                _tempearture = value; 
+            } 
+        }
+    } 
+    
+    class NewsFeed2 
+    { 
+        WeatherStation2 weatherStation; 
+        
+        public void AddTemperatureInfoToFeed(int temperature) 
+        { 
+            Console.WriteLine(&quot;News Feed2: New temperature &quot; + temperature + &quot; added to feed.&quot;); 
+        } 
+        
+        public NewsFeed2(WeatherStation2 weatherStation) 
+        { 
+            this.weatherStation = weatherStation; 
+            weatherStation.Reporter += AddTemperatureInfoToFeed; 
+        } 
+    } 
+    
+    class FlashNews2 
+    { 
+        
+        WeatherStation2 weatherStation; 
+        
+        public void ShowTemperatureInfoInFlashNews(int temperature) 
+        { 
+            Console.WriteLine(&quot;Flash News2: New temperature is &quot; + temperature + &quot;.&quot;); 
+        } 
+        
+        public FlashNews2(WeatherStation2 weatherStation) 
+        { 
+            this.weatherStation = weatherStation; weatherStation.Reporter += ShowTemperatureInfoInFlashNews; 
+        } 
+    } 
+}    			</code></pre></noscript></div>
+
+
+	<p>The unfortunate evil subscriber no longer compiles with events!</p>
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber2.cs'></script>
+<noscript><pre><code>class EvilSubscriber2
+{
+    WeatherStation2 weatherStation;
+
+    public void EvilMessage(int temperature)
+    {
+        Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
+    }
+
+    public EvilSubscriber2(WeatherStation2 weatherStation)
+    {
+        this.weatherStation = weatherStation;
+
+        // Broadcast to all the subscriber         
+        weatherStation.Reporter(60); // Compiler Error                
+
+        // Reassign the subscriber                
+        weatherStation.Reporter = EvilMessage; // Compiler Error  
+
+        // Replace all the subscribers                 
+        weatherStation.Reporter = null; // Compiler Error    
+    }
+}</code></pre></noscript></div>
+
+	<br />
+	You&nbsp;can download the source code from <a href="http://www.box.net/shared/kunno1y9noj26qodstnz">here</a>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ASP.NET MVC3 Ajax Part II - Adding Animation to Action Link]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/"/>
+    <updated>2011-06-26T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation</id>
+    <content type="html"><![CDATA[<div class='post'>
+	<div>
+		<p>This blog post is the continuation of my <a href="http://blog.tamizhvendan.in/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">previous blog post</a>. In the last blog post we have seen how to achieve the basic Ajax functionality using <em>Ajax.ActionLink()</em> helper method. Probably in many websites you might have seen whenever any ajax request is raised by the user, there would be an associated loading text or a loading gif will be displayed which inform the user that something is going on the background. We are now going to see how to achieve the same using the <em>ActionLink()</em> method.</p>
+		<p>
+			<em>ActionLink()</em> method uses a&nbsp;declarative approach to do this. All we need to do is to create a div element contains the element which will be displayed during the Ajax request and associate the div element to the <em>ActionLink()</em> method by assigning the &#8221;<em>LoadingElementId</em>&#8221; AjaxOption to the div element&#8217;s id. Let us see how to do this by using the MVC3 app that we have seen in the <a href="http://blog.tamizhvendan.in/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">previous blog post</a>.
+		</p>
+		<h3>Adding Loading Div Element</h3>
+		Open &#8220;Index.cshtml&#8221; and append the following div. It just contains image element which will be displayed during ajax request.
+<div><script src='https://gist.github.com/2ca8aaef6714aafaa889.js?file=Index.cshtml'></script>
+<noscript><pre><code>&lt;div id=&quot;divLoading&quot; style=&quot;display:none&quot;&gt;
+	&lt;img src=&quot;../../Content/images/loading.gif&quot; /&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+
+	<p>Note the inline style. The display has been set to none as it not intended to display only during Ajax request. </p>
+		<h3>Associate Div Element with <em>ActionLink()</em> method</h3>
+		<p>This is very simple. We just need to add the AjaxOption &#8221;<em>LoadingElementId</em>&#8221; and assign it to the loading div element&#8217;s id. The modified <em>ActionLink()</em> method will look as follows.</p>
+		<div style="clear: both; text-align: center;">
+			<img src="http://1.bp.blogspot.com/-6NlSqFH_RBU/TgbDPO7tB_I/AAAAAAAAAHc/BEEQT3XEWmQ/s1600/ActionLink+Method.png" /></div>
+		<br />
+		<h3>Simulating a delay in Action Method</h3>
+		<p>Now when we run the application we might not get a chance to see the loading gif as everything takes place is very less time. In order to see the loading gif, we need to increase the processing time taken by the GreetMe action method. The modified GreetMe action method in <em>HomeController.cs</em> will look as follows. The delay has been introduced by using the <em>Thread.Sleep()</em> method which delay the process by 2 seconds. </p>
+		<div><script src='https://gist.github.com/2ca8aaef6714aafaa889.js?file=HomeController.cs'></script>
+<noscript><pre><code>public string GreetMe() 
+{
+  System.Threading.Thread.Sleep(2000);
+  return &quot;Hello ASP.NET MVC3 Ajax !!&quot;;
+}</code></pre></noscript></div>
+
+	<br />
+		Now when we run the application we will be able to see the loading gif when the Greet Me link is clicked.
+	<h3>Summary</h3>
+		In the Part i &amp; ii of this series we have seen a basic Ajax functionality using <em>Ajax.ActionLink()</em> method. The source code of the demo application can be downloaded from <a href="http://www.box.net/shared/zmn84rj31g2kdx19flxq">here</a>.
+	</div>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ASP.NET MVC 3 Ajax - Part I]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/"/>
+    <updated>2011-06-24T00:00:00+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2011/06/24/aspnet-mvc-3-ajax-part-i</id>
+    <content type="html"><![CDATA[<div class='post'>
+    <div>
+
+        <p>
+            In this blog series ASP.NET MVC3 Ajax we are going to explore about implementing Ajax features in ASP.NET MVC3 Web application and 
+	this blog post will cover the basics of ASP.NET MVC3 Ajax.
+        </p>
+
+        <p>
+            MVC3 makes use of <a href="http://en.wikipedia.org/wiki/Unobtrusive_JavaScript">Unobtrusive javascript</a> which results a clear and 
+        clean separation between the functionality and the View/Presention of the webpage. 
+        We can introduce Ajax features to the MVC3 application using two ways.
+        </p>
+
+        <ol>
+
+            <li>
+                <h5>Ajax Helper Methods</h5>
+                - Enable us to achieve Ajax without writing no/less javascript
+            </li>
+
+            <li>
+                <h5>jQuery Ajax</h5>
+                - We need to write the code using javascript and jQuery ajax
+
+            </li>
+
+        </ol>
+        <p>
+            Ajax Helper Methods are very simple and intuitive to get start with. 
+        So, I&#8217;ll be covering the Ajax Helper Methods and will cover the jQuery Ajax in the future posts of this blog series.
+        </p>
+
+        <h4>Ajax Helper Methods</h4>
+        <p>
+            It enables us to implement ajax feature without writing much code. 
+    <i>Ajax.ActionLink()</i> is one of the fundamental Ajax helper method that returns a anchor element (&lt;a&gt;&lt;/a&gt;) with the URL 
+        of the action method; When the action link is clicked, the action method in the specified URL is invoked asynchronously and 
+        result is sent back to the client. Let us see it in detail by using sample demo application.
+        </p>
+
+        <ul>
+            <li>Create a new ASP.NET MVC3 Project &#8220;AjaxGettingStarted&#8221; </li>
+            <li>Select &#8221;<b>Empty</b>&#8221; template and &#8221;<b>Razor</b>&#8221; as view engine and click &#8221;<b>Ok</b>&#8221;</li>
+            <li>ASP.NET MVC3 project template shipped with the <b>scripts folder </b>which contains the all the jQuery library files 
+                that are required for doing Ajax and other client side functionalities. 
+                To implement ajax we should use the references of &#8220;jQuery&#8221; and &#8220;jQuery.unobtrusive-ajax&#8221; minified js files in our view
+                    <div style="text-align: center">
+                        <img src="http://4.bp.blogspot.com/-cYTipiOz2uQ/TgR_YKzsliI/AAAAAAAAAHU/R8X1FQYpAfM/s1600/2.+Scripts+Folder.PNG" />
+                    </div>
+            </li>
+            <li>Create a Controller with the name <em>HomeController</em> by right clicking the &#8220;Controllers&#8221; folder and 
+                select &#8220;Add&#8221; -&gt; &#8220;Controller&#8221;</li>
+            <li>The HomeController.cs file will be created under controllers folder with the following code.
+                <div><script src='https://gist.github.com/c087dba84453acbd23b1.js?file=HomeController.cs'></script>
+<noscript><pre><code>public class HomeController : Controller    
+{        
+	public ActionResult Index()
+	{             
+		return View();
+	}
+}</code></pre></noscript></div>
+
+            </li>
+            <li>Then right click inside the Index() Action Method and select &#8220;Add View&#8221;. Leave the default setting and click &#8220;Add&#8221;.</li>
+            <li>This would create the view &#8220;Index.cshtml&#8221; under the folder &#8220;Views/Home&#8221;.</li>
+            <li>Add the following action method in HomeController.cs file
+                <div><script src='https://gist.github.com/c087dba84453acbd23b1.js?file=HomeController_GreetMe.cs'></script>
+<noscript><pre><code>public string GreetMe()
+{
+    return &quot;Hello ASP.NET MVC3 Ajax!!&quot;;
+}</code></pre></noscript></div>
+
+                This action method will be called asynchronously called using Ajax.ActionLink helper method. 
+                This just written a string which will be displayed in the view via Ajax. </li>
+        </ul>
+        <ul>
+            <li>Add the script reference to the &#8220;jQuery&#8221; and &#8220;jQuery.unobtrusive-ajax&#8221; minified js files in Index.cshtml file.
+            <div><script src='https://gist.github.com/c087dba84453acbd23b1.js?file=Index.cshtml'></script>
+<noscript><pre><code>&lt;script src=&quot;@Url.Content(&quot;~/Scripts/jquery-1.5.1.min.js&quot;)&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;@Url.Content(&quot;~/Scripts/jquery.unobtrusive-ajax.js&quot;)&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></pre></noscript></div>
+
+            </li>
+            <li>
+                <p>Now all the setup in place to implement the basic Ajax functionality using Ajax.ActionLink Helper method. Before seeing this method in action let me explain bit more about this method. There are 12 overloads for this method amoung which the simplest one is </p>
+                <em>Ajax.ActionLink(string linkText, string actionName, AjaxOptions ajaxOptions)</em>
+                <p>The first parameter is the Link text which will be displayed in the view, the second parameter is the name of the action method which should be invoked while clicking the action link and the third parameter is AjaxOptions which defines how the Ajax request/response will take place and used to tell MVC exactly what you want your Ajax call to do.</p>
+            </li>
+        </ul>
+        <ul>
+            <li>AjaxOptions class will have the following properties
+                <ol>
+                    <li>Confirm - Gets or sets the message to display in a confirmation window before a request is submitted.</li>
+                    <li>HttpMethod - Gets or sets the HTTP request method (&#8220;Get&#8221; or &#8220;Post&#8221;).</li>
+                    <li>InsertionMode - Gets or sets the mode that specifies how to insert the response into the target DOM element</li>
+                    <li>LoadingElementId - Gets or sets the id attribute of an HTML element that is displayed while the Ajax function is loading.</li>
+                    <li>OnBegin - Gets or sets the name of the JavaScript function to call immediately before the page is updated. </li>
+                    <li>OnComplete - Gets or sets the JavaScript function to call when response data has been instantiated but before the page is updated. </li>
+                    <li>OnError - Gets or sets the JavaScript function to call if the page update fails.</li>
+                    <li>OnSuccess - Gets or sets the JavaScript function to call after the page is successfully updated.</li>
+                    <li>UpdateTargetId - Gets or sets the ID of the DOM element to update by using the response from the server.</li>
+                    <li>URL - Gets or sets the URL to make the request to.</li>
+                </ol>
+            </li>
+        </ul>
+        <ul>
+            <li>In our sample demo application we are just going to have a link called &#8220;Greet Me&#8221;. 
+                Upon clicking on that click we are going make Ajax request to GreetMe action method and 
+                populate a div tag with the value returned by the action method</li>
+            <li>Add the following code in the index.cshtml file. which implements the above step.
+	            <div><script src='https://gist.github.com/c087dba84453acbd23b1.js?file=Index_ActionLink.cshtml'></script>
+<noscript><pre><code>@Ajax.ActionLink(&quot;Greet Me&quot;, &quot;GreetMe&quot;, 
+	new AjaxOptions() {
+		UpdateTargetId=&quot;divGreetings&quot;, 
+		HttpMethod=&quot;GET&quot;                	
+	}
+)</code></pre></noscript></div>
+
+	            This ActionLink method call just creates an Ajax action link with the text &#8220;Greet Me&#8221;, 
+                upon clicking the link it invoke the &#8220;GreetMe&#8221; action method name which we already defined 
+                in the HomeController with the ajax option &#8220;HttpGetRequest&#8221; and update the Dom element with id &#8220;divGreetings&#8221; 
+                with the results that we are getting from the GreetMe action method, which is a simple string &#8220;Hello ASP.NET MVC3 Ajax!!&#8221;</li>
+        </ul>
+        <div style="text-align:center">
+
+            <img src="http://3.bp.blogspot.com/-X90DCHXAEQQ/TgWJkXaXijI/AAAAAAAAAHY/pKzrPDNWNF4/s1600/3-output.PNG"/>
+            
+        </div>
+        <strong>Summary</strong>
+            <p>In this blog post we have implemented a basic ajax feature using Ajax.ActionLink helper method. 
+                In the <a href="http://blog.tamizhvendan.in/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/">next blog post </a> 
+                of the series we would see how to add some add interactive animation during the ajax request.</p>
+
+    </div>
+</div>
+]]></content>
+  </entry>
+  
+</feed>
