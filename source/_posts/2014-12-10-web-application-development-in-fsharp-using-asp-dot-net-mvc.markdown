@@ -6,6 +6,7 @@ comments: true
 categories: 
   - fsharp
   - functional-programming
+  - ASP.NET MVC
 ---
 
 ### Introduction
