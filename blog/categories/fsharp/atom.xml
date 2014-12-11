@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fsharp | Tamizh's Thoughts]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2014-12-04T20:16:37+05:30</updated>
+  <updated>2014-12-11T16:18:13+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,104 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Step 0 - Setting up the fsharp-phonecat Solution]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/"/>
+    <updated>2014-12-10T22:15:50+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 0 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In this blog post, we are going to set up the visual studio solution and create the high level project structure for the <em>fsharp-phonecat</em> application. </p>
+
+<p><strong>Let’s get started!</strong></p>
+
+<h4 id="setting-up-visual-studio-solution">Setting Up Visual Studio Solution</h4>
+
+<p>The first step is to create an blank visual studio solution and name it as <strong>PhoneCat</strong></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/BlankSolution.png" width="700" height="700"></p>
+
+<p>After creating the blank solution create two fsharp class libraries and name it as <strong>Domain</strong> and <strong>DataAccess</strong> respectively.</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/ClassLibrary.png" width="700" height="700"></p>
+
+<p>Do delete the sample fsharp files Domain1.fs, DataAccess1.fs and Script.fsx that are created by default while creating the class libraries</p>
+
+<p>Then create a ASP.NET MVC web project using <a href="https://visualstudiogallery.msdn.microsoft.com/39ae8dec-d11a-4ac9-974e-be0fdadec71b">F# MVC 5 template</a> and name it as <em>Web</em></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/WebProject.png" width="700" height="700"></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/MVC5.png"></p>
+
+<p>We are going to use TDD, so create test projects for each of the above projects created and name it as <strong>Domain.Tests</strong>, <strong>DataAccess.Tests</strong> and <strong>Web.Tests</strong> respectively.</p>
+
+<p>The final project structure would look like</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/ProjectStructure.png"></p>
+
+<p>F# MVC 5 template comes with a default Bootstrap theme and we are going to extend it by using e-commerce theme from <a href="http://startbootstrap.com/template-overviews/shop-homepage/">Start Bootstrap</a>. Download the theme and add <em>shop-homepage.css</em> to the Content directory of <strong>Web</strong> project. After adding it update <em>Global.asax.fs</em> to include this css file while bundling.</p>
+
+<p>``` fsharp BundleConfig after adding shop-homepage.css<br />
+type BundleConfig() =<br />
+    static member RegisterBundles (bundles:BundleCollection) =<br />
+        bundles.Add(ScriptBundle(“~/bundles/jquery”)<br />
+            .Include([|”~/Scripts/jquery-{version}.js”|]))</p>
+
+<pre><code>    bundles.Add(ScriptBundle("~/bundles/modernizr")
+        .Include([|"~/Scripts/modernizr-*"|]))
+
+    bundles.Add(ScriptBundle("~/bundles/bootstrap")
+        .Include("~/Scripts/bootstrap.js", 
+                    "~/Scripts/respond.js"))
+
+    bundles.Add(StyleBundle("~/Content/css")
+        .Include("~/Content/bootstrap.css",
+                    "~/Content/site.css",
+                    "~/Content/shop-homepage.css")) ``` 
+</code></pre>
+
+<p>Now the stage is set for awesomeness. Update <strong>_Layout.cshtml</strong> and <strong>Index.cshtml</strong> as mentioned in the bootstrap theme and run the web project.</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800"></p>
+
+<p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the next-post we will be wiring up the backend. Stay tuned !</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Web Application Development in Fsharp using ASP.NET MVC]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/"/>
+    <updated>2014-12-10T17:07:48+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc</id>
+    <content type="html"><![CDATA[<h3 id="introduction">Introduction</h3>
+
+<p>Fsharp is my new favorite language in recent times and I’ve been learning it for the last six months. I always believe the best way to learn a language / technology / framework is to create something using it and also learning from the mistakes while creating it. So, here is my attempt to create a sample web application in fsharp using ASP.NET MVC framework. In this series of blog posts I’m going to share my experience on creating “phone-cat” web application inspired from the <a href="https://github.com/angular/angular-phonecat">angular-phonecat</a>. </p>
+
+<p>As it is my maiden attempt to create a relatively large web application in fsharp, if you find something that can be improved, feel free to share <em>I’m willing to learn from you.</em></p>
+
+<h3 id="blog-series-links">Blog Series Links</h3>
+
+<ul>
+  <li><strong>Step 0</strong> - <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
+  <li>Step 1 - Getting Started with fsharp-phonecat</li>
+</ul>
+
+<h4 id="upcoming-posts">Upcoming Posts</h4>
+
+<ul>
+  <li>Event Sourcing using EventStore</li>
+  <li>Recommendation System using FSharp Agents, Rx and SignalR</li>
+  <li>Advanced Search using FSParsec</li>
+  <li>Data Access Layer using No-Sql</li>
+  <li>Integration testing using TickSpec and canopy</li>
+  <li>Build automation using FAKE</li>
+  <li>Documentation generation using FSharp.Formatting</li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[If your fsharp code compiles it usually works]]></title>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: asp.net mvc | Tamizh's Thoughts]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/asp-dot-net-mvc/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2014-12-04T20:16:37+05:30</updated>
+  <updated>2014-12-11T16:18:13+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,104 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Step 0 - Setting up the fsharp-phonecat Solution]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/"/>
+    <updated>2014-12-10T22:15:50+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 0 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In this blog post, we are going to set up the visual studio solution and create the high level project structure for the <em>fsharp-phonecat</em> application. </p>
+
+<p><strong>Let’s get started!</strong></p>
+
+<h4 id="setting-up-visual-studio-solution">Setting Up Visual Studio Solution</h4>
+
+<p>The first step is to create an blank visual studio solution and name it as <strong>PhoneCat</strong></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/BlankSolution.png" width="700" height="700"></p>
+
+<p>After creating the blank solution create two fsharp class libraries and name it as <strong>Domain</strong> and <strong>DataAccess</strong> respectively.</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/ClassLibrary.png" width="700" height="700"></p>
+
+<p>Do delete the sample fsharp files Domain1.fs, DataAccess1.fs and Script.fsx that are created by default while creating the class libraries</p>
+
+<p>Then create a ASP.NET MVC web project using <a href="https://visualstudiogallery.msdn.microsoft.com/39ae8dec-d11a-4ac9-974e-be0fdadec71b">F# MVC 5 template</a> and name it as <em>Web</em></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/WebProject.png" width="700" height="700"></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/MVC5.png"></p>
+
+<p>We are going to use TDD, so create test projects for each of the above projects created and name it as <strong>Domain.Tests</strong>, <strong>DataAccess.Tests</strong> and <strong>Web.Tests</strong> respectively.</p>
+
+<p>The final project structure would look like</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/ProjectStructure.png"></p>
+
+<p>F# MVC 5 template comes with a default Bootstrap theme and we are going to extend it by using e-commerce theme from <a href="http://startbootstrap.com/template-overviews/shop-homepage/">Start Bootstrap</a>. Download the theme and add <em>shop-homepage.css</em> to the Content directory of <strong>Web</strong> project. After adding it update <em>Global.asax.fs</em> to include this css file while bundling.</p>
+
+<p>``` fsharp BundleConfig after adding shop-homepage.css<br />
+type BundleConfig() =<br />
+    static member RegisterBundles (bundles:BundleCollection) =<br />
+        bundles.Add(ScriptBundle(“~/bundles/jquery”)<br />
+            .Include([|”~/Scripts/jquery-{version}.js”|]))</p>
+
+<pre><code>    bundles.Add(ScriptBundle("~/bundles/modernizr")
+        .Include([|"~/Scripts/modernizr-*"|]))
+
+    bundles.Add(ScriptBundle("~/bundles/bootstrap")
+        .Include("~/Scripts/bootstrap.js", 
+                    "~/Scripts/respond.js"))
+
+    bundles.Add(StyleBundle("~/Content/css")
+        .Include("~/Content/bootstrap.css",
+                    "~/Content/site.css",
+                    "~/Content/shop-homepage.css")) ``` 
+</code></pre>
+
+<p>Now the stage is set for awesomeness. Update <strong>_Layout.cshtml</strong> and <strong>Index.cshtml</strong> as mentioned in the bootstrap theme and run the web project.</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800"></p>
+
+<p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the next-post we will be wiring up the backend. Stay tuned !</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Web Application Development in Fsharp using ASP.NET MVC]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/"/>
+    <updated>2014-12-10T17:07:48+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc</id>
+    <content type="html"><![CDATA[<h3 id="introduction">Introduction</h3>
+
+<p>Fsharp is my new favorite language in recent times and I’ve been learning it for the last six months. I always believe the best way to learn a language / technology / framework is to create something using it and also learning from the mistakes while creating it. So, here is my attempt to create a sample web application in fsharp using ASP.NET MVC framework. In this series of blog posts I’m going to share my experience on creating “phone-cat” web application inspired from the <a href="https://github.com/angular/angular-phonecat">angular-phonecat</a>. </p>
+
+<p>As it is my maiden attempt to create a relatively large web application in fsharp, if you find something that can be improved, feel free to share <em>I’m willing to learn from you.</em></p>
+
+<h3 id="blog-series-links">Blog Series Links</h3>
+
+<ul>
+  <li><strong>Step 0</strong> - <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
+  <li>Step 1 - Getting Started with fsharp-phonecat</li>
+</ul>
+
+<h4 id="upcoming-posts">Upcoming Posts</h4>
+
+<ul>
+  <li>Event Sourcing using EventStore</li>
+  <li>Recommendation System using FSharp Agents, Rx and SignalR</li>
+  <li>Advanced Search using FSParsec</li>
+  <li>Data Access Layer using No-Sql</li>
+  <li>Integration testing using TickSpec and canopy</li>
+  <li>Build automation using FAKE</li>
+  <li>Documentation generation using FSharp.Formatting</li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[A hybrid application using ASP.NET MVC3 and Node.js]]></title>
@@ -293,125 +391,6 @@
     </p>
     <p>“Beauty is in the eye of the beholder”, If you have a better idea to do the same, kindly leave a comment, I am open to learn from you.</p>
 </div>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Unit Testing Custom Model Binders in MVC3]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in/"/>
-    <updated>2012-02-11T00:00:00+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in</id>
-    <content type="html"><![CDATA[<div class="post">
-    <p>
-        In <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
-        with Sessions in MVC3 using Custom model binders. In this blog post we are going to see how to do unit test the model binder itself.
-    </p>
-    <p>
-        One remarkable thing which everybody hails in MVC3 is its extensibility and its testability. You can extend/customize the components in the 
-        framework and also you can unit test them with ease.
-    </p>
-    <p>
-        Before getting into unit testing the custom model binder, Lets have a closer look at 
-            the <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.imodelbinder.bindmodel.aspx">BindModel</a> method
-    </p>
-    <br />
-    <img class="center" src="/images/UnitTesting_ModelBinders/BindModel.png">
-       
-        <p>
-            In the BindModel method we are making use of Session property in the HttpContext object which is in turn a property of 
-            the <a href="http://msdn.microsoft.com/en-us/library/dd492673.aspx">ControllerContext</a> object that is passed to the BindModel method as 
-            a parameter by the MVC3 framework. In order to unit test this method we need to have to control over the HttpContext property of 
-            the ControllerContext and the Session property of the HttpContext.
-    </p>
-
-    <p>How to get control over those properties ? Thanks to <a href="http://msdn.microsoft.com/en-us/library/dd460098.aspx">a constructor of ControllerContext</a></p>
-    <br /><img class="center" src="/images/UnitTesting_ModelBinders/ControllerContext.png">        
-        <p>ControllerContext uses the constructor dependency injection to get rid of the direct dependency on <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontextbase.aspx">HttpContextBase</a> and we are going to exploit this to do unit testing. Using a mocking framework we can easily create a mock of HttpContetBase and drive the unit test.</p>
-    <p>The Session property of the HttpContextBase is of type <a href="http://msdn.microsoft.com/en-us/library/system.web.httpsessionstatebase.aspx">HttpSessionStateBase</a> which can also be mocked.</p>
-    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
-    <br /><img class="center" src="/images/UnitTesting_ModelBinders/UnitTest.png">      
-
-</div>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Unit Testing with Sessions in ASP.NET MVC3]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/"/>
-    <updated>2012-02-02T00:00:00+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet</id>
-    <content type="html"><![CDATA[<div class="post">
-    <h3>Introduction</h3>
-        
-        <p>While talking to my friend regarding his project, he told me about how he is doing unit testing which involves sessions in ASP.NET MVC3. 
-            His team is actually using a “HttpSimulator” which simulates the web request and then the do unit test by verifying the session by interacting 
-            with the simulator. When digging further I have come to know that this way of unit testing session objects are influenced 
-            from the “ASP.NET Webforms”. It reminds me the talk of <a href="http://www.infoq.com/presentations/Functional-Thinking">Neil Ford on 
-                Function Thinking</a>. In that video he talks about an analogy called “Axe and Chain Saw” to explain our way of thinking as
-        </p>
-        <blockquote>When we give a chain saw to people who were cutting trees by axe, they would tend to use chain saw in the same way as the use Axe. 
-            Which is obviously inefficient. So we should understand at the capabilities of the tool in our hand before we using it</blockquote>
-       
-        <p>ASP.NET MVC3 is far better than Web Forms when it comes to unit testing. We don’t need to use a simulator to test against our sessions. 
-            There is a better way to do this MVC3 and in this blog post we are going to explore it.<p />
-       
-        <h4>Time for Code</h4>       
-        <p>Shopping Cart is the first thing that strikes our mind when we want to quote an example for using Http session. 
-        So, I am going to show an app called “MyShop” a mini shopping site through which I am going to explain the concepts involved. 
-        The application flow would be as follows</p>
-        
-            <img class="center" src="/images/UnitTesting_With_Session/Cart.png">
-            <img class="center" src="/images/UnitTesting_With_Session/Cart2.png">       
-        
-
-        <h4>Models</h4>
-        
-        <p>The models are simple, straight forward and self explanatory.</p>
-    <img class="center" src="/images/UnitTesting_With_Session/model.png">  
-    <img class="center" src="/images/UnitTesting_With_Session/CartCsharp.png">    
-        <p>I’ve tried my level best to keep the model as simple as possible. 
-        So, Cart in MyShop will have only two public methods. One to add a product to the Cart’s Line and another one to retrieve all the 
-        products inside the Cart’s line.</p>
-        
-        <h4>The CartController Version 1.0</h4>
-        <img class="center" src="/images/UnitTesting_With_Session/CartController.png"> 
-        <p>In this CartController version 1.0 we have two public methods Index and AddToCart which are dependent on HttpSession object. 
-            This dependency inside the methods is actually preventing us from unit testing the CartController in simple way and we have no 
-            choice other than implementing a “Http Simulator” to unit test these two methods. As I said before there is better to do is! Here we go!!</p>
-        
-        <h4>The CartController Version 2.0</h4>
-        <img class="center" src="/images/UnitTesting_With_Session/CartController2.png"> 
-    <p>No more Sessions!!.. Yeah.. We have got rid of the dependency on the session object by adding a new parameter called cart. Now you can use easily unit test the CartController as follows</p>
-        <img class="center" src="/images/UnitTesting_With_Session/UnitTest.png"> 
-        <p>Okay we made it easy for unit testing by moving the dependency out of the method and introduced the cart as the parameter. But how does my MVC3 framework will know the cart parameter should come from session object ?… Good Catch!! and here comes the magic called custom ModelBinder</p>
-       
-        <h4>ModelBinder – A brief background</h4>
-        <p>Model binding is an exciting feature in MVC3 framework which automatically creates the C# objects directly from Http request and 
-            pass it to the Action methods in controller as parameter values. It uses a default model binder which looks at the form values, 
-            query string values that are submitted with the Http Request and create the model object.</p>
-        <h4>CartModelBinder</h4>
-        
-        <p>In our case, we need to have a object of Cart which is populated from the Session object and not from the HttpRequest. 
-            The default model binder used by MVC3 has no idea about session object. So, Its our responsibility to tell to the MVC3 framework
-        </p>
-        
-        <p>“<em>Hey! If there is any parameter of type Cart in controller action method, then use my own custom model binder called CartModelBinder to create the object</em>”</p>
-        <p>There are two steps to do the above said operation</p>
-        <p>1. Creating the custom model binder by inheriting the IModelBinder interface</p>
-        <img class="center" src="/images/UnitTesting_With_Session/CartModelBinder.png"> 
-        <p>2. Registering our custom model binder in the Global.asax.cs file</p>
-        <img class="center" src="/images/UnitTesting_With_Session/AppStart.png"> 
-        <p>
-        That’s all.. MVC3 takes care of rest</p>
-        
-        <h4>Summary</h4>
-        <p>In this blog post we have explored how we can get rid of “Http Simulator” to unit test the controllers which involves Session objects using 
-            custom model binder. You can download the working example of “MyShop” showcased in this blog post 
-            from <a href="http://www.box.com/s/b9lf2heukyivh68921jj">here</a>. 
-            Refer <a href="/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
-            unit testing with the custom model binder itself.</p>
-
-</p></div>
 ]]></content>
   </entry>
   

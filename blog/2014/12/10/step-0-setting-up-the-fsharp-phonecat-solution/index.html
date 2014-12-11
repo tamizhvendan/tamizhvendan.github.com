@@ -1,0 +1,265 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Step 0 - Setting up the fsharp-phonecat Solution - Tamizh's Thoughts</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Step 0 - Setting Up the Fsharp-phonecat Solution This is step 0 of my blog series on Web Application Development in Fsharp using ASP.NET MVC In this &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="Tamizh's Thoughts" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 105.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 120.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 120.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 115.0%'>data access</a> <a href='/blog/categories/entity-framework' style='font-size: 125.0%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 115.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 115.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 105.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 115.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 110.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 110.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 105.0%'>others</a> <a href='/blog/categories/programming' style='font-size: 130.0%'>programming</a> <a href='/blog/categories/unit-testing' style='font-size: 125.0%'>unit testing</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Step 0 - Setting Up the Fsharp-phonecat Solution</h1>
+	<div class="entry-content" itemprop="articleBody"><blockquote>
+  <p>This is step 0 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In this blog post, we are going to set up the visual studio solution and create the high level project structure for the <em>fsharp-phonecat</em> application. </p>
+
+<p><strong>Let’s get started!</strong></p>
+
+<h4 id="setting-up-visual-studio-solution">Setting Up Visual Studio Solution</h4>
+
+<p>The first step is to create an blank visual studio solution and name it as <strong>PhoneCat</strong></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/BlankSolution.png" width="700" height="700" /></p>
+
+<p>After creating the blank solution create two fsharp class libraries and name it as <strong>Domain</strong> and <strong>DataAccess</strong> respectively.</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/ClassLibrary.png" width="700" height="700" /></p>
+
+<p>Do delete the sample fsharp files Domain1.fs, DataAccess1.fs and Script.fsx that are created by default while creating the class libraries</p>
+
+<p>Then create a ASP.NET MVC web project using <a href="https://visualstudiogallery.msdn.microsoft.com/39ae8dec-d11a-4ac9-974e-be0fdadec71b">F# MVC 5 template</a> and name it as <em>Web</em></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/WebProject.png" width="700" height="700" /></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/MVC5.png" /></p>
+
+<p>We are going to use TDD, so create test projects for each of the above projects created and name it as <strong>Domain.Tests</strong>, <strong>DataAccess.Tests</strong> and <strong>Web.Tests</strong> respectively.</p>
+
+<p>The final project structure would look like</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/ProjectStructure.png" /></p>
+
+<p>F# MVC 5 template comes with a default Bootstrap theme and we are going to extend it by using e-commerce theme from <a href="http://startbootstrap.com/template-overviews/shop-homepage/">Start Bootstrap</a>. Download the theme and add <em>shop-homepage.css</em> to the Content directory of <strong>Web</strong> project. After adding it update <em>Global.asax.fs</em> to include this css file while bundling.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>BundleConfig after adding shop-homepage.css</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">BundleConfig</span><span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">static</span> <span class="k">member</span> <span class="n">RegisterBundles</span> <span class="o">(</span><span class="n">bundles</span><span class="o">:</span><span class="n">BundleCollection</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">        <span class="n">bundles</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">ScriptBundle</span><span class="o">(</span><span class="s">&quot;~/bundles/jquery&quot;</span><span class="o">)</span>
+</span><span class="line">            <span class="o">.</span><span class="n">Include</span><span class="o">([|</span><span class="s">&quot;~/Scripts/jquery-{version}.js&quot;</span><span class="o">|]))</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">bundles</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">ScriptBundle</span><span class="o">(</span><span class="s">&quot;~/bundles/modernizr&quot;</span><span class="o">)</span>
+</span><span class="line">            <span class="o">.</span><span class="n">Include</span><span class="o">([|</span><span class="s">&quot;~/Scripts/modernizr-*&quot;</span><span class="o">|]))</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">bundles</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">ScriptBundle</span><span class="o">(</span><span class="s">&quot;~/bundles/bootstrap&quot;</span><span class="o">)</span>
+</span><span class="line">            <span class="o">.</span><span class="n">Include</span><span class="o">(</span><span class="s">&quot;~/Scripts/bootstrap.js&quot;</span><span class="o">,</span>
+</span><span class="line">                        <span class="s">&quot;~/Scripts/respond.js&quot;</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">bundles</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">StyleBundle</span><span class="o">(</span><span class="s">&quot;~/Content/css&quot;</span><span class="o">)</span>
+</span><span class="line">            <span class="o">.</span><span class="n">Include</span><span class="o">(</span><span class="s">&quot;~/Content/bootstrap.css&quot;</span><span class="o">,</span>
+</span><span class="line">                        <span class="s">&quot;~/Content/site.css&quot;</span><span class="o">,</span>
+</span><span class="line">                        <span class="s">&quot;~/Content/shop-homepage.css&quot;</span><span class="o">))</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now the stage is set for awesomeness. Update <strong>_Layout.cshtml</strong> and <strong>Index.cshtml</strong> as mentioned in the bootstrap theme and run the web project.</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800" /></p>
+
+<p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the next-post we will be wiring up the backend. Stay tuned !</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2014
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

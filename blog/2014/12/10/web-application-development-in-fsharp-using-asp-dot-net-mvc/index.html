@@ -5,11 +5,11 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>Entity Framework 4.0 As Class Library - Part 2 - Tamizh's Thoughts</title>
+	<title>Web Application Development in Fsharp using ASP.NET MVC - Tamizh's Thoughts</title>
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Entity Framework 4.0 as Class Library - Part 2 As the continuation of my previous blog post, In this blog post we are going to explore on how to &hellip;">
+	<meta name="description" content="Web Application Development in Fsharp Using ASP.NET MVC Introduction Fsharp is my new favorite language in recent times and I’ve been learning it &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@
 
 	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="Tamizh's Thoughts" type="application/atom+xml">
 	
-	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2011/04/01/entity-framework-40-as-class-library/">
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">
 	<link href="/favicon.png" rel="shortcut icon">
 	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
 	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -108,66 +108,31 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-	<h1 class="title" itemprop="name">Entity Framework 4.0 as Class Library - Part 2</h1>
-	<div class="entry-content" itemprop="articleBody"><div class='post'>
-    <div>
-        <p>As the continuation of my previous <a href="/blog/2011/03/25/entity-framework-40-class-library-part/">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
+	<h1 class="title" itemprop="name">Web Application Development in Fsharp Using ASP.NET MVC</h1>
+	<div class="entry-content" itemprop="articleBody"><h3 id="introduction">Introduction</h3>
 
-        <p>Consuming the Data Access Library created using Entity Framework 4.0 involves the following two steps.</p>
-        <ol>
-            <li>Adding reference to the class library</li>
-            <li>Adding the connection string in the config file (App.config or Web.config)</li>
-        </ol>
-        <p>Let us see how can we do these steps using a console application. To keep things simple I have opt for a console application. It holds the same for an ASP.NET , Windows Form, WPF,WCF, etc.</p>
+<p>Fsharp is my new favorite language in recent times and I’ve been learning it for the last six months. I always believe the best way to learn a language / technology / framework is to create something using it and also learning from the mistakes while creating it. So, here is my attempt to create a sample web application in fsharp using ASP.NET MVC framework. In this series of blog posts I’m going to share my experience on creating “phone-cat” web application inspired from the <a href="https://github.com/angular/angular-phonecat">angular-phonecat</a>. </p>
 
-        <h4>Console Application Creation</h4>
-        <p>Create a new console application called &#8220;HrdConsoleApp&#8221;</p>
-        <img src="http://1.bp.blogspot.com/-jd1uE7HyzUY/TZw4OSKgKVI/AAAAAAAAAFw/O0t-17BazAk/s1600/1.ConsoleAppCreation.PNG" />
+<p>As it is my maiden attempt to create a relatively large web application in fsharp, if you find something that can be improved, feel free to share <em>I’m willing to learn from you.</em></p>
 
-        <h4>Add a reference to the Class library</h4>
-        <p>Right click on references and refer the class library &#8220;HRD.DataAccess&#8221; that we have created in the last blog.</p>
-        <img src="http://4.bp.blogspot.com/-238LBeCcS-8/TZw4UoXoTyI/AAAAAAAAAF0/Z-wMwpTZD1k/s1600/2.ReferenceLibrary.PNG" />
+<h3 id="blog-series-links">Blog Series Links</h3>
 
-        <p>Add reference to System.Data.Entity Library</p>
-        <img src="http://4.bp.blogspot.com/-TIhl2OiTt68/TZw59TQrQ6I/AAAAAAAAAF8/WM5ffjSpETo/s1600/5.DataEntityReference.PNG" />
+<ul>
+  <li><strong>Step 0</strong> - <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
+  <li>Step 1 - Getting Started with fsharp-phonecat</li>
+</ul>
 
-        <p>Add the App.Config file to the console application by right clicking on the project name in the solution explorer and select &#8220;Add-&gt;New Item&#8221;. Then Copy the connection string from the App.Config file created in the HrdDataAccess Class library Project created earlier and paste it in the App.config file created in the previous step.</p>
-        <img src="http://2.bp.blogspot.com/-ZqMXJ5KdLy8/TZw4Y1uECQI/AAAAAAAAAF4/fIcRIy1se5c/s1600/3.AppConfigCreation.PNG" />
+<h4 id="upcoming-posts">Upcoming Posts</h4>
 
-        <img src="http://2.bp.blogspot.com/-HgFzRYacpQA/TZw6IqMd5oI/AAAAAAAAAGA/q_IiJsTNYvU/s1600/4.AppConfig.PNG" />
-        <p>That&#8217;s all now it is all set to access the database with only minimal amount of code.. Here we go!!</p>
-        <h4>Code Please!</h4>
-        <div><script src='https://gist.github.com/7794bb7ac98d6de3b962.js'></script>
-<noscript><pre><code>using System;
-using System.Linq;
-using HRD.DataAccess;
-namespace HrdConsoleApp
-{
-    class Program
-    { 
-        static void Main(string[] args) 
-        { 
-            var hrdEntities = new HRDEntities(); 
-            foreach (Employee employee in hrdEntities.Employees)
-            { 
-                Console.WriteLine(&quot;Name: &quot; + employee.Name); 
-                Console.WriteLine(&quot;Department: &quot; + employee.Department.Name); 
-                Console.WriteLine(&quot;########################&quot;); 
-            } 
-        } 
-    }
-}</code></pre></noscript></div>
-
-
-        <h4>Output</h4>
-        <img src="http://1.bp.blogspot.com/-Fooy-W2-OCQ/TZw6M7tVqTI/AAAAAAAAAGE/tJ5UYVi5LRI/s1600/6.Output.PNG" />
-
-        <h4>Summary:</h4>
-        <p>
-            In this blog series (Part 1 and Part 2) we have seen how to create the data access layer using Entity Framework 4.0 as class library and how to consume it in an application. With the introduction of Entity Framework developing the code for data access layer is no longer a tidy and time consuming job!!
-        </p>
-    </div>
-</div>
+<ul>
+  <li>Event Sourcing using EventStore</li>
+  <li>Recommendation System using FSharp Agents, Rx and SignalR</li>
+  <li>Advanced Search using FSParsec</li>
+  <li>Data Access Layer using No-Sql</li>
+  <li>Integration testing using TickSpec and canopy</li>
+  <li>Build automation using FAKE</li>
+  <li>Documentation generation using FSharp.Formatting</li>
+</ul>
 </div>
 
 </article>
@@ -210,8 +175,8 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2011/04/01/entity-framework-40-as-class-library/';
-        var disqus_url = 'http://blog.tamizhvendan.in/blog/2011/04/01/entity-framework-40-as-class-library/';
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/';
         var disqus_script = 'embed.js';
       
     (function () {
