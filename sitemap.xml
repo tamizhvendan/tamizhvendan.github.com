@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://blog.tamizhvendan.in/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/</loc>
+    <lastmod>2014-12-17T17:31:44+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/</loc>
     <lastmod>2014-12-10T22:15:50+05:30</lastmod>
     <priority>0.8</priority>
@@ -185,21 +191,21 @@
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/archives/</loc>
-    <lastmod>2014-12-11T16:18:13+05:30</lastmod>
+    <lastmod>2014-12-18T18:07:30+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/</loc>
-    <lastmod>2014-12-11T16:18:13+05:30</lastmod>
+    <lastmod>2014-12-18T18:07:30+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/categories/</loc>
-    <lastmod>2014-12-11T16:18:13+05:30</lastmod>
+    <lastmod>2014-12-18T18:07:30+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

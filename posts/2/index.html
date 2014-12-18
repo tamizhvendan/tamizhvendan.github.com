@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Dec 29th, 2011 goals Comments 2012 – a Year of Aspirations 2011 has been a magnificent year for me both professionally and personally. The most &hellip;">
+	<meta name="description" content="Feb 2nd, 2012 asp.net mvc, unit testing Comments Unit Testing With Sessions in ASP.NET MVC3 Introduction While talking to my friend regarding his &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -96,7 +96,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 105.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 120.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 120.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 115.0%'>data access</a> <a href='/blog/categories/entity-framework' style='font-size: 125.0%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 115.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 115.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 105.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 115.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 110.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 110.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 105.0%'>others</a> <a href='/blog/categories/programming' style='font-size: 130.0%'>programming</a> <a href='/blog/categories/unit-testing' style='font-size: 125.0%'>unit testing</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.61538461538461%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 118.46153846153845%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 118.46153846153845%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 113.84615384615384%'>data access</a> <a href='/blog/categories/entity-framework' style='font-size: 123.07692307692308%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 118.46153846153845%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 118.46153846153845%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.61538461538461%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 113.84615384615384%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 109.23076923076923%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 109.23076923076923%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.61538461538461%'>others</a> <a href='/blog/categories/programming' style='font-size: 127.6923076923077%'>programming</a> <a href='/blog/categories/unit-testing' style='font-size: 123.07692307692308%'>unit testing</a> </span>
 </section>
 </nav>
 </header>				
@@ -109,6 +109,113 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-02T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 2<sup>nd</sup>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/" itemprop="url">Unit Testing With Sessions in ASP.NET MVC3</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <h3>Introduction</h3>
+        
+        <p>While talking to my friend regarding his project, he told me about how he is doing unit testing which involves sessions in ASP.NET MVC3. 
+            His team is actually using a “HttpSimulator” which simulates the web request and then the do unit test by verifying the session by interacting 
+            with the simulator. When digging further I have come to know that this way of unit testing session objects are influenced 
+            from the “ASP.NET Webforms”. It reminds me the talk of <a href="http://www.infoq.com/presentations/Functional-Thinking">Neil Ford on 
+                Function Thinking</a>. In that video he talks about an analogy called “Axe and Chain Saw” to explain our way of thinking as
+        </p>
+        <blockquote>When we give a chain saw to people who were cutting trees by axe, they would tend to use chain saw in the same way as the use Axe. 
+            Which is obviously inefficient. So we should understand at the capabilities of the tool in our hand before we using it</blockquote>
+       
+        <p>ASP.NET MVC3 is far better than Web Forms when it comes to unit testing. We don’t need to use a simulator to test against our sessions. 
+            There is a better way to do this MVC3 and in this blog post we are going to explore it.<p/>
+       
+        <h4>Time for Code</h4>       
+        <p>Shopping Cart is the first thing that strikes our mind when we want to quote an example for using Http session. 
+        So, I am going to show an app called “MyShop” a mini shopping site through which I am going to explain the concepts involved. 
+        The application flow would be as follows</p>
+        
+            <img class="center" src="/images/UnitTesting_With_Session/Cart.png">
+            <img class="center" src="/images/UnitTesting_With_Session/Cart2.png">       
+        
+
+        <h4>Models</h4>
+        
+        <p>The models are simple, straight forward and self explanatory.</p>
+    <img class="center" src="/images/UnitTesting_With_Session/model.png">  
+    <img class="center" src="/images/UnitTesting_With_Session/CartCsharp.png">    
+        <p>I’ve tried my level best to keep the model as simple as possible. 
+        So, Cart in MyShop will have only two public methods. One to add a product to the Cart’s Line and another one to retrieve all the 
+        products inside the Cart’s line.</p>
+        
+        <h4>The CartController Version 1.0</h4>
+        <img class="center" src="/images/UnitTesting_With_Session/CartController.png"> 
+        <p>In this CartController version 1.0 we have two public methods Index and AddToCart which are dependent on HttpSession object. 
+            This dependency inside the methods is actually preventing us from unit testing the CartController in simple way and we have no 
+            choice other than implementing a “Http Simulator” to unit test these two methods. As I said before there is better to do is! Here we go!!</p>
+        
+        <h4>The CartController Version 2.0</h4>
+        <img class="center" src="/images/UnitTesting_With_Session/CartController2.png"> 
+    <p>No more Sessions!!.. Yeah.. We have got rid of the dependency on the session object by adding a new parameter called cart. Now you can use easily unit test the CartController as follows</p>
+        <img class="center" src="/images/UnitTesting_With_Session/UnitTest.png"> 
+        <p>Okay we made it easy for unit testing by moving the dependency out of the method and introduced the cart as the parameter. But how does my MVC3 framework will know the cart parameter should come from session object ?… Good Catch!! and here comes the magic called custom ModelBinder</p>
+       
+        <h4>ModelBinder – A brief background</h4>
+        <p>Model binding is an exciting feature in MVC3 framework which automatically creates the C# objects directly from Http request and 
+            pass it to the Action methods in controller as parameter values. It uses a default model binder which looks at the form values, 
+            query string values that are submitted with the Http Request and create the model object.</p>
+        <h4>CartModelBinder</h4>
+        
+        <p>In our case, we need to have a object of Cart which is populated from the Session object and not from the HttpRequest. 
+            The default model binder used by MVC3 has no idea about session object. So, Its our responsibility to tell to the MVC3 framework
+        </p>
+        
+        <p>“<em>Hey! If there is any parameter of type Cart in controller action method, then use my own custom model binder called CartModelBinder to create the object</em>”</p>
+        <p>There are two steps to do the above said operation</p>
+        <p>1. Creating the custom model binder by inheriting the IModelBinder interface</p>
+        <img class="center" src="/images/UnitTesting_With_Session/CartModelBinder.png"> 
+        <p>2. Registering our custom model binder in the Global.asax.cs file</p>
+        <img class="center" src="/images/UnitTesting_With_Session/AppStart.png"> 
+        <p>
+        That’s all.. MVC3 takes care of rest</p>
+        
+        <h4>Summary</h4>
+        <p>In this blog post we have explored how we can get rid of “Http Simulator” to unit test the controllers which involves Session objects using 
+            custom model binder. You can download the working example of “MyShop” showcased in this blog post 
+            from <a href="http://www.box.com/s/b9lf2heukyivh68921jj">here</a>. 
+            Refer <a href="/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
+            unit testing with the custom model binder itself.</p>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1069,259 +1176,6 @@ namespace UsingAjaxForms.Controllers
     <p>The stage has been setup. No one can ride bicycle by reading a book on “How to Ride Bicycle”. What books and blog posts would offer us is knowledge. In addition to knowledge to move further we need another thing called “Practice”. Yes get your hands dirty. Experiment, Research, Critique, Analyse, involve in healthy debates with your colleagues on various aspects of software craftsmanship, work and feel passionate about your work.</p>
     <p>I have pledged myself to follow the best practices in all my development works and no compromise on the quality of the code I write. In nutshell, I am going to care about my craft, think about my work and strive for excellence.</p>
     <p>I am in the very early stage of becoming a better programmer and looking forward to listen to your suggestions and inputs on this. When we grow older, we will be stronger. With all blessings and hope, the journey begins!</p>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-13T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jul 13<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/categories/programming/'>programming</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/07/13/observer-pattern-using-delegates-vs/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/07/13/observer-pattern-using-delegates-vs/" itemprop="url">Observer Pattern Using Delegates v/s Observer Pattern Using Events and Delegates</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-	<p>
-		Most of the articles and texts in C# demonstrate the observer pattern using events and delegates. When going through one such text, a thought come across my mind. Why we are going for events when we can easily achieve the multicasting using Delegates alone. After some R&amp;D, I found it out why and hence this blog post.
-	</p>
-	<p>I am going to explain this “why” using a Weather Station example. To keep things simple, the Weather Station that we are going to see will keep track of only the temperature. Whenever the temperature changes, it simplify notifies its subscribers with the new temperature. Flash News is one of the subscribers which show the temperature in flash news. News Feed, another subscriber which adds the temperature information to the news feed. Fine, enough theory! It’s time to see the code.</p>
-	<p>Here is the implementation of Observer Pattern using Delegates alone. </p>
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{
-    class WeatherStation
-    {
-        private int _temperature;
-        public TemperatureReporter Reporter { get; set; }
-
-        public int Temperature
-        {
-            get { return _temperature; }
-            set
-            {
-                if (Reporter != null)
-                {
-                    Reporter(value);
-                }
-                _tempearture = value;
-            }
-        }
-    }
-
-    class NewsFeed
-    {
-        WeatherStation weatherStation;
-
-        public void AddTemperatureInfoToFeed(int temperature)
-        {
-            Console.WriteLine(&quot;News Feed: New temperature &quot; + temperature + &quot; added to feed.&quot;);
-        }
-
-        public NewsFeed(WeatherStation weatherStation)
-        {
-            this.weatherStation = weatherStation;
-            weatherStation.Reporter += AddTemperatureInfoToFeed;
-        }
-    }
-
-    class FlashNews
-    {
-        WeatherStation weatherStation;
-
-        public void ShowTemperatureInfoInFlashNews(int temperature)
-        {
-            Console.WriteLine(&quot;Flash News: New temperature is &quot; + temperature + &quot;.&quot;);
-        }
-
-        public FlashNews(WeatherStation weatherStation)
-        {
-            this.weatherStation = weatherStation;
-            weatherStation.Reporter += ShowTemperatureInfoInFlashNews;
-        }
-    }
-}</code></pre></noscript></div>
-
-
-	<h4>The Main Program</h4>
-
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=Program.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{
-    public delegate void TemperatureReporter(int tempearture);
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            // Observer Pattern Using Delegates
-            WeatherStation weatherStation = new WeatherStation();
-            FlashNews flashNews = new FlashNews(weatherStation);
-            NewsFeed newsFeed = new NewsFeed(weatherStation);
-            weatherStation.Temperature = 30;
-            weatherStation.Temperature = 15;
-            weatherStation.Temperature = 45;
-        }
-    }
-}</code></pre></noscript></div>
-
-	<h4>The output</h4>
-	<div style="clear: both; text-align: center;">
-		<img src="http://1.bp.blogspot.com/-LjDx8rPsr50/Th0bSdtTyHI/AAAAAAAAAHk/dMBuF4GLgD0/s1600/delegates-output.PNG" /></div>
-	<p>Hurrah! It’s working as expected. Both subscribers are get notified. We can implement the observer pattern using delegates alone. Stop for a minute and go through the code, is the implementation robust? Kudos if you are able to find the shortcomings of this implementation. If not continue reading. </p>
-	<p>Think of a world where everyone is good. There is no need of police, no need of court either. But it is not the case. You may wonder why I am mentioning this here. This analogy holds true for the objective of this blog post too. There is no need of using events in the c# programming world if all the subscribers are good. Miserably, here also it is not the case. Hence we are going for events instead of using delegates alone. </p>
-	<h4>Drawbacks of using delegates alone</h4>
-	<ul>
-		<li>A subscriber can replace other subscribers by reassigning the delegate</li>
-		<li>A subscriber can clear all other subscribers also (by setting the delegate to null). </li>
-		<li>A subscriber can broadcast to other subscribers by invoking the delegate</li>
-	</ul>
-	Clearly all the above 3 drawbacks violates the Observer Pattern.Here is our evil subscriber code implementation. 
-<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{
-    class EvilSubscriber
-    {
-        WeatherStation weatherStation;
-
-        public void EvilMessage(int temperature)
-        {
-            Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
-        }
-
-        public EvilSubscriber(WeatherStation weatherStation)
-        {
-            this.weatherStation = weatherStation;
-
-            // Broadcast to all the subscriber
-            weatherStation.Reporter(60);
-
-            // Reassign the subscriber            
-            weatherStation.Reporter = EvilMessage;
-
-            // Replace all the subscribers            
-            weatherStation.Reporter = null;
-        }
-    }
-}</code></pre></noscript></div>
-
-
-	<p>Hope now you understand the need of a better implementation of observer pattern. Here comes the salvage. Event! Use event along with delegates. With event in place, compiler will not allow the evil subscriber to get compiled. </p>
-	<h4>Robust implementation of Weather Station using events</h4>
-
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub2.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{ 
-    class WeatherStation2 
-    { 
-        private int _tempearture; 
-        
-        public event TemperatureReporter Reporter; 
-        
-        public int Temperature 
-        { 
-            get 
-            { 
-                return _tempearture; 
-            } 
-            set 
-            { 
-                if (Reporter != null) 
-                { 
-                    Reporter(value); 
-                } 
-                _tempearture = value; 
-            } 
-        }
-    } 
-    
-    class NewsFeed2 
-    { 
-        WeatherStation2 weatherStation; 
-        
-        public void AddTemperatureInfoToFeed(int temperature) 
-        { 
-            Console.WriteLine(&quot;News Feed2: New temperature &quot; + temperature + &quot; added to feed.&quot;); 
-        } 
-        
-        public NewsFeed2(WeatherStation2 weatherStation) 
-        { 
-            this.weatherStation = weatherStation; 
-            weatherStation.Reporter += AddTemperatureInfoToFeed; 
-        } 
-    } 
-    
-    class FlashNews2 
-    { 
-        
-        WeatherStation2 weatherStation; 
-        
-        public void ShowTemperatureInfoInFlashNews(int temperature) 
-        { 
-            Console.WriteLine(&quot;Flash News2: New temperature is &quot; + temperature + &quot;.&quot;); 
-        } 
-        
-        public FlashNews2(WeatherStation2 weatherStation) 
-        { 
-            this.weatherStation = weatherStation; weatherStation.Reporter += ShowTemperatureInfoInFlashNews; 
-        } 
-    } 
-}    			</code></pre></noscript></div>
-
-
-	<p>The unfortunate evil subscriber no longer compiles with events!</p>
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber2.cs'></script>
-<noscript><pre><code>class EvilSubscriber2
-{
-    WeatherStation2 weatherStation;
-
-    public void EvilMessage(int temperature)
-    {
-        Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
-    }
-
-    public EvilSubscriber2(WeatherStation2 weatherStation)
-    {
-        this.weatherStation = weatherStation;
-
-        // Broadcast to all the subscriber         
-        weatherStation.Reporter(60); // Compiler Error                
-
-        // Reassign the subscriber                
-        weatherStation.Reporter = EvilMessage; // Compiler Error  
-
-        // Replace all the subscribers                 
-        weatherStation.Reporter = null; // Compiler Error    
-    }
-}</code></pre></noscript></div>
-
-	<br />
-	You&nbsp;can download the source code from <a href="http://www.box.net/shared/kunno1y9noj26qodstnz">here</a>
 </div>
 
 		
