@@ -64,4 +64,4 @@ Now the stage is set for awesomeness. Update **_Layout.cshtml** and **Index.csht
 
 {% img center /images/fsharp_phonecat/step_0/HomePage.png 800 800 %}
 
-You can checkout the code [here](https://github.com/tamizhvendan/fsharp-phonecat/tree/0). In the next-post we will be wiring up the backend. Stay tuned !
+You can checkout the code [here](https://github.com/tamizhvendan/fsharp-phonecat/tree/0). In the [next-post]({% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}) we will be wiring up the backend. Stay tuned !

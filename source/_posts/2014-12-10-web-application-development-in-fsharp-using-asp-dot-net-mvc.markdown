@@ -18,7 +18,7 @@ As it is my maiden attempt to create a relatively large web application in fshar
 ### Blog Series Links
 
 * **Step 0** - [Setting up the fsharp-phonecat Solution]({% post_url 2014-12-10-step-0-setting-up-the-fsharp-phonecat-solution %})
-* Step 1 - Getting Started with fsharp-phonecat
+* **Step 1** - [Creating Web Api endpoints for fsharp-phonecat using Web Api 2]({% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %})
 
 #### Upcoming Posts
 
