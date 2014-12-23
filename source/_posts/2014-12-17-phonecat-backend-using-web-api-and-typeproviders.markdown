@@ -7,6 +7,7 @@ categories:
   - fsharp
   - functional-programming
   - ASP.NET MVC
+  - web-api
 ---
 
 > This is step 1 of my blog series on [Web Application Development in Fsharp using ASP.NET MVC]({% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %})
