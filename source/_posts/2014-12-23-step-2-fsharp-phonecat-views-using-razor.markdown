@@ -226,11 +226,81 @@ type PhoneViewModel =
       Images = phone.Images
     }
 ``` 
-With all in place, we just need to create a razor view with the name ```Show.cshtml``` inside the **View** -> **Phone** directory of *Web* project and update it [as mentioned here.]() 
+With all in place, we just need to create a razor view with the name ```Show.cshtml``` inside the **View** -> **Phone** directory of *Web* project and update it [as mentioned here.](https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Phone/Show.cshtml) 
 
 That's it. Phone View is up and running! Click the Phone Links in the Home Page it will take you to the Phones View Page.
 
 ### Manufacturers View
 {% img /images/fsharp_phonecat/step_2/manufacturer.png %}
-Manufatures View is also follows the similar steps of Phone View and it displays the Phones manufatured by a selected manufaturer in the home page.
+Manufatures View is follows the similar steps that we have used to create the Phone View. It displays the Phones manufatured by a selected manufaturer in the home page.
 
+Let's start from the controller. Create a controller in the *Web* project with the name ```ManufacturerController```
+
+```fsharp
+namespace PhoneCat.Web.Controllers
+
+open System.Web
+open System.Web.Mvc
+open PhoneCat.Domain
+open System
+
+type ManufacturerViewModel = {
+  Name : string
+  Phones : seq<Phone>
+}
+with static member ToManufacturerViewModel (name, phones) =
+      {Name = ManufacturerName.ToString name; Phones = phones}
+
+type ManufacturerController 
+  (
+    getPhones : ManufacturerName -> (ManufacturerName * seq<Phone>)
+  ) =
+  inherit Controller()
+  
+  member this.Show (id : string) = 
+    
+    let viewModel = 
+      id 
+      |> ManufacturerName.ToManufacturerName
+      |> getPhones
+      |> ManufacturerViewModel.ToManufacturerViewModel
+
+    this.View(viewModel)
+```
+
+The ```ManufacturerController``` depends on the function ```getPhones``` which gives the Phones manufactured by the given manufacturer. The action method ```Show``` converts given id to the manufaturer name,  get the Phones, convert them to ```ManufacturerViewModel``` and render the view.
+
+The domain model ```Phone``` mentioned here is the one that we have [already created in step-1](https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33). The ```getPhones```` domain function is yet to be created. 
+
+Open ```Phones``` file in the *Domain* project and add the ```getPhonesOfManufacturer``` function.
+
+```fsharp
+let getPhonesOfManufacturer (phones : seq<Phone>) (manufacturerName) =
+    let phones' = 
+      phones
+      |> Seq.filter (fun p -> ManufacturerName.ToManufacturerName p.Name = manufacturerName)
+    (manufacturerName, phones')
+```
+The ```getPhonesOfManufacturer``` function takes a sequence of phones and a manufacturer name, filters them for the given manufacturer and return a [tuple](http://fsharpforfunandprofit.com/posts/tuples/) that contain the manufacturer name and the sequence of phones.
+
+As we have already created the data-store functions which serves the required data, we just need to wire up the controller.
+
+Update ```MvcInfrastructure``` file in the *Web* project to create ```ManufacturerController```
+
+```fsharp
+module MvcInfrastructure = 
+  type CompositionRoot(phones : seq<PhoneTypeProvider.Root>) = 
+    inherit DefaultControllerFactory() with
+      override this.GetControllerInstance(requestContext, controllerType) = 
+        // ... Existing code ignored for brevity 
+        else if controllerType = typeof<ManufacturerController> then
+          let getPhonesByManufactuerName = phones |> Seq.map TypeProviders.ToPhone |> Phones.getPhonesOfManufacturer
+          let manufacturerController = new ManufacturerController(getPhonesByManufactuerName)
+          manufacturerController :> IController
+        else
+          raise <| ArgumentException((sprintf "Unknown controller type requested: %A" controllerType))
+``` 
+
+Thanks to the [partial function](http://fsharpforfunandprofit.com/posts/partial-application/) we have partially applied the first parameter alone for the ```Phones.getPhonesOfManufacturer``` function which has the signature ```seq<Phone> -> ManufacturerName -> seq<Phone>``` and created a new function on the fly with the signature ```ManufacturerName -> seq<Phone>``` which is the exactly the function that is needed by the ```ManufacturerController```
+
+The final step is to create a razor view with the name ```Show.cshtml``` inside the **View** -> **Manufacturer** directory of *Web* project and update it [as mentioned here.](https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Manufacturer/Show.cshtml) 
