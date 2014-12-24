@@ -4,7 +4,7 @@
   <title><![CDATA[Category: functional-programming | Tamizh's Thoughts]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/functional-programming/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2014-12-24T15:28:10+05:30</updated>
+  <updated>2014-12-24T15:33:44+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -25,7 +25,7 @@
 <p>In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
 
 <h3 id="phone-view">Phone View</h3>
-<p><img src="/images/fsharp_phonecat/step_2/phone.png"></p>
+<p><img src="/images/fsharp_phonecat/step_2/Phone.png"></p>
 
 <p>As we did it in the step-1 we are going to start with the controller which serves the phone view. Let’s get started by creating a source file in <strong>Web</strong> project under the folders <em>Controllers</em> with the name <code>PhoneController</code></p>
 
@@ -259,7 +259,7 @@
 <p>That’s it. Phone View is up and running! Click the Phone Links in the Home Page it will take you to the Phones View Page.</p>
 
 <h3 id="manufacturers-view">Manufacturers View</h3>
-<p><img src="/images/fsharp_phonecat/step_2/manufacturer.png"><br />
+<p><img src="/images/fsharp_phonecat/step_2/Manufacturer.png"><br />
 Manufactures View follows the similar steps that we have used to create the Phone View. It displays the Phones manufactured by a selected manufacturer in the home page.</p>
 
 <p>Let’s start from the controller. Create a controller in the <strong>Web</strong> project with the name <code>ManufacturerController</code></p>
