@@ -4,7 +4,7 @@
   <title><![CDATA[Category: functional-programming | Tamizh's Thoughts]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/functional-programming/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2014-12-18T18:07:30+05:30</updated>
+  <updated>2014-12-24T15:28:10+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,351 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Step-2 Fsharp-PhoneCat Views using Razor]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
+    <updated>2014-12-23T19:47:20+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 2 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
+
+<h3 id="phone-view">Phone View</h3>
+<p><img src="/images/fsharp_phonecat/step_2/phone.png"></p>
+
+<p>As we did it in the step-1 we are going to start with the controller which serves the phone view. Let’s get started by creating a source file in <strong>Web</strong> project under the folders <em>Controllers</em> with the name <code>PhoneController</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type PhoneController(phones : seq&lt;Phone&gt;) =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  inherit Controller()
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  member this.Show (id : string) = 
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    let phone = phones |&gt; Seq.find (fun p -&gt; p.Id = id) |&gt; PhoneViewModel.ToPhoneViewModel 
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    this.View(phone)
+</pre></div>
+</div>
+</div>
+
+<p>The action method <code>Show</code> just picks the phone with the given id, converts the selected phone to a view model and returns the view.</p>
+
+<p>The <code>phones</code> data which is being passed to the controller is actually a domain model representing the data that are required to show in the UI. Let’s create it in the <em>Domain</em> project. Create a source file in the <strong>Domain</strong> project and name it as <code>Catalog</code>.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace PhoneCat.Domain
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open PhoneCat.Domain.Measures
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>module Catalog =    
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  type Display = {
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    ScreenResolution : string
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    ScreenSize : float&lt;inch&gt;
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    TouchScreen : bool
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  }
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  type Storage = {
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    Flash : float&lt;MB&gt;
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    Ram : float&lt;MB&gt;
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  }
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  type Android = {
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    OS : string
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    UI : string
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  }
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  type Camera = {
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    Features : seq&lt;string&gt;
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    Primary : string
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  }
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>  type Phone = {
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>    Id : string
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>    Name : string
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>    Description : string
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>    Android : Android
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>    Camera : Camera
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>    Display : Display
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>    Weight : float&lt;g&gt;
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>    Storage : Storage
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>    Images : seq&lt;string&gt;
+<span class="line-numbers"><a href="#n37" name="n37">37</a></span>  }
+</pre></div>
+</div>
+</div>
+<p>It’s a <a href="http://fsharpforfunandprofit.com/series/understanding-fsharp-types.html">typical type definition</a> in fsharp which describes the domain model <code>Phone</code>. Also if you remember we have already created a type with the same name <code>Phone</code> in <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33">the previous step</a>. Though they share the name both are being used for different purposes. One for showing all the details of a phone and other one is for showing only few details about a phone. </p>
+
+<p>This is what we call us <a href="http://martinfowler.com/bliki/BoundedContext.html">bounded context in DDD</a>. In fsharp we can easily achieve it using modules with less verbosity.</p>
+
+<p>We have also used another awesome feature of fsharp called <a href="http://fsharpforfunandprofit.com/posts/units-of-measure/">units-of-measure</a> which help us <a href="http://en.wikipedia.org/wiki/Mars_Climate_Orbiter#Cause_of_failure">avoid failures in unit-coversion</a> by providing strong typed data.</p>
+
+<p>In the later posts we will be extending the domain based on theses measure types right now it just expresses the domain correct. These measure types are not created yet so lets create them by adding a source file in <strong>Domain</strong> project with the name <code>Measures</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace PhoneCat.Domain
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>module Measures = 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  [&lt;Measure&gt;] type inch
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  [&lt;Measure&gt;] type g
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  [&lt;Measure&gt;] type MB
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let private toUOM (measureString : string) stringToReplace (uom : float&lt;_&gt;) = 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    let value = 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      if measureString = &quot;&quot; then 0.
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      else measureString.Replace(stringToReplace, &quot;&quot;) |&gt; float
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    value |&gt; ((*) uom)
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let toInch (inchStr : string) = toUOM inchStr &quot;inches&quot; 1.0&lt;inch&gt;
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let toGram (weightStr : string) = toUOM weightStr &quot;grams&quot; 1.0&lt;g&gt;
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  let toMB (storageStr : string) = toUOM storageStr &quot;MB&quot; 1.0&lt;MB&gt;
+</pre></div>
+</div>
+</div>
+
+<p>We have defined types to represents measures in inch, gram and megabytes. We have also added few utility methods to translate the raw string to strongly typed data which does the following</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>&quot;200.5inches&quot; to 200.5&lt;inch&gt;
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>&quot;1200MB&quot; to 1200.&lt;MB&gt;
+</pre></div>
+</div>
+</div>
+<p>With the domain model in place the next step is to populate this domain model from the data-store. To do it we are going to reuse the PhoneTypeProvider that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/DataAccess/TypeProviders.fs#L25">created in the step-1</a>. Since it has all the properties that we needed, we just need to add a function which does the mapping.</p>
+
+<p>Open <code>TypeProviders</code> and add the below function</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let ToCatalogPhone(phone : PhoneTypeProvider.Root) = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let android = { OS = phone.Android.Os; UI = phone.Android.Ui }
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>      
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let camera = 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    { Features = phone.Camera.Features
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      Primary = phone.Camera.Primary }        
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let display = 
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    { ScreenResolution = phone.Display.ScreenResolution
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      ScreenSize = toInch phone.Display.ScreenSize
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      TouchScreen = phone.Display.TouchScreen }
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  let storage = 
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    { Flash = toMB phone.Storage.Flash
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      Ram = toMB phone.Storage.Ram}
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  { Id = phone.Id
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    Name = phone.Name
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    Description = phone.Description
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    Android = android
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    Camera = camera
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>    Display = display
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    Weight = toGram phone.SizeAndWeight.Weight
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    Storage = storage 
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    Images = phone.Images}
+</pre></div>
+</div>
+</div>
+<p>We are leveraging the utility functions <code>toGram</code>, <code>toMB</code> defined above as part of measure types and do seamless mapping of domain model from data store.</p>
+
+<p>The next step is wiring the controller with the domain model and the data-store. We are going to follow the same <strong>Composition Root</strong> design as we <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Infrastructure.fs#L19-38">did in step-1</a></p>
+
+<p>Add a source file in the <em>Web</em> project with the name <code>MvcInfrastructure</code> and add the following code</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace PhoneCat.Web
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open PhoneCat.DataAccess
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open PhoneCat.Domain
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open PhoneCat.Web.Controllers
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open System
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open System.Web.Mvc
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>module MvcInfrastructure = 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  type CompositionRoot(phones : seq&lt;PhoneTypeProvider.Root&gt;) = 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    inherit DefaultControllerFactory() with
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      override this.GetControllerInstance(requestContext, controllerType) = 
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>        if controllerType = typeof&lt;HomeController&gt; then 
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>          let homeController = new HomeController()
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>          homeController :&gt; IController
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>        else if controllerType = typeof&lt;PhoneController&gt; then
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>          let phones' = phones |&gt; Seq.map TypeProviders.ToCatalogPhone
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>          let phoneController = new PhoneController(phones')
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>          phoneController :&gt; IController
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>        else
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>          raise &lt;| ArgumentException((sprintf &quot;Unknown controller type requested: %A&quot; controllerType))
+</pre></div>
+</div>
+</div>
+
+<p>Similar to step-1 we are creating the composition root by passing the phones data and doing the wiring of different components.</p>
+
+<p>Since we have created our custom ControllerFactory, we need to update the MVC configuration to use it when the framework creates the controllers.</p>
+
+<p>Update the ```Global.asax.fs`` file as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>member x.Application_Start() =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let phones = GitHubRepository.getPhones()
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  AreaRegistration.RegisterAllAreas()
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  GlobalConfiguration.Configure(new Action&lt;HttpConfiguration&gt;(fun config -&gt; Global.RegisterWebApi(config, phones)))
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Global.RegisterFilters(GlobalFilters.Filters)
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  Global.RegisterRoutes(RouteTable.Routes)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  ControllerBuilder.Current.SetControllerFactory(MvcInfrastructure.CompositionRoot(phones))
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  BundleConfig.RegisterBundles BundleTable.Bundles
+</pre></div>
+</div>
+</div>
+<p>In the last step the we have retrieved the phones data <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Global.asax.fs#L65">inside the RegisterWebApi method</a> and in this step we have moved it outside so that it can be used by both MVC Controllers and Web-Api controllers.</p>
+
+<p>We have also changed the signature of RegisterWebApi method. In the <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Global.asax.fs#L51">earlier step</a> it gets the configuration parameter alone and now it has two parameters <code>httpConfiguration</code> and <code>phones</code></p>
+
+<p>The next pending task in Phone View is translating the Phone Domain model to Phone View Model. Add the Phone View model in the <code>PhoneController</code> created before and update it us below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type PhoneViewModel = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    Name : string
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    Description : string
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    Os : string
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    Ui : string
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    Flash : string
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    Ram : string
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    Weight : string
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    ScreenResolution : string
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    ScreenSize : string
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    TouchScreen : string
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    Primary : string
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    Features : seq&lt;string&gt;
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    Images : seq&lt;string&gt;    
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  }
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  with static member ToPhoneViewModel(phone : Phone) =
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    let roundToDigits (value:float) = String.Format(&quot;{0:0.00}&quot;, value)
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    let concatWithSpace str2 str1 = str1 + &quot; &quot; + str2
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    let uomToString (measureValue: float&lt;_&gt;) measureName =
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      measureValue |&gt; float |&gt; roundToDigits |&gt; concatWithSpace measureName
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    { 
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>      Name = phone.Name
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>      Description = phone.Description
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>      Os = phone.Android.OS
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>      Ui = phone.Android.UI
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>      Flash = phone.Storage.Flash |&gt; int |&gt; sprintf &quot;%d MB&quot;
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>      Ram =  phone.Storage.Ram |&gt; int |&gt; sprintf &quot;%d MB&quot;
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>      Weight = uomToString phone.Weight &quot;grams&quot;
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>      ScreenResolution = phone.Display.ScreenResolution
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>      ScreenSize = uomToString phone.Display.ScreenSize &quot;inches&quot;
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>      TouchScreen = if phone.Display.TouchScreen then &quot;Yes&quot; else &quot;No&quot;
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>      Primary = phone.Camera.Primary
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>      Features = phone.Camera.Features
+<span class="line-numbers"><a href="#n37" name="n37">37</a></span>      Images = phone.Images
+<span class="line-numbers"><a href="#n38" name="n38">38</a></span>    }
+</pre></div>
+</div>
+</div>
+<p>With all in place, we just need to create a razor view with the name <code>Show.cshtml</code> inside the <strong>View</strong> -&gt; <strong>Phone</strong> directory of <em>Web</em> project and update it <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Phone/Show.cshtml">as mentioned here.</a> </p>
+
+<p>That’s it. Phone View is up and running! Click the Phone Links in the Home Page it will take you to the Phones View Page.</p>
+
+<h3 id="manufacturers-view">Manufacturers View</h3>
+<p><img src="/images/fsharp_phonecat/step_2/manufacturer.png"><br />
+Manufactures View follows the similar steps that we have used to create the Phone View. It displays the Phones manufactured by a selected manufacturer in the home page.</p>
+
+<p>Let’s start from the controller. Create a controller in the <strong>Web</strong> project with the name <code>ManufacturerController</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace PhoneCat.Web.Controllers
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open System.Web
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open System.Web.Mvc
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open PhoneCat.Domain
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open System
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>type ManufacturerViewModel = {
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  Name : string
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  Phones : seq&lt;Phone&gt;
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>}
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>with static member ToManufacturerViewModel (name, phones) =
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      {Name = ManufacturerName.ToString name; Phones = phones}
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>type ManufacturerController 
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  (
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    getPhones : ManufacturerName -&gt; (ManufacturerName * seq&lt;Phone&gt;)
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  ) =
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  inherit Controller()
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  member this.Show (id : string) = 
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>    
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    let viewModel = 
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>      id 
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>      |&gt; ManufacturerName.ToManufacturerName
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>      |&gt; getPhones
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>      |&gt; ManufacturerViewModel.ToManufacturerViewModel
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>    this.View(viewModel)
+</pre></div>
+</div>
+</div>
+
+<p>The <code>ManufacturerController</code> depends on the function <code>getPhones</code> which gives the Phones manufactured by the given manufacturer. The action method <code>Show</code> converts given id to the manufaturer name,  gets the Phones, converts them to <code>ManufacturerViewModel</code> and renders the view.</p>
+
+<p>The domain model <code>Phone</code> mentioned here is the one that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33">already created in step-1</a>. The <code>getPhones</code> domain function is yet to be created. </p>
+
+<p>Open <code>Phones</code> file in the <em>Domain</em> project and add the <code>getPhonesOfManufacturer</code> function.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getPhonesOfManufacturer (phones : seq&lt;Phone&gt;) (manufacturerName) =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    let phones' = 
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>      phones
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>      |&gt; Seq.filter (fun p -&gt; ManufacturerName.ToManufacturerName p.Name = manufacturerName)
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    (manufacturerName, phones')
+</pre></div>
+</div>
+</div>
+<p>The <code>getPhonesOfManufacturer</code> function takes a sequence of phones and a manufacturer name, filters them for the given manufacturer and return a <a href="http://fsharpforfunandprofit.com/posts/tuples/">tuple</a> that contain the manufacturer name and the sequence of phones.</p>
+
+<p>As we have already created the data-store functions which serves the required data, we just need to wire up the controller.</p>
+
+<p>Update <code>MvcInfrastructure</code> file in the <em>Web</em> project to create <code>ManufacturerController</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module MvcInfrastructure = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  type CompositionRoot(phones : seq&lt;PhoneTypeProvider.Root&gt;) = 
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    inherit DefaultControllerFactory() with
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      override this.GetControllerInstance(requestContext, controllerType) = 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        // ... Existing code ignored for brevity 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>        else if controllerType = typeof&lt;ManufacturerController&gt; then
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>          let getPhonesByManufactuerName = phones |&gt; Seq.map TypeProviders.ToPhone |&gt; Phones.getPhonesOfManufacturer
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>          let manufacturerController = new ManufacturerController(getPhonesByManufactuerName)
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>          manufacturerController :&gt; IController
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        else
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>          raise &lt;| ArgumentException((sprintf &quot;Unknown controller type requested: %A&quot; controllerType))
+</pre></div>
+</div>
+</div>
+
+<p>Thanks to the <a href="http://fsharpforfunandprofit.com/posts/partial-application/">partial function</a> we have partially applied the first parameter alone for the <code>Phones.getPhonesOfManufacturer</code> function which has the signature </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>seq&lt;Phone&gt; -&gt; ManufacturerName -&gt; seq&lt;Phone&gt;
+</pre></div>
+</div>
+</div>
+<p>and created a new function on the fly with the signature </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>ManufacturerName -&gt; seq&lt;Phone&gt;
+</pre></div>
+</div>
+</div>
+<p>which is the exactly the function that is needed by the <code>ManufacturerController</code></p>
+
+<p>The final step is to create a razor view with the name <code>Show.cshtml</code> inside the <strong>View</strong> -&gt; <strong>Manufacturer</strong> directory of <strong>Web</strong> project and update it <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Manufacturer/Show.cshtml">as mentioned here.</a> </p>
+
+<h3 id="summary">Summary</h3>
+<p>In this blog post we have seen how to create MVC Razor views in fsharp. You can find the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/2">source code in the github repository</a>. In the later posts we will be adding more interactivity. Stay tuned !!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Step 1 - Phonecat backend using Web Api and TypeProviders]]></title>
@@ -689,6 +1034,7 @@ type BundleConfig() =<br />
 <ul>
   <li><strong>Step 0</strong> - <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
   <li><strong>Step 1</strong> - <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Creating Web Api endpoints for fsharp-phonecat using Web Api 2</a></li>
+  <li><strong>Step 2</strong> - <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Creating ASP.NET MVC Razor Views for fsharp-phonecat</a></li>
 </ul>
 
 <h4 id="upcoming-posts">Upcoming Posts</h4>

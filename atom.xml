@@ -4,7 +4,7 @@
   <title><![CDATA[Tamizh's Thoughts]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2014-12-18T18:07:30+05:30</updated>
+  <updated>2014-12-24T15:28:10+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,513 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Step-2 Fsharp-PhoneCat Views using Razor]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
+    <updated>2014-12-23T19:47:20+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 2 of my blog series on <a href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="http://blog.tamizhvendan.in/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
+
+<h3 id="phone-view">Phone View</h3>
+<p><img src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_2/phone.png" /></p>
+
+<p>As we did it in the step-1 we are going to start with the controller which serves the phone view. Let’s get started by creating a source file in <strong>Web</strong> project under the folders <em>Controllers</em> with the name <code>PhoneController</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">PhoneController</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">Controller</span><span class="bp">()</span>
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Show</span> <span class="o">(</span><span class="n">id</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">phone</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">find</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">Id</span> <span class="o">=</span> <span class="n">id</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="nn">PhoneViewModel</span><span class="p">.</span><span class="n">ToPhoneViewModel</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="o">(</span><span class="n">phone</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The action method <code>Show</code> just picks the phone with the given id, converts the selected phone to a view model and returns the view.</p>
+
+<p>The <code>phones</code> data which is being passed to the controller is actually a domain model representing the data that are required to show in the UI. Let’s create it in the <em>Domain</em> project. Create a source file in the <strong>Domain</strong> project and name it as <code>Catalog</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Domain</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain.Measures</span>
+</span><span class="line">
+</span><span class="line"><span class="k">module</span> <span class="nn">Catalog</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">type</span> <span class="nc">Display</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">ScreenResolution</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">ScreenSize</span> <span class="o">:</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">inch</span><span class="o">&gt;</span>
+</span><span class="line">    <span class="n">TouchScreen</span> <span class="o">:</span> <span class="kt">bool</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">type</span> <span class="nc">Storage</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">Flash</span> <span class="o">:</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">MB</span><span class="o">&gt;</span>
+</span><span class="line">    <span class="n">Ram</span> <span class="o">:</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">MB</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">type</span> <span class="nc">Android</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">OS</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">UI</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">type</span> <span class="nc">Camera</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">Features</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
+</span><span class="line">    <span class="n">Primary</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">type</span> <span class="nc">Phone</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">Id</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Description</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Android</span> <span class="o">:</span> <span class="n">Android</span>
+</span><span class="line">    <span class="n">Camera</span> <span class="o">:</span> <span class="n">Camera</span>
+</span><span class="line">    <span class="n">Display</span> <span class="o">:</span> <span class="n">Display</span>
+</span><span class="line">    <span class="n">Weight</span> <span class="o">:</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">g</span><span class="o">&gt;</span>
+</span><span class="line">    <span class="n">Storage</span> <span class="o">:</span> <span class="n">Storage</span>
+</span><span class="line">    <span class="n">Images</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>It’s a <a href="http://fsharpforfunandprofit.com/series/understanding-fsharp-types.html">typical type definition</a> in fsharp which describes the domain model <code>Phone</code>. Also if you remember we have already created a type with the same name <code>Phone</code> in <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33">the previous step</a>. Though they share the name both are being used for different purposes. One for showing all the details of a phone and other one is for showing only few details about a phone. </p>
+
+<p>This is what we call us <a href="http://martinfowler.com/bliki/BoundedContext.html">bounded context in DDD</a>. In fsharp we can easily achieve it using modules with less verbosity.</p>
+
+<p>We have also used another awesome feature of fsharp called <a href="http://fsharpforfunandprofit.com/posts/units-of-measure/">units-of-measure</a> which help us <a href="http://en.wikipedia.org/wiki/Mars_Climate_Orbiter#Cause_of_failure">avoid failures in unit-coversion</a> by providing strong typed data.</p>
+
+<p>In the later posts we will be extending the domain based on theses measure types right now it just expresses the domain correct. These measure types are not created yet so lets create them by adding a source file in <strong>Domain</strong> project with the name <code>Measures</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Domain</span>
+</span><span class="line">
+</span><span class="line"><span class="k">module</span> <span class="nn">Measures</span> <span class="o">=</span>
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">Measure</span><span class="o">&gt;]</span> <span class="k">type</span> <span class="nc">inch</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">Measure</span><span class="o">&gt;]</span> <span class="k">type</span> <span class="nc">g</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">Measure</span><span class="o">&gt;]</span> <span class="k">type</span> <span class="nc">MB</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">toUOM</span> <span class="o">(</span><span class="n">measureString</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="n">stringToReplace</span> <span class="o">(</span><span class="n">uom</span> <span class="o">:</span> <span class="kt">float</span><span class="o">&lt;_&gt;)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">value</span> <span class="o">=</span>
+</span><span class="line">      <span class="k">if</span> <span class="n">measureString</span> <span class="o">=</span> <span class="s">&quot;&quot;</span> <span class="k">then</span> <span class="mi">0</span><span class="o">.</span>
+</span><span class="line">      <span class="k">else</span> <span class="n">measureString</span><span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="n">stringToReplace</span><span class="o">,</span> <span class="s">&quot;&quot;</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="kt">float</span>
+</span><span class="line">    <span class="n">value</span> <span class="o">|&gt;</span> <span class="o">((*)</span> <span class="n">uom</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">toInch</span> <span class="o">(</span><span class="n">inchStr</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span> <span class="n">toUOM</span> <span class="n">inchStr</span> <span class="s">&quot;inches&quot;</span> <span class="mi">1</span><span class="o">.</span><span class="mi">0</span><span class="o">&lt;</span><span class="n">inch</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">toGram</span> <span class="o">(</span><span class="n">weightStr</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span> <span class="n">toUOM</span> <span class="n">weightStr</span> <span class="s">&quot;grams&quot;</span> <span class="mi">1</span><span class="o">.</span><span class="mi">0</span><span class="o">&lt;</span><span class="n">g</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">toMB</span> <span class="o">(</span><span class="n">storageStr</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span> <span class="n">toUOM</span> <span class="n">storageStr</span> <span class="s">&quot;MB&quot;</span> <span class="mi">1</span><span class="o">.</span><span class="mi">0</span><span class="o">&lt;</span><span class="n">MB</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We have defined types to represents measures in inch, gram and megabytes. We have also added few utility methods to translate the raw string to strongly typed data which does the following</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="text"><span class="line">&quot;200.5inches&quot; to 200.5&lt;inch&gt;
+</span><span class="line">&quot;1200MB&quot; to 1200.&lt;MB&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>With the domain model in place the next step is to populate this domain model from the data-store. To do it we are going to reuse the PhoneTypeProvider that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/DataAccess/TypeProviders.fs#L25">created in the step-1</a>. Since it has all the properties that we needed, we just need to add a function which does the mapping.</p>
+
+<p>Open <code>TypeProviders</code> and add the below function</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">ToCatalogPhone</span><span class="o">(</span><span class="n">phone</span> <span class="o">:</span> <span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">android</span> <span class="o">=</span> <span class="o">{</span> <span class="n">OS</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Android</span><span class="o">.</span><span class="n">Os</span><span class="o">;</span> <span class="n">UI</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Android</span><span class="o">.</span><span class="n">Ui</span> <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">camera</span> <span class="o">=</span>
+</span><span class="line">    <span class="o">{</span> <span class="n">Features</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">Features</span>
+</span><span class="line">      <span class="n">Primary</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">Primary</span> <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">display</span> <span class="o">=</span>
+</span><span class="line">    <span class="o">{</span> <span class="n">ScreenResolution</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Display</span><span class="o">.</span><span class="n">ScreenResolution</span>
+</span><span class="line">      <span class="n">ScreenSize</span> <span class="o">=</span> <span class="n">toInch</span> <span class="n">phone</span><span class="o">.</span><span class="n">Display</span><span class="o">.</span><span class="n">ScreenSize</span>
+</span><span class="line">      <span class="n">TouchScreen</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Display</span><span class="o">.</span><span class="n">TouchScreen</span> <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">storage</span> <span class="o">=</span>
+</span><span class="line">    <span class="o">{</span> <span class="n">Flash</span> <span class="o">=</span> <span class="n">toMB</span> <span class="n">phone</span><span class="o">.</span><span class="n">Storage</span><span class="o">.</span><span class="n">Flash</span>
+</span><span class="line">      <span class="n">Ram</span> <span class="o">=</span> <span class="n">toMB</span> <span class="n">phone</span><span class="o">.</span><span class="n">Storage</span><span class="o">.</span><span class="n">Ram</span><span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">{</span> <span class="n">Id</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Id</span>
+</span><span class="line">    <span class="n">Name</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Name</span>
+</span><span class="line">    <span class="n">Description</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Description</span>
+</span><span class="line">    <span class="n">Android</span> <span class="o">=</span> <span class="n">android</span>
+</span><span class="line">    <span class="n">Camera</span> <span class="o">=</span> <span class="n">camera</span>
+</span><span class="line">    <span class="n">Display</span> <span class="o">=</span> <span class="n">display</span>
+</span><span class="line">    <span class="n">Weight</span> <span class="o">=</span> <span class="n">toGram</span> <span class="n">phone</span><span class="o">.</span><span class="n">SizeAndWeight</span><span class="o">.</span><span class="n">Weight</span>
+</span><span class="line">    <span class="n">Storage</span> <span class="o">=</span> <span class="n">storage</span>
+</span><span class="line">    <span class="n">Images</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Images</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>We are leveraging the utility functions <code>toGram</code>, <code>toMB</code> defined above as part of measure types and do seamless mapping of domain model from data store.</p>
+
+<p>The next step is wiring the controller with the domain model and the data-store. We are going to follow the same <strong>Composition Root</strong> design as we <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Infrastructure.fs#L19-38">did in step-1</a></p>
+
+<p>Add a source file in the <em>Web</em> project with the name <code>MvcInfrastructure</code> and add the following code</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Web</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.DataAccess</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Web.Controllers</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Web.Mvc</span>
+</span><span class="line">
+</span><span class="line"><span class="k">module</span> <span class="nn">MvcInfrastructure</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">type</span> <span class="nc">CompositionRoot</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">inherit</span> <span class="n">DefaultControllerFactory</span><span class="bp">()</span> <span class="k">with</span>
+</span><span class="line">      <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetControllerInstance</span><span class="o">(</span><span class="n">requestContext</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">HomeController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">          <span class="k">let</span> <span class="nv">homeController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HomeController</span><span class="bp">()</span>
+</span><span class="line">          <span class="n">homeController</span> <span class="o">:&gt;</span> <span class="n">IController</span>
+</span><span class="line">        <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">PhoneController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">          <span class="k">let</span> <span class="nv">phones</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToCatalogPhone</span>
+</span><span class="line">          <span class="k">let</span> <span class="nv">phoneController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PhoneController</span><span class="o">(</span><span class="n">phones&#39;</span><span class="o">)</span>
+</span><span class="line">          <span class="n">phoneController</span> <span class="o">:&gt;</span> <span class="n">IController</span>
+</span><span class="line">        <span class="k">else</span>
+</span><span class="line">          <span class="n">raise</span> <span class="o">&lt;|</span> <span class="n">ArgumentException</span><span class="o">((</span><span class="n">sprintf</span> <span class="s">&quot;Unknown controller type requested: %A&quot;</span> <span class="n">controllerType</span><span class="o">))</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Similar to step-1 we are creating the composition root by passing the phones data and doing the wiring of different components.</p>
+
+<p>Since we have created our custom ControllerFactory, we need to update the MVC configuration to use it when the framework creates the controllers.</p>
+
+<p>Update the &#8220;`Global.asax.fs&#8220; file as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">member</span> <span class="n">x</span><span class="p">.</span><span class="nf">Application_Start</span><span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">phones</span> <span class="o">=</span> <span class="nn">GitHubRepository</span><span class="p">.</span><span class="n">getPhones</span><span class="bp">()</span>
+</span><span class="line">  <span class="nn">AreaRegistration</span><span class="p">.</span><span class="n">RegisterAllAreas</span><span class="bp">()</span>
+</span><span class="line">  <span class="nn">GlobalConfiguration</span><span class="p">.</span><span class="n">Configure</span><span class="o">(</span><span class="k">new</span> <span class="n">Action</span><span class="o">&lt;</span><span class="n">HttpConfiguration</span><span class="o">&gt;(</span><span class="k">fun</span> <span class="n">config</span> <span class="o">-&gt;</span> <span class="nn">Global</span><span class="p">.</span><span class="n">RegisterWebApi</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">phones</span><span class="o">)))</span>
+</span><span class="line">  <span class="nn">Global</span><span class="p">.</span><span class="n">RegisterFilters</span><span class="o">(</span><span class="nn">GlobalFilters</span><span class="p">.</span><span class="n">Filters</span><span class="o">)</span>
+</span><span class="line">  <span class="nn">Global</span><span class="p">.</span><span class="n">RegisterRoutes</span><span class="o">(</span><span class="nn">RouteTable</span><span class="p">.</span><span class="n">Routes</span><span class="o">)</span>
+</span><span class="line">  <span class="nn">ControllerBuilder</span><span class="p">.</span><span class="nn">Current</span><span class="p">.</span><span class="n">SetControllerFactory</span><span class="o">(</span><span class="nn">MvcInfrastructure</span><span class="p">.</span><span class="n">CompositionRoot</span><span class="o">(</span><span class="n">phones</span><span class="o">))</span>
+</span><span class="line">  <span class="nn">BundleConfig</span><span class="p">.</span><span class="n">RegisterBundles</span> <span class="nn">BundleTable</span><span class="p">.</span><span class="n">Bundles</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>In the last step the we have retrieved the phones data <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Global.asax.fs#L65">inside the RegisterWebApi method</a> and in this step we have moved it outside so that it can be used by both MVC Controllers and Web-Api controllers.</p>
+
+<p>We have also changed the signature of RegisterWebApi method. In the <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Global.asax.fs#L51">earlier step</a> it gets the configuration parameter alone and now it has two parameters <code>httpConfiguration</code> and <code>phones</code></p>
+
+<p>The next pending task in Phone View is translating the Phone Domain model to Phone View Model. Add the Phone View model in the <code>PhoneController</code> created before and update it us below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">PhoneViewModel</span> <span class="o">=</span>
+</span><span class="line">  <span class="o">{</span>
+</span><span class="line">    <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Description</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Os</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Ui</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Flash</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Ram</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Weight</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">ScreenResolution</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">ScreenSize</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">TouchScreen</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Primary</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">Features</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
+</span><span class="line">    <span class="n">Images</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">with</span> <span class="k">static</span> <span class="k">member</span> <span class="n">ToPhoneViewModel</span><span class="o">(</span><span class="n">phone</span> <span class="o">:</span> <span class="n">Phone</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">roundToDigits</span> <span class="o">(</span><span class="n">value</span><span class="o">:</span><span class="kt">float</span><span class="o">)</span> <span class="o">=</span> <span class="nn">String</span><span class="p">.</span><span class="n">Format</span><span class="o">(</span><span class="s">&quot;{0:0.00}&quot;</span><span class="o">,</span> <span class="n">value</span><span class="o">)</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">concatWithSpace</span> <span class="n">str2</span> <span class="n">str1</span> <span class="o">=</span> <span class="n">str1</span> <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span> <span class="n">str2</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">uomToString</span> <span class="o">(</span><span class="n">measureValue</span><span class="o">:</span> <span class="kt">float</span><span class="o">&lt;_&gt;)</span> <span class="n">measureName</span> <span class="o">=</span>
+</span><span class="line">      <span class="n">measureValue</span> <span class="o">|&gt;</span> <span class="kt">float</span> <span class="o">|&gt;</span> <span class="n">roundToDigits</span> <span class="o">|&gt;</span> <span class="n">concatWithSpace</span> <span class="n">measureName</span>
+</span><span class="line">
+</span><span class="line">    <span class="o">{</span>
+</span><span class="line">      <span class="n">Name</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Name</span>
+</span><span class="line">      <span class="n">Description</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Description</span>
+</span><span class="line">      <span class="n">Os</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Android</span><span class="o">.</span><span class="n">OS</span>
+</span><span class="line">      <span class="n">Ui</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Android</span><span class="o">.</span><span class="n">UI</span>
+</span><span class="line">      <span class="n">Flash</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Storage</span><span class="o">.</span><span class="n">Flash</span> <span class="o">|&gt;</span> <span class="n">int</span> <span class="o">|&gt;</span> <span class="n">sprintf</span> <span class="s">&quot;%d MB&quot;</span>
+</span><span class="line">      <span class="n">Ram</span> <span class="o">=</span>  <span class="n">phone</span><span class="o">.</span><span class="n">Storage</span><span class="o">.</span><span class="n">Ram</span> <span class="o">|&gt;</span> <span class="n">int</span> <span class="o">|&gt;</span> <span class="n">sprintf</span> <span class="s">&quot;%d MB&quot;</span>
+</span><span class="line">      <span class="n">Weight</span> <span class="o">=</span> <span class="n">uomToString</span> <span class="n">phone</span><span class="o">.</span><span class="n">Weight</span> <span class="s">&quot;grams&quot;</span>
+</span><span class="line">      <span class="n">ScreenResolution</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Display</span><span class="o">.</span><span class="n">ScreenResolution</span>
+</span><span class="line">      <span class="n">ScreenSize</span> <span class="o">=</span> <span class="n">uomToString</span> <span class="n">phone</span><span class="o">.</span><span class="n">Display</span><span class="o">.</span><span class="n">ScreenSize</span> <span class="s">&quot;inches&quot;</span>
+</span><span class="line">      <span class="n">TouchScreen</span> <span class="o">=</span> <span class="k">if</span> <span class="n">phone</span><span class="o">.</span><span class="n">Display</span><span class="o">.</span><span class="n">TouchScreen</span> <span class="k">then</span> <span class="s">&quot;Yes&quot;</span> <span class="k">else</span> <span class="s">&quot;No&quot;</span>
+</span><span class="line">      <span class="n">Primary</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">Primary</span>
+</span><span class="line">      <span class="n">Features</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Camera</span><span class="o">.</span><span class="n">Features</span>
+</span><span class="line">      <span class="n">Images</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Images</span>
+</span><span class="line">    <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>With all in place, we just need to create a razor view with the name <code>Show.cshtml</code> inside the <strong>View</strong> -&gt; <strong>Phone</strong> directory of <em>Web</em> project and update it <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Phone/Show.cshtml">as mentioned here.</a> </p>
+
+<p>That’s it. Phone View is up and running! Click the Phone Links in the Home Page it will take you to the Phones View Page.</p>
+
+<h3 id="manufacturers-view">Manufacturers View</h3>
+<p><img src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_2/manufacturer.png" /><br />
+Manufactures View follows the similar steps that we have used to create the Phone View. It displays the Phones manufactured by a selected manufacturer in the home page.</p>
+
+<p>Let’s start from the controller. Create a controller in the <strong>Web</strong> project with the name <code>ManufacturerController</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="nn">Web</span><span class="p">.</span><span class="n">Controllers</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Web</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Web.Mvc</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">ManufacturerViewModel</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line"><span class="k">with</span> <span class="k">static</span> <span class="k">member</span> <span class="n">ToManufacturerViewModel</span> <span class="o">(</span><span class="n">name</span><span class="o">,</span> <span class="n">phones</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">      <span class="o">{</span><span class="n">Name</span> <span class="o">=</span> <span class="nn">ManufacturerName</span><span class="p">.</span><span class="n">ToString</span> <span class="n">name</span><span class="o">;</span> <span class="n">Phones</span> <span class="o">=</span> <span class="n">phones</span><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">ManufacturerController</span>
+</span><span class="line">  <span class="o">(</span>
+</span><span class="line">    <span class="n">getPhones</span> <span class="o">:</span> <span class="n">ManufacturerName</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">ManufacturerName</span> <span class="o">*</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;)</span>
+</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">Controller</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Show</span> <span class="o">(</span><span class="n">id</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">let</span> <span class="nv">viewModel</span> <span class="o">=</span>
+</span><span class="line">      <span class="n">id</span>
+</span><span class="line">      <span class="o">|&gt;</span> <span class="nn">ManufacturerName</span><span class="p">.</span><span class="n">ToManufacturerName</span>
+</span><span class="line">      <span class="o">|&gt;</span> <span class="n">getPhones</span>
+</span><span class="line">      <span class="o">|&gt;</span> <span class="nn">ManufacturerViewModel</span><span class="p">.</span><span class="n">ToManufacturerViewModel</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="o">(</span><span class="n">viewModel</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>ManufacturerController</code> depends on the function <code>getPhones</code> which gives the Phones manufactured by the given manufacturer. The action method <code>Show</code> converts given id to the manufaturer name,  gets the Phones, converts them to <code>ManufacturerViewModel</code> and renders the view.</p>
+
+<p>The domain model <code>Phone</code> mentioned here is the one that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33">already created in step-1</a>. The <code>getPhones</code> domain function is yet to be created. </p>
+
+<p>Open <code>Phones</code> file in the <em>Domain</em> project and add the <code>getPhonesOfManufacturer</code> function.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getPhonesOfManufacturer</span> <span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;)</span> <span class="o">(</span><span class="n">manufacturerName</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">phones</span><span class="k">&#39;</span> <span class="o">=</span>
+</span><span class="line">      <span class="n">phones</span>
+</span><span class="line">      <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">filter</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="nn">ManufacturerName</span><span class="p">.</span><span class="n">ToManufacturerName</span> <span class="n">p</span><span class="o">.</span><span class="n">Name</span> <span class="o">=</span> <span class="n">manufacturerName</span><span class="o">)</span>
+</span><span class="line">    <span class="o">(</span><span class="n">manufacturerName</span><span class="o">,</span> <span class="n">phones&#39;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>The <code>getPhonesOfManufacturer</code> function takes a sequence of phones and a manufacturer name, filters them for the given manufacturer and return a <a href="http://fsharpforfunandprofit.com/posts/tuples/">tuple</a> that contain the manufacturer name and the sequence of phones.</p>
+
+<p>As we have already created the data-store functions which serves the required data, we just need to wire up the controller.</p>
+
+<p>Update <code>MvcInfrastructure</code> file in the <em>Web</em> project to create <code>ManufacturerController</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">MvcInfrastructure</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">type</span> <span class="nc">CompositionRoot</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">inherit</span> <span class="n">DefaultControllerFactory</span><span class="bp">()</span> <span class="k">with</span>
+</span><span class="line">      <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetControllerInstance</span><span class="o">(</span><span class="n">requestContext</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">        <span class="c1">// ... Existing code ignored for brevity </span>
+</span><span class="line">        <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">ManufacturerController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">          <span class="k">let</span> <span class="nv">getPhonesByManufactuerName</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToPhone</span> <span class="o">|&gt;</span> <span class="nn">Phones</span><span class="p">.</span><span class="n">getPhonesOfManufacturer</span>
+</span><span class="line">          <span class="k">let</span> <span class="nv">manufacturerController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ManufacturerController</span><span class="o">(</span><span class="n">getPhonesByManufactuerName</span><span class="o">)</span>
+</span><span class="line">          <span class="n">manufacturerController</span> <span class="o">:&gt;</span> <span class="n">IController</span>
+</span><span class="line">        <span class="k">else</span>
+</span><span class="line">          <span class="n">raise</span> <span class="o">&lt;|</span> <span class="n">ArgumentException</span><span class="o">((</span><span class="n">sprintf</span> <span class="s">&quot;Unknown controller type requested: %A&quot;</span> <span class="n">controllerType</span><span class="o">))</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Thanks to the <a href="http://fsharpforfunandprofit.com/posts/partial-application/">partial function</a> we have partially applied the first parameter alone for the <code>Phones.getPhonesOfManufacturer</code> function which has the signature </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="text"><span class="line">seq&lt;Phone&gt; -&gt; ManufacturerName -&gt; seq&lt;Phone&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>and created a new function on the fly with the signature </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="text"><span class="line">ManufacturerName -&gt; seq&lt;Phone&gt;
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>which is the exactly the function that is needed by the <code>ManufacturerController</code></p>
+
+<p>The final step is to create a razor view with the name <code>Show.cshtml</code> inside the <strong>View</strong> -&gt; <strong>Manufacturer</strong> directory of <strong>Web</strong> project and update it <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Manufacturer/Show.cshtml">as mentioned here.</a> </p>
+
+<h3 id="summary">Summary</h3>
+<p>In this blog post we have seen how to create MVC Razor views in fsharp. You can find the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/2">source code in the github repository</a>. In the later posts we will be adding more interactivity. Stay tuned !!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Step 1 - Phonecat backend using Web Api and TypeProviders]]></title>
@@ -968,6 +1475,7 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
 <ul>
   <li><strong>Step 0</strong> - <a href="http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
   <li><strong>Step 1</strong> - <a href="http://blog.tamizhvendan.in/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Creating Web Api endpoints for fsharp-phonecat using Web Api 2</a></li>
+  <li><strong>Step 2</strong> - <a href="http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Creating ASP.NET MVC Razor Views for fsharp-phonecat</a></li>
 </ul>
 
 <h4 id="upcoming-posts">Upcoming Posts</h4>
@@ -2350,49 +2858,6 @@ namespace UsingAjaxForms.Controllers
         You can download the source code of this blog post from <a href="http://www.box.net/shared/kvktovzz5fiihtxemvr0">here</a></p>
 </div>
 	]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[A journey towards software craftsmanship]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2011/07/27/journey-towards-software-craftsmanship/"/>
-    <updated>2011-07-27T00:00:00+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2011/07/27/journey-towards-software-craftsmanship</id>
-    <content type="html"><![CDATA[<div class='post'>
-    <div>
-        <p>Programming has been my passion right from the day I have seen computer. After nearly 3.7 years of experience (2 years of freelancing and 1.7 years of Industry), I found that there are lot of areas in programming where I need to improve myself especially in the art of software craftsmanship. Programming is really an art!!</p>
-        <p>Fine, I have the passion and wish to move to the next level but the key is get started and focusing my efforts on a right path. After some extensive internet searches and fruitful discussions with my colleagues, I have drawn a road map. I feel it is worth sharing through this blog as it might help someone who aspires to reach the next level in programming. </p>
-        <p>We can’t become Einstein in single night. We can’t become Sachin just by scoring a match winning century in a single match either. Likewise we can’t become a Master in Software Craftsmanship by just creating a single Killer Application. It takes a lot of efforts, passion, endurance persistence, temperament and a well-defined path to reach the top. </p>
-        <p>As a programmer/developer we all know very well about the benefits of Code Reuse. Have you ever thought of <i>Experience Reuse!! </i>Just think about it for some minutes. Obviously there is no replacement/substitute for Experience but what’s wrong in learning from others experience. It requires both hard work and smart work to make it to the next level. Here I am mentioning about smart work. Why are we doing the same mistakes which some people did already in their lives? <span style="mso-spacerun: yes;">&nbsp;</span>Why don’t we just learn it from them and get rid of those recurring mistakes. Come on, we are programmers, be smarter. Let’s learn from the some of the masters in the field and do some new mistakes.</p>
-        <p>Before start mentioning about those masters, I would like to thank my colleague “Jijesh Mohan” who has helped a lot and inspired me to start the journey (Now I hope, you will know what is mean by Experience Reuse). Here is the list of Masters.</p>
-    </div>
-    <ul>
-        <li><a href="http://blog.objectmentor.com/">Robert C Martin</a></li>
-        <li><a href="http://pragdave.pragprog.com/">Dave Thomas</a></li>
-        <li><a href="http://martinfowler.com/">Martin Fowler</a></li>
-        <li><a href="http://en.wikipedia.org/wiki/Ward_Cunningham">Ward Cunningham</a></li>
-        <li><a href="http://en.wikipedia.org/wiki/Kent_Beck">Kent Beck</a></li>
-        <li><a href="http://en.wikipedia.org/wiki/Grady_Booch">Grady Booch</a></li>
-        <li><a href="http://www.joelonsoftware.com/">Joel Spolsky</a></li>
-        <li><a href="http://www.catb.org/~esr/">Eric S Raymond</a></li>
-    </ul>
-    <p>One great thing about all these excellent folks is they share their knowledge, either through Books or through their blogs. We are very fortunate. Now it’s our turn to learn from their wisdom and move forward.</p>
-    <blockquote><p>The man who does not read good books has no advantage over the man who can&#8217;t read them.</p><footer><strong>Mark Twain</strong></footer></blockquote><div>I have found the following magnificent books in the quest</div>
-    <ul>
-        <li>Pragmatic Programmer – Andrew Hunt, Dave Thomas</li>
-        <ul>
-            <li>Must Read for every programmer. In my perspective it is the Bible of Programming</li>
-        </ul>
-        <li>Clean Code – Robert C Martin</li>
-        <li>Refactoring – Martin Fowler</li>
-        <li>Art of Unix Programming – Eric S Raymond</li>
-    </ul>
-    <p>I’ve read the Pragmatic Programmer and all others are in my “To-Read” list. I am really searching for words in dictionary to describe about “Pragmatic Programmer”. It is a “Gem”.</p>
-    <p>When it comes to blogs, we have “Google Reader”. Just subscribe to the blog posts of these eminent people through Google Reader and learn the art of programming.</p>
-    <p>The stage has been setup. No one can ride bicycle by reading a book on “How to Ride Bicycle”. What books and blog posts would offer us is knowledge. In addition to knowledge to move further we need another thing called “Practice”. Yes get your hands dirty. Experiment, Research, Critique, Analyse, involve in healthy debates with your colleagues on various aspects of software craftsmanship, work and feel passionate about your work.</p>
-    <p>I have pledged myself to follow the best practices in all my development works and no compromise on the quality of the code I write. In nutshell, I am going to care about my craft, think about my work and strive for excellence.</p>
-    <p>I am in the very early stage of becoming a better programmer and looking forward to listen to your suggestions and inputs on this. When we grow older, we will be stronger. With all blessings and hope, the journey begins!</p>
-</div>
-]]></content>
   </entry>
   
 </feed>
