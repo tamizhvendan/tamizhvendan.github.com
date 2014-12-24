@@ -16,7 +16,7 @@ In the [last blog post]({% post_url 2014-12-17-phonecat-backend-using-web-api-an
 ### Phone View
 {% img /images/fsharp_phonecat/step_2/phone.png %}
 
-As we did it in the step-1 we are going to start with the controller which serves the phone view. Let's get started by creating a source file in *Web* project under the folders **Controllers** with the name ```PhoneController```
+As we did it in the step-1 we are going to start with the controller which serves the phone view. Let's get started by creating a source file in **Web** project under the folders *Controllers* with the name ```PhoneController```
 
 ```fsharp
 type PhoneController(phones : seq<Phone>) =
@@ -26,13 +26,12 @@ type PhoneController(phones : seq<Phone>) =
     this.View(phone)
 ```
 
-It just a straight forward code which just picks the phone with the given id, transform the selected phone to a view model and return the view.
+The action method ```Show``` just picks the phone with the given id, converts the selected phone to a view model and returns the view.
 
-The ```phones``` data which is being passed to the controller is actually a domain model representing the data that are required to show in the UI. Let's create it in the *Domain* project. Create a source file in the *Domain* project and name it as ```Catalog```.
+The ```phones``` data which is being passed to the controller is actually a domain model representing the data that are required to show in the UI. Let's create it in the *Domain* project. Create a source file in the **Domain** project and name it as ```Catalog```.
 
 ```fsharp
 namespace PhoneCat.Domain
-
 open PhoneCat.Domain.Measures
 
 module Catalog =    
@@ -70,13 +69,13 @@ module Catalog =
     Images : seq<string>
   }
 ```
-It's a typical type definition in fsharp which describes the domain model ```Phone```. Also if you remember we have already created a type with the same name ```Phone``` in [the previous step](https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33). Though they share the name both are being used in two different context. One for showing all the details of a phone and other one is for showing only few details about a phone. 
+It's a [typical type definition](http://fsharpforfunandprofit.com/series/understanding-fsharp-types.html) in fsharp which describes the domain model ```Phone```. Also if you remember we have already created a type with the same name ```Phone``` in [the previous step](https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33). Though they share the name both are being used for different purposes. One for showing all the details of a phone and other one is for showing only few details about a phone. 
 
-This is what we call us [bounded context in DDD](http://martinfowler.com/bliki/BoundedContext.html) which we can easily achieved in fsharp using modules.
+This is what we call us [bounded context in DDD](http://martinfowler.com/bliki/BoundedContext.html). In fsharp we can easily achieve it using modules with less verbosity.
 
 We have also used another awesome feature of fsharp called [units-of-measure](http://fsharpforfunandprofit.com/posts/units-of-measure/) which help us [avoid failures in unit-coversion](http://en.wikipedia.org/wiki/Mars_Climate_Orbiter#Cause_of_failure) by providing strong typed data.
 
-In the later posts we will be extending the domain based on theses measure types right now it just expresses the domain correct. These measure types are not created yet so lets create them adding a source file in *Domain* project with the name ```Measures```
+In the later posts we will be extending the domain based on theses measure types right now it just expresses the domain correct. These measure types are not created yet so lets create them by adding a source file in **Domain** project with the name ```Measures```
 
 ```fsharp
 namespace PhoneCat.Domain
@@ -99,7 +98,7 @@ module Measures =
   let toMB (storageStr : string) = toUOM storageStr "MB" 1.0<MB>
 ```
 
-We have defined types to represents measures in inch, gram and megabytes. We have also added few utility methods to translate the raw string to strongly typed data which does the follwoing
+We have defined types to represents measures in inch, gram and megabytes. We have also added few utility methods to translate the raw string to strongly typed data which does the following
 
 ```text
 "200.5inches" to 200.5<inch>
@@ -113,16 +112,18 @@ Open ```TypeProviders``` and add the below function
 let ToCatalogPhone(phone : PhoneTypeProvider.Root) = 
   let android = { OS = phone.Android.Os; UI = phone.Android.Ui }
       
-  let camera = { Features = phone.Camera.Features; Primary = phone.Camera.Primary }        
+  let camera = 
+    { Features = phone.Camera.Features
+      Primary = phone.Camera.Primary }        
       
   let display = 
     { ScreenResolution = phone.Display.ScreenResolution
       ScreenSize = toInch phone.Display.ScreenSize
       TouchScreen = phone.Display.TouchScreen }
 
-  let storage = { 
-    Flash = toMB phone.Storage.Flash
-    Ram = toMB phone.Storage.Ram}
+  let storage = 
+    { Flash = toMB phone.Storage.Flash
+      Ram = toMB phone.Storage.Ram}
 
   { Id = phone.Id
     Name = phone.Name
@@ -134,9 +135,9 @@ let ToCatalogPhone(phone : PhoneTypeProvider.Root) =
     Storage = storage 
     Images = phone.Images}
 ```
-We are leveraging the utility functions ```toGram```, ```toMB``` defined above as part of measure types and do seamless mapping of domain model from mapping store.
+We are leveraging the utility functions ```toGram```, ```toMB``` defined above as part of measure types and do seamless mapping of domain model from data store.
 
-The next step is wiring the controller with the domain model and the data-store. We are going to follow the same [Composition Root] design as we [did in step-1](https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Infrastructure.fs#L19-38)
+The next step is wiring the controller with the domain model and the data-store. We are going to follow the same **Composition Root** design as we [did in step-1](https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Infrastructure.fs#L19-38)
 
 Add a source file in the *Web* project with the name ```MvcInfrastructure``` and add the following code
 
@@ -232,9 +233,9 @@ That's it. Phone View is up and running! Click the Phone Links in the Home Page 
 
 ### Manufacturers View
 {% img /images/fsharp_phonecat/step_2/manufacturer.png %}
-Manufatures View is follows the similar steps that we have used to create the Phone View. It displays the Phones manufatured by a selected manufaturer in the home page.
+Manufactures View follows the similar steps that we have used to create the Phone View. It displays the Phones manufactured by a selected manufacturer in the home page.
 
-Let's start from the controller. Create a controller in the *Web* project with the name ```ManufacturerController```
+Let's start from the controller. Create a controller in the **Web** project with the name ```ManufacturerController```
 
 ```fsharp
 namespace PhoneCat.Web.Controllers
@@ -268,9 +269,9 @@ type ManufacturerController
     this.View(viewModel)
 ```
 
-The ```ManufacturerController``` depends on the function ```getPhones``` which gives the Phones manufactured by the given manufacturer. The action method ```Show``` converts given id to the manufaturer name,  get the Phones, convert them to ```ManufacturerViewModel``` and render the view.
+The ```ManufacturerController``` depends on the function ```getPhones``` which gives the Phones manufactured by the given manufacturer. The action method ```Show``` converts given id to the manufaturer name,  gets the Phones, converts them to ```ManufacturerViewModel``` and renders the view.
 
-The domain model ```Phone``` mentioned here is the one that we have [already created in step-1](https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33). The ```getPhones```` domain function is yet to be created. 
+The domain model ```Phone``` mentioned here is the one that we have [already created in step-1](https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33). The ```getPhones``` domain function is yet to be created. 
 
 Open ```Phones``` file in the *Domain* project and add the ```getPhonesOfManufacturer``` function.
 
@@ -301,6 +302,19 @@ module MvcInfrastructure =
           raise <| ArgumentException((sprintf "Unknown controller type requested: %A" controllerType))
 ``` 
 
-Thanks to the [partial function](http://fsharpforfunandprofit.com/posts/partial-application/) we have partially applied the first parameter alone for the ```Phones.getPhonesOfManufacturer``` function which has the signature ```seq<Phone> -> ManufacturerName -> seq<Phone>``` and created a new function on the fly with the signature ```ManufacturerName -> seq<Phone>``` which is the exactly the function that is needed by the ```ManufacturerController```
+Thanks to the [partial function](http://fsharpforfunandprofit.com/posts/partial-application/) we have partially applied the first parameter alone for the ```Phones.getPhonesOfManufacturer``` function which has the signature 
 
-The final step is to create a razor view with the name ```Show.cshtml``` inside the **View** -> **Manufacturer** directory of *Web* project and update it [as mentioned here.](https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Manufacturer/Show.cshtml) 
+```text
+seq<Phone> -> ManufacturerName -> seq<Phone>
+``` 
+and created a new function on the fly with the signature 
+
+```text
+ManufacturerName -> seq<Phone>
+``` 
+which is the exactly the function that is needed by the ```ManufacturerController```
+
+The final step is to create a razor view with the name ```Show.cshtml``` inside the **View** -> **Manufacturer** directory of **Web** project and update it [as mentioned here.](https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Manufacturer/Show.cshtml) 
+
+### Summary
+In this blog post we have seen how to create MVC Razor views in fsharp. You can find the [source code in the github repository](https://github.com/tamizhvendan/fsharp-phonecat/tree/2). In the later posts we will be adding more interactivity. Stay tuned !!
