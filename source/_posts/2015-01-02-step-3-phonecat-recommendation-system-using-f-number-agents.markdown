@@ -126,7 +126,7 @@ One of the great feature of F# is its seamless interoperability with C# librarie
 
 We have created a private [Rx Subject](http://msdn.microsoft.com/en-us/library/hh242970%28v=vs.103%29.aspx) and made it responsible for pushing the notification which contains the phone id that is being visited.
 
-But wait how we do we configure the subscription between this controller and the ```PhoneViewTracker``` ? Thanks to the CompositionRoot that we have [created in the step-2](https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Infrastructure.fs#L28-L32). As we have full control over the creation of controller its just a matter of two lines to achieve it.
+But wait how do we configure the subscription between this controller and the ```PhoneViewTracker``` ? Thanks to the CompositionRoot that we have [created in the step-2](https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Infrastructure.fs#L28-L32). As we have full control over the creation of controller its just a matter of two lines to achieve it.
 
 ```fsharp
 type CompositionRoot(phones : seq<PhoneTypeProvider.Root>) =          
@@ -173,7 +173,7 @@ The beauty of this entire workflow is all are message driven and asynchronous by
 
 Let's start from Recommendation SignalR hub. The first step is installing SingalR from [the nuget](https://www.nuget.org/packages/Microsoft.AspNet.SignalR/2.1.2).
 
-After installing create a source file in the **Web** project and name it as ```Startup``` add the following code as per the SignalR convention.
+After installing create a source file in the **Web** project and name it as ```Startup``` then add the following code as per the SignalR convention.
 
 ```fsharp
 namespace PhoneCat.Web
@@ -213,7 +213,7 @@ type RecommendationHub() =
       "Recommendation initiated"
 ```
 
-Then anonymous id discussed while storing user visits is actually persisted in the [request cookies by Asp.Net](http://msdn.microsoft.com/en-in/library/91ka2e6a%28v=vs.85%29.aspx) in an encoded format. In the ```GetRecommendation``` method we will be retrieving this encoded anonymous id from the cookie and decode it. Then we need to get the SignalR connection id which available in the base class ```Hub```. After getting both the anonymous id and the connection id, send a ```GetRecommendation``` message to the ```StorageAgent``` with these information. Finally send a response to the SignalR client as "Recommendation initiated".
+Then anonymous id of the user session is actually persisted in the [request cookies by Asp.Net](http://msdn.microsoft.com/en-in/library/91ka2e6a%28v=vs.85%29.aspx) in an encoded format. In the ```GetRecommendation``` method we will be retrieving this encoded anonymous id from the cookie and decode it. Then we need to get the SignalR connection id which available in the base class ```Hub```. After getting both the anonymous id and the connection id, send a ```GetRecommendation``` message to the ```StorageAgent``` with these information. Finally send a response to the SignalR client as "Recommendation initiated".
 
 The ```decode``` function is not added yet so let's add them. Thanks to [this stackoverflow answer](http://stackoverflow.com/a/2481110/159850) we just need to convert the code from C# to F#
 
@@ -229,9 +229,9 @@ let private decode encodedAnonymousId =
     field.GetValue(anonymousIdData) :?> string
 ```
 
-We have used a special F# operator here ```:?>``` which is a dynamci down cast operator which casts a base class to a sub-class of it. You can read [this msdn documentation](http://msdn.microsoft.com/en-us/library/dd233220.aspx) to know more about F# casting and conversions.
+We have used a special F# operator here ```:?>``` which is a dynamic down cast operator which casts a base class to a sub-class of it. You can read [this msdn documentation](http://msdn.microsoft.com/en-us/library/dd233220.aspx) to know more about F# casting and conversions.
 
-The ```GetRecommendation``` message is not added yet, so let's add them too. Modify ```StorageAgentMessage``` create before as below
+The ```GetRecommendation``` message is not added yet, so let's add them too. Modify ```StorageAgentMessage``` created before as below
 
 ```fsharp
   type StorageAgentMessage =
@@ -239,7 +239,7 @@ The ```GetRecommendation``` message is not added yet, so let's add them too. Mod
     | GetRecommendation of string * string
 ```
 
-The final step of this pipeline is Update the ```StorageAgent``` to handle this ```GetRecommendation``` message. Modify the ```storageAgentFunc``` in the ```UserNavigationHistory``` as below
+The final step of this pipeline is to Update the ```StorageAgent``` to handle this ```GetRecommendation``` message. Modify the ```storageAgentFunc``` in the ```UserNavigationHistory``` as below
 
 ```fsharp
  let private storageAgentFunc (agent : Agent<StorageAgentMessage>) =  
@@ -256,3 +256,99 @@ The final step of this pipeline is Update the ```StorageAgent``` to handle this 
 ```
 
 Handling of the ```GetRecommendation``` message is very straight forward. Just get the phone ids being visited by the given anonymous id from the in memory dictionary and send a message consists of connection id and this phone ids visited to the ```RecommendationAgent``` which we will be creating next.
+
+Create a source file with the name ```Recommendations``` in the **Domain** project and add the ```RecommendationAgent``` below
+
+```fsharp
+[<AutoOpen>]
+module Recommendation =
+  let private recommendationAgentFunc (inbox : Agent<string*List<string>>) =
+    let rec messageLoop () = async {
+      let! connectionId, visitedPhoneIds = inbox.Receive()     
+      if (Seq.length visitedPhoneIds) >= 2 then
+        suggestRecommendation connectionId (visitedPhoneIds |> Seq.take 2 |> Seq.toList)
+      return! messageLoop()
+    }
+    messageLoop ()
+
+  let RecommendationAgent = Agent.Start recommendationAgentFunc
+``` 
+
+In order to keep this blog post simple I've used my own 'Hello World' kind of algorithm which picks the latest two phone ids being visited and suggests recommendation based on it. In a real world you would be replacing this toddler algorithm with more sophisticated algorithms like [Association Rule Learning](http://en.wikipedia.org/wiki/Association_rule_learning). I am planning to implement this algorithm at later stages of this blog series.
+
+Then the next step is to implement the ```suggestRecommendation``` function which picks a hardcoded recommendation and publish the result using Rx. To do this add the [Rx Nuget Package](https://www.nuget.org/packages/Rx-Main/) in the **Domain** project and add the  ```suggestRecommendation``` function in the ```Recommendation``` module
+
+```fsharp
+let RecommendationPipe = new Subject<string*string option>()
+
+  let private suggestRecommendation connectionId visitedPhoneIds = 
+    match visitedPhoneIds with
+    | ["motorola-xoom-with-wi-fi"; "motorola-xoom"] -> RecommendationPipe.OnNext (connectionId, Some "motorola-atrix-4g")
+    | ["dell-streak-7"; "dell-venue"] -> RecommendationPipe.OnNext (connectionId, Some "nexus-s")
+    | _ -> RecommendationPipe.OnNext (connectionId, None)
+```
+
+The implementation is a very straight forward pattern matching. If last visited two items are ("motorola-xoom-with-wi-fi", "motorola-xoom"), send the recommendation as "motorola-atrix-4g", else if they are ("dell-streak-7","dell-venue") then recommend "nexus-s". If none of the condition matches then send none. Thanks to the [option type](http://fsharpforfunandprofit.com/posts/the-option-type/) which expresses this result in type safe manner.
+
+With all these infrastructure in place, all we need to do is to just subscribe to this ```RecommendationPipe``` and send the suggestion to the user via SignalR
+
+Let's add a observer for this pipe in the **Web** project. Open ```Hubs``` module in the **Web** project and add the following code
+
+```fsharp
+
+let private getUrl (phoneId : string) httpContext =
+    let routeValueDictionary = new RouteValueDictionary()
+    routeValueDictionary.Add("controller", "Phone")
+    routeValueDictionary.Add("action", "Show")
+    routeValueDictionary.Add("id", phoneId)
+    let requestContext = new RequestContext(new HttpContextWrapper(httpContext), new RouteData());
+    let virtualPathData = RouteTable.Routes.GetVirtualPath(requestContext, routeValueDictionary);
+    virtualPathData.VirtualPath
+
+let notifyRecommendation httpContext phones (connectionId, recommendedPhoneId) =
+    let phones' = phones |> Seq.map TypeProviders.ToPhone
+    match recommendedPhoneId with 
+    | Some phoneId ->
+      let recommendedPhone = Phones.getPhoneById phones' phoneId
+      let phoneUrl = getUrl phoneId httpContext
+      let hubContext = GlobalHost.ConnectionManager.GetHubContext<RecommendationHub>()
+      hubContext.Clients.Client(connectionId)?showRecommendation(recommendedPhone, phoneUrl) 
+    | None -> ()
+```
+
+The ```notifyRecommendation``` function checks whether the incoming recommendedPhoneId has value or not. If it has value, it just picks the ```Phone``` record corresponding to the given phoneId and get the url for the recommended phone. With all these data in place, we just need to send the response to the using via SignalR.
+
+You would have a noticed a weird ```?``` symbol which is actually part of the [ImpromptuInterface.FSharp](https://www.nuget.org/packages/ImpromptuInterface.FSharp/). This library adds provisions to use [C# dynamic types](http://msdn.microsoft.com/en-IN/library/dd264736.aspx) in F#
+
+They are two missing pieces. One is ```Phones.getPhoneById``` which we are not having. Let's add them. Open ```Phones``` module in **Domain** project and add it as mentioned below
+
+```fsharp
+let getPhoneById (phones : seq<Phone>) phoneId =
+    phones |> Seq.find (fun p -> p.Id = phoneId)
+```
+
+The final step is wiring the ``RecommendationPipe`` with the ```notifyRecommendation```. Open ```Global.asax.fs``` and update it as below
+
+```fsharp
+type Global() = 
+  // .. existing code ignore for brevity ..
+ member x.Application_Start() =
+    let phones = GitHubRepository.getPhones()
+    // .. existing code ignore for brevity ..
+    let notificationObserver = Hubs.notifyRecommendation HttpContext.Current phones
+    Recommendation.RecommendationPipe.Subscribe notificationObserver |> ignore
+    ()
+```
+
+Partial application of function is a very handy thing which actually replaces its counterpart Dependency Injection in the OOP. We just provided the first two arguments of ```notifyRecommendation``` and created a new function with the signature ```string * string option -> unit``` which is the expected observer signature for the ```RecommendationPipe```.
+
+#### The Front End UI
+The front end for this is a typical SignalR-Javascript client code which you can find it the [github repository](https://github.com/tamizhvendan/fsharp-phonecat/blob/3/Web/Scripts/recommendation.js). I've intentionally leaving the front-end part of this application as it would be extends the scope of the blog post. Moreover if you go through the source code in the github repository you can easily understand
+
+
+### Summary
+F# is just so awesome with so much expressive functional programming features. Rx, Agents and SignalR add more powers to it and enable you to create a scalable functional reactive architecture. I'd like give credits two incredible resources on this subject Mark Seemann's Pluralsight course on [Functional Architecture with F#](http://www.pluralsight.com/courses/functional-architecture-fsharp) and Kevin Ashton's excellent blog post on [Full Stack F#](http://namelessinteractive.com/blog/Full_Stack_FSharp_%E2%80%93_The_Long_Version_(Part_1)) which helped me a lot in coming out with this blog post.
+
+Last but not the least, Thanks to [Sergey Tihon](https://sergeytihon.wordpress.com) for the words of encouragement to write the blog post on this topic.
+
+You can find the source code of this step in [the github repository](https://github.com/tamizhvendan/fsharp-phonecat/tree/3). 

@@ -20,11 +20,11 @@ As it is my maiden attempt to create a relatively large web application in fshar
 * **Step 0** - [Setting up the fsharp-phonecat Solution]({% post_url 2014-12-10-step-0-setting-up-the-fsharp-phonecat-solution %})
 * **Step 1** - [Creating Web Api endpoints for fsharp-phonecat using Web Api 2]({% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %})
 * **Step 2** - [Creating ASP.NET MVC Razor Views for fsharp-phonecat]({% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %})
+* **Step 3** - [PhoneCat Recommendation System using F# Agents, SignalR and Rx]({% post_url 2015-01-02-step-3-phonecat-recommendation-system-using-f-number-agents %})
 
 #### Upcoming Posts
 
 * Event Sourcing using EventStore
-* Recommendation System using FSharp Agents, Rx and SignalR
 * Advanced Search using FSParsec
 * Data Access Layer using No-Sql
 * Integration testing using TickSpec and canopy
