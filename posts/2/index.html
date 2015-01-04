@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Feb 11th, 2012 asp.net mvc, unit testing Comments Unit Testing Custom Model Binders in MVC3 In my previous post we have seen a way to do unit &hellip;">
+	<meta name="description" content="Mar 4th, 2012 asp.net mvc, craftsmanship, unit testing Comments Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way Would you like if your &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -96,7 +96,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.28571428571429%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 117.14285714285714%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 117.14285714285714%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.85714285714286%'>data access</a> <a href='/blog/categories/entity-framework' style='font-size: 121.42857142857143%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 121.42857142857143%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 121.42857142857143%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.28571428571429%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.85714285714286%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.57142857142857%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.57142857142857%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.28571428571429%'>others</a> <a href='/blog/categories/programming' style='font-size: 125.71428571428572%'>programming</a> <a href='/blog/categories/unit-testing' style='font-size: 121.42857142857143%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.57142857142857%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 124.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -109,6 +109,153 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-04T00:00:00+05:30" data-updated="true" itemprop="datePublished">Mar 4<sup>th</sup>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/" itemprop="url">Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <p>Would you like if your unit test have an assertion like this ?</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh5.ggpht.com/-Z7XXVGQ3sX4/T1J73ct1gqI/AAAAAAAAASQ/qw-uSNrLoOE/image_thumb3.png?imgmax=800">
+    </div>
+    <p>
+        IMHO having a unit test assertion like this with a long magical string value would become a maintenance problem with additional logic being added.
+        It breaks with even minor changes like “adding an extra whitespace” though it is logically correct(Browsers ignores the whitespaces while rendering html)!.
+        It is harder to debug to!!
+    </p>
+    <p>
+        How can we get rid of this long string assertion ? Is there any better way to do assertion against this long magical string ejected from a
+        <a href="http://stephenwalther.com/blog/archive/2009/03/03/chapter-6-understanding-html-helpers.aspx">HtmlHelper</a> ? One thing which strikes on my mind when I come
+        across this problem is why don’t we parse the string as an xml and assert against the xml element instead. It might appear like laborious at the first sight,
+        but by making use of <a href="http://msdn.microsoft.com/en-us/library/system.xml.linq.xelement.aspx">XElement</a> and
+        <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a> we can easily do that.
+    </p>
+
+    <p>In the blog post we are going to see how can we implement this in a more cleaner way. </p>
+
+    <p>Okay.. Enough texts.. Its time to see some code!!</p>
+
+    <p>
+        The first step is to convert the “html string” returned by the html helper to XElement. Generally most of the helpers returns
+        <a href="http://stackoverflow.com/questions/2293357/what-is-an-mvchtmlstring-and-when-should-i-use-it">MvcHtmlString</a>, So, we can easily achieve this
+        by writing an extension method called “ToXElement” on MvcHtmlString.
+    </p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-cwtnsV7pl2c/T1J763QmH1I/AAAAAAAAASg/6QKxAEGZ5uM/image_thumb%25255B2%25255D.png?imgmax=800">
+    </div>
+
+    <p>That’s it! All set to redefine the way custom html helpers are being tested. </p>
+
+    <p>Fine, Let us see it in action. We will start with a handy HtmlHelper method called “Button” which would render a “Html button tag” and here is the test to assert it.</p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-Zl-hH4zYH1A/T1J7_Y9Qr3I/AAAAAAAAASw/PyWZZJMadV0/image_thumb%25255B10%25255D.png?imgmax=800">
+    </div>
+    <p>
+        The first test uses the ToXElement extension method and assert against the XElement’s properties whereas the second test uses the
+        “magical string with tags added” to do the assertion. Now you may feel what’s wrong with this guy the second test look clean to me,
+        why he is making fuss about it. Yes you are correct, the second one looks clean. But it appears to be clean as the requirement in hand is very simple.
+    </p>
+    <p>IMHO the custom html helpers that we are building in our real world application won’t be as simple as having a button tag with just plain caption in it. </p>
+    <p>Fine, lets see the real world. Voice from your team lead <em></em></p>
+    <p>
+        <em>
+            Hey! the Button HtmlHelper you designed has did a tremendous job. Can you make a small change on it so that it would
+            <strong>generate a button with a class attribute having the value ‘appbutton’ by default</strong>.
+            We need it because it make the button styling consistent with rest of our application ”
+        </em>
+    </p>
+
+    <p>Let us implement the feature by starting with the test for it</p>
+    <p>
+        <a href="http://lh4.ggpht.com/-HScL-9YaD1s/T1J8Awk2YbI/AAAAAAAAAS4/Q3E6JlpRItM/s1600-h/image%25255B23%25255D.png">
+            <img src="http://lh5.ggpht.com/-MyHzxXBfdCM/T1J8DL_KgbI/AAAAAAAAATA/Vvt1j4k-KYo/image_thumb%25255B14%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>
+        Now tell me is the second test clean ? I don’t think so. The generate html string is bit long now also having double quotes inside double quotes makes it hard to read.
+        At the same time the first test remains robust and clean.
+    </p>
+
+    <p>
+        Still not convinced, okay just go up and see the very first test that we have wrote to test the button caption.
+        Do you think the <strong>hard way test</strong> with the “<strong>long magical string</strong>” still pass ??
+    </p>
+
+    <p style="text-align: center; color: #ff0000; font-weight: bold">It would fail</p>
+
+    <p>Why ?? Here is the error message </p>
+    <p>
+        <a href="http://lh5.ggpht.com/-K6RjhSEMhLA/T1J8EpZAZ-I/AAAAAAAAATI/TUutsjz0XdE/s1600-h/image%25255B28%25255D.png">
+            <img src="http://lh4.ggpht.com/-SpmB-mDwffk/T1J8HO3Np4I/AAAAAAAAATQ/oKxboMdbr6I/image_thumb%25255B17%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>Now what would you do, if you decided to persist with the “long magical string”, then your action would be editing the test as below</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh6.ggpht.com/-RJKnvJ5K8dI/T1J8LTJG_iI/AAAAAAAAATg/TAKyOA5Ej9w/image_thumb%25255B21%25255D.png?imgmax=800">
+    </div>
+    <p>Nice job. Now tell me what is the difference between this one and the below one</p>
+    <div style="text-align: center;clear:both">
+        <a href="http://lh6.ggpht.com/-ps4dX_FO-B0/T1J8MhVBtwI/AAAAAAAAATo/u003U24qiBo/s1600-h/image%25255B42%25255D.png">
+            <img src="http://lh3.ggpht.com/-i5zAV0v0JfY/T1J8O7pNIiI/AAAAAAAAATw/Fuo_4WMsFzk/image_thumb%25255B27%25255D.png?imgmax=800">
+        </a>
+    </div>
+    <p>
+        Apart from the test method name everything is same. Is the test clean ? Is the test clearly saying what it is trying to assert ?
+        What would happen if we got the requirement to add one more attribute or even more? Think !!
+    </p>
+
+    <p>But at the same time the tests which written using XElement assertion would remain healthy and their test method name mean what it is testing </p>
+    <p>
+        <a href="http://lh6.ggpht.com/-t5GRHpUvWSI/T1J8Qh6dvqI/AAAAAAAAAT4/WaaIvzaEKCY/s1600-h/image%25255B47%25255D.png">
+            <img src="http://lh3.ggpht.com/-fQ_eFoBZqnE/T1J8TPZgtFI/AAAAAAAAAUA/1wGDDsT5J8Y/image_thumb%25255B30%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>I leave it you to decide which one is cleaner. </p>
+    <h4>Summary</h4>
+    <p>Here is the implementation of “Button HtmlHelper” that we unit tested so far</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-lg0jE79JCVI/T1J8Y3QGqOI/AAAAAAAAAUQ/gif78dMv6XI/image_thumb%25255B33%25255D.png?imgmax=800">
+    </div>
+    <p>
+        My humble request to the readers of this blog post, please take care of your “Unit tests” and give some more importance to it.
+        An hour spent upfront would save a day in future.
+    </p>
+    <p>“Beauty is in the eye of the beholder”, If you have a better idea to do the same, kindly leave a comment, I am open to learn from you.</p>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1042,144 +1189,6 @@
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-08-03T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 3<sup>rd</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/08/03/using-ajaxbeginform-aspnet-mvc3-ajax/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/08/03/using-ajaxbeginform-aspnet-mvc3-ajax/" itemprop="url">Using Ajax.BeginForm – ASP.NET MVC3 Ajax – Part III</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-
-    <p>
-        In my previous blog posts 
-	    <a href="/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">Part 1</a>, 
-	    <a href="/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/">Part 2</a>
-        we have explored how to use the <em>Ajax.ActionLink()</em> helper method to implement a basic Ajax request. 
-	    In this blog post we have are going to see an another useful helper method <em>Ajax.BeginForm()</em>
-    </p>
-
-    <p>
-        We will be implementing the following scenario using the <em>Ajax.BeginForm()</em>. 
-    The scenario would be having a view consisting of a simple form with name and email field.
-    </p>
-    <div style="clear: both; text-align: center">
-        <img src="http://3.bp.blogspot.com/-ymtu1zLXx3A/TjkOu1RpS_I/AAAAAAAAAIs/dbURJFeRGeA/s1600/AjaxBeginForm1.PNG" />
-    </div>
-
-    <p>Upon clicking the “Submit” button, the data will be sent back to the server via Ajax Post request and get a confirmation like this.</p>
-    <div style="clear: both; text-align: center">
-        <img src="http://4.bp.blogspot.com/-SvRqB-F2Yu4/TjkOuy-BpiI/AAAAAAAAAIw/er75G6DKkcU/s1600/AjaxBeginForm2.PNG" />
-    </div>
-
-    <p>
-        ASP.NET MVC3 offers an intuitive way to submitting/posting the form data to server via ajax using 
-        <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a> helper method. 
-        Lets start developing the scenario by first defining the Model (Not using TDD to keep this blog post simple).
-    </p>
-
-    <div><script src='https://gist.github.com/546d5c4d9476826dfe14.js?file=PersonalDetail.cs'></script>
-<noscript><pre><code>using System.ComponentModel.DataAnnotations;
-namespace UsingAjaxForms.Models
-{
-    public class PersonalDetail
-    {
-        [Required]
-        public string Name { get; set; }
-
-        [Required]
-        public string Email { get; set; }
-    }
-}</code></pre></noscript></div>
-
-
-    <p>
-        To keep things simple, Our PersonalDetailsController will be having only two action methods. 
-        One will handling the “Get” request for Creating PersonalDetail and the other one for handling “Post” request for Creating PersonalDetail.
-    </p>
-
-    <div><script src='https://gist.github.com/546d5c4d9476826dfe14.js?file=PersonalDetailController.cs'></script>
-<noscript><pre><code>using System.Web.Mvc;
-using UsingAjaxForms.Models;
-namespace UsingAjaxForms.Controllers
-{
-    public class PersonalDetailController : Controller
-    {
-        public ActionResult Create()
-        {
-            var personalDetail = new PersonalDetail();
-            return View(personalDetail);
-        }
-
-        [HttpPost]
-        public string Create(PersonalDetail personalDetails)
-        {
-            return &quot;Hi &quot; + personalDetails.Name + &quot;!. Thanks for providing the details.&quot;;
-        }
-    }
-}</code></pre></noscript></div>
-
-
-	<p>
-        Now, the stage is set to play using ajax. The View for Creating new PersonalDetail using Ajax is similar to that of using ordinary post back except one factor. 
-        We need to replace the Html.BeginForm helper method with the 
-        <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a>
-    </p>
-
-    <p>
-        Ajax.BeginForm method has 11 overloads. On this blog post we are going to use the following overload. 
-        <em>Ajax.BeginForm(string actionName, string controllerName, AjaxOptions ajaxOptions)</em>
-    </p>
-
-    <p>
-        The actionName and controllerName points to the handler which is going to handle the ajax request and the ajaxOptions defines the behavior of the ajax request. 
-        The View for Creating PersonalDetail will look like this
-    </p>
-
-    <div style="clear: both; text-align: center">
-        <img src="http://2.bp.blogspot.com/-MbuiTU8NMKU/TjkOurokTOI/AAAAAAAAAIo/9FvQ9vtIDzw/s1600/AjaxBeginFormView.PNG" />
-    </div>
-
-    <p>That’s it!! All you need to do is to enclose your form into an Ajax.BeginForm method wired with the necessary configurations. 
-        In this example the ajax form method takes care of wiring up submit form action to the given action method of the controller and 
-        update the result which it receives from the server using the <em>UpdateTargetId</em>. 
-        You can also play with the Ajax request by adding a loading animation as I have mentioned in 
-        <a href="/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/">Part II blog post</a>. 
-        <strong>Note:</strong> Dont forget to add references to the jQuery script files</p>
-
-    <h4>Summary:</h4>
-    <p>In this blog post we have seen a very basic way to create Ajax forms in ASP.NET MVC3. 
-        You can download the source code of this blog post from <a href="http://www.box.net/shared/kvktovzz5fiihtxemvr0">here</a></p>
-</div>
-	
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
@@ -1191,7 +1200,7 @@ namespace UsingAjaxForms.Controllers
     <div class="center"><a href="/blog/archives">Blog Archives</a></div>
 </nav></div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2014
+			<footer id="footer" class="inner">Copyright &copy; 2015
 
     Tamizhvendan S
 

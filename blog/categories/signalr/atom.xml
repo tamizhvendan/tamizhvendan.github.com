@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: signalr | Tamizh's Thoughts]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/signalr/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2015-01-04T21:31:49+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Step-3 PhoneCat Recommendation System using F# Agents, SignalR and Rx]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/"/>
+    <updated>2015-01-02T05:44:52+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 3 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the last two steps we have seen how to create a <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">web apis</a> and <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
+
+<h3 id="a-small-flashback">A Small Flashback</h3>
+<p>I’ve actually planned to put this blog post for the great fsharp community initiative <a href="https://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/">F# Advent Calender</a>. Unfortunately it was not able to get through as I’ve <a href="http://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/#comment-4135">nominated myself</a> little late. I always believe there is an opportunity behind every adversity. I didn’t get hung up and I knew this is one of the great topic to blog about. When I decided to blog about it, I needed a sample web application. So, I was creating that sample application and it suddenly strikes! <em>How about a blog series on web application development in fsharp?</em> I’ve immediately started working on it and hence this blog series.</p>
+
+<h3 id="so-what-we-gonna-do-in-this-step">So what we gonna do in this step</h3>
+<p>In this blog post we are going to build a recommendation system which keeps track of what phones that the user is viewing, and based on his navigation history, we will be recommending a phone that he might be interested in</p>
+
+<p style="text-align:center"> <strong> User visits "Motorola XOOM™" </strong> </p>
+<p><img src="/images/fsharp_phonecat/step_3/Phone_1.png"></p>
+
+<p style="text-align:center"> <strong> User visits "Motorola XOOM™ with Wi-Fi" </strong> </p>
+<p><img src="/images/fsharp_phonecat/step_3/Phone_2.png"></p>
+
+<p>Let us start the implementation by defining two high level tasks</p>
+
+<ol>
+  <li>Tracking user navigation</li>
+  <li>Recommending a phone</li>
+</ol>
+
+<h3 id="tracking-user-navigation">1. Tracking user navigation</h3>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png" width="600" height="500"></p>
+
+<p>The first two components has been already implemented as part of <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
+
+<p>Create a source file in the <strong>Web</strong> project and name it as <code>PhoneViewTracker</code>. Add a function <code>observePhonesViewed</code> which will be invoked when you a user visits a phone.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>module PhoneViewTracker =     
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let observePhonesViewed anonymousId phoneIdBeingVisited =
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    StorageAgent.Post (SavePhoneVisit (anonymousId, phoneIdBeingVisited))
+</pre></div>
+</div>
+</div>
+
+<p>The <code>anonymousId</code> is a <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid%28v=vs.110%29.aspx">http property</a> which represents a unique identifier for the given user session</p>
+
+<p>Upon receiving the <code>anonymousId</code> and <code>phoneIdBeingVisited</code> we will be posting a message to the <code>StorageAgent</code> to save this visit. Both the agent and the message doesn’t exist now, so lets create them</p>
+
+<p>Create a source file in the <strong>Domain</strong> project and name it as <code>UserNavigationHistory</code> and add the following</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace PhoneCat.Domain
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open System.Reactive.Subjects
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open System.Collections.Generic
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>type Agent&lt;'T&gt; = MailboxProcessor&lt;'T&gt;
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>module UserNavigationHistory =  
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  type StorageAgentMessage =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    | SavePhoneVisit of string * string
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  let private storageAgentFunc (agent : Agent&lt;StorageAgentMessage&gt;) =  
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    let rec loop (dict : Dictionary&lt;string, list&lt;string&gt;&gt;) = async { 
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>      let! storageAgentMessage = agent.Receive()
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>      match storageAgentMessage with
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>      | SavePhoneVisit (anonymousId, phoneIdBeingVisited) -&gt; 
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>          if dict.ContainsKey(anonymousId) then
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>            let phoneIdsVisited = phoneIdBeingVisited :: dict.[anonymousId]
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>            dict.[anonymousId] &lt;- phoneIdsVisited
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>          else
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>            dict.Add(anonymousId, [phoneIdBeingVisited])
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>      return! loop dict      
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    }
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>    loop (new Dictionary&lt;string, list&lt;string&gt;&gt;())
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>  let StorageAgent = Agent.Start(storageAgentFunc)
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>
+</pre></div>
+</div>
+</div>
+
+<p>Storage Agent is an F# Agent which stores the user navigation history in an in-memory dictionary. It can be replaced by any key-value store like <a href="http://redis.io/">redis</a> but for experimentation I’ve preferred to use F# Agents.</p>
+
+<p>The <code>StorageAgentMessage</code> is a <a href="http://fsharpforfunandprofit.com/posts/discriminated-unions/">dicriminated union</a> represents possible messages that the <code>StorageAgent</code> can process. Right now it has only message <code>SavePhoneVisit</code> which takes a tuple representing the <code>anonymousId</code> and the <code>phoneIdBeingVisited</code></p>
+
+<p>The <code>StorageAgent</code> is a typical F# Agent which waits for the incoming <code>StorageAgentMessage</code> and upon receiving it stores the visit in the in-memory dictionary. </p>
+
+<p>The next step is wiring the <code>PhoneViewTracker.observePhonesViewed</code> function with the <code>PhoneController.Show</code> action method. We can call the function directly that will create a strongly coupled code. We can even directly post the message to the agent. But that also makes the code tightly coupled. </p>
+
+<p>What we are actually trying to implement here is a <strong>User Phone Visit Stream</strong>. Whenever the user visits a phone, we just want to notifiy somebody to keep track of it and move on. And its where <a href="http://msdn.microsoft.com/en-in/data/gg577609.aspx">Reactive Extensions aka Rx</a> comes into the picture. If you are new to Reactive Programming or Rx, I strongly recommend you to go through <a href="https://gist.github.com/staltz/868e7e9bc2a7b8c1f754">this excellent article</a> by <a href="http://staltz.com/">André Staltz</a></p>
+
+<p>Install the <a href="https://www.nuget.org/packages/Rx-Main/">Rx Nuget Package</a> in the <em>Web</em> project. With Rx in the kitty the next step is to make the User’s phone visit as event and subscribe this event with the <code>PhoneViewTracker</code></p>
+
+<p>The first step is to make the <code>PhoneController</code> as observable. Modify the already created <code>PhoneController</code> as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type PhoneController(phones : seq&lt;Phone&gt;) =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  inherit Controller()
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let subject = new Subject&lt;string&gt;()
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  interface IObservable&lt;string&gt; with
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    member this.Subscribe observer = subject.Subscribe observer
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  member this.Show (id : string) = 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    let phone = phones |&gt; Seq.find (fun p -&gt; p.Id = id) |&gt; PhoneViewModel.ToPhoneViewModel
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    subject.OnNext id 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    this.View(phone)
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  override this.Dispose disposing =
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    if disposing then 
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>      subject.OnCompleted()
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>      subject.Dispose()      
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    base.Dispose disposing
+</pre></div>
+</div>
+</div>
+
+<p>One of the great feature of F# is its seamless interoperability with C# libraries. As you seen in the above code snippet we have just made the <code>PhoneController</code> into an observable by implementing the interface <a href="http://msdn.microsoft.com/en-us/library/dd990377%28v=vs.110%29.aspx">IObservable</a>. </p>
+
+<p>We have created a private <a href="http://msdn.microsoft.com/en-us/library/hh242970%28v=vs.103%29.aspx">Rx Subject</a> and made it responsible for pushing the notification which contains the phone id that is being visited.</p>
+
+<p>But wait how do we configure the subscription between this controller and the <code>PhoneViewTracker</code> ? Thanks to the CompositionRoot that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Infrastructure.fs#L28-L32">created in the step-2</a>. As we have full control over the creation of controller its just a matter of two lines to achieve it.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type CompositionRoot(phones : seq&lt;PhoneTypeProvider.Root&gt;) =          
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>    inherit DefaultControllerFactory() with
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>      override this.GetControllerInstance(requestContext, controllerType) = 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>        // ...
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        else if controllerType = typeof&lt;PhoneController&gt; then          
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>          let phones' = phones |&gt; Seq.map TypeProviders.ToCatalogPhone
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>          let observer = PhoneViewTracker.observePhonesViewed (requestContext.HttpContext.Request.AnonymousID)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>          let phoneController = new PhoneController(phones')
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>          let subscription = phoneController.Subscribe observer                    
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>          phoneController :&gt; IController
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>        // ...
+</pre></div>
+</div>
+</div>
+<p>We are leveraging the ASP.NET’s <a href="http://msdn.microsoft.com/en-us/library/fsykd036.aspx">Anonymous Identification Module</a> which help us in creating a unique anonymous id for every user session. We can retrieve it from the <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid.aspx">HttpRequest</a> as mentioned in the above snippet</p>
+
+<p><a href="http://msdn.microsoft.com/en-in/library/91ka2e6a(v=vs.85).aspx">Anonymous identification of user session</a> are not enabled by default, so add the following entry in the <strong>Web.config</strong> file</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="tag">&lt;configuration&gt;</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span class="comment">&lt;!-- Existing Code ignored for brevity ... --&gt;</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="tag">&lt;system.web&gt;</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    <span class="comment">&lt;!-- Existing Code ignored for brevity... --&gt;</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    <span class="tag">&lt;anonymousIdentification</span> <span class="attribute-name">enabled</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">true</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  <span class="tag">&lt;/system.web&gt;</span>
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span><span class="tag">&lt;/configuration&gt;</span>
+</pre></div>
+</div>
+</div>
+
+<p>With the help of the partial application of functions as we did it in the previous steps, we have created a partial function called <code>observer</code> which has the signature <code>string -&gt; unit</code>. Then we have subscribed to <code>PhoneController</code> using the <code>Subscribe</code> method and with this we are done with saving an user visit. </p>
+
+<h3 id="recommending-a-phone">2. Recommending a phone</h3>
+
+<p><strong>Workflow</strong></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_3/Phone_Recommendation_Workflow.png" width="600" height="500"></p>
+
+<ol>
+  <li>User initiates the recommendation request using SignalR</li>
+  <li>Upon receiving it, Recommendation SignalR hub sends a recommendation request message to Storage Agent with the user Anonymous Id and SignlaR connection Id of the given user</li>
+  <li>Storage Agent then fetches the phone visit history of the given user based on the incoming anonymous id and pass it to the Recommendation Agent along with the SignalR connection id.</li>
+  <li>Recommendation Agent responds to this by computing the recommendation and publish the result (Either recommended phone id or none) in the Recommendation observable</li>
+  <li>Recommendation hub receives this recommendation result, send the response back to the corresponding SignalR client.</li>
+</ol>
+
+<p>The beauty of this entire workflow is all are message driven and asynchronous by default.  </p>
+
+<p>Let’s start from Recommendation SignalR hub. The first step is installing SingalR from <a href="https://www.nuget.org/packages/Microsoft.AspNet.SignalR/2.1.2">the nuget</a>.</p>
+
+<p>After installing create a source file in the <strong>Web</strong> project and name it as <code>Startup</code> then add the following code as per the SignalR convention.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>namespace PhoneCat.Web
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>open Owin
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>type Startup() = 
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  member x.Configuration(app : IAppBuilder) = 
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    app.MapSignalR() |&gt; ignore
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>    ()
+</pre></div>
+</div>
+</div>
+
+<p>Then add an app setting in the <em>Web.config</em> file and configure the SignalR to use this <code>Startup</code> class</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="tag">&lt;configuration&gt;</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span class="tag">&lt;appSettings&gt;</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    <span class="comment">&lt;!-- Other keys.. --&gt;</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    <span class="tag">&lt;add</span> <span class="attribute-name">key</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">owin:AppStartup</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">PhoneCat.Web.Startup</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  <span class="tag">&lt;/appSettings&gt;</span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  <span class="comment">&lt;!-- other configuration items.. --&gt;</span>
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span><span class="tag">&lt;/configuration&gt;</span>
+</pre></div>
+</div>
+</div>
+
+<p>With SignalR added to the system, the next step is to create <code>RecommendationHub</code>. Add a source file in <strong>Web</strong> project and name it as <code>Hubs</code>.</p>
+
+<p>Then create a <code>RecommendationHub</code> class with a public method <code>GetRecommendation</code> which will be invoked by the SignalR client to initiate recommendation process.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RecommendationHub() =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    inherit Hub ()
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    member this.GetRecommendation () =             
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>      let encodedAnonymousId = this.Context.Request.Cookies.[&quot;.ASPXANONYMOUS&quot;].Value
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>      let anonymousId = decode encodedAnonymousId
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>      let connectionId = this.Context.ConnectionId
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>      StorageAgent.Post (GetRecommendation(anonymousId, connectionId))
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>      &quot;Recommendation initiated&quot;
+</pre></div>
+</div>
+</div>
+
+<p>Then anonymous id of the user session is actually persisted in the <a href="http://msdn.microsoft.com/en-in/library/91ka2e6a%28v=vs.85%29.aspx">request cookies by Asp.Net</a> in an encoded format. In the <code>GetRecommendation</code> method we will be retrieving this encoded anonymous id from the cookie and decode it. Then we need to get the SignalR connection id which available in the base class <code>Hub</code>. After getting both the anonymous id and the connection id, send a <code>GetRecommendation</code> message to the <code>StorageAgent</code> with these information. Finally send a response to the SignalR client as “Recommendation initiated”.</p>
+
+<p>The <code>decode</code> function is not added yet so let’s add them. Thanks to <a href="http://stackoverflow.com/a/2481110/159850">this stackoverflow answer</a> we just need to convert the code from C# to F#</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let private decode encodedAnonymousId =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>    let decodeMethod = 
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>      typeof&lt;AnonymousIdentificationModule&gt;
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>        .GetMethod(&quot;GetDecodedValue&quot;, BindingFlags.Static ||| BindingFlags.NonPublic)
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    let anonymousIdData = decodeMethod.Invoke(null, [| encodedAnonymousId |]);
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    let field = 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      anonymousIdData.GetType()
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        .GetField(&quot;AnonymousId&quot;, BindingFlags.Instance ||| BindingFlags.NonPublic);
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    field.GetValue(anonymousIdData) :?&gt; string
+</pre></div>
+</div>
+</div>
+
+<p>We have used a special F# operator here <code>:?&gt;</code> which is a dynamic down cast operator which casts a base class to a sub-class of it. You can read <a href="http://msdn.microsoft.com/en-us/library/dd233220.aspx">this msdn documentation</a> to know more about F# casting and conversions.</p>
+
+<p>The <code>GetRecommendation</code> message is not added yet, so let’s add them too. Modify <code>StorageAgentMessage</code> created before as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>  type StorageAgentMessage =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    | SavePhoneVisit of string * string
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    | GetRecommendation of string * string
+</pre></div>
+</div>
+</div>
+
+<p>The final step of this pipeline is to Update the <code>StorageAgent</code> to handle this <code>GetRecommendation</code> message. Modify the <code>storageAgentFunc</code> in the <code>UserNavigationHistory</code> as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span> let private storageAgentFunc (agent : Agent&lt;StorageAgentMessage&gt;) =  
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>    let rec loop (dict : Dictionary&lt;string, list&lt;string&gt;&gt;) = async { 
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>      let! storageAgentMessage = agent.Receive()
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      match storageAgentMessage with
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>      | SavePhoneVisit (anonymousId, phoneIdBeingVisited) -&gt; 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>          // .. existing code ignored for brevity ..
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      | GetRecommendation (anonymousId, connectionId) -&gt;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>          if dict.ContainsKey(anonymousId) then
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>            let phoneIdsVisited = dict.[anonymousId]
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>            RecommendationAgent.Post (connectionId,phoneIdsVisited)
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      return! loop dict
+</pre></div>
+</div>
+</div>
+
+<p>Handling of the <code>GetRecommendation</code> message is very straight forward. Just get the phone ids being visited by the given anonymous id from the in memory dictionary and send a message consists of connection id and this phone ids visited to the <code>RecommendationAgent</code> which we will be creating next.</p>
+
+<p>Create a source file with the name <code>Recommendations</code> in the <strong>Domain</strong> project and add the <code>RecommendationAgent</code> below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;AutoOpen&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>module Recommendation =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let private recommendationAgentFunc (inbox : Agent&lt;string*List&lt;string&gt;&gt;) =
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    let rec messageLoop () = async {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>      let! connectionId, visitedPhoneIds = inbox.Receive()     
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      if (Seq.length visitedPhoneIds) &gt;= 2 then
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        suggestRecommendation connectionId (visitedPhoneIds |&gt; Seq.take 2 |&gt; Seq.toList)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      return! messageLoop()
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    }
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    messageLoop ()
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  let RecommendationAgent = Agent.Start recommendationAgentFunc
+</pre></div>
+</div>
+</div>
+
+<p>In order to keep this blog post simple I’ve used my own ‘Hello World’ kind of algorithm which picks the latest two phone ids being visited and suggests recommendation based on it. In a real world you would be replacing this toddler algorithm with more sophisticated algorithms like <a href="http://en.wikipedia.org/wiki/Association_rule_learning">Association Rule Learning</a>. I am planning to implement this algorithm at later stages of this blog series.</p>
+
+<p>Then the next step is to implement the <code>suggestRecommendation</code> function which picks a hardcoded recommendation and publish the result using Rx. To do this add the <a href="https://www.nuget.org/packages/Rx-Main/">Rx Nuget Package</a> in the <strong>Domain</strong> project and add the  <code>suggestRecommendation</code> function in the <code>Recommendation</code> module</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let RecommendationPipe = new Subject&lt;string*string option&gt;()
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let private suggestRecommendation connectionId visitedPhoneIds = 
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    match visitedPhoneIds with
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    | [&quot;motorola-xoom-with-wi-fi&quot;; &quot;motorola-xoom&quot;] -&gt; RecommendationPipe.OnNext (connectionId, Some &quot;motorola-atrix-4g&quot;)
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    | [&quot;dell-streak-7&quot;; &quot;dell-venue&quot;] -&gt; RecommendationPipe.OnNext (connectionId, Some &quot;nexus-s&quot;)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    | _ -&gt; RecommendationPipe.OnNext (connectionId, None)
+</pre></div>
+</div>
+</div>
+
+<p>The implementation is a very straight forward pattern matching. If last visited two items are (“motorola-xoom-with-wi-fi”, “motorola-xoom”), send the recommendation as “motorola-atrix-4g”, else if they are (“dell-streak-7”,”dell-venue”) then recommend “nexus-s”. If none of the condition matches then send none. Thanks to the <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">option type</a> which expresses this result in type safe manner.</p>
+
+<p>With all these infrastructure in place, all we need to do is to just subscribe to this <code>RecommendationPipe</code> and send the suggestion to the user via SignalR</p>
+
+<p>Let’s add a observer for this pipe in the <strong>Web</strong> project. Open <code>Hubs</code> module in the <strong>Web</strong> project and add the following code</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let private getUrl (phoneId : string) httpContext =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let routeValueDictionary = new RouteValueDictionary()
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    routeValueDictionary.Add(&quot;controller&quot;, &quot;Phone&quot;)
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    routeValueDictionary.Add(&quot;action&quot;, &quot;Show&quot;)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    routeValueDictionary.Add(&quot;id&quot;, phoneId)
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    let requestContext = new RequestContext(new HttpContextWrapper(httpContext), new RouteData());
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    let virtualPathData = RouteTable.Routes.GetVirtualPath(requestContext, routeValueDictionary);
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    virtualPathData.VirtualPath
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>let notifyRecommendation httpContext phones (connectionId, recommendedPhoneId) =
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    let phones' = phones |&gt; Seq.map TypeProviders.ToPhone
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    match recommendedPhoneId with 
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    | Some phoneId -&gt;
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      let recommendedPhone = Phones.getPhoneById phones' phoneId
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>      let phoneUrl = getUrl phoneId httpContext
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>      let hubContext = GlobalHost.ConnectionManager.GetHubContext&lt;RecommendationHub&gt;()
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>      hubContext.Clients.Client(connectionId)?showRecommendation(recommendedPhone, phoneUrl) 
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    | None -&gt; ()
+</pre></div>
+</div>
+</div>
+
+<p>The <code>notifyRecommendation</code> function checks whether the incoming recommendedPhoneId has value or not. If it has value, it just picks the <code>Phone</code> record corresponding to the given phoneId and get the url for the recommended phone. With all these data in place, we just need to send the response to the using via SignalR.</p>
+
+<p>You would have a noticed a weird <code>?</code> symbol which is actually part of the <a href="https://www.nuget.org/packages/ImpromptuInterface.FSharp/">ImpromptuInterface.FSharp</a>. This library adds provisions to use <a href="http://msdn.microsoft.com/en-IN/library/dd264736.aspx">C# dynamic types</a> in F#</p>
+
+<p>They are two missing pieces. One is <code>Phones.getPhoneById</code> which we are not having. Let’s add them. Open <code>Phones</code> module in <strong>Domain</strong> project and add it as mentioned below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getPhoneById (phones : seq&lt;Phone&gt;) phoneId =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    phones |&gt; Seq.find (fun p -&gt; p.Id = phoneId)
+</pre></div>
+</div>
+</div>
+
+<p>The final step is wiring the <code>RecommendationPipe</code> with the <code>notifyRecommendation</code>. Open <code>Global.asax.fs</code> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type Global() = 
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  // .. existing code ignore for brevity ..
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span> member x.Application_Start() =
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    let phones = GitHubRepository.getPhones()
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    // .. existing code ignore for brevity ..
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    let notificationObserver = Hubs.notifyRecommendation HttpContext.Current phones
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    Recommendation.RecommendationPipe.Subscribe notificationObserver |&gt; ignore
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>    ()
+</pre></div>
+</div>
+</div>
+
+<p>Partial application of function is a very handy thing which actually replaces its counterpart Dependency Injection in the OOP. We just provided the first two arguments of <code>notifyRecommendation</code> and created a new function with the signature <code>string * string option -&gt; unit</code> which is the expected observer signature for the <code>RecommendationPipe</code>.</p>
+
+<h4 id="the-front-end-ui">The Front End UI</h4>
+<p>The front end for this is a typical SignalR-Javascript client code which you can find it the <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/3/Web/Scripts/recommendation.js">github repository</a>. I’ve intentionally leaving the front-end part of this application as it would be extends the scope of the blog post. Moreover if you go through the source code in the github repository you can easily understand</p>
+
+<h3 id="summary">Summary</h3>
+<p>F# is just so awesome with so much expressive functional programming features. Rx, Agents and SignalR add more powers to it and enable you to create a scalable functional reactive architecture. I’d like give credits two incredible resources on this subject Mark Seemann’s Pluralsight course on <a href="http://www.pluralsight.com/courses/functional-architecture-fsharp">Functional Architecture with F#</a> and Kevin Ashton’s excellent blog post on <a href="http://namelessinteractive.com/blog/Full_Stack_FSharp_%E2%80%93_The_Long_Version_(Part_1)">Full Stack F#</a> which helped me a lot in coming out with this blog post.</p>
+
+<p>Last but not the least, Thanks to <a href="https://sergeytihon.wordpress.com">Sergey Tihon</a> for the words of encouragement to write the blog post on this topic.</p>
+
+<p>You can find the source code of this step in <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/3">the github repository</a>. </p>
+]]></content>
+  </entry>
+  
+</feed>
