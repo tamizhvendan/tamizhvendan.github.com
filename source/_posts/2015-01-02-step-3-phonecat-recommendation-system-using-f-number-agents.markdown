@@ -32,7 +32,7 @@ Let us start the implementation by defining two high level tasks
 1. Tracking user navigation
 2. Recommending a phone
 
-### Tracking user navigation
+### 1. Tracking user navigation
 
 {% img center /images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png 600 500 %}
 
@@ -91,11 +91,11 @@ Storage Agent is an F# Agent which stores the user navigation history in an in-m
 
 The ```StorageAgentMessage``` is a [dicriminated union](http://fsharpforfunandprofit.com/posts/discriminated-unions/) represents possible messages that the ```StorageAgent``` can process. Right now it has only message ```SavePhoneVisit``` which takes a tuple representing the ```anonymousId``` and the ```phoneIdBeingVisited```
 
-The ```StorageAgent``` is a typical F# Agent which waits for the incoming ```StorageAgentMessage``` and upon receiving it process it by storing them in the in-memory dictionary. 
+The ```StorageAgent``` is a typical F# Agent which waits for the incoming ```StorageAgentMessage``` and upon receiving it stores the visit in the in-memory dictionary. 
 
 The next step is wiring the ```PhoneViewTracker.observePhonesViewed``` function with the ```PhoneController.Show``` action method. We can call the function directly that will create a strongly coupled code. We can even directly post the message to the agent. But that also makes the code tightly coupled. 
 
-What we are actually trying to implement here is a *Fire and Forget Approach*. Whenever the user visits a phone, we just want to notifiy somebody to keep track of it and move on. And its where [Reactive Extensions aka Rx](http://msdn.microsoft.com/en-in/data/gg577609.aspx) comes into the picture. 
+What we are actually trying to implement here is a **User Phone Visit Stream**. Whenever the user visits a phone, we just want to notifiy somebody to keep track of it and move on. And its where [Reactive Extensions aka Rx](http://msdn.microsoft.com/en-in/data/gg577609.aspx) comes into the picture. If you are new to Reactive Programming or Rx, I strongly recommend you to go through [this excellent article](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754) by [André Staltz](http://staltz.com/)
 
 Install the [Rx Nuget Package](https://www.nuget.org/packages/Rx-Main/) in the *Web* project. With Rx in the kitty the next step is to make the User's phone visit as event and subscribe this event with the ```PhoneViewTracker```
 
@@ -154,3 +154,105 @@ We are leveraging the ASP.NET's [Anonymous Identification Module](http://msdn.mi
   </system.web>
 </configuration>
 ```
+
+With the help of the partial application of functions as we did it in the previous steps, we have created a partial function called ```observer``` which has the signature ```string -> unit```. Then we have subscribed to ```PhoneController``` using the ```Subscribe``` method and with this we are done with saving an user visit. 
+
+### 2. Recommending a phone
+
+**Workflow**
+
+{% img center /images/fsharp_phonecat/step_3/Phone_Recommendation_Workflow.png 600 500 %}
+
+1. User initiates the recommendation request using SignalR
+2. Upon receiving it, Recommendation SignalR hub sends a recommendation request message to Storage Agent with the user Anonymous Id and SignlaR connection Id of the given user
+3. Storage Agent then fetches the phone visit history of the given user based on the incoming anonymous id and pass it to the Recommendation Agent along with the SignalR connection id.
+4. Recommendation Agent responds to this by computing the recommendation and publish the result (Either recommended phone id or none) in the Recommendation observable
+5. Recommendation hub receives this recommendation result, send the response back to the corresponding SignalR client.
+
+The beauty of this entire workflow is all are message driven and asynchronous by default.  
+
+Let's start from Recommendation SignalR hub. The first step is installing SingalR from [the nuget](https://www.nuget.org/packages/Microsoft.AspNet.SignalR/2.1.2).
+
+After installing create a source file in the **Web** project and name it as ```Startup``` add the following code as per the SignalR convention.
+
+```fsharp
+namespace PhoneCat.Web
+
+open Owin
+
+type Startup() = 
+  member x.Configuration(app : IAppBuilder) = 
+    app.MapSignalR() |> ignore
+    ()
+```
+
+Then add an app setting in the *Web.config* file and configure the SignalR to use this ```Startup``` class
+
+```xml
+<configuration>
+  <appSettings>
+    <!-- Other keys.. -->
+    <add key="owin:AppStartup" value="PhoneCat.Web.Startup" />
+  </appSettings>
+  <!-- other configuration items.. -->
+</configuration>
+```
+
+With SignalR added to the system, the next step is to create ```RecommendationHub```. Add a source file in **Web** project and name it as ```Hubs```.
+
+Then create a ```RecommendationHub``` class with a public method ```GetRecommendation``` which will be invoked by the SignalR client to initiate recommendation process.
+
+```fsharp
+type RecommendationHub() =
+    inherit Hub ()
+    member this.GetRecommendation () =             
+      let encodedAnonymousId = this.Context.Request.Cookies.[".ASPXANONYMOUS"].Value
+      let anonymousId = decode encodedAnonymousId
+      let connectionId = this.Context.ConnectionId
+      StorageAgent.Post (GetRecommendation(anonymousId, connectionId))
+      "Recommendation initiated"
+```
+
+Then anonymous id discussed while storing user visits is actually persisted in the [request cookies by Asp.Net](http://msdn.microsoft.com/en-in/library/91ka2e6a%28v=vs.85%29.aspx) in an encoded format. In the ```GetRecommendation``` method we will be retrieving this encoded anonymous id from the cookie and decode it. Then we need to get the SignalR connection id which available in the base class ```Hub```. After getting both the anonymous id and the connection id, send a ```GetRecommendation``` message to the ```StorageAgent``` with these information. Finally send a response to the SignalR client as "Recommendation initiated".
+
+The ```decode``` function is not added yet so let's add them. Thanks to [this stackoverflow answer](http://stackoverflow.com/a/2481110/159850) we just need to convert the code from C# to F#
+
+```fsharp
+let private decode encodedAnonymousId =
+    let decodeMethod = 
+      typeof<AnonymousIdentificationModule>
+        .GetMethod("GetDecodedValue", BindingFlags.Static ||| BindingFlags.NonPublic)
+    let anonymousIdData = decodeMethod.Invoke(null, [| encodedAnonymousId |]);
+    let field = 
+      anonymousIdData.GetType()
+        .GetField("AnonymousId", BindingFlags.Instance ||| BindingFlags.NonPublic);
+    field.GetValue(anonymousIdData) :?> string
+```
+
+We have used a special F# operator here ```:?>``` which is a dynamci down cast operator which casts a base class to a sub-class of it. You can read [this msdn documentation](http://msdn.microsoft.com/en-us/library/dd233220.aspx) to know more about F# casting and conversions.
+
+The ```GetRecommendation``` message is not added yet, so let's add them too. Modify ```StorageAgentMessage``` create before as below
+
+```fsharp
+  type StorageAgentMessage =
+    | SavePhoneVisit of string * string
+    | GetRecommendation of string * string
+```
+
+The final step of this pipeline is Update the ```StorageAgent``` to handle this ```GetRecommendation``` message. Modify the ```storageAgentFunc``` in the ```UserNavigationHistory``` as below
+
+```fsharp
+ let private storageAgentFunc (agent : Agent<StorageAgentMessage>) =  
+    let rec loop (dict : Dictionary<string, list<string>>) = async { 
+      let! storageAgentMessage = agent.Receive()
+      match storageAgentMessage with
+      | SavePhoneVisit (anonymousId, phoneIdBeingVisited) -> 
+          // .. existing code ignored for brevity ..
+      | GetRecommendation (anonymousId, connectionId) ->
+          if dict.ContainsKey(anonymousId) then
+            let phoneIdsVisited = dict.[anonymousId]
+            RecommendationAgent.Post (connectionId,phoneIdsVisited)
+      return! loop dict
+```
+
+Handling of the ```GetRecommendation``` message is very straight forward. Just get the phone ids being visited by the given anonymous id from the in memory dictionary and send a message consists of connection id and this phone ids visited to the ```RecommendationAgent``` which we will be creating next.
