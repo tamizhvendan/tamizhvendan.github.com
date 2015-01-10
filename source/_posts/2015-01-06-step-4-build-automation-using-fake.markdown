@@ -53,8 +53,37 @@ Create a [fsharp script file](http://blogs.msdn.com/b/chrsmith/archive/2008/09/1
 
 ### Cleaning the build directory
 
+```fsharp
+#r "tools/FAKE/tools/FakeLib.dll"
+open Fake
+
+let buildDir = "./build"
+
+Target "Clean" (fun _ -> CleanDir buildDir)
+
+```
+
 ### Build the solution
 
+```fsharp
+Target "Build" (fun _ ->
+
+  RestorePackages()
+
+  !! "./PhoneCat.sln"
+    |> MSBuildRelease buildDir "Build"
+    |> Log "Build-Output: "
+
+)
+```
+
 ### Running unit tests using Nunit.Runner
+
+```fsharp
+Target "Test" (fun _ ->
+  !! (buildDir + "/*.Tests.dll")
+    |> NUnit (fun p -> {p with ToolPath = "./tools/NUnit.Runners/tools" })
+)
+```
 
 ### Deploy the application in IIS
