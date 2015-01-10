@@ -53,6 +53,10 @@ Create a [fsharp script file](http://blogs.msdn.com/b/chrsmith/archive/2008/09/1
 
 ### Cleaning the build directory
 
+Just a like any other build process, the first step is to clear build the directory. Fake follows the same convention of MsBuild's [Targets](http://msdn.microsoft.com/en-us/library/ms171462.aspx). Defining targets in Fake is less verbose compare to its MsBuild's counterpart. As a matter of fact, it is a fsharp function that take two arguments, the name of the target and a function which defines the target. 
+
+Since it is a script file we need to add reference to the **FakeLib.dll** before writing the actual code.
+
 ```fsharp
 #r "tools/FAKE/tools/FakeLib.dll"
 open Fake
@@ -63,7 +67,13 @@ Target "Clean" (fun _ -> CleanDir buildDir)
 
 ```
 
+Less verbose, Isn't it ?
+
+The ```CleanDir``` is a predefined function in Fake library which takes a directory path and clear (delete) all its contents.
+
 ### Build the solution
+
+After t
 
 ```fsharp
 Target "Build" (fun _ ->
