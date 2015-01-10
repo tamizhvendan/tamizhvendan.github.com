@@ -53,7 +53,7 @@ Create a [fsharp script file](http://blogs.msdn.com/b/chrsmith/archive/2008/09/1
 
 ### Cleaning the build directory
 
-Just a like any other build process, the first step is to clear build the directory. Fake follows the same convention of MsBuild's [Targets](http://msdn.microsoft.com/en-us/library/ms171462.aspx). Defining targets in Fake is less verbose compare to its MsBuild's counterpart. As a matter of fact, it is a fsharp function that take two arguments, the name of the target and a function which defines the target. 
+Just a like any other build process, the first step is to clear build the directory. Fake follows the same convention of MsBuild's [Targets](http://msdn.microsoft.com/en-us/library/ms171462.aspx). Defining targets in Fake is less verbose compare to its MsBuild's counterpart. As a matter of fact, it is a fsharp function that take two parameters, the name of the target and a function which defines the target. 
 
 Since it is a script file we need to add reference to the **FakeLib.dll** before writing the actual code.
 
@@ -69,11 +69,11 @@ Target "Clean" (fun _ -> CleanDir buildDir)
 
 Less verbose, Isn't it ?
 
-The ```CleanDir``` is a predefined function in Fake library which takes a directory path and clear (delete) all its contents.
+The ```CleanDir``` is a predefined function in Fake library which clean up this build directory. If the directory doesn't exist it creates the directory. 
 
 ### Build the solution
 
-After t
+After cleaning the build directory the next step is to carrying out the actual build process. Before the building the application we need to resolve the nuget packages being referred in the application. It's damn simple in Fake. All you need to do is just call predefined function ```RestorePackages```.    
 
 ```fsharp
 Target "Build" (fun _ ->
@@ -86,8 +86,16 @@ Target "Build" (fun _ ->
 
 )
 ```
+The ```!!``` is a function which takes a file path and returns [FileIncludes](http://fsharp.github.io/FAKE/apidocs/fake-filesystem-fileincludes.html) which is Fake's internal representation of a file set.
+
+The ```MsBuildRelease``` is also a predefined function in Fake which builds the given solution (which is piped from the ```!!```). The first two parameters are the output build directory path and the target names which should be run by MsBuild. Fake offers lot of functional wrappers on top of MsBuild and you can find more about it in this [api documentation.](http://fsharp.github.io/FAKE/apidocs/fake-msbuildhelper.html)
+
+The last line just pipes the log result from the ```MsBuildRelease``` function to the log output.
 
 ### Running unit tests using Nunit.Runner
+
+Now we have built the solution and the next step is running the unit test cases. Since I've written the test cases using Nunit and we are going to see how to run nunit tests using Fake. Fake also supports [XUnit](http://fsharp.github.io/FAKE/apidocs/fake-xunithelper.html) and [MsTest](http://fsharp.github.io/FAKE/apidocs/fake-mstest.html). Porting 
+the below code to other unit testing framework is very straight forward.
 
 ```fsharp
 Target "Test" (fun _ ->
@@ -95,5 +103,8 @@ Target "Test" (fun _ ->
     |> NUnit (fun p -> {p with ToolPath = "./tools/NUnit.Runners/tools" })
 )
 ```
+As we did it in the build target, the ```!!``` function picks all the unit test files (I've used a convention of naming the unit tests projects with the **.Tests** suffix) in the build directory and transform them to FileIncludes. 
+
+The ```NUnit``` is yet another [inbuilt function of Fake](http://fsharp.github.io/FAKE/apidocs/fake-nunitsequential.html) which runs nunit on  
 
 ### Deploy the application in IIS
