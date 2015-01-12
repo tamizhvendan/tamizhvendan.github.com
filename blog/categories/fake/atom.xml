@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: fake | Tamizh's Thoughts]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/fake/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2015-01-12T09:07:53+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Step-4 Build automation using FAKE]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake/"/>
+    <updated>2015-01-06T05:22:32+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 4 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the last three steps, we have seen how to build an web application in fsharp by leveraging <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web-Api</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor</a> and <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">SignalR</a>. In this step for a change we are going to take the <a href="http://en.wikipedia.org/wiki/DevOps">DevOps</a> side of the application and going to add the build automation capabilities for the application. Let’s get stated!</p>
+
+<h2 id="fake---an-awesome-build-automation-library">Fake - An awesome build automation library</h2>
+
+<p><a href="http://fsharp.github.io/FAKE/">Fake</a> is a F# version of very successful and widely used build automation libraries <a href="http://www.gnu.org/software/make/">Make</a> and <a href="http://en.wikipedia.org/wiki/Rake_%28software%29">Rake</a>. The combination of <a href="http://fsharp.org/testimonials/">fsharp’s expressiveness</a> and the <a href="http://fsharp.github.io/FAKE/gettingstarted.html">Fake’s DSL</a> is a visual treat to the eyes and especially if you are someone who is using <a href="http://en.wikipedia.org/wiki/MSBuild">MsBuild</a> xml files for doing build automation you will definitely appreciate it.</p>
+
+<h3 id="adding-nugetexe-to-nuget-folder">Adding nuget.exe to .nuget folder</h3>
+
+<p>As we are going to drive the nuget packages installation from the fsharp script file, we will be needing a <a href="nuget.org/nuget.exe">command line version of nuget</a>. Download it and place it inside the <strong>.nuget</strong> folder</p>
+
+<p>Also its a good practice to add a <a href="http://docs.nuget.org/docs/reference/nuget-config-settings">Nuget.config file</a>. Add it too under <strong>.nuget</strong> folder. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="preprocessor">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span><span class="tag">&lt;configuration&gt;</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="tag">&lt;packageSources&gt;</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    <span class="tag">&lt;add</span> <span class="attribute-name">key</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">nuget.org</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">https://www.nuget.org/api/v2/</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  <span class="tag">&lt;/packageSources&gt;</span> 
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span><span class="tag">&lt;/configuration&gt;</span>
+</pre></div>
+</div>
+</div>
+
+<h3 id="adding-buildbat-file">Adding build.bat file</h3>
+
+<p>Create a batch file <strong>build.bat</strong> in the root directory of the solution. It is going act as bootstrap file which initiates the entire build process.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>@echo off
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>cls
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>&quot;.nuget\NuGet.exe&quot; &quot;Install&quot; &quot;FAKE&quot; &quot;-OutputDirectory&quot; &quot;tools&quot; &quot;-ExcludeVersion&quot;
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>&quot;tools\FAKE\tools\Fake.exe&quot; build.fsx
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>pause
+</pre></div>
+</div>
+</div>
+<p>It just download the Fake nuget package using the nuget.exe that we added earlier and call the fake.exe with the fsharp build script <strong>build.fsx</strong>.</p>
+
+<h3 id="adding-buildfsx-file">Adding build.fsx file</h3>
+
+<p>Create a <a href="http://blogs.msdn.com/b/chrsmith/archive/2008/09/12/scripting-in-f.aspx">fsharp script file</a> with the name <strong>build.fsx</strong> in the root directory. This script is going to implement all our build automation tasks by using fake library.</p>
+
+<h3 id="cleaning-the-build-directory">Cleaning the build directory</h3>
+
+<p>Just a like any other build process, the first step is to clear the build directory. Fake follows the same convention of MsBuild’s <a href="http://msdn.microsoft.com/en-us/library/ms171462.aspx">Targets</a>. Defining targets in Fake is less verbose compare to its MsBuild’s counterpart. As a matter of fact, it is a fsharp function that take two parameters, the name of the target and a function which defines the target. </p>
+
+<p>Since it is a script file we need to add reference to the <strong>FakeLib.dll</strong> before writing the actual code.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>#r &quot;tools/FAKE/tools/FakeLib.dll&quot;
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>open Fake
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>let buildDir = &quot;./build&quot;
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>Target &quot;Clean&quot; (fun _ -&gt; CleanDir buildDir)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>
+</pre></div>
+</div>
+</div>
+
+<p>Less verbose, Isn’t it ?</p>
+
+<p>The <code>CleanDir</code> is a predefined function in Fake library which clean up this build directory. If the directory doesn’t exist it creates the directory. </p>
+
+<h3 id="build-the-solution">Build the solution</h3>
+
+<p>After cleaning the build directory the next step is to carrying out the actual build process. Before building the application we need to resolve the nuget packages being referred in the application. It’s so simple in Fake. All you need to do is just call predefined function <code>RestorePackages</code>.    </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>Target &quot;Build&quot; (fun _ -&gt;
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  RestorePackages()
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  !! &quot;./PhoneCat.sln&quot;
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    |&gt; MSBuildRelease buildDir &quot;Build&quot;
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    |&gt; Log &quot;Build-Output: &quot;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>)
+</pre></div>
+</div>
+</div>
+<p>The <code>!!</code> is a function which takes a file path and returns <a href="http://fsharp.github.io/FAKE/apidocs/fake-filesystem-fileincludes.html">FileIncludes</a> which is Fake’s internal representation of a file set.</p>
+
+<p>FileIncludes <a href="https://github.com/fsharp/FAKE/blob/master/src/app/FakeLib/Globbing/FileSystem.fs#L95-l117">implements</a> <code>IEnumerable&lt;string&gt;</code> so it can be used wherever we need an <code>IEnumerable&lt;string&gt;</code>. </p>
+
+<p>The <code>MsBuildRelease</code> is also a predefined function in Fake which builds the given solution (which is piped from the <code>!!</code>). The first two parameters are the output build directory path and the target names which should be run by MsBuild. Fake offers lot of functional wrappers on top of MsBuild and you can find more about it in this <a href="http://fsharp.github.io/FAKE/apidocs/fake-msbuildhelper.html">api documentation.</a>. </p>
+
+<p>The last line just pipes the log result from the <code>MsBuildRelease</code> function to the log output.</p>
+
+<h3 id="running-unit-tests-using-nunitrunner">Running unit tests using Nunit.Runner</h3>
+
+<p>Now we have built the solution and the next step is running the unit test cases. Since I’ve written the test cases using Nunit and we are going to see how to run nunit tests using Fake. Fake also supports <a href="http://fsharp.github.io/FAKE/apidocs/fake-xunithelper.html">XUnit</a> and <a href="http://fsharp.github.io/FAKE/apidocs/fake-mstest.html">MsTest</a>. Porting the below code to other unit testing framework is very straight forward.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Target &quot;Test&quot; (fun _ -&gt;
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  !! (buildDir + &quot;/*.Tests.dll&quot;)
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    |&gt; NUnit (fun p -&gt; {p with ToolPath = &quot;./tools/NUnit.Runners/tools&quot; })
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>)
+</pre></div>
+</div>
+</div>
+<p>As we did it in the build target, the <code>!!</code> function picks all the unit test files (I’ve used a convention of naming the unit tests projects with the <strong>.Tests</strong> suffix) in the build directory and transform them to FileIncludes. </p>
+
+<p>The <code>NUnit</code> is yet another <a href="http://fsharp.github.io/FAKE/apidocs/fake-nunitsequential.html">inbuilt function of Fake</a> which runs nunit on the given group of assemblies.</p>
+
+<p>It takes two parameter, a function that returns the modified default <code>NUnitParams</code> value and a sequence of assembly paths. We have modified the default <code>ToolPath</code> property which specifies the file path of <strong>NUnit Runner</strong> </p>
+
+<p>As we did for Fake we have to modify the batch file as below to install the Nunit Runner nuget package before running the actual script.  </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>@echo off
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>cls
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>&quot;.nuget\NuGet.exe&quot; &quot;Install&quot; &quot;FAKE&quot; &quot;-OutputDirectory&quot; &quot;tools&quot; &quot;-ExcludeVersion&quot;
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>&quot;.nuget\NuGet.exe&quot; &quot;Install&quot; &quot;NUnit.Runners&quot; &quot;-OutputDirectory&quot; &quot;tools&quot; &quot;-ExcludeVersion&quot;
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>&quot;tools\FAKE\tools\Fake.exe&quot; build.fsx
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>pause
+</pre></div>
+</div>
+</div>
+
+<h3 id="deploy-the-application-in-iis">Deploy the application in IIS</h3>
+
+<p>Well, now we are at the final step of the build process which deploy the application in the local IIS server. </p>
+
+<p>Deploying an application in IIS is super easy using Fake. All you need to do is just input necessary things like site name, virtual directory name, etc., and call the <code>IIS</code> function in <strong>Fake.IIS</strong> library which is installed as part of Fake.</p>
+
+<p>To begin with we need to add reference in the beginning <strong>build.fsx</strong> to include the <strong>Fake.IIS</strong> library. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>#r &quot;tools/FAKE/tools/Fake.IIS.dll&quot;
+</pre></div>
+</div>
+</div>
+
+<p>This <strong>Fake.IIS</strong> makes heavy use of <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.servermanager(v=vs.90).aspx">ServerManager</a> which helps to dynamically configure IIS 7.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>Target &quot;Deploy&quot; (fun _ -&gt; 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let siteName = &quot;fsharp&quot;
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let appPool = &quot;fsharp.appPool&quot;
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  let port = &quot;:9999:&quot;
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let vdir = &quot;/phonecat&quot;  
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  let webBuildPath = buildDir + &quot;/_PublishedWebsites/Web&quot;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let sitePhysicalPath = @&quot;c:\inetpub\wwwroot\phonecat&quot;
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  XCopy webBuildPath sitePhysicalPath 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  (IIS
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    (Site siteName &quot;http&quot; port @&quot;C:\inetpub\wwwroot&quot; appPool)
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    (ApplicationPool appPool true &quot;v4.0&quot;)
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    (Some(Application vdir sitePhysicalPath)))
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>)
+</pre></div>
+</div>
+</div>
+
+<p>When we build a web project using MsBuild in release mode, it creates a deployable directory which can be accessed using the path <em>/_PublishedWebsites/Web</em> in the build directory. So, after building the application we just need to copy this deployable directory to the <strong>intepub\wwwroot</strong> directory using the XCopy function in Fake.</p>
+
+<p>The <code>IIS</code> function takes three parameters</p>
+
+<ul>
+  <li>site - A function with the signature <code>ServerManager -&gt; Site</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.site(v=vs.90).aspx">Site</a> with the given site settings. </li>
+  <li>appPool - A function with the signature <code>ServerManager -&gt; ApplicationPool</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.applicationpool(v=vs.90).aspx">AppPool</a> with the given appPool settings.  </li>
+  <li>app - An option type with the signature <code>(Site -&gt; ServerManager -&gt; Application) option</code> provides the <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.application(v=vs.90).aspx">Application</a>  </li>
+</ul>
+
+<p>Fake’s IIS helper library has in-built function for Site, ApplicationPool and Application which takes the necessary inputs need for its creation and returns the associated instances. All of these function creates Site, ApplicationPool and Application respectively if they are not available in the IIS. </p>
+
+<h3 id="running-the-targets">Running the Targets</h3>
+
+<p>In the above steps we just defined various Fake targets. These targets doesn’t execute on its own and we need to explicitly define the order of its execution and initiate.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>&quot;Clean&quot;
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  ==&gt; &quot;Build&quot;
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  ==&gt; &quot;Test&quot;
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  ==&gt; &quot;Deploy&quot;
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>RunTargetOrDefault &quot;Deploy&quot;
+</pre></div>
+</div>
+</div>
+
+<p>The <code>==&gt;</code> is one of <a href="http://fsharp.github.io/FAKE/apidocs/fake-additionalsyntax.html">the DSL in Fake</a> which is actually a function that defines the target execution order.</p>
+
+<p>The <code>RunTargetOrDefault</code> function runs the target specified in the parameter or executes the default target.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>Fake is just awesome. We can automate so much things with very few lines of code and the beauty is it can be used in <strong>any .net projects</strong>. If you are using MsBuild Xml scripts, do try Fake! It will make you super productive. You can find the source of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/4">fsharp-phonecat repository</a>. </p>
+
+]]></content>
+  </entry>
+  
+</feed>

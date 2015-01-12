@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Jan 2nd, 2015 asp.net mvc, fsharp, functional-programming, rx, signalr Comments Step-3 PhoneCat Recommendation System Using F# Agents, SignalR and &hellip;">
+	<meta name="description" content="Jan 6th, 2015 devops, fake, fsharp Comments Step-4 Build Automation Using FAKE This is step 4 of my blog series on Web Application Development in &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -96,7 +96,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 124.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fsharp' style='font-size: 128.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -109,6 +109,271 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-06T05:22:32+05:30" data-updated="true" itemprop="datePublished">Jan 6<sup>th</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/devops/'>devops</a>, <a class='category' href='/blog/categories/fake/'>fake</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/01/06/step-4-build-automation-using-fake/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/01/06/step-4-build-automation-using-fake/" itemprop="url">Step-4 Build Automation Using FAKE</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote>
+  <p>This is step 4 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the last three steps, we have seen how to build an web application in fsharp by leveraging <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web-Api</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor</a> and <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">SignalR</a>. In this step for a change we are going to take the <a href="http://en.wikipedia.org/wiki/DevOps">DevOps</a> side of the application and going to add the build automation capabilities for the application. Let’s get stated!</p>
+
+<h2 id="fake---an-awesome-build-automation-library">Fake - An awesome build automation library</h2>
+
+<p><a href="http://fsharp.github.io/FAKE/">Fake</a> is a F# version of very successful and widely used build automation libraries <a href="http://www.gnu.org/software/make/">Make</a> and <a href="http://en.wikipedia.org/wiki/Rake_%28software%29">Rake</a>. The combination of <a href="http://fsharp.org/testimonials/">fsharp’s expressiveness</a> and the <a href="http://fsharp.github.io/FAKE/gettingstarted.html">Fake’s DSL</a> is a visual treat to the eyes and especially if you are someone who is using <a href="http://en.wikipedia.org/wiki/MSBuild">MsBuild</a> xml files for doing build automation you will definitely appreciate it.</p>
+
+<h3 id="adding-nugetexe-to-nuget-folder">Adding nuget.exe to .nuget folder</h3>
+
+<p>As we are going to drive the nuget packages installation from the fsharp script file, we will be needing a <a href="nuget.org/nuget.exe">command line version of nuget</a>. Download it and place it inside the <strong>.nuget</strong> folder</p>
+
+<p>Also its a good practice to add a <a href="http://docs.nuget.org/docs/reference/nuget-config-settings">Nuget.config file</a>. Add it too under <strong>.nuget</strong> folder. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+</span><span class="line"><span class="nt">&lt;configuration&gt;</span>
+</span><span class="line">  <span class="nt">&lt;packageSources&gt;</span>
+</span><span class="line">    <span class="nt">&lt;add</span> <span class="na">key=</span><span class="s">&quot;nuget.org&quot;</span> <span class="na">value=</span><span class="s">&quot;https://www.nuget.org/api/v2/&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">  <span class="nt">&lt;/packageSources&gt;</span>
+</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="adding-buildbat-file">Adding build.bat file</h3>
+
+<p>Create a batch file <strong>build.bat</strong> in the root directory of the solution. It is going act as bootstrap file which initiates the entire build process.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="p">@</span><span class="k">echo</span> <span class="k">off</span>
+</span><span class="line"><span class="k">cls</span>
+</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;FAKE&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
+</span><span class="line"><span class="s2">&quot;tools\FAKE\tools\Fake.exe&quot;</span> build.fsx
+</span><span class="line"><span class="k">pause</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>It just download the Fake nuget package using the nuget.exe that we added earlier and call the fake.exe with the fsharp build script <strong>build.fsx</strong>.</p>
+
+<h3 id="adding-buildfsx-file">Adding build.fsx file</h3>
+
+<p>Create a <a href="http://blogs.msdn.com/b/chrsmith/archive/2008/09/12/scripting-in-f.aspx">fsharp script file</a> with the name <strong>build.fsx</strong> in the root directory. This script is going to implement all our build automation tasks by using fake library.</p>
+
+<h3 id="cleaning-the-build-directory">Cleaning the build directory</h3>
+
+<p>Just a like any other build process, the first step is to clear the build directory. Fake follows the same convention of MsBuild’s <a href="http://msdn.microsoft.com/en-us/library/ms171462.aspx">Targets</a>. Defining targets in Fake is less verbose compare to its MsBuild’s counterpart. As a matter of fact, it is a fsharp function that take two parameters, the name of the target and a function which defines the target. </p>
+
+<p>Since it is a script file we need to add reference to the <strong>FakeLib.dll</strong> before writing the actual code.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">r</span> <span class="s">&quot;tools/FAKE/tools/FakeLib.dll&quot;</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Fake</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">buildDir</span> <span class="o">=</span> <span class="s">&quot;./build&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Target</span> <span class="s">&quot;Clean&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">CleanDir</span> <span class="n">buildDir</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Less verbose, Isn’t it ?</p>
+
+<p>The <code>CleanDir</code> is a predefined function in Fake library which clean up this build directory. If the directory doesn’t exist it creates the directory. </p>
+
+<h3 id="build-the-solution">Build the solution</h3>
+
+<p>After cleaning the build directory the next step is to carrying out the actual build process. Before building the application we need to resolve the nuget packages being referred in the application. It’s so simple in Fake. All you need to do is just call predefined function <code>RestorePackages</code>.    </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Build&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">RestorePackages</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">!!</span> <span class="s">&quot;./PhoneCat.sln&quot;</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">MSBuildRelease</span> <span class="n">buildDir</span> <span class="s">&quot;Build&quot;</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">Log</span> <span class="s">&quot;Build-Output: &quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>The <code>!!</code> is a function which takes a file path and returns <a href="http://fsharp.github.io/FAKE/apidocs/fake-filesystem-fileincludes.html">FileIncludes</a> which is Fake’s internal representation of a file set.</p>
+
+<p>FileIncludes <a href="https://github.com/fsharp/FAKE/blob/master/src/app/FakeLib/Globbing/FileSystem.fs#L95-l117">implements</a> <code>IEnumerable&lt;string&gt;</code> so it can be used wherever we need an <code>IEnumerable&lt;string&gt;</code>. </p>
+
+<p>The <code>MsBuildRelease</code> is also a predefined function in Fake which builds the given solution (which is piped from the <code>!!</code>). The first two parameters are the output build directory path and the target names which should be run by MsBuild. Fake offers lot of functional wrappers on top of MsBuild and you can find more about it in this <a href="http://fsharp.github.io/FAKE/apidocs/fake-msbuildhelper.html">api documentation.</a>. </p>
+
+<p>The last line just pipes the log result from the <code>MsBuildRelease</code> function to the log output.</p>
+
+<h3 id="running-unit-tests-using-nunitrunner">Running unit tests using Nunit.Runner</h3>
+
+<p>Now we have built the solution and the next step is running the unit test cases. Since I’ve written the test cases using Nunit and we are going to see how to run nunit tests using Fake. Fake also supports <a href="http://fsharp.github.io/FAKE/apidocs/fake-xunithelper.html">XUnit</a> and <a href="http://fsharp.github.io/FAKE/apidocs/fake-mstest.html">MsTest</a>. Porting the below code to other unit testing framework is very straight forward.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Test&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">  <span class="o">!!</span> <span class="o">(</span><span class="n">buildDir</span> <span class="o">+</span> <span class="s">&quot;/*.Tests.dll&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">NUnit</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">p</span> <span class="k">with</span> <span class="n">ToolPath</span> <span class="o">=</span> <span class="s">&quot;./tools/NUnit.Runners/tools&quot;</span> <span class="o">})</span>
+</span><span class="line"><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>As we did it in the build target, the <code>!!</code> function picks all the unit test files (I’ve used a convention of naming the unit tests projects with the <strong>.Tests</strong> suffix) in the build directory and transform them to FileIncludes. </p>
+
+<p>The <code>NUnit</code> is yet another <a href="http://fsharp.github.io/FAKE/apidocs/fake-nunitsequential.html">inbuilt function of Fake</a> which runs nunit on the given group of assemblies.</p>
+
+<p>It takes two parameter, a function that returns the modified default <code>NUnitParams</code> value and a sequence of assembly paths. We have modified the default <code>ToolPath</code> property which specifies the file path of <strong>NUnit Runner</strong> </p>
+
+<p>As we did for Fake we have to modify the batch file as below to install the Nunit Runner nuget package before running the actual script.  </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="p">@</span><span class="k">echo</span> <span class="k">off</span>
+</span><span class="line"><span class="k">cls</span>
+</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;FAKE&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
+</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;NUnit.Runners&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="s2">&quot;tools\FAKE\tools\Fake.exe&quot;</span> build.fsx
+</span><span class="line"><span class="k">pause</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="deploy-the-application-in-iis">Deploy the application in IIS</h3>
+
+<p>Well, now we are at the final step of the build process which deploy the application in the local IIS server. </p>
+
+<p>Deploying an application in IIS is super easy using Fake. All you need to do is just input necessary things like site name, virtual directory name, etc., and call the <code>IIS</code> function in <strong>Fake.IIS</strong> library which is installed as part of Fake.</p>
+
+<p>To begin with we need to add reference in the beginning <strong>build.fsx</strong> to include the <strong>Fake.IIS</strong> library. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">r</span> <span class="s">&quot;tools/FAKE/tools/Fake.IIS.dll&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This <strong>Fake.IIS</strong> makes heavy use of <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.servermanager(v=vs.90).aspx">ServerManager</a> which helps to dynamically configure IIS 7.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Deploy&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">siteName</span> <span class="o">=</span> <span class="s">&quot;fsharp&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">appPool</span> <span class="o">=</span> <span class="s">&quot;fsharp.appPool&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">port</span> <span class="o">=</span> <span class="s">&quot;:9999:&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">vdir</span> <span class="o">=</span> <span class="s">&quot;/phonecat&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">webBuildPath</span> <span class="o">=</span> <span class="n">buildDir</span> <span class="o">+</span> <span class="s">&quot;/_PublishedWebsites/Web&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sitePhysicalPath</span> <span class="o">=</span> <span class="s">@&quot;c:\inetpub\wwwroot\phonecat&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">XCopy</span> <span class="n">webBuildPath</span> <span class="n">sitePhysicalPath</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">(</span><span class="n">IIS</span>
+</span><span class="line">    <span class="o">(</span><span class="n">Site</span> <span class="n">siteName</span> <span class="s">&quot;http&quot;</span> <span class="n">port</span> <span class="s">@&quot;C:\inetpub\wwwroot&quot;</span> <span class="n">appPool</span><span class="o">)</span>
+</span><span class="line">    <span class="o">(</span><span class="n">ApplicationPool</span> <span class="n">appPool</span> <span class="k">true</span> <span class="s">&quot;v4.0&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="o">(</span><span class="n">Some</span><span class="o">(</span><span class="n">Application</span> <span class="n">vdir</span> <span class="n">sitePhysicalPath</span><span class="o">)))</span>
+</span><span class="line"><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>When we build a web project using MsBuild in release mode, it creates a deployable directory which can be accessed using the path <em>/_PublishedWebsites/Web</em> in the build directory. So, after building the application we just need to copy this deployable directory to the <strong>intepub\wwwroot</strong> directory using the XCopy function in Fake.</p>
+
+<p>The <code>IIS</code> function takes three parameters</p>
+
+<ul>
+  <li>site - A function with the signature <code>ServerManager -&gt; Site</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.site(v=vs.90).aspx">Site</a> with the given site settings. </li>
+  <li>appPool - A function with the signature <code>ServerManager -&gt; ApplicationPool</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.applicationpool(v=vs.90).aspx">AppPool</a> with the given appPool settings.  </li>
+  <li>app - An option type with the signature <code>(Site -&gt; ServerManager -&gt; Application) option</code> provides the <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.application(v=vs.90).aspx">Application</a>  </li>
+</ul>
+
+<p>Fake’s IIS helper library has in-built function for Site, ApplicationPool and Application which takes the necessary inputs need for its creation and returns the associated instances. All of these function creates Site, ApplicationPool and Application respectively if they are not available in the IIS. </p>
+
+<h3 id="running-the-targets">Running the Targets</h3>
+
+<p>In the above steps we just defined various Fake targets. These targets doesn’t execute on its own and we need to explicitly define the order of its execution and initiate.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="s">&quot;Clean&quot;</span>
+</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Build&quot;</span>
+</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Test&quot;</span>
+</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Deploy&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">RunTargetOrDefault</span> <span class="s">&quot;Deploy&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>==&gt;</code> is one of <a href="http://fsharp.github.io/FAKE/apidocs/fake-additionalsyntax.html">the DSL in Fake</a> which is actually a function that defines the target execution order.</p>
+
+<p>The <code>RunTargetOrDefault</code> function runs the target specified in the parameter or executes the default target.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>Fake is just awesome. We can automate so much things with very few lines of code and the beauty is it can be used in <strong>any .net projects</strong>. If you are using MsBuild Xml scripts, do try Fake! It will make you super productive. You can find the source of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/4">fsharp-phonecat repository</a>. </p>
+
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -2675,149 +2940,6 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
     <a href="http://jade-visualizer.herokuapp.com/">“Jade-Visualizer”</a> a web-based visualizer/translator which targets the beginners 
     of <a href="http://jade-lang.com/">Jade</a> (A widely used <a href="http://nodejs.org">Node.js</a> view engine) to learn it effectively. </p> 
     <p>Its the inspiration from good bloggers, kindled me to <a href="/blog/2011/01/05/thank-god/">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133"></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122"></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96"></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li></ul> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li></ul> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p>
-</div>
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-04-13T00:00:00+05:30" data-updated="true" itemprop="datePublished">Apr 13<sup>th</sup>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/categories/programming/'>programming</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2012/04/13/interesting-json-model-binding/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/04/13/interesting-json-model-binding/" itemprop="url">An Interesting JSON Model Binding Behaviour in ASP.NET MVC3</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <h3>Introduction</h3>
-    <p>
-        <a href="http://msdn.microsoft.com/en-us/library/dd410405.aspx">Model Binding</a> is one of the coolest feature in ASP.NET MVC3.
-        Like a magic wand, your form element values, <a href="http://www.json.org/">JSON values</a>, also query string values automatically get converted to the equivalent C# object and
-        makes the life of the developer easier.
-    </p> <p>
-        The default behaviour of MVC3 model binding works well in more common scenarios.
-        But in certain cases it wont work as expected, and in such situations we need to <a href="http://odetocode.com/blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx">
-            write
-            custom model binders
-        </a>. Two weeks before while I was working with model binding on JSON values, I’ve encountered an interesting behaviour of JSON model binding.
-    </p>
-
-    <p>
-        If a JSON property contains a string, it get bind to a string property of the equivalent C# object. But if that same JSON property contains a empty string, while model binding,
-        the equivalent C# object’s property is assigned to null and not to empty string! The same happened with arrays. If it contains elements, it get bind without any problems.
-        But if the array is empty it get bind to null!!
-    </p> <p>
-        In this blog post, we are going to get rid of this intriguing behaviour by writing a Custom JSON model binder.
-        Hope it would be useful and save you some hairs <i class='emoji smile'></i>
-
-        <h3>The Sample Application – “MyMobileStore”</h3>
-    <p>
-        In this blog post we are going to see a small application called “MyMobileStore”. This sample app has two features. One will help you to search the mobiles
-        in the “MyMobileStore” by using the company name and the mobile types. An another feature will help you to find out the sales details of the mobiles from a given
-        company for the specified mobile types.
-    </p>
-
-    <h3>Show me the code</h3>
-    <p>Core classes</p>
-    <p><img class="center" src="/images/JsonModelBinding/CoreClasses.png" title="" ></p>
-    <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
-    <p>
-    <p><img class="center" src="/images/JsonModelBinding/MobileController.png" title="" ></p>
-    <p>
-        Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
-        the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
-    </p>
-    <p>
-    <p><img class="center" src="/images/JsonModelBinding/MobileFilter.png" title="" ></p>
-    </p> <p>
-        The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
-        One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
-        action method blank to keep it simple. Both actions returns a JSON result to make them consumed by ajax.
-    </p>
-
-    <p><em>(Note: I’ve violated some design principles in the sample code as I just wanted to make this blog post as simple as possible) </em></p>
-
-    <h3>The Problem (Opportunity in my language)</h3>
-    <p>
-        In a good world, if the user selected either or both the company name and the mobiles types to be filtered, then our controller in “MyMobileStore”
-        will happily accepts them as a parameter and continue its work without any mishaps.
-    </p>
-
-    <p><img class="center" src="/images/JsonModelBinding/Problem.png" title="" ></p>
-    <p>
-        But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
-        reference exception and breaks the functionality!!
-    </p>
-    <p><img class="center" src="/images/JsonModelBinding/BadWorld.png" title="" ></p>
-    <p><img class="center" src="/images/JsonModelBinding/NullException.png" title="" ></p>
-
-    <p>
-        <em>
-            (Now you might have understood why I added a tweak in the number of mobile types
-            <i class='emoji smile'></i>)
-        </em>
-    </p>
-    <h3>Possible Solutions</h3>
-    <ol>
-        <li>Perform null check inside the “SearchMobiles” action method and assign empty array.</li>
-        <li>Write a Custom Model Binder for “MobileFilter” and perform the null check inside the model binding logic</li>
-    </ol>
-    <p>
-        Though the option 1 is a simple and straightforward thing, what would you do if the “SalesDetails” action method works with the mobile types collection.
-        You certainly need to duplicate the null checking inside it also. Let us assume that we have some more action methods in our “MyMobileStore” which has “MobileFilter”
-        as their parameter. Do you still duplicate the null check there ?. Think!!
-    </p>
-    <p>
-        If you do so, I am sorry my dear friend, you are violating the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> principle and creating
-        <a href="http://pragprog.com/the-pragmatic-programmer/extracts/software-entropy">a broken window</a> in your codebase! So, lets go ahead and write
-        <a href="http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882">clean code</a> by making use of Custom Model Binder for our “MobileFilter”.
-    </p>
-
-    <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
-    <p>
-        <img class="center" src="/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
-    </p>
-
-    <p>
-        Our custom model binder is very simple, it just makes use of Default Model binding behaviour. After the default behaviour has been done,
-        it checks for null values using <a href="http://msdn.microsoft.com/en-us/library/ms173224.aspx">Null-Coalescing operator</a> and assign empty values if
-        the values are null.
-    </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
-
-    <p>
-        <img class="center" src="/images/JsonModelBinding/Global.png" title="" >
-    </p>
-    <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
-    <p>
-        <img class="center" src="/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
-    </p> 
-    <h3>Conclusion</h3> 
-    <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
-        binding problems. In my next blog post I would share my experiences in how to unit test this custom model binders. 
-    You can download the source code that I have used in this blog post from <a href="http://www.box.com/s/16dbb662bb2f94babe27">here</a></p>
 </div>
 		
 		
