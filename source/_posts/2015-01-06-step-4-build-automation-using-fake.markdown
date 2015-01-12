@@ -35,7 +35,7 @@ Also its a good practice to add a [Nuget.config file](http://docs.nuget.org/docs
 
 ### Adding build.bat file
 
-The **build.bat** is a bootstrap file which initiates the entire build process. It's a typical fake build batch file. Add it in the root folder of the solution.
+Create a batch file **build.bat** in the root directory of the solution. It is going act as bootstrap file which initiates the entire build process.
 
 ```bat
 @echo off
@@ -44,7 +44,7 @@ cls
 "tools\FAKE\tools\Fake.exe" build.fsx
 pause
 ``` 
-It just download the Fake nuget package using the nuget.exe that we added earlier and call the fake.exe with the fsharp build script. This **build.fsx** script is not added yet. So, let's add them.
+It just download the Fake nuget package using the nuget.exe that we added earlier and call the fake.exe with the fsharp build script **build.fsx**.
 
 ### Adding build.fsx file
 
@@ -53,7 +53,7 @@ Create a [fsharp script file](http://blogs.msdn.com/b/chrsmith/archive/2008/09/1
 
 ### Cleaning the build directory
 
-Just a like any other build process, the first step is to clear build the directory. Fake follows the same convention of MsBuild's [Targets](http://msdn.microsoft.com/en-us/library/ms171462.aspx). Defining targets in Fake is less verbose compare to its MsBuild's counterpart. As a matter of fact, it is a fsharp function that take two parameters, the name of the target and a function which defines the target. 
+Just a like any other build process, the first step is to clear the build directory. Fake follows the same convention of MsBuild's [Targets](http://msdn.microsoft.com/en-us/library/ms171462.aspx). Defining targets in Fake is less verbose compare to its MsBuild's counterpart. As a matter of fact, it is a fsharp function that take two parameters, the name of the target and a function which defines the target. 
 
 Since it is a script file we need to add reference to the **FakeLib.dll** before writing the actual code.
 
@@ -121,6 +121,7 @@ cls
 "tools\FAKE\tools\Fake.exe" build.fsx
 pause
 ```
+
 ### Deploy the application in IIS
 
 Well, now we are at the final step of the build process which deploy the application in the local IIS server. 
@@ -184,5 +185,5 @@ The ```RunTargetOrDefault``` function runs the target specified in the parameter
 
 ### Summary
 
-Fake is just awesome. We can automate so much thing with very few lines of code and it can be used in **any .net projects**. If you are using MsBuild Xml scripts, do try Fake! It will make you super productive. You can find the source of this step in the fsharp-phonecat repository. 
+Fake is just awesome. We can automate so much things with very few lines of code and the beauty is it can be used in **any .net projects**. If you are using MsBuild Xml scripts, do try Fake! It will make you super productive. You can find the source of this step in the [fsharp-phonecat repository](https://github.com/tamizhvendan/fsharp-phonecat/tree/4). 
 
