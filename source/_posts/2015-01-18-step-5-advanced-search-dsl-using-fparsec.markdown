@@ -40,7 +40,7 @@ FParsec does both [lexical analysis](http://en.wikipedia.org/wiki/Lexical_analys
 
 Lets quickly walk through the basics of FParsec.
 
-In Fparsec all the parsers are of type ```Parser<'Result,'UserState>``` . The ```'Result``` type represents the result of the parser and the ```'UserState``` represents the internal state of the parser. 
+In Fparsec all the parsers are of type ```Parser<'Result,'UserState>``` . The ```'Result``` represents the type of the parser result and the ```'UserState``` represents the internal state of the parser. 
 
 FParsec offers lot of in-built parser functions which takes F# primitive types and return a parser type for it. 
 
@@ -62,7 +62,7 @@ let pram = pstring "ram"
 let pweight = pstring "weight"
 let pscreen = pstring "ram"
 ```
-Like ```pchar``` function, the ```pstring``` takes a string as its input and return a parser (```Parser<string, 'UserState>```) that parses only the given string. This parser is case-sensitive. If you want to have a parser which case-insensitive you can use ```pstringCI```
+Like ```pchar``` function, the ```pstring``` takes a string as its input and return a parser (```Parser<string, 'UserState>```) that parses only the given string. This parser is case-sensitive. If you want to have a parser which is case-insensitive you can use ```pstringCI```
 
 ```fsharp
 let pmb = pstringCI "MB"
@@ -76,7 +76,7 @@ let pinch = pstringCI "inch"
 let pvalue = pfloat
 ```
 
-I hope by this time you would have been familiar with the FParsec functions. Yes, you are right ```pfloat``` parses a floating point and returns the parser for the same. But unlike ```pchar``` and ```pstrig``` it doesn't take any input and it can parse any floating point numbers. 
+I hope by this time you would have been familiar with the FParsec functions. Yes, you are right ```pfloat``` parses a floating point and returns the parser for the same. But unlike ```pchar``` and ```pstrig``` it doesn't take any input and it can parse any floating point numbers and return the same when we execute the parser. 
 
 ### |>>
 
@@ -108,40 +108,41 @@ let pweight = psearchFilter "weight"
 let pscreen = psearchFilter "screen"
 
 ```  
-If you see the type of ```pram``` it is Parser<SearchFilter, 'u> i.e Parser for our custom type. I've created a utility intermediate parser called ```psearchFilter``` that helps in avoiding the code duplication across multiple search filter parser creation.
+If you see the type of ```pram``` it is Parser<SearchFilter, 'u> i.e Parser for our custom type. The ```psearchFilter``` is an utility function which helps in avoiding the code duplication across multiple search filter parser creation.
 
 ### >>. 
 
-I love this function and it represents the beauty of functional programing. This function has the signature
+I love this function and it represents the beauty of functional programming. This function has the signature
 
 ```text
 Parser<'a, 'u> -> Parser<'c, 'u> -> Parser<'c, 'u>
 ```  
 
-It takes two parsers of same or different types and returns a parser that parses the input using the given two parsers by applying them sequentially and returns a parser with the input type of second parser 
+It takes two parsers of same or different types and returns a parser that parses the input using the given two parsers by applying them sequentially and returns a parser with the input type of second parser (The **.** symbol represents which parser to pick)
 
 Lets see this action to understand it more
 
 ```text
 let pgreaterThan = pchar '>' >>. pfloat |>> GreaterThan
 ```
-We have created parser here for greater than. It parses the string **">80.2"** (i.e ```pchar``` parses the **>** symbol and ```pfloat``` parses the number **80.2**. Since we have created it using ```>>.``` function, both ```pchar``` and ```pfloat``` are applied in sequence and it returns a parser of float type) and retrieve the floating number **80.2** from it. Then we have applied the ```|>>``` function which translate it our custom type ```GreaterThan``` that we defined in the AST.
+We have created parser here for greater than. It parses the string **">80.2"** (i.e ```pchar``` parses the **>** symbol and ```pfloat``` parses the number **80.2**. Since we have created it using ```>>.``` function, both ```pchar``` and ```pfloat``` are applied in sequence and it returns a parser of float type) and retrieve the floating number **80.2** when the parser is executed. Then we have applied the ```|>>``` function which translate it our custom type ```GreaterThan``` that we defined in the AST.
 
-The ```>>.``` is much like functional composition done by the [>> function (aka operator)](http://en.wikibooks.org/wiki/F_Sharp_Programming/Higher_Order_Functions#The_Composition_Function_.28.3C.3C_operator.29) but instead of acting at teh function level it acts at the parser level.
+The ```>>.``` is much like functional composition done by the [>> function (aka operator)](http://en.wikibooks.org/wiki/F_Sharp_Programming/Higher_Order_Functions#The_Composition_Function_.28.3C.3C_operator.29) but instead of acting at the function level it acts at the parser level.
 
 
 ### .>>
 
-It is similar to the ```>>.``` function but instead of returning a parser with the input type of second parser it returns a parser with the input type of first parser.
+It is similar to the ```>>.``` function but instead of returning a parser with the input type of second parser it returns a parser with the input type of the first parser.
 
 It has the signature
-```text
+
+```text 
 Parser<'a, 'u> -> Parser<'c, 'u> -> Parser<'a, 'u>
 ``` 
 
 ### .>>.
 
-It is a combination of ```.>>``` and ```>>.```. i.e Instead of dropping the output of either of the given parsers, it returns a parser which parses the input and returns a parer with a tuple representing the inputs of both of the given parsers.
+It is a combination of ```.>>``` and ```>>.``` i.e Instead of dropping the output of either of the given parsers, it returns a parser which parses the input and returns a parser with the result type as tuple representing the inputs of both of the given parsers.
 
 It has the signature
 
@@ -154,9 +155,9 @@ Lets see both ```.>>``` and ```.>>.``` in action
 let prange = pfloat .>> (pchar '-') .>>. pfloat |>> Range
 ```
 
-The ```prange``` parser parses the string "100-200" and returns the Range type with i.e F# type equivalent [ Range (100, 200)] of the raw string "100-200".
+The ```prange``` parser parses the string "100-200" and returns ```Range (100, 200)```.
 
-The ```.>>``` function here dropped the symbol **-** here (output of ```pchar``` parser) and the function ```.>>.``` picked the output of both and returned a tuple which we needed for the range.
+The ```.>>``` function here dropped the symbol **-** here (output of ```pchar``` parser) and the function ```.>>.``` picked the output of these parsers and returned a tuple representing the given range.
 
 Now you got why I said I love this function! These tiny functions allow us to create parsers by combining them. If you understand how these tiny functions work and trust me you can create complex parsers even a [C# compiler](http://trelford.com/blog/post/parsecsharp.aspx)
 
@@ -172,7 +173,7 @@ Run the parser ```p1``` against the input. If the parsing succeed skip the rest 
 
 What is the difference between [Non-Fatal Error](http://www.quanttec.com/fparsec/reference/primitives.html#members.Error) and a [Fatal Error](http://www.quanttec.com/fparsec/reference/primitives.html#members.FatalError) ?
 
-Well, its closely associated with the internal implementation of FParsec. FParsec implements backtracking with only a "one token look-ahead". i.e if the parser consumed one input token from the stream, it modifies the internal state and if it fails after that it would result in Fatal Error. Not-Fatal Error occurs when parer error happened without consuming the input. Its little complex to explain it fully and if you need more information about it, you can find in [this detailed documentation](http://www.quanttec.com/fparsec/users-guide/parsing-alternatives.html).
+Well, its closely associated with the internal implementation of FParsec. FParsec implements backtracking with only a "one token look-ahead". i.e if the parser consumed one input token from the stream, it modifies the internal state and if it fails after that it would result in Fatal Error. Not-Fatal Error occurs when parer error happened without consuming the input. 
 
 ```fsharp
 let pgreaterThan = pchar '>' >>. pfloat |>> GreaterThan
@@ -182,7 +183,7 @@ let pvalueFilters = choice [pgreaterThan; (attempt prange); pvalue]
 ``` 
 If you seen the AST of the DSL that we are going to implement, the value filters can be any one of greaterThan or range or value. Using ```choice``` we have implemented this "either or" parser and also we have leveraged the ```attempt``` function to get rid of parser fatal error.
 
-Both ```prange``` and ```value```, shares the same first token i.e for "100-200MB" & "100MB", the first token '1' is same. So while parsing after consuming the token '1' from the input sequence, FParsec assumes its a range filter and changes its internal state. By the time it reaches the token 'M' in "100MB", it would result in a fatal error saying *Expecting: '-'*. As we have used ```attempt``` here, it backtracks the parser state back to the token '1' of "100MB" and start parsing using 'pvalue' parser. Its hard to get it first time (I've spent close to an hour to figure it out) and I recommend you to spend some quality time in understanding the [documentation](http://www.quanttec.com/fparsec/users-guide/parsing-alternatives.html) if you want really want to crack it!
+Both ```prange``` and ```value```, shares the same first token i.e for "100-200MB" & "100MB", the first token '1' is same. So while parsing the string "100MB" it starts by consuming the first token '1' from the input sequence. FParsec assumes its a range filter and changes its internal state. By the time it reaches the token 'M' in "100MB", it would result in a fatal error saying *Expecting: '-'*. As we have used ```attempt``` here, it backtracks the parser state back to the token '1' of "100MB" and start parsing using ```pvalue``` parser. Its hard to get it first time (I've spent close to an hour to figure it out) and I recommend you to spend some quality time in understanding the [documentation](http://www.quanttec.com/fparsec/users-guide/parsing-alternatives.html) if you want really want to crack it!
 
 
 ### sepBy
@@ -190,17 +191,16 @@ Both ```prange``` and ```value```, shares the same first token i.e for "100-200M
 [sepBy](http://www.quanttec.com/fparsec/reference/primitives.html#members.sepBy) takes an element parser ```p1``` and a separator parser as its input and returns a parser for a list of elements separated by the separators.
 
 It has the signature
-```text
+
+``` text
 Parser<'a,'u> -> Parser<'b,'u> -> Parser<'a list, 'u>
 ```
 
-We will be using this function to parse multiple search filters
+We will be using this function to parse multiple search filters separated by **;**
 
 ### run
 
-This [run function](http://www.quanttec.com/fparsec/reference/charparsers.html#members.run) executes the given parser against a string input and returns the [ParserResult](http://www.quanttec.com/fparsec/reference/charparsers.html#members.ParserResult).
-
-After creating the parser, we will be using this function to execute the parser against the search filter query from the front end and returns the associated AST of the query.
+The [run function](http://www.quanttec.com/fparsec/reference/charparsers.html#members.run) takes a parser and a string as its input and it executes the given parser against the string input and returns a [ParserResult](http://www.quanttec.com/fparsec/reference/charparsers.html#members.ParserResult) representing the result.
 
 ## Implementing the Parser
 
@@ -361,7 +361,7 @@ member this.Create(request, controllerDescriptor, controllerType) =
 
 The final step of the creating a view for the Phone Search which enable the user to search the phones using the DSL that we have created so far.
 
-It is straight forward razor view creation as we have seen in [step-2]({% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}). Add a action method ```Search``` in the ```PhoneController``` as below
+It is straight forward razor view creation as we have seen in [step-2]({% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}). Add an action method ```Search``` in the ```PhoneController``` as below
 
 ```fsharp
 // ...
@@ -377,4 +377,4 @@ The javascript side has been taken care by knockout.js and you can find the scri
 
 ## Summary
 
-Its a little longer post than I expected and I am glad that you have read it this far. I'd like give credit to this [blog post by fog creek](http://blog.fogcreek.com/fparsec/) by [Hao Lian](http://haolian.org/) which I've used as a reference to come up with this implementation. As usual you can find the source code in the [phonecat github repository](https://github.com/tamizhvendan/fsharp-phonecat/tree/5).
+Its a little longer post than I expected and I am glad that you have read it this far. I'd like give credit to this [blog post](http://blog.fogcreek.com/fparsec/) by [Hao Lian](http://haolian.org/) which I've used as a reference to come up with this implementation. As usual you can find the source code in the [phonecat github repository](https://github.com/tamizhvendan/fsharp-phonecat/tree/5).
