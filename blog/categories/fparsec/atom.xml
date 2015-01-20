@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: fparsec | Tamizh's Thoughts]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/fparsec/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2015-01-20T19:11:34+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Step-5 Advanced Search DSL using FParsec]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/"/>
+    <updated>2015-01-18T19:52:26+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 5 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In this blog post we are going create an advanced Search <a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> for searching Phones in the PhoneCat application that we are building in this blog series, using a F# parser combinator library called <a href="http://www.quanttec.com/fparsec/">FParsec</a>. </p>
+
+<p><img src="/images/fsharp_phonecat/step_5/search_results.png"></p>
+
+<p>As you seen in the screenshot above the DSL that we are going to build will enable us to search phones using three search filters (parameters) <strong>weight</strong>, <strong>screen</strong> and <strong>ram</strong>. The values (value filters) of these search filters can be defined in three ways as <strong>&gt;</strong>(greater than), <strong>-</strong>(range) and <strong>{value}</strong>(actual value itself i.e <em>=</em>). Each of these values should be accompanied with their unit of measures <strong>g</strong>, <strong>inch</strong> and <strong>MB</strong> respectively. For simplicity, I’ve expressed these units in singulars. The <strong>:</strong> symbol is used to separate Search Filter and Value Filter. Multiple filters can be used by seperating thing using the <strong>;</strong> symbol. </p>
+
+<p>The <a href="http://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree (AST)</a> of this external DSL is</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type SearchFilter = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>| Ram of (float -&gt; float&lt;MB&gt;)
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>| Weight of (float -&gt; float&lt;g&gt;)
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>| Screen of (float -&gt; float&lt;inch&gt;)
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>type ValueFilter = 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>| Value of float 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>| GreaterThan of float 
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>| Range of float * float
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>let filters : (SearchFilter * ValueFilter) list = // ... 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
+</pre></div>
+</div>
+</div>
+
+<p>FParsec does both <a href="http://en.wikipedia.org/wiki/Lexical_analysis">lexical analysis</a> (converting raw character sequence into meaningful tokens) and <a href="http://en.wikipedia.org/wiki/Parsing">parsing</a> (converting tokens to an AST like the one above). FParsec has been built using pure functions from the ground up and it enable us to create complex parser by combining small parsers (aka <a href="http://programmers.stackexchange.com/questions/117522/what-are-combinators-and-how-are-they-applied-to-programming-projects-practica">combinators</a>). </p>
+
+<h3 id="fpasec-101">FPasec 101</h3>
+
+<p>Lets quickly walk through the basics of FParsec.</p>
+
+<p>In Fparsec all the parsers are of type <code>Parser&lt;'Result,'UserState&gt;</code> . The <code>'Result</code> represents the type of the parser result and the <code>'UserState</code> represents the internal state of the parser. </p>
+
+<p>FParsec offers lot of in-built parser functions which takes F# primitive types and return a parser type for it. </p>
+
+<h4 id="pchar">pchar</h4>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let psearchValueSeperator = pchar ':'
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let pmultiFiltersSeperator = pchar ';'
+</pre></div>
+</div>
+</div>
+
+<p>The <code>pchar</code> function takes a character and returns a parser (i.e of type <code>Parser&lt;char, 'UserState&gt;</code>) which parses only the given character. </p>
+
+<p>FParsec uses a convention of prefix <strong>p</strong> to define all its parser function and we are also going to use the same to define our custom parser functions.</p>
+
+<h3 id="pstring">pstring</h3>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let pram = pstring &quot;ram&quot;
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let pweight = pstring &quot;weight&quot;
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let pscreen = pstring &quot;ram&quot;
+</pre></div>
+</div>
+</div>
+<p>Like <code>pchar</code> function, the <code>pstring</code> takes a string as its input and return a parser (<code>Parser&lt;string, 'UserState&gt;</code>) that parses only the given string. This parser is case-sensitive. If you want to have a parser which is case-insensitive you can use <code>pstringCI</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let pmb = pstringCI &quot;MB&quot;
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let pg = pstringCI &quot;g&quot;
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let pinch = pstringCI &quot;inch&quot;
+</pre></div>
+</div>
+</div>
+
+<h3 id="pfloat">pfloat</h3>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let pvalue = pfloat
+</pre></div>
+</div>
+</div>
+
+<p>I hope by this time you would have been familiar with the FParsec functions. Yes, you are right <code>pfloat</code> parses a floating point and returns the parser for the same. But unlike <code>pchar</code> and <code>pstrig</code> it doesn’t take any input and it can parse any floating point numbers and return the same when we execute the parser. </p>
+
+<h3 id="section">|»</h3>
+
+<p>So far we have seen parsers for the F# primitive types. What about our custom types ? FParsec has an answer for that too using the function (aka operator) <code>|&gt;&gt;</code>. </p>
+
+<p>The signature of <code>|&gt;&gt;</code> function is</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Parser&lt;'a, 'u&gt; -&gt; (a' -&gt; 'b) -&gt; Parser&lt;'b, 'u&gt;
+</pre></div>
+</div>
+</div>
+<p>i.e this function takes two inputs, a parser of type <code>'a</code> and a function that transform the type <code>'a</code> to <code>'b</code> and return a parser of type <code>'b</code></p>
+
+<p>If you remember the AST that we have defined in the beginning of the post, the search filter has been defined as a discriminated union of type <code>SearchFilter</code>. Each fields <code>Ram</code>, <code>Screen</code>, <code>Weight</code> are being represented in the DSL by their string counterparts <em>“ram”</em>, <em>“screen”</em>, <em>“weight”</em> respectively. We can leverage this <code>|&gt;&gt;</code> function to take care of this data type transformation</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let toLowerCase (str : string) = str.ToLowerInvariant() 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>let toSearchFilter str = 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  match toLowerCase str with
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  | &quot;ram&quot; -&gt; Ram ((*) 1.&lt;MB&gt;)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  | &quot;weight&quot; -&gt; Weight ((*) 1.&lt;g&gt;)
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  | &quot;screen&quot; -&gt; Screen ((*) 1.&lt;inch&gt;)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  | _ -&gt; failwith &quot;Invalid search filter&quot;
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let psearchFilter str = pstring str |&gt;&gt; toSearchFilter
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>let pram = psearchFilter &quot;ram&quot;
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>let pweight = psearchFilter &quot;weight&quot;
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>let pscreen = psearchFilter &quot;screen&quot;
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
+</pre></div>
+</div>
+</div>
+<p>If you see the type of <code>pram</code> it is Parser&lt;SearchFilter, ‘u&gt; i.e Parser for our custom type. The <code>psearchFilter</code> is an utility function which helps in avoiding the code duplication across multiple search filter parser creation.</p>
+
+<h3 id="section-1">».</h3>
+
+<p>I love this function and it represents the beauty of functional programming. This function has the signature</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Parser&lt;'a, 'u&gt; -&gt; Parser&lt;'c, 'u&gt; -&gt; Parser&lt;'c, 'u&gt;
+</pre></div>
+</div>
+</div>
+
+<p>It takes two parsers of same or different types and returns a parser that parses the input using the given two parsers by applying them sequentially and returns a parser with the input type of second parser (The <strong>.</strong> symbol represents which parser to pick)</p>
+
+<p>Lets see this action to understand it more</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let pgreaterThan = pchar '&gt;' &gt;&gt;. pfloat |&gt;&gt; GreaterThan
+</pre></div>
+</div>
+</div>
+<p>We have created parser here for greater than. It parses the string <strong>“&gt;80.2”</strong> (i.e <code>pchar</code> parses the <strong>&gt;</strong> symbol and <code>pfloat</code> parses the number <strong>80.2</strong>. Since we have created it using <code>&gt;&gt;.</code> function, both <code>pchar</code> and <code>pfloat</code> are applied in sequence and it returns a parser of float type) and retrieve the floating number <strong>80.2</strong> when the parser is executed. Then we have applied the <code>|&gt;&gt;</code> function which translate it our custom type <code>GreaterThan</code> that we defined in the AST.</p>
+
+<p>The <code>&gt;&gt;.</code> is much like functional composition done by the <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Higher_Order_Functions#The_Composition_Function_.28.3C.3C_operator.29">» function (aka operator)</a> but instead of acting at the function level it acts at the parser level.</p>
+
+<h3 id="section-2">.»</h3>
+
+<p>It is similar to the <code>&gt;&gt;.</code> function but instead of returning a parser with the input type of second parser it returns a parser with the input type of the first parser.</p>
+
+<p>It has the signature</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Parser&lt;'a, 'u&gt; -&gt; Parser&lt;'c, 'u&gt; -&gt; Parser&lt;'a, 'u&gt;
+</pre></div>
+</div>
+</div>
+
+<h3 id="section-3">.».</h3>
+
+<p>It is a combination of <code>.&gt;&gt;</code> and <code>&gt;&gt;.</code> i.e Instead of dropping the output of either of the given parsers, it returns a parser which parses the input and returns a parser with the result type as tuple representing the inputs of both of the given parsers.</p>
+
+<p>It has the signature</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Parser&lt;'a, 'u&gt; -&gt; Parser&lt;'c, 'u&gt; -&gt; Parser&lt;('a * 'c), 'u&gt;
+</pre></div>
+</div>
+</div>
+<p>Lets see both <code>.&gt;&gt;</code> and <code>.&gt;&gt;.</code> in action</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let prange = pfloat .&gt;&gt; (pchar '-') .&gt;&gt;. pfloat |&gt;&gt; Range
+</pre></div>
+</div>
+</div>
+
+<p>The <code>prange</code> parser parses the string “100-200” and returns <code>Range (100, 200)</code>.</p>
+
+<p>The <code>.&gt;&gt;</code> function here dropped the symbol <strong>-</strong> here (output of <code>pchar</code> parser) and the function <code>.&gt;&gt;.</code> picked the output of these parsers and returned a tuple representing the given range.</p>
+
+<p>Now you got why I said I love this function! These tiny functions allow us to create parsers by combining them. If you understand how these tiny functions work and trust me you can create complex parsers even a <a href="http://trelford.com/blog/post/parsecsharp.aspx">C# compiler</a></p>
+
+<h3 id="attempt">attempt</h3>
+
+<p>This function takes parser <code>p</code> and execute it against the input. If it result in <strong>fatal error</strong>, it <a href="http://en.wikipedia.org/wiki/Backtracking">backtracks</a> the parser state to its original state as if that the given input is not being consumed. </p>
+
+<h3 id="choice">choice</h3>
+
+<p>This function takes multiple parsers say <code>p1</code>, <code>p2</code> … <code>pn</code> and execute it against the input in the following order.</p>
+
+<p>Run the parser <code>p1</code> against the input. If the parsing succeed skip the rest of the parsers and return the parser else if it resulted an <strong>non-fatal error</strong>, backtrack the parser state to its original state and try the same with the next parser <code>p2</code>. This continues all the way down to <code>pn</code>.</p>
+
+<p>What is the difference between <a href="http://www.quanttec.com/fparsec/reference/primitives.html#members.Error">Non-Fatal Error</a> and a <a href="http://www.quanttec.com/fparsec/reference/primitives.html#members.FatalError">Fatal Error</a> ?</p>
+
+<p>Well, its closely associated with the internal implementation of FParsec. FParsec implements backtracking with only a “one token look-ahead”. i.e if the parser consumed one input token from the stream, it modifies the internal state and if it fails after that it would result in Fatal Error. Not-Fatal Error occurs when parer error happened without consuming the input. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let pgreaterThan = pchar '&gt;' &gt;&gt;. pfloat |&gt;&gt; GreaterThan
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let prange = pfloat .&gt;&gt; (pchar '-') .&gt;&gt;. pfloat |&gt;&gt; Range
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let pvalue = pfloat |&gt;&gt; Value
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>let pvalueFilters = choice [pgreaterThan; (attempt prange); pvalue]
+</pre></div>
+</div>
+</div>
+<p>If you seen the AST of the DSL that we are going to implement, the value filters can be any one of greaterThan or range or value. Using <code>choice</code> we have implemented this “either or” parser and also we have leveraged the <code>attempt</code> function to get rid of parser fatal error.</p>
+
+<p>Both <code>prange</code> and <code>value</code>, shares the same first token i.e for “100-200MB” &amp; “100MB”, the first token ‘1’ is same. So while parsing the string “100MB” it starts by consuming the first token ‘1’ from the input sequence. FParsec assumes its a range filter and changes its internal state. By the time it reaches the token ‘M’ in “100MB”, it would result in a fatal error saying <em>Expecting: ‘-‘</em>. As we have used <code>attempt</code> here, it backtracks the parser state back to the token ‘1’ of “100MB” and start parsing using <code>pvalue</code> parser. Its hard to get it first time (I’ve spent close to an hour to figure it out) and I recommend you to spend some quality time in understanding the <a href="http://www.quanttec.com/fparsec/users-guide/parsing-alternatives.html">documentation</a> if you want really want to crack it!</p>
+
+<h3 id="sepby">sepBy</h3>
+
+<p><a href="http://www.quanttec.com/fparsec/reference/primitives.html#members.sepBy">sepBy</a> takes an element parser <code>p1</code> and a separator parser as its input and returns a parser for a list of elements separated by the separators.</p>
+
+<p>It has the signature</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Parser&lt;'a,'u&gt; -&gt; Parser&lt;'b,'u&gt; -&gt; Parser&lt;'a list, 'u&gt;
+</pre></div>
+</div>
+</div>
+
+<p>We will be using this function to parse multiple search filters separated by <strong>;</strong></p>
+
+<h3 id="run">run</h3>
+
+<p>The <a href="http://www.quanttec.com/fparsec/reference/charparsers.html#members.run">run function</a> takes a parser and a string as its input and it executes the given parser against the string input and returns a <a href="http://www.quanttec.com/fparsec/reference/charparsers.html#members.ParserResult">ParserResult</a> representing the result.</p>
+
+<h2 id="implementing-the-parser">Implementing the Parser</h2>
+
+<p>We have seen a brief overview of some of the basic building blocks of FParsec. It’s time to pull all these things together and create the complete parser which parses the Search DSL.</p>
+
+<p>Create a source file in the <strong>Domain</strong> project and name it as <code>Search</code>. Then add the AST that we have discussed as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Search =  
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  type SearchFilter = 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  | Ram of (float -&gt; float&lt;MB&gt;)
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  | Weight of (float -&gt; float&lt;g&gt;)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  | Screen of (float -&gt; float&lt;inch&gt;)
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  type ValueFilter = 
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  | Value of float 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  | GreaterThan of float 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  | Range of float * float
+</pre></div>
+</div>
+</div>
+
+<p>The next step is to install the <a href="https://www.nuget.org/packages/FParsec">FParsec Nuget Package</a> in the <strong>Domain</strong> project. After installing it create a source file with the name <code>SearchParser</code> and add a function to parse the filter string as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module SearchParser =  
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let parseFilter filterStr =   
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let toLowerCase (str : string) = str.ToLowerInvariant()
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    let toSearchFilter = function
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>      | &quot;ram&quot; -&gt; Ram ((*) 1.&lt;MB&gt;)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      | &quot;weight&quot; -&gt; Weight ((*) 1.&lt;g&gt;)
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      | &quot;screen&quot; -&gt; Screen ((*) 1.&lt;inch&gt;)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      | _ -&gt; failwith &quot;Invalid search filter&quot;
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>   
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    let psearchFilter str = pstringCI str |&gt;&gt; (toLowerCase &gt;&gt; toSearchFilter)
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    let psearchValueSeperator = pchar ':'
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    let pmultiFiltersSeperator = pchar ';'
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    let pgreaterThan = pchar '&gt;' &gt;&gt;. pfloat |&gt;&gt; GreaterThan
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    let prange = pfloat .&gt;&gt; (pchar '-') .&gt;&gt;. pfloat |&gt;&gt; Range
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    let pvalue = pfloat |&gt;&gt; Value
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    let pvalueFilters = choice [pgreaterThan; (attempt prange); pvalue]
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    let createCompleteFilter psearchfilter puom  = 
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>      psearchfilter .&gt;&gt; psearchValueSeperator .&gt;&gt;. pvalueFilters .&gt;&gt; puom
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    let pmb = pstringCI &quot;MB&quot;
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    let pg = pstringCI &quot;g&quot;
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>    let pinch = pstringCI &quot;inch&quot;
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    let pram = psearchFilter &quot;ram&quot;
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    let pweight = psearchFilter &quot;weight&quot;
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    let pscreen = psearchFilter &quot;screen&quot;
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>    let pramFilter = createCompleteFilter pram pmb
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>    let pweightFilter = createCompleteFilter pweight pg
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>    let pscreenFilter = createCompleteFilter pscreen pinch
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>    let pfilter = choice [pramFilter;pweightFilter;pscreenFilter]
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>    let parser = sepBy pfilter pmultiFiltersSeperator
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>    match run parser filterStr with
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>    | Success(filters, _, _) -&gt; Choice1Of2(filters)
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>    | Failure(err,_,_) -&gt; Choice2Of2(err)
+</pre></div>
+</div>
+</div>
+
+<p>The <code>parseFilter</code> function takes the search filter query from the front end, parses it using the custom parsers that we have built and return the <a href="http://msdn.microsoft.com/en-us/library/ee353439.aspx">Choice type</a>.</p>
+
+<p>The <code>Choice1Of2</code> will contain a list of tuples (SearchFilter * ValueFilter) that represents the strongly typed AST of the given input query.</p>
+
+<p>The <code>Choice2of2</code> will contain the error message in case if there is any parser error happened while parsing the input query.</p>
+
+<h2 id="implementing-phone-search-backend">Implementing Phone Search backend</h2>
+
+<p>With the parser in place, the next step is to building the backend logic of filtering the phones using the filters returned by the parsers</p>
+
+<p>Open the module <code>Search</code> in the <strong>Domain</strong> project and add the following <code>searchPhones</code> function</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let searchPhones phones filters =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let hasMetValueFilter toUom valueFilter property  =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    match valueFilter with
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    | Value x -&gt; property = toUom x
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    | GreaterThan x -&gt; property &gt; toUom x
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    | Range (x,y) -&gt; property &gt;= toUom x &amp;&amp; property &lt;= toUom y
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let hasMetSearchFilter filter phone =
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    let valueFilter = (snd filter)
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    match (fst filter) with
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    | Ram toMB -&gt; hasMetValueFilter toMB valueFilter phone.Storage.Ram
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    | Weight toG -&gt; hasMetValueFilter toG valueFilter phone.Weight
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    | Screen toInch-&gt; hasMetValueFilter toInch valueFilter phone.Display.ScreenSize
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  let filterPhones phones' filter =
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    phones'
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    |&gt; Seq.filter (hasMetSearchFilter filter)
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  let rec searchPhones' phones' filters' =
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    match filters' with
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>    | [] -&gt; phones'
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    | x :: xs -&gt; (searchPhones' (filterPhones phones' x) xs)
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  searchPhones' phones filters
+</pre></div>
+</div>
+</div>
+<p>The function <code>searchPhones</code> recursively applies the filters one by one over the list of phones and filter the phones based on the filter criteria.</p>
+
+<h2 id="exposing-the-phone-search-as-web-api">Exposing the phone search as web-api</h2>
+
+<p>Open the <code>PhonesController</code> that we have added in the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">step-1</a> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type Error = { message : string }
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>[&lt;RoutePrefix(&quot;api/phones&quot;)&gt;]
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>type PhonesController
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    (
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>        getTopSellingPhones : int -&gt; seq&lt;Phone&gt; -&gt; seq&lt;Phone&gt;,
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        phones : seq&lt;Phone&gt;,
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        catalogPhones : seq&lt;Catalog.Phone&gt;              
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    ) = 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    inherit ApiController()
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    [&lt;Route(&quot;topselling&quot;)&gt;]
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    member this.GetTopSelling () =
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      getTopSellingPhones 3 phones
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    [&lt;HttpGet&gt;]
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    [&lt;Route(&quot;search&quot;)&gt;]
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    member this.SearchPhones (q : string) =
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      let parserResult = SearchParser.parseFilter q
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      match parserResult with
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>      | Choice1Of2 filters -&gt; 
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>        let filteredPhones = Search.searchPhones catalogPhones filters
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>        base.Request.CreateResponse(HttpStatusCode.OK, filteredPhones)
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>      | Choice2Of2 errMsg -&gt;
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>        base.Request.CreateResponse(HttpStatusCode.OK, { message = errMsg })
+</pre></div>
+</div>
+</div>
+
+<p>The action method <code>SearchPhones</code> gets the input query <code>q</code> from the user and give it to the parser using the <code>parseFilter</code> function. If the parsing is successful, then we will be calling the <code>searchPhones</code> function with the filters returned by the parser. If the parsing failed, we will be returning the error response with the error message from the parser.</p>
+
+<p>We have added a new dependency <code>catalogPhones</code> in the <code>PhonesController</code> constructor which represents all the available phones in the catalog. We need to inject it while creating the controller. Open the <code>Infrastructure</code> module and update the <code>PhonesController</code> creation as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>member this.Create(request, controllerDescriptor, controllerType) =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let phones' = phones |&gt; Seq.map TypeProviders.ToPhone
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let phoneIndexes' = phoneIndexes |&gt; Seq.map TypeProviders.ToPhoneIndex
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  let catalogPhones = phones |&gt; Seq.map TypeProviders.ToCatalogPhone
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  // ...
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  else if controllerType = typeof&lt;PhonesController&gt; then                    
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      let getTopSellingPhones = Phones.getTopSellingPhones (InMemoryInventory.getPhonesSold())                    
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      let phonesController = new PhonesController(getTopSellingPhones, phones', catalogPhones)                    
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      phonesController :&gt; IHttpController  
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  // ...
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+</pre></div>
+</div>
+</div>
+
+<h2 id="creating-phone-search-view">Creating Phone Search View</h2>
+
+<p>The final step of the creating a view for the Phone Search which enable the user to search the phones using the DSL that we have created so far.</p>
+
+<p>It is straight forward razor view creation as we have seen in <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. Add an action method <code>Search</code> in the <code>PhoneController</code> as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// ...
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>member this.Search () =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  this.View()
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>// ...
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>
+</pre></div>
+</div>
+</div>
+<p>Create a razor view <strong>Search.cshtml</strong> in the <em>Views/Phone</em> directory and add the code as <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Web/Views/Phone/Show.cshtml">defined here</a>.</p>
+
+<p>The javascript side has been taken care by knockout.js and you can find the script that takes care of calling the api and rendering the filtered phones <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Web/Scripts/search.js">here</a>. </p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Its a little longer post than I expected and I am glad that you have read it this far. I’d like give credit to this <a href="http://blog.fogcreek.com/fparsec/">blog post</a> by <a href="http://haolian.org/">Hao Lian</a> which I’ve used as a reference to come up with this implementation. As usual you can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/5">phonecat github repository</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>
