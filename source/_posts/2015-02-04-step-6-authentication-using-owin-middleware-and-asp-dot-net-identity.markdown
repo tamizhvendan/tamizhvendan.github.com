@@ -13,4 +13,12 @@ categories:
 
 In the [last blog post]({% post_url 2015-01-18-step-5-advanced-search-dsl-using-fparsec %}) we have added an interactive feature to search phones and in this blog post we are going to do add authentication to our PhoneCat application using Owin Middleware and ASP.NET identity.
 
-The end result would like as below
+In the first half of this blog post we are going to see how we can implement a new user registration workflow 
+
+{% img /images/fsharp_phonecat/step_6/registration_workflow.png %}
+
+And in the second half, we are going to see how to do authentication using user login credentials
+
+{% img /images/fsharp_phonecat/step_6/login_workflow.png %}
+
+
