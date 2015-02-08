@@ -82,9 +82,70 @@ The ```AuthenticationType``` is an identifier to distinguish between different a
 
 With all the needed infrastructure in place its time to do the actual work and lets start with adding a provision for registering new user.
 
+Add reference to ```Idenity``` project in the ```Web``` project and install the following nuget packages
 
+```text
+Microsoft.Owin.Security.Cookies
+Microsoft.Owin.Host.SystemWeb
+Microsoft.AspNet.Identity.EntityFramework
+```
 
+Create a controller with the name ```AuthenticationController``` in the ```Web``` project and update it as below
 
+```fsharp
+[<CLIMutable>]
+type RegisterViewModel = {
+  Name : string
+  Email : string
+  Password : string
+}
 
+type AuthenticationController (userManager : UserManager<User>) = 
+  inherit Controller()
+  member this.Register() = this.View()
 
+```
+The ```AuthenticationController``` depends on ```UserManager``` to take care of managing users. As the name indicates ```RegisterViewModel``` represents the view model for Registration View.
+
+The action method ```Register``` simply renders the Register View. This view not created yet so lets add it. Create a cshtml file with the name *Register.cshtml* under the directory **Views/Authentication**. 
+
+This is a strongly typed view of type ```RegisterViewModel```
+
+```html
+@model PhoneCat.Web.Controllers.RegisterViewModel
+
+<h3>Register New User</h3>
+
+@using (Html.BeginForm("Register", "Authentication", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+  @Html.AntiForgeryToken()
+  @Html.ValidationSummary()
+  <div class="form-group">
+    <label for="Email" class="col-sm-2 control-label">Name</label>
+    <div class="col-sm-10">
+      @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placholder = "Name" })
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Email" class="col-sm-2 control-label">Email</label>
+    <div class="col-sm-10">
+      @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placholder = "Email" })
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="Password" class="col-sm-2 control-label">Password</label>
+    <div class="col-sm-10">
+      @Html.PasswordFor(m => m.Password, new { @class = "form-control", placholder = "Password" })
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-primary">Create</button>
+    </div>
+  </div>
+}
+```
+It's a typical razor view representing the registration screen. For the sake of simplicity I've ignored the retype passowrd field. 
+
+The next step is handling this new user registration post request raised when clicking the  
 
