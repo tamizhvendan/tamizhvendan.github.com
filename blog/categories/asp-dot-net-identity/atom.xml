@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: asp.net-identity | Tamizh's Thoughts]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/asp-dot-net-identity/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2015-02-09T08:33:19+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Step-6 Authentication using Owin authentication Middleware and ASP.NET Identity]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/"/>
+    <updated>2015-02-04T17:24:22+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 6 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">last blog post</a> we have added an interactive feature to search phones and in this blog post we are going to add authentication to our PhoneCat application using Owin Authentication Middleware and ASP.NET identity.</p>
+
+<p>In the first half of this blog post we are going to see how to implement a new user registration workflow </p>
+
+<p><img src="/images/fsharp_phonecat/step_6/registration_workflow.png"></p>
+
+<p>And in the second half, we are going to see how to do authentication using the registered login credentials</p>
+
+<p><img src="/images/fsharp_phonecat/step_6/login_workflow.png"></p>
+
+<h3 id="owin-authentication-middleware-in-brief">Owin Authentication Middleware in brief</h3>
+
+<p>In the <a href="https://msdn.microsoft.com/en-us/magazine/dn451439.aspx">Owin Specification</a>, a middleware access the request before it reaches the underlying web framework. You can view the authentication middleware as gate keeper who checks the incoming request, if it is authenticated it let the request to go through the other middlewares in the pipeline else it bypasses the pipeline and take a different route (usually redirecting to the login page)</p>
+
+<p>In the blog post we are going to use cookie based authentication middleware which is similar to the <a href="https://msdn.microsoft.com/en-us/library/7t6b43z4%28v=vs.140%29.aspx">Asp.Net Forms Authentication</a> and it also supports <a href="https://msdn.microsoft.com/en-us/library/system.security.claims.claim(v=vs.110).aspx">Claims</a>.</p>
+
+<p>Another appreciable feature in Owin it is upto us on how to validate the incoming user credentials. We can plug it to any external authentication providers like Google, Facebook, etc., or using Active Directory or Asp.Net Identity. Here we are going to validate the user credentials using <a href="http://odetocode.com/blogs/scott/archive/2013/11/25/asp-net-core-identity.aspx">Asp.Net Identity framework</a> which provides the required interfaces for handling the authentication and <a href="http://odetocode.com/blogs/scott/archive/2014/01/03/asp-net-identity-with-the-entity-framework.aspx">Entity Framework Identity</a> which provides the concrete implementations for this Identity interfaces.</p>
+
+<h3 id="setting-up-the-infrastructure">Setting up the infrastructure</h3>
+
+<p>Create a new F# class library project with the name <code>Identity</code> and install the Microsoft <a href="https://www.nuget.org/packages/Microsoft.AspNet.Identity.EntityFramework/">AspNet.Identity.EntityFramework</a> nuget package which provides a pluggable data store for the user identity management using Entity Framework.</p>
+
+<p>Then add a source file in the <code>Identity</code> project with the name <code>User</code> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>open Microsoft.AspNet.Identity.EntityFramework
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>[&lt;AllowNullLiteral&gt;]
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>type User() = 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  inherit IdentityUser()
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  member val Name = &quot;&quot; with get, set
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>type UserDbContext() =
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  inherit IdentityDbContext&lt;User&gt;(&quot;IdentityConnection&quot;)
+</pre></div>
+</div>
+</div>
+
+<p>The <code>IdentityUser</code> represents the default implementation of <a href="https://msdn.microsoft.com/en-us/library/microsoft.aspnet.identity.iuser%28v=vs.108%29.aspx">IUser</a> interface which provides the basic properties for a user. We can extend it by adding our custom properties. Here we have added a custom property called <code>Name</code> which represents the name of the user.</p>
+
+<p>The <a href="https://msdn.microsoft.com/en-us/library/ee353608.aspx">AllowNullLiteral</a> attribute is one of the feature in F# which explicitly make a type to allow null as one of its value. F# by default doesn’t support null value for its types and the beauty is you will get a compiler error if you assign null to an identifier! Pretty cool isn’t it? No Null Exception, <a href="http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare">No Billion Dollar Mistake</a>! Then why we are allowing it explicitly here. Well, it has been added here for a reason and I will reveal it later in this blog post</p>
+
+<p>The <code>IdentityDbContext</code> represents the data store abstraction of Identity entities like Users, Roles, Claims and Logins. The <code>UserDbContext</code> is just a subclass of <code>IdentityDbContext</code> which tells Entity Framework to use the connection string name <code>IdentityConnection</code></p>
+
+<h3 id="setting-up-user-registration">Setting up User Registration</h3>
+
+<p>With all the needed infrastructure in place its time to do the actual work and lets start with adding a provision for registering new user.</p>
+
+<p>In the <code>Web</code> project add the reference to the <code>Identity</code> project and install the following nuget packages</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Microsoft.Owin.Security.Cookies
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>Microsoft.Owin.Host.SystemWeb
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>Microsoft.AspNet.Identity.EntityFramework
+</pre></div>
+</div>
+</div>
+
+<p>Create a controller with the name <code>AuthenticationController</code> in the <code>Web</code> project and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;CLIMutable&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>type RegisterViewModel = {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  Name : string
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Email : string
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Password : string
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>}
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>type AuthenticationController (userManager : UserManager&lt;User&gt;) = 
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  inherit Controller()
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  member this.Register() = this.View()
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+</pre></div>
+</div>
+</div>
+<p>The <code>AuthenticationController</code> depends on <code>UserManager</code> to take care of managing users. <a href="https://msdn.microsoft.com/en-us/library/dn613290%28v=vs.108%29.aspx">UserManager</a> is an abstraction defined in the <strong>AspNet.Identity</strong> assembly. It provides various APIs to work with the underlying user datastore. </p>
+
+<p>As the name indicates <code>RegisterViewModel</code> represents the view model for Registration View. The <a href="https://msdn.microsoft.com/en-us/library/hh289724.aspx">CLIMutable</a> attribute creates a default constructor and “getters and setters” for all the properties of a record type when it is compiled to IL and here it makes the <code>RegisterViewModel</code> compatible with the Asp.Net <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.defaultmodelbinder(v=vs.118).aspx">DefaultModelBinder</a> which expects the types to have default constructor to bind the incoming request.</p>
+
+<p>The action method <code>Register</code> simply renders the Register View. This view not created yet so lets add it. Create a cshtml file with the name <em>Register.cshtml</em> in the directory <strong>Views/Authentication</strong>. </p>
+
+<p>This is a strongly typed view of type <code>RegisterViewModel</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>@model PhoneCat.Web.Controllers.RegisterViewModel
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="tag">&lt;h3&gt;</span>Register New User<span class="tag">&lt;/h3&gt;</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>@using (Html.BeginForm(&quot;Register&quot;, &quot;Authentication&quot;, FormMethod.Post))
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>{
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  @Html.AntiForgeryToken()
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  @Html.ValidationSummary()  
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  @Html.TextBoxFor(m =<span class="error">&gt;</span> m.Name)
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  @Html.TextBoxFor(m =<span class="error">&gt;</span> m.Email)
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>   
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  @Html.PasswordFor(m =<span class="error">&gt;</span> m.Password)
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  <span class="tag">&lt;button</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">btn btn-primary</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Create<span class="tag">&lt;/button&gt;</span>  
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>}
+</pre></div>
+</div>
+</div>
+<p><em>Note: I’ve intentionally ignored the bootstrap css form styles here to keep the code snippet less noisy</em></p>
+
+<p><img src="/images/fsharp_phonecat/step_6/new_user_registration.png"></p>
+
+<p>It’s a typical razor view representing the registration screen. For the sake of simplicity I’ve ignored the retype password field. </p>
+
+<p>The next step is handling the new user registration POST request.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;HttpPost&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>[&lt;ValidateAntiForgeryToken&gt;]
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>member this.Register(registerViewModel : RegisterViewModel) : ActionResult =
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  let user = new User(Name = registerViewModel.Name, 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>                      UserName = registerViewModel.Email , 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>                      Email = registerViewModel.Email)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let userCreateResult = userManager.Create(user, registerViewModel.Password)
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  if (userCreateResult.Succeeded) then          
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    this.RedirectToAction(&quot;Index&quot;, &quot;Home&quot;) :&gt; ActionResult
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  else
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    userCreateResult.Errors
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    |&gt; Seq.iter(fun err -&gt; this.ModelState.AddModelError(&quot;&quot;, err))
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    this.View(registerViewModel) :&gt; ActionResult 
+</pre></div>
+</div>
+</div>
+
+<p>Add the above action method in the <code>AuthenticationController</code> to create new user. It creates a <code>User</code> object from the <code>RegisterViewModel</code> and use it to create a new user via <code>UserManager</code>. We are using <code>Email</code> as the <code>UserName</code> in the above code snippet</p>
+
+<p>If the user creation is successful, we are redirecting the user to the home page else we are showing the error messages to the user. After we implemented the login we will modify the above logic to sign in after successful registration.</p>
+
+<p>The next task is creation of <code>AuthenticationController</code> instance. Open <code>MvcInfrastructure</code> that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/MvcInfrastructure.fs">created in the step-2</a> and update it as below.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let private createUserManager () =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let userManager = new UserManager&lt;User&gt;(new UserStore&lt;User&gt;(new UserDbContext()))
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let userValidator = new UserValidator&lt;User&gt;(userManager)
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  userValidator.AllowOnlyAlphanumericUserNames &lt;- false
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  userManager.UserValidator &lt;- userValidator
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  userManager
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>type CompositionRoot(phones : seq&lt;PhoneTypeProvider.Root&gt;) =          
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  inherit DefaultControllerFactory() with
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    override this.GetControllerInstance(requestContext, controllerType) = 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      // ... Existing code ...
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      else if controllerType = typeof&lt;AuthenticationController&gt; then
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>        let authenticationController = new AuthenticationController(createUserManager())
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>        authenticationController :&gt; IController
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      // ... Existing code ...
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+</pre></div>
+</div>
+</div>
+<p>As we are using email as username we need to change the user validator in the <code>UserManager</code> to allow the alphanumeric characters in the username.</p>
+
+<p>The final step is providing the connection string to access the identity database. Open the <strong>Web.config</strong> file and add the following</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="tag">&lt;connectionStrings&gt;</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    <span class="tag">&lt;add</span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">IdentityConnection</span><span class="delimiter">&quot;</span></span> 
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>      <span class="attribute-name">connectionString</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">Data Source=localhost;Initial Catalog=PhoneCatIdentity;Integrated Security=True</span><span class="delimiter">&quot;</span></span> 
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>      <span class="attribute-name">providerName</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">System.Data.SqlClient</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  <span class="tag">&lt;/connectionStrings&gt;</span>
+</pre></div>
+</div>
+</div>
+
+<p>As we are using Entity Framework’s Code First here, the schema will be generated dynamically when we run the code for the very first time.</p>
+
+<p>That’s it. We have wired up everything to create a new user!</p>
+
+<h3 id="setting-up-user-login">Setting up User Login</h3>
+
+<p>As we are going to use owin <a href="http://blogs.msdn.com/b/webdev/archive/2013/07/03/understanding-owin-forms-authentication-in-mvc-5.aspx">cookies based authentication</a> middleware, the first step to tell the application startup pipeline to use cookie authentication. </p>
+
+<p>Open <code>Startup</code> and update it to support authentication</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type Startup() = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let configureAuthentication (app : IAppBuilder) =
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    let cookieAuthenticationOptions = new CookieAuthenticationOptions()
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    cookieAuthenticationOptions.AuthenticationType &lt;- DefaultAuthenticationTypes.ApplicationCookie 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    cookieAuthenticationOptions.LoginPath &lt;- new PathString(&quot;/authentication/login&quot;)
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    app.UseCookieAuthentication(cookieAuthenticationOptions) |&gt; ignore
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  member x.Configuration(app : IAppBuilder) = 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    app.MapSignalR() |&gt; ignore
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    configureAuthentication app
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    ()
+</pre></div>
+</div>
+</div>
+<p>The <code>AuthenticationType</code> is an identifier to distinguish between different authentication middlewares and the <code>LoginPath</code> is the url to the Login Page which will be used to redirect the unauthorized requests.</p>
+
+<p>After setting up cookie authentication, like we did for new user registration, we are going to create a view to enable the user to login.</p>
+
+<p>Add the <code>Login</code> action method in the <code>AuthenticationController</code> and also create <code>LoginViewModel</code> </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;CLIMutable&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>type LoginViewModel = {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  Email : string
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Password : string
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>}
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>type AuthenticationController (userManager : UserManager&lt;User&gt;) = 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  inherit Controller()
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  // ... Existing code ...  
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  member this.Login() = this.View()
+</pre></div>
+</div>
+</div>
+<p>and create <code>Login</code> view in the <strong>Authentication\Login</strong> directory</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>@model PhoneCat.Web.Controllers.LoginViewModel
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="tag">&lt;h3&gt;</span>Login<span class="tag">&lt;/h3&gt;</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>@using (Html.BeginForm(&quot;Login&quot;, &quot;Authentication&quot;, FormMethod.Post))
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>{
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  @Html.AntiForgeryToken()
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  @Html.ValidationSummary()
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  @Html.TextBoxFor(m =<span class="error">&gt;</span> m.Email)
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  @Html.PasswordFor(m =<span class="error">&gt;</span> m.Password)
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  <span class="tag">&lt;button</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">submit</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>Log in<span class="tag">&lt;/button&gt;</span>   
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>}
+</pre></div>
+</div>
+</div>
+<p><img src="/images/fsharp_phonecat/step_6/login.png"></p>
+
+<p>The next step is the crux of this blog post. Challenging the incoming user login credentials against its corresponding registered one.</p>
+
+<p>We will be using <code>UserManager</code>’s following methods to achieve it.</p>
+
+<ul>
+  <li>
+    <p><a href="https://msdn.microsoft.com/en-us/library/dn497475(v=vs.108).aspx">Find</a> - Returns a user with the specified username and password or null if there is no match (C# needs <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option</a> type badly!). In the beginning of the blog post I’ve mentioned you that I will talk about why we are using <code>AllowNullLiteral</code> attribute for the <code>User</code> class. As you see here <code>Find</code> method returns <code>null</code> if the user is not available! So, As per this definition <code>null</code> is valid value for <code>User</code> class.</p>
+  </li>
+  <li>
+    <p><a href="https://msdn.microsoft.com/en-us/library/dn497467(v=vs.108).aspx">CreateIdentity</a> - Creates the Claim Identity representing the user. We need this claim identity to signin and also to pass around the claim details. </p>
+  </li>
+</ul>
+
+<p>Both of the above methods are having their async counterparts. But for the sake of simplicity I’m ignoring it. May be it can be a exercise for you to figure it out!</p>
+
+<p>Let’s add some utility function to handle finding the user and signing in</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let signin (userManager : UserManager&lt;User&gt;) (request : HttpRequestBase) user  =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let identity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie)
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let authManager = request.GetOwinContext().Authentication
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  identity.AddClaim(new Claim(ClaimTypes.GivenName, user.Name))
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  authManager.SignIn(identity)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let tryFindUser (userManager : UserManager&lt;User&gt;) email password  =
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let user = userManager.Find(email, password)
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  if user &lt;&gt; null then Some user else None
+</pre></div>
+</div>
+</div>
+<p>Since we are using Email as the UserName here in this example, we need to have a specific claim to pass around the Name of the user. That’s what we are doing in the <code>signin</code> method. Later we will be using this claim to display the user name in the header of the page.</p>
+
+<p>Great! Now its time to handle handle Login POST request. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;HttpPost&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>[&lt;ValidateAntiForgeryToken&gt;]
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>member this.Login(loginViewModel : LoginViewModel) : ActionResult =
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  match tryFindUser userManager loginViewModel.Email loginViewModel.Password  with
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  | None -&gt;
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    this.ModelState.AddModelError(&quot;&quot;, &quot;Invalid Email or Password&quot;)
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    this.View(loginViewModel) :&gt; ActionResult
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  | Some user -&gt;
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    signin userManager base.Request user
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    this.RedirectToAction(&quot;Index&quot;, &quot;Home&quot;) :&gt; ActionResult    
+</pre></div>
+</div>
+</div>
+
+<p>The <code>Login</code> action method just tries to find the user using given credentials. If the user is available, signin to the application using his credentials and redirect to the home page else show login error to the user.</p>
+
+<p>We can add this same signin behavior after successful user registration too.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;HttpPost&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>[&lt;ValidateAntiForgeryToken&gt;]
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>member this.Register(registerViewModel : RegisterViewModel) : ActionResult =  
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  // ... Existing Code ...
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  if (userCreateResult.Succeeded) then
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    signin userManager base.Request user      
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    this.RedirectToAction(&quot;Index&quot;, &quot;Home&quot;) :&gt; ActionResult
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  else
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    // ... Existing Code ...
+</pre></div>
+</div>
+</div>
+
+<p>Since <code>UserManager</code> is an <code>IDisposable</code>. It’s good practices to dispose it after using. So, Override <code>Dispose</code> method in <code>AuthenticationController</code> and dispose it. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>override this.Dispose(disposing) =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  if disposing then
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    userManager.Dispose()
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  base.Dispose(disposing)
+</pre></div>
+</div>
+</div>
+
+<p>The final pending work is displaying the user name in the header after successful login. Open <strong>Layout.cshtml</strong> add the following lines</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">&lt;!-- ... Existing code ... --&gt;</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="tag">&lt;ul</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">nav navbar-nav navbar-right top-nav</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  @if (Request.IsAuthenticated)
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    var identity = User.Identity as ClaimsIdentity;
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    var name = identity.FindFirst(ClaimTypes.GivenName).Value;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    <span class="tag">&lt;li</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">dropdown</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">dropdown-toggle</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">data-toggle</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">dropdown</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">aria-expanded</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">true</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        <span class="tag">&lt;i</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">fa fa-user</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span><span class="tag">&lt;/i&gt;</span>@name
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      <span class="tag">&lt;/a&gt;</span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      <span class="tag">&lt;ul</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">dropdown-menu</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>        <span class="tag">&lt;li&gt;</span>
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>          <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">@Url.Action(</span><span class="delimiter">&quot;</span></span><span class="attribute-name">Logout</span><span class="error">&quot;</span><span class="error">,</span><span class="error">&quot;</span><span class="attribute-name">Authentication</span><span class="error">&quot;</span><span class="error">)</span><span class="error">&quot;</span><span class="tag">&gt;</span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>            <span class="tag">&lt;i</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">fa fa-fw fa-power-off</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span><span class="tag">&lt;/i&gt;</span> Log Out
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>          <span class="tag">&lt;/a&gt;</span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>        <span class="tag">&lt;/li&gt;</span>
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>      <span class="tag">&lt;/ul&gt;</span>
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    <span class="tag">&lt;/li&gt;</span>
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  }
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  else
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  {
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    <span class="tag">&lt;li</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">dropdown</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>      <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">#</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">dropdown-toggle</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">data-toggle</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">dropdown</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">aria-expanded</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">true</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>        <span class="tag">&lt;i</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">fa fa-user</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span><span class="tag">&lt;/i&gt;</span> Guest
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>      <span class="tag">&lt;/a&gt;</span>
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>      <span class="tag">&lt;ul</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">dropdown-menu</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>        <span class="tag">&lt;li&gt;</span>
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>          <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">@Url.Action(</span><span class="delimiter">&quot;</span></span><span class="attribute-name">Login</span><span class="error">&quot;</span><span class="error">,</span><span class="error">&quot;</span><span class="attribute-name">Authentication</span><span class="error">&quot;</span><span class="error">)</span><span class="error">&quot;</span><span class="tag">&gt;</span>
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>            <span class="tag">&lt;i</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">fa fa-fw fa-bank</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span><span class="tag">&lt;/i&gt;</span> Log In
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>          <span class="tag">&lt;/a&gt;</span>
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>        <span class="tag">&lt;/li&gt;</span>
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>        <span class="tag">&lt;li&gt;</span>
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>          <span class="tag">&lt;a</span> <span class="attribute-name">href</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">@Url.Action(</span><span class="delimiter">&quot;</span></span><span class="attribute-name">Register</span><span class="error">&quot;</span><span class="error">,</span><span class="error">&quot;</span><span class="attribute-name">Authentication</span><span class="error">&quot;</span><span class="error">)</span><span class="error">&quot;</span><span class="tag">&gt;</span>
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>            <span class="tag">&lt;i</span> <span class="attribute-name">class</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">fa fa-fw fa-laptop</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span><span class="tag">&lt;/i&gt;</span>Register
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>          <span class="tag">&lt;/a&gt;</span>
+<span class="line-numbers"><a href="#n37" name="n37">37</a></span>        <span class="tag">&lt;/li&gt;</span>
+<span class="line-numbers"><a href="#n38" name="n38">38</a></span>      <span class="tag">&lt;/ul&gt;</span>
+<span class="line-numbers"><a href="#n39" name="n39">39</a></span>    <span class="tag">&lt;/li&gt;</span>
+<span class="line-numbers"><strong><a href="#n40" name="n40">40</a></strong></span>  }
+<span class="line-numbers"><a href="#n41" name="n41">41</a></span><span class="tag">&lt;/ul&gt;</span>
+<span class="line-numbers"><a href="#n42" name="n42">42</a></span><span class="comment">&lt;!-- ... Existing code ... --&gt;</span>
+</pre></div>
+</div>
+</div>
+
+<h3 id="adding-logout">Adding Logout</h3>
+
+<p>Adding logout is very simple and straight forward. All we need to do is just invoke the Owin Authentication Manager’s <code>SignOut</code> method. Create an action method in <code>AuthenticationController</code> to handle it</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>member this.Logout() =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let authManager = base.Request.GetOwinContext().Authentication
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  authManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie)
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  this.RedirectToAction(&quot;Index&quot;, &quot;Home&quot;)
+</pre></div>
+</div>
+</div>
+
+<h3 id="summary">Summary</h3>
+
+<p>The interoperability offered by F# to integrate with the existing C# libraries is very seamless and I hope you have got it too! You can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/6">github</a> as usual. In the next blog post We will see how to add validations in the User Registration. Stay tuned!</p>
+]]></content>
+  </entry>
+  
+</feed>

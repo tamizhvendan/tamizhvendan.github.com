@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Aug 13th, 2011 asp.net mvc, entity framework, unit testing Comments Test Driving Model Validation in ASP.NET MVC3 - Part 1 Entity Framework 4.1(EF4. &hellip;">
+	<meta name="description" content="Aug 17th, 2011 asp.net mvc, entity framework, unit testing Comments Test Driving Model Validation in ASP.NET MVC3 - Part 2 In Part-1of this small &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,6 +20,7 @@
 	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="Tamizh's Thoughts" type="application/atom+xml">
 	
 	<link rel="canonical" href="http://blog.tamizhvendan.in/posts/3/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link href="/favicon.png" rel="shortcut icon">
 	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
 	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
@@ -98,7 +99,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 132.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -111,6 +112,127 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-17T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 17<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/" itemprop="url">Test Driving Model Validation in ASP.NET MVC3 - Part 2</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <p>
+    <p>
+        In <a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>of this small blog post series, 
+            we have explored a way to do the TDD of controller’s responsibility in the context of model validation. 
+            In this Part-2 we are going to see <strong>“How to do the TDD of Model Validation”</strong>
+    </p>
+
+    <p>
+        Before getting into the business let us have a quick look at how ASP.NET MVC3 does the model validation. 
+            Internally when making an Http POST/GET request, MVC3 makes use of a helper class 
+            <strong><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validator.aspx">Validator</a></strong>
+        located in the namespace <em>System.ComponentModel.DataAnnotations.</em>
+        Validator can be used to validate the models based on the <strong>
+            <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationattribute.aspx">ValidationAttribute</a></strong>
+        attributes associate with the model. After validating MVC3 adds the validation results to the controller’s <em>ModelState</em>
+        Property by the <em>AddModelError</em> method which in turn sets the<em> ModelState.IsValid</em> property 
+            (Refer <a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>). We are actually going to make use of this <em>Validator</em>
+        helper class going to test drive the model validation. 
+    </p>
+
+    <h4>Let us start with a small requirement</h4>
+    <p>
+        <em>“Employee name should not be empty”</em>
+    </p>
+
+    <p>The corresponding unit test will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://4.bp.blogspot.com/-3Ql_dP2wJkE/Tku0g78apHI/AAAAAAAAAKw/gV-lTvda50I/s1600/UnitTest1.PNG" />
+    </div>
+
+    <p>ValidateObject Method determines whether the specified object is valid using the validation context and throws a ValidationException if the object is invalid.</p>
+
+
+    <p>Employee Model will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-URfST5ZPMwo/Tku0gsJJAxI/AAAAAAAAAKs/5K0GYH1ObLs/s1600/Emp1.PNG" />
+    </div>
+
+    <p>
+        When you run the test “EmployeeNameShouldNotBeEmpty”, it will <strong><span style="color: red;">Fail</span></strong> with the error message 
+        <em>“System.ComponentModel.DataAnnotations.ValidationException was expected”</em>. Now it’s time to make it <strong>
+            <span style="color: #00b050;">Pass. </span></strong>Thanks to <em>RequiredAttribute</em> we can make the test the pass without much effort. 
+        Just decorate the Name property with the <em>[Required]</em> Attribute. That’s it. Now run the test and it will 
+        <strong><span style="color: #00b050;">Pass.</span></strong> As there is no scope for Refactoring, we will be ignoring it.
+    </p>
+
+    <p>Well, we have done the TDD of model validation. Now let’s move onto the next requirement.</p>
+    <p>
+        <em>“Employee age should be greater than 30”</em>
+    </p>
+    <br />
+    <p>
+        Let’s write the unit test for this requirement.
+    </p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://3.bp.blogspot.com/-cXpXTstCDr4/Tku0hg4cWDI/AAAAAAAAAK0/hahJBKoWOLI/s1600/UnitTest2.PNG" />
+    </div>
+
+    <p>When we run the test, we’d get a failing test with error message “System.ComponentModel.DataAnnotations.ValidationException was expected”</p>
+
+    <p>Like <em>RequiredAttribute</em> we don’t have any AgeLimit Attribute to make the test pass. However we can create such kind of CustomAttributes. 
+        Another approach would be making use of <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.ivalidatableobject.aspx">
+            <em>IValiadatableObject</em></a></p>
+
+    <p>I will be using the latter option in this blog post, if you are interested in creating custom attribute refer this <a href="http://www.devtrends.co.uk/blog/the-complete-guide-to-validation-in-asp.net-mvc-3-part-2">blog post</a></p>
+
+    <p>Here we go; the modified Employee model will look like as follows </p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://1.bp.blogspot.com/-zAsuau_JXwA/Tku0iUzEgFI/AAAAAAAAAK4/J1t3gYaECmw/s1600/Emp2.PNG" />
+    </div>
+
+    <p>
+        The <em>Validator</em> helper class will invoke the Validate method of the model if the model passed to the <em>ValidateObject</em> 
+        Method implements the <em>IValidatableObject</em>.
+    </p>
+
+    <p>Hurrah! Now you will be getting a passing test. We have done the TDD of Model Validation. </p>
+    <h3>Summary</h3>
+    <p>The bottom-line is we should not combine the unit tests of model validation with the controller’s unit tests and both should be kept separate. 
+        You can download the source code which we’ve seen in this blog post series from <a href="http://www.box.net/shared/73e9m5d2ufyi6pazfq4j">here</a></p>
+</div>
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1374,89 +1496,6 @@ namespace HrdConsoleApp
         <p>
             In this blog series (Part 1 and Part 2) we have seen how to create the data access layer using Entity Framework 4.0 as class library and how to consume it in an application. With the introduction of Entity Framework developing the code for data access layer is no longer a tidy and time consuming job!!
         </p>
-    </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-25T00:00:00+05:30" data-updated="true" itemprop="datePublished">Mar 25<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/data-access/'>data access</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/03/25/entity-framework-40-class-library-part/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/03/25/entity-framework-40-class-library-part/" itemprop="url">Entity Framework 4.0 - Class Library - Part 1</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>In this blog post we are going to explore how to create the data access layer as a class library using Entity Framework 4.0. By defining the data access layer as class library, you can reuse it across many applications just by adding areference to the class library. In my next blog post, we&#8217;ll explore how to consume the library in an application. </p>
-        <p>Entity Framework 4.0 enables the developer to concentrate on the business logic and business objects without bothering how it has been manipulated at the database level. You can find a very good tutorial onEntity Framework <a href="http://www.dotnetcurry.com/ShowArticle.aspx?ID=599">here</a> to get started.This blog post uses a sample database named &#8220;HRD&#8221; which has two tables, Employee and Department. </p>
-
-        <h4>Step 1: Create a Class Library</h4>
-
-        <p>Create a new class library project with the name &#8220;HRD.DataAccess&#8221; and click &#8220;Ok&#8221;. After creating a new project delete the &#8220;Class1.cs&#8221; which is created by default.</p>
-        <a href="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s1600/1.Class-Library-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
-            <img alt="" border="0" id="Img1" src="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s400/1.Class-Library-Creation.PNG" /></a>
-
-        <h4>Step 2: Create the Entity class using the entity framework</h4>
-
-        <p>Right click on the project name &#8220;HRD.DataAccess&#8221; and select &#8220;Add -&gt; New item&#8221;.Select &#8220;Data&#8221; under installed templates and then select &#8220;ADO.NET Data Entity Model&#8221;. Type the name as &#8220;HrdModel.edmx&#8221; and click &#8220;Add&#8221;. </p>
-        <a href="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s1600/2.%2BEdmx-File-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588018736147760674" src="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s400/2.%2BEdmx-File-Creation.PNG" />
-        </a>
-
-        <p>In the Entity Data Model Wizard select &#8220;Generate from database&#8221; and click &#8220;Next&#8221;</p>
-        <a href="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s1600/3.%2BEntity%2BData%2BModel%2BWizard.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
-            <img alt="" border="0" id="Img2" src="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s400/3.%2BEntity%2BData%2BModel%2BWizard.PNG" /></a>
-
-        <p>In the next step select the database name &#8220;PCName\sqlexpress.HRD.dbo&#8221; and select &#8220;Next&#8221;</p>
-        <a href="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s1600/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019738534634002" src="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s400/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG" /></a>
-
-        <p>In the next step select the tables names &#8220;Department&#8221; &amp; &#8220;Employee&#8221; and click &#8220;Finish&#8221;</p>
-        <a href="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s1600/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019795895543346" src="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s400/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG" /></a>
-
-        <p>Now we have created the entity model which represent the Object/Relation mapping</p>
-        <a href="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s1600/6.%2BEDMX%2BSuccessful%2BCreation.PNG">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019838615201234" src="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s400/6.%2BEDMX%2BSuccessful%2BCreation.PNG" style="cursor: pointer; height: 289px; width: 400px;" /></a>
-
-        <h4>Step 3: Building the class library</h4>
-        <ol>
-            <li>Select &#8220;Build-&gt;Configuration Manager&#8221;</li>
-            <li>Change the Configuration of the Project &#8220;HRD.DataAccess&#8221; to &#8220;Release&#8221;. By default it is &#8220;Debug&#8221;</li>
-            <li>Click &#8220;Close&#8221;</li>
-            <li>Select &#8220;Build-&gt;Build HRD.DataAccess&#8221;</li>
-        </ol>
-        That&#8217;s it!!. Now we have the DataAccess Library ready!! We can reuse it across different .Net Applications 
-	
-        <h4>Summary</h4>
-        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="/blog/2011/04/01/entity-framework-40-as-class-library/">next blog</a>, we&#8217;d be exploring on how to consume the data access library in an application. </p>
     </div>
 </div>
 
