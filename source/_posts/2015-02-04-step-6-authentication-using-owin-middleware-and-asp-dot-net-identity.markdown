@@ -49,7 +49,7 @@ type UserDbContext() =
 
 The ```IdentityUser``` represents default implementation of IUser interface which provides the basic properties for a user. We can extend it by adding our custom properties. Here we have added a custom property called ```Name``` which represents the name of the user.
 
-The [AllowNullLiteral](https://msdn.microsoft.com/en-us/library/ee353608.aspx) attribute is one of the great feature of F# which explicitly make a type to allow null as one of its value. F# by default doesn't support null value for its types and the beauty is you will get a compiler error if you assign null to an identiter! (Pretty cool isn't it) No Null Exception. Then why we are allowing it explicitly here. Well, it has been added here for a reason and I will reveal it later in this blog post
+The [AllowNullLiteral](https://msdn.microsoft.com/en-us/library/ee353608.aspx) attribute is one of the feature in F# which explicitly make a type to allow null as one of its value. F# by default doesn't support null value for its types and the beauty is you will get a compiler error if you assign null to an identiter! Pretty cool isn't it? No Null Exception, [No Billion Doller Mistake](http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare)! Then why we are allowing it explicitly here. Well, it has been added here for a reason and I will reveal it later in this blog post
 
 The ```IdentityDbContext``` represents the data store abstraction of Identity entities like Users, Roles, Claims and Logins. The ```UserDbContext``` is just a subclass of ```IdentityDbContext``` which tells Entity Framework to use the connection string name ```IdentityConnection```
 
@@ -121,32 +121,19 @@ This is a strongly typed view of type ```RegisterViewModel```
 @using (Html.BeginForm("Register", "Authentication", FormMethod.Post, new { @class = "form-horizontal" }))
 {
   @Html.AntiForgeryToken()
-  @Html.ValidationSummary()
-  <div class="form-group">
-    <label for="Email" class="col-sm-2 control-label">Name</label>
-    <div class="col-sm-10">
-      @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placholder = "Name" })
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="Email" class="col-sm-2 control-label">Email</label>
-    <div class="col-sm-10">
-      @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placholder = "Email" })
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="Password" class="col-sm-2 control-label">Password</label>
-    <div class="col-sm-10">
-      @Html.PasswordFor(m => m.Password, new { @class = "form-control", placholder = "Password" })
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-primary">Create</button>
-    </div>
-  </div>
+  @Html.ValidationSummary()  
+      
+  @Html.TextBoxFor(m => m.Name)
+    
+  @Html.TextBoxFor(m => m.Email)
+   
+  @Html.PasswordFor(m => m.Password, new { @class = "form-control", placholder = "Password" })
+      
+  <button type="submit" class="btn btn-primary">Create</button>  
 }
 ```
+*Note: I've intentionally ignored the bootstrap css form styles here to keep the code snippet less noisy*
+
 {% img /images/fsharp_phonecat/step_6/new_user_registration.png %}
 
 It's a typical razor view representing the registration screen. For the sake of simplicity I've ignored the retype password field. 
@@ -237,29 +224,144 @@ and create ```Login``` view in the **Authentication\Login** directory
 @model PhoneCat.Web.Controllers.LoginViewModel
 
 <h3>Login</h3>
-@using (Html.BeginForm("Login", "Authentication", FormMethod.Post, new { @class = "form-horizontal" }))
+@using (Html.BeginForm("Login", "Authentication", FormMethod.Post))
 {
   @Html.AntiForgeryToken()
   @Html.ValidationSummary()
-  <div class="form-group">
-    <label for="inputEmail3" class="col-sm-2 control-label">Email</label>
-    <div class="col-sm-10">
-      @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placholder = "Email" })
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="inputPassword3" class="col-sm-2 control-label">Password</label>
-    <div class="col-sm-10">
-      @Html.PasswordFor(m => m.Password, new { @class = "form-control", placholder = "Password" })
-    </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-primary">Log in</button>
-    </div>
-  </div>
+  
+      @Html.TextBoxFor(m => m.Email)
+    
+      @Html.PasswordFor(m => m.Password)
+    
+      <button type="submit">Log in</button>   
 }
 ```
 {% img /images/fsharp_phonecat/step_6/login.png %}
 
-The next step is the crux of this blog post. Challenging the 
+The next step is the crux of this blog post. Challenging the incoming user login credentials against its corresponding registered one.
+
+We will be using ```UserManager```'s following methods to achieve it.
+
+* [Find](https://msdn.microsoft.com/en-us/library/dn497475(v=vs.108).aspx) - Returns a user with the specified username and password or null if there is no match (C# needs [Option](http://fsharpforfunandprofit.com/posts/the-option-type/) type badly!). In the beginning of the blog post I've mentioned you that I will talk about why we are using ```AllowNullLiteral``` attribute for the ```User``` class. As you see here ```Find``` method returns ```null``` if the user is not available! So, As per this definition ```null``` is valid value for ```User``` class.
+
+* [CreateIdentity](https://msdn.microsoft.com/en-us/library/dn497467(v=vs.108).aspx) - Creates the Claim Identity representing the user. We need this claim identity to signin and also to pass around the claim details. 
+
+Both of the above methods are having their async counterparts. But for the sake of simplicty I'm ignoring it. May be it can be a exercise for you to use figure it out!
+
+Let's add some utility function to handle finding the user and signing in
+
+```fsharp
+let signin (userManager : UserManager<User>) (request : HttpRequestBase) user  =
+  let identity = userManager.CreateIdentity(user, DefaultAuthenticationTypes.ApplicationCookie)
+  let authManager = request.GetOwinContext().Authentication
+  identity.AddClaim(new Claim(ClaimTypes.GivenName, user.Name))
+  authManager.SignIn(identity)
+
+let tryFindUser (userManager : UserManager<User>) email password  =
+  let user = userManager.Find(email, password)
+  if user <> null then Some user else None
+```
+Since we are using Email as the UserName here in this example, we need to have a specific claim to pass around the Name of the user. That's what we are doing in the ```signin``` method. Later we will be using this claim to display the user name in the header of the page.
+
+Great! Now its time to handle handle Login POST request. 
+
+```fsharp
+[<HttpPost>]
+[<ValidateAntiForgeryToken>]
+member this.Login(loginViewModel : LoginViewModel) : ActionResult =
+  match tryFindUser userManager loginViewModel.Email loginViewModel.Password  with
+  | None ->
+    this.ModelState.AddModelError("", "Invalid Email or Password")
+    this.View(loginViewModel) :> ActionResult
+  | Some user ->
+    signin userManager base.Request user
+    this.RedirectToAction("Index", "Home") :> ActionResult    
+```
+
+The ```Login``` action method just tries to find the user using given credentials. If the user is available, signin to the application using his credentials and redirect to the home page else show login error to the user.
+
+We can add this same signin behavior after successful user registration too.
+
+```fsharp
+[<HttpPost>]
+[<ValidateAntiForgeryToken>]
+member this.Register(registerViewModel : RegisterViewModel) : ActionResult =  
+  // ... Existing Code ...
+  if (userCreateResult.Succeeded) then
+    signin userManager base.Request user      
+    this.RedirectToAction("Index", "Home") :> ActionResult
+  else
+    // ... Existing Code ...
+``` 
+
+Since ```UserManager``` is an ```IDisposable```. It's good practices to dispose it after using. So, Override ```Dispose``` method in ```AuthenticationController``` and dispose it. 
+
+```fsharp
+override this.Dispose(disposing) =
+  if disposing then
+    userManager.Dispose()
+  base.Dispose(disposing)
+```
+
+The final pending work is displaying the user name in the header after successful login. Open **Layout.cshtml** add the following lines
+
+```html
+<!-- ... Existing code ... -->
+<ul class="nav navbar-nav navbar-right top-nav">
+
+  @if (Request.IsAuthenticated)
+  {
+    var identity = User.Identity as ClaimsIdentity;
+    var name = identity.FindFirst(ClaimTypes.GivenName).Value;
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+        <i class="fa fa-user"></i>@name
+      </a>
+      <ul class="dropdown-menu">
+        <li>
+          <a href="@Url.Action("Logout","Authentication")">
+            <i class="fa fa-fw fa-power-off"></i> Log Out
+          </a>
+        </li>
+      </ul>
+    </li>
+  }
+  else
+  {
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+        <i class="fa fa-user"></i> Guest
+      </a>
+      <ul class="dropdown-menu">
+        <li>
+          <a href="@Url.Action("Login","Authentication")">
+            <i class="fa fa-fw fa-bank"></i> Log In
+          </a>
+        </li>
+        <li>
+          <a href="@Url.Action("Register","Authentication")">
+            <i class="fa fa-fw fa-laptop"></i>Register
+          </a>
+        </li>
+      </ul>
+    </li>
+  }
+</ul>
+<!-- ... Existing code ... -->
+```
+
+### Adding Logout
+
+Adding logout is very simple and straight forward. All we need to do is just invoke the Owin Authentication Manager's ```SignOut`` method. Create an action method in ```AuthenticationController``` to handle it
+
+```fsharp
+member this.Logout() =
+  let authManager = base.Request.GetOwinContext().Authentication
+  authManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie)
+  this.RedirectToAction("Index", "Home")
+```
+
+### Summary
+
+The interoperability offered by F# to integrate with the existing C# libraries is very seamless and I hope you have got it too! You can find the source code in the [github](https://github.com/tamizhvendan/fsharp-phonecat/tree/6) as usual. In the next blog post We will see how to add validations in the User Registration. Stay tuned!
+
