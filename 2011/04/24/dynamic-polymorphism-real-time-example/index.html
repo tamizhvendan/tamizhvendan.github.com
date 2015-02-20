@@ -1,0 +1,337 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Dynamic Polymorphism - A Real time example - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Dynamic Polymorphism - a Real Time Example In this blog post we are going to see, how to achieve dynamic polymorphism in c# using interfaces through &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/2011/04/24/dynamic-polymorphism-real-time-example/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/blog/favicon.png" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/blog/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/blog/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/blog/archives">Archives</a></li>
+    <li><a href="/blog/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blogblog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blogblog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blogblog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blogblog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blogblog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blogblog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blogblog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blogblog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blogblog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blogblog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blogblog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blogblog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blogblog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blogblog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blogblog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blogblog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blogblog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blogblog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blogblog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blogblog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blogblog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blogblog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blogblog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blogblog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Dynamic Polymorphism - a Real Time Example</h1>
+	<div class="entry-content" itemprop="articleBody"><div class='post'>
+    <div>
+        <p>
+            In this blog post we are going to see, how to achieve dynamic polymorphism in c# using interfaces through a 
+            small game simulator called &#8220;War&#8221;.
+        </p>
+
+        <div style="text-align: center">
+            <img src="http://3.bp.blogspot.com/-F-5wRIWJiKE/TbOvdE6MOnI/AAAAAAAAAGM/r1vs5p8LzUE/s1600/WarForm.png" />
+        </div>
+
+
+        <p>The simulator is simple and straight forward to play. The user just need to select a weapon and click on &#8220;Attack&#8221;.</p>
+
+        <p>
+            Let me explain some theoretical background about &#8220;Dynamic Polymorphism&#8221; before dive into implementing the Game simulator. 
+            To put in a simple terms, Dynamic Polymorphism means changing the behavior at run time. 
+            Let us see an example of what does it mean. If a dog smells a cat, it will bark and if it smells a food, it will salivate. 
+            Here, the smelling sense of the dog is same. But depending on what does it smell, it change its behavior. 
+            Hope now you are aware of what is mean by dynamic polymorphism. 
+            Just stop reading and think what is the dynamic polymorphic behavior here in the &#8220;War&#8221; simulator.
+        </p>
+
+        <p>
+            Yes, you are absolutely correct!! The Attacking behavior is the dynamic polymorphic behavior. 
+            The behavior of attack button will vary with respect to the weapon the user has chosen.
+        </p>
+
+        <p>Fine.. Lets dive into the code!!</p>
+
+        <h4>Step1: Design the Main Form</h4>
+
+        <ol>
+            <li>Create a new Windows Forms Application and name it as &#8220;War&#8221;</li>
+            <li>Rename the &#8220;Form1.cs&#8221; file to &#8220;MainForm.cs&#8221; and Click &#8220;Yes&#8221; to let the Visual Studio to do the renaming for you.</li>
+            <li>Add a groupbox control and change its &#8220;Text&#8221; Property to &#8220;Weapon&#8221;</li>
+            <li>Add three radio button controls inside the groupbox and change their &#8220;Text&#8221; Property to Sword, Gun and bomb respectively.</li>
+            <li>Add a button control and change its &#8220;Text&#8221; property to &#8220;Attack!!&#8221;.</li>
+            <li>Rename the &#8220;Name &#8221; property of all the controls added to some meaningful names like rboSword for Sword Radiobutton</li>
+            <li>The Final Finished will look like the screenshot in the beginning of this blog.&nbsp;&nbsp; </li>
+        </ol>
+
+        <h4>Step 2: Create an Interface called IWeapon</h4>
+
+        <ol>
+            <li>Right click on the Project name &#8220;War&#8221; in the solution explorer and add a new interface file called &#8220;IWeapon.cs&#8221;</li>
+            <li>This interface IWeapon will have a public method called &#8220;Attack&#8221; which defines a contract so that all the Weapon we are going to create should implement this IWeapon interface and provide the implementation code for the Attack() method</li>
+        </ol>
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=IWeapon.cs'></script>
+<noscript><pre><code>public interface IWeapon 
+{ 
+    void Attack(); 
+}</code></pre></noscript></div>
+
+
+
+        <h4>Step3: Create the concrete Weapon Classes&nbsp;</h4>
+        <ol>
+            <li>Add three class files to the &#8220;War&#8221; Project with the names &#8220;Sword.cs&#8221;, &#8220;&#8221;Gun.cs&#8221;, &#8220;Bomb.cs&#8221;</li>
+            <li>These classes represents the actual weapons and that we are going use in our simulator. Each of these classes will implement the IWeapon interface and provide the implementation code for the &#8220;Attack()&#8221; method.</li>
+            <li>Modify the class files as follows</li>
+        </ol>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Sword.cs'></script>
+<noscript><pre><code>public class Sword : IWeapon    
+{       
+    public void Attack() 
+    {            
+        System.Windows.Forms.MessageBox.Show(&quot;Sword!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Gun.cs'></script>
+<noscript><pre><code>public class Gun : IWeapon    
+{       
+    public void Attack() 
+    {            
+        System.Windows.Forms.MessageBox.Show(&quot;Gun!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Bomb.cs'></script>
+<noscript><pre><code>public class Bomb : IWeapon    
+{       
+    public void Attack() 
+    {
+        System.Windows.Forms.MessageBox.Show(&quot;Bomb!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <p>The Attack() method will show a message box with a text saying the weapon name being used.</p>
+
+        <h4>Step 4: Program the &#8220;War&#8221; Simulator Main Form</h4>
+        <p>Now the stage is set for the real show. Let us wire the code of MainForm.cs and make the &#8220;War&#8221; simulator.</p>
+        <ol>
+            <li>Add a private instance variable of type IWeapon in the MainForm class and initialize with the sword class. 
+                This will hold the reference of current weapon being used Note: Sword is the default weapon.
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=MainForm.cs'></script>
+<noscript><pre><code>public partial class MainForm : Form
+{
+	private IWeapon weapon = new Sword();	
+}</code></pre></noscript></div>
+
+            </li>
+            <li>Now we are going to add event handlers for the weapons radio buttons. 
+                They will change the reference stored in the instance variable &#8220;weapon&#8221; to the respective Weapons class. 
+                Add the checked change event for all the radio button and their event handlers will look like as follows.
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=ChangeWeaponHandler.cs'></script>
+<noscript><pre><code>private void rboSword_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Sword();
+}
+private void rboGun_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Gun();
+}
+private void rboBomb_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Bomb();
+}</code></pre></noscript></div>
+
+            </li>
+            <li>Add the Click event handler for the &#8220;Attack&#8221; button. 
+                This event handler will simply call the Attack() method of the instance variable &#8220;weapon&#8221;
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=AttackHandler.cs'></script>
+<noscript><pre><code>private void btnAttack_Click(object sender, EventArgs e)
+{
+	weapon.Attack();
+}</code></pre></noscript></div>
+
+            </li>
+        </ol>
+
+        <b>Summary</b>
+        <p>In this blog we have seen a basic real time example on implementing dynamic polymorphism. You can download the source code of this sample from <a href="http://www.box.net/shared/y12zyr2d66">here</a>.</p>
+    </div>
+</div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.p3programmer.com/2011/04/24/dynamic-polymorphism-real-time-example/';
+        var disqus_url = 'http://www.p3programmer.com/2011/04/24/dynamic-polymorphism-real-time-example/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

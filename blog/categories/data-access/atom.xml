@@ -4,7 +4,7 @@
   <title><![CDATA[Category: data access | P3 Programmer]]></title>
   <link href="http://www.p3programmer.com/blog/categories/data-access/atom.xml" rel="self"/>
   <link href="http://www.p3programmer.com/"/>
-  <updated>2015-02-20T22:30:24+05:30</updated>
+  <updated>2015-02-20T22:40:15+05:30</updated>
   <id>http://www.p3programmer.com/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[EF Code First 4.1  in Console Application]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/08/04/ef-code-first-41-in-console-application/"/>
+    <link href="http://www.p3programmer.com/2011/08/04/ef-code-first-41-in-console-application/"/>
     <updated>2011-08-04T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/08/04/ef-code-first-41-in-console-application</id>
+    <id>http://www.p3programmer.com/2011/08/04/ef-code-first-41-in-console-application</id>
     <content type="html"><![CDATA[<div class="post">
 	<div>
 		<p>
@@ -132,12 +132,12 @@
   
   <entry>
     <title type="html"><![CDATA[Entity Framework 4.0 As Class Library - Part 2]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/04/01/entity-framework-40-as-class-library/"/>
+    <link href="http://www.p3programmer.com/2011/04/01/entity-framework-40-as-class-library/"/>
     <updated>2011-04-01T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/04/01/entity-framework-40-as-class-library</id>
+    <id>http://www.p3programmer.com/2011/04/01/entity-framework-40-as-class-library</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
-        <p>As the continuation of my previous <a href="/blog/2011/03/25/entity-framework-40-class-library-part/">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
+        <p>As the continuation of my previous <a href="/2011/03/25/entity-framework-40-class-library-part/">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
 
         <p>Consuming the Data Access Library created using Entity Framework 4.0 involves the following two steps.</p>
         <ol>
@@ -199,9 +199,9 @@ namespace HrdConsoleApp
   
   <entry>
     <title type="html"><![CDATA[Entity Framework 4.0 - Class library - Part 1]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/03/25/entity-framework-40-class-library-part/"/>
+    <link href="http://www.p3programmer.com/2011/03/25/entity-framework-40-class-library-part/"/>
     <updated>2011-03-25T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/03/25/entity-framework-40-class-library-part</id>
+    <id>http://www.p3programmer.com/2011/03/25/entity-framework-40-class-library-part</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
         <p>In this blog post we are going to explore how to create the data access layer as a class library using Entity Framework 4.0. By defining the data access layer as class library, you can reuse it across many applications just by adding areference to the class library. In my next blog post, we'll explore how to consume the library in an application. </p>
@@ -246,7 +246,7 @@ namespace HrdConsoleApp
         That's it!!. Now we have the DataAccess Library ready!! We can reuse it across different .Net Applications 
 	
         <h4>Summary</h4>
-        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="/blog/2011/04/01/entity-framework-40-as-class-library/">next blog</a>, we'd be exploring on how to consume the data access library in an application. </p>
+        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="/2011/04/01/entity-framework-40-as-class-library/">next blog</a>, we'd be exploring on how to consume the data access library in an application. </p>
     </div>
 </div>
 ]]></content>
