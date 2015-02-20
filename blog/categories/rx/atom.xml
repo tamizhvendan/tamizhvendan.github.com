@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rx | P3 Programmer]]></title>
   <link href="http://www.p3programmer.com/blog/categories/rx/atom.xml" rel="self"/>
   <link href="http://www.p3programmer.com/"/>
-  <updated>2015-02-20T22:40:15+05:30</updated>
+  <updated>2015-02-20T22:56:33+05:30</updated>
   <id>http://www.p3programmer.com/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -15,14 +15,14 @@
   
   <entry>
     <title type="html"><![CDATA[Step-3 PhoneCat Recommendation System using F# Agents, SignalR and Rx]]></title>
-    <link href="http://www.p3programmer.com/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/"/>
+    <link href="http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/"/>
     <updated>2015-01-02T05:44:52+05:30</updated>
-    <id>http://www.p3programmer.com/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
+    <id>http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 3 of my blog series on <a href="/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 3 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the last two steps we have seen how to create a <a href="/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">web apis</a> and <a href="/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
+<p>In the last two steps we have seen how to create a <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">web apis</a> and <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
 
 <h3 id="a-small-flashback">A Small Flashback</h3>
 <p>I’ve actually planned to put this blog post for the great fsharp community initiative <a href="https://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/">F# Advent Calender</a>. Unfortunately it was not able to get through as I’ve <a href="http://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/#comment-4135">nominated myself</a> little late. I always believe there is an opportunity behind every adversity. I didn’t get hung up and I knew this is one of the great topic to blog about. When I decided to blog about it, I needed a sample web application. So, I was creating that sample application and it suddenly strikes! <em>How about a blog series on web application development in fsharp?</em> I’ve immediately started working on it and hence this blog series.</p>
@@ -47,7 +47,7 @@
 
 <p><img class="center" src="/images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png" width="600" height="500"></p>
 
-<p>The first two components has been already implemented as part of <a href="/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
+<p>The first two components has been already implemented as part of <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
 
 <p>Create a source file in the <strong>Web</strong> project and name it as <code>PhoneViewTracker</code>. Add a function <code>observePhonesViewed</code> which will be invoked when you a user visits a phone.</p>
 

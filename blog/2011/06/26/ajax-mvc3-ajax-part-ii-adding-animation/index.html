@@ -1,0 +1,229 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>ASP.NET MVC3 Ajax Part II - Adding Animation to Action Link - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="ASP.NET MVC3 Ajax Part II - Adding Animation to Action Link This blog post is the continuation of my previous blog post. In the last blog post we &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">ASP.NET MVC3 Ajax Part II - Adding Animation to Action Link</h1>
+	<div class="entry-content" itemprop="articleBody"><div class='post'>
+	<div>
+		<p>This blog post is the continuation of my <a href="/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">previous blog post</a>. In the last blog post we have seen how to achieve the basic Ajax functionality using <em>Ajax.ActionLink()</em> helper method. Probably in many websites you might have seen whenever any ajax request is raised by the user, there would be an associated loading text or a loading gif will be displayed which inform the user that something is going on the background. We are now going to see how to achieve the same using the <em>ActionLink()</em> method.</p>
+		<p>
+			<em>ActionLink()</em> method uses a&nbsp;declarative approach to do this. All we need to do is to create a div element contains the element which will be displayed during the Ajax request and associate the div element to the <em>ActionLink()</em> method by assigning the &#8221;<em>LoadingElementId</em>&#8221; AjaxOption to the div element&#8217;s id. Let us see how to do this by using the MVC3 app that we have seen in the <a href="/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">previous blog post</a>.
+		</p>
+		<h3>Adding Loading Div Element</h3>
+		Open &#8220;Index.cshtml&#8221; and append the following div. It just contains image element which will be displayed during ajax request.
+<div><script src='https://gist.github.com/2ca8aaef6714aafaa889.js?file=Index.cshtml'></script>
+<noscript><pre><code>&lt;div id=&quot;divLoading&quot; style=&quot;display:none&quot;&gt;
+	&lt;img src=&quot;../../Content/images/loading.gif&quot; /&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+
+	<p>Note the inline style. The display has been set to none as it not intended to display only during Ajax request. </p>
+		<h3>Associate Div Element with <em>ActionLink()</em> method</h3>
+		<p>This is very simple. We just need to add the AjaxOption &#8221;<em>LoadingElementId</em>&#8221; and assign it to the loading div element&#8217;s id. The modified <em>ActionLink()</em> method will look as follows.</p>
+		<div style="clear: both; text-align: center;">
+			<img src="http://1.bp.blogspot.com/-6NlSqFH_RBU/TgbDPO7tB_I/AAAAAAAAAHc/BEEQT3XEWmQ/s1600/ActionLink+Method.png" /></div>
+		<br />
+		<h3>Simulating a delay in Action Method</h3>
+		<p>Now when we run the application we might not get a chance to see the loading gif as everything takes place is very less time. In order to see the loading gif, we need to increase the processing time taken by the GreetMe action method. The modified GreetMe action method in <em>HomeController.cs</em> will look as follows. The delay has been introduced by using the <em>Thread.Sleep()</em> method which delay the process by 2 seconds. </p>
+		<div><script src='https://gist.github.com/2ca8aaef6714aafaa889.js?file=HomeController.cs'></script>
+<noscript><pre><code>public string GreetMe() 
+{
+  System.Threading.Thread.Sleep(2000);
+  return &quot;Hello ASP.NET MVC3 Ajax !!&quot;;
+}</code></pre></noscript></div>
+
+	<br />
+		Now when we run the application we will be able to see the loading gif when the Greet Me link is clicked.
+	<h3>Summary</h3>
+		In the Part i &amp; ii of this series we have seen a basic Ajax functionality using <em>Ajax.ActionLink()</em> method. The source code of the demo application can be downloaded from <a href="http://www.box.net/shared/zmn84rj31g2kdx19flxq">here</a>.
+	</div>
+</div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.p3programmer.com/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/';
+        var disqus_url = 'http://www.p3programmer.com/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

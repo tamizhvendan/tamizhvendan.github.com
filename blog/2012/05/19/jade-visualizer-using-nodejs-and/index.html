@@ -1,0 +1,203 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Jade Visualizer using Node.js and Socket.io - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Jade Visualizer Using Node.js and Socket.io Hurrah! Finally I made it “None of my inventions came by accident. I see a worthwhile need to be met and &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/blog/2012/05/19/jade-visualizer-using-nodejs-and/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Jade Visualizer Using Node.js and Socket.io</h1>
+	<div class="entry-content" itemprop="articleBody"><div class='post'>
+    <p><strong>Hurrah! Finally I made it</strong></p> <blockquote> 
+    <p><em>“None of my inventions came by accident. I see a worthwhile need to be met and I make trial after trial until it comes. 
+        What it boils down to is one per cent inspiration and ninety-nine per cent perspiration”&nbsp; - Thomas Alva Edison</em></p></blockquote> 
+    <p>Today I’m very glad and excited to announce my little contribution to the open source community called 
+    <a href="http://jade-visualizer.herokuapp.com/">“Jade-Visualizer”</a> a web-based visualizer/translator which targets the beginners 
+    of <a href="http://jade-lang.com/">Jade</a> (A widely used <a href="http://nodejs.org">Node.js</a> view engine) to learn it effectively. </p> 
+    <p>Its the inspiration from good bloggers, kindled me to <a href="/blog/2011/01/05/thank-god/">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133"></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122"></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96"></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li></ul> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li></ul> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p>
+</div></div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.p3programmer.com/blog/2012/05/19/jade-visualizer-using-nodejs-and/';
+        var disqus_url = 'http://www.p3programmer.com/blog/2012/05/19/jade-visualizer-using-nodejs-and/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

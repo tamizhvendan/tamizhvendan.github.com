@@ -1,0 +1,310 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Test Driving Model Validation in ASP.NET MVC3 - Part 1 - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Test Driving Model Validation in ASP.NET MVC3 - Part 1 Entity Framework 4.1(EF4.1) provides in-built support for defining the validation constraints &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/blog/2011/08/13/test-driving-model-validation-in-aspnet/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Test Driving Model Validation in ASP.NET MVC3 - Part 1</h1>
+	<div class="entry-content" itemprop="articleBody"><div class='post'>
+    <div>
+        <p>
+            Entity Framework 4.1(EF4.1) provides in-built support for defining the validation
+             constraints in model through Data Annotation attributes and Fluent API. It’s
+             one of the cool features provided by EF4.1 that enables the developers to define
+             validation rules of the model in an easy and more maintainable way. In addition
+             to that MVC3 framework makes use of these validation model and supports both
+             client and server side validation without writing any code!
+        </p>
+
+        <p>
+            I’m in the early days of practicing Test Driven Development (TDD). Fortunately I
+             have got an opportunity to implement TDD in my current assignment. I feel I am
+             much oriented and focused towards the solution while using TDD. Also it makes
+             me to critique my design and the way I do the coding. I would like to be a
+             better programmer and looking forward to improve myself and hence TDD suits me
+             more. Learning TDD and practicing it is totally different! Yes, in theory it
+             is very easy to read and understand TDD. But when you practice it, you will
+             encounter many more interesting things about TDD and in fact it’s where you can
+             actually learn TDD.
+        </p>
+
+        <p>
+            Okay, how to do TDD with Controller&#8217;s responsibility in the context of Model validation in MVC3. Well, it is easy but
+                we should understand and find out what exactly we want to test and the way to test them. Many articles and blog posts suggest doing it through the controller.
+                Is it really a good approach to test the model validation through controller?&nbsp;&nbsp; Kindly think of it for a moment. 
+                I feel it is not a right way to deal this stuff.&nbsp;
+        </p>
+
+        <p>
+            Let me explain it through a small example. Consider an Employee model which has two properties Name and Age&nbsp;and an EmployeeController responsible for doing
+            CRUD on Employee Model. What is the responsibility of EmployeeController when creating a new Employee data? It should check whether the posted employee model is 
+            valid or not, if it is valid add to the database else return the view with the validation errors. MVC3 framework makes life easy by automatically validating the 
+            Posted model and set the <b>IsValid</b> Property of the ModelState and also add validation errors to the model. Hence controller&#8217;s job is very easy as follows
+        </p>
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img border="0" src="http://2.bp.blogspot.com/-gMWdWyjaBxQ/TkYnWEIpWQI/AAAAAAAAAKI/mvc7iTeatok/s1600/Employee.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img src="http://1.bp.blogspot.com/-DSw1qdzt9ZA/TkYYuJLxKGI/AAAAAAAAAJw/5k1AerK1wiE/s1600/EmpControllerResponsibility.png" />
+        </div>
+        <h4>Corresponding TestCases</h4>
+
+        <ul>
+            <li>When creating a new employee, if the passed employee data is valid, it should be added to the database</li>
+            <li>When creating a new employee, if the passed employee data is InValid, it should not add to the database and show the view with validation errors.</li>
+        </ul>
+        <br />
+        <p>The first unit test will be as following:</p>
+
+        <<div style="clear: both; text-align: center;">
+            <img src="http://3.bp.blogspot.com/-XEBOUhl7_WM/TkYgBqYX9VI/AAAAAAAAAJ0/wqKLvm_NGnw/s1600/EmpControllerUnitTest1.png" />
+        </div>
+
+        <p>
+            This unit test makes use of the following fake Database implementation.
+        </p>
+
+        <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-c1GRZq3f1Ms/TkYiTwN9z4I/AAAAAAAAAJ4/lma-KtsMK6Q/s1600/fakeDatabase.png" />
+        </div>
+        <p>
+            To keep this blog post simple, I am not showcasing the TDD steps which I have done here and the EmployeeController Code would be as follows.
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img src="http://1.bp.blogspot.com/-QRcFWLWNsmg/TkYkHGAoWnI/AAAAAAAAAJ8/FEit5wZZWs0/s1600/EmpController.png" />
+        </div>
+        
+        <p>
+            Employee Controller makes use of an InMemory Database (Simplest option!!) &nbsp;which implements the IRepository interface.&nbsp;
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://1.bp.blogspot.com/-xy_kB-hQk9o/TkYlRVdooZI/AAAAAAAAAKA/nnxYCWTdTLg/s1600/IRepository.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://2.bp.blogspot.com/-yU6djR74NeA/TkYlXKnjBOI/AAAAAAAAAKE/eXcZL2_7qew/s1600/InMemoryDb.png" />
+        </div>
+        
+        <p>
+            I have done all the wire ups to make the first unit test pass. (Pardon me! For the sake of simplicity of this blog post I&#8217;ve violated TDD rules. 
+            Hope you can infer the TDD steps from the coding samples). Its time to &nbsp;move to the next unit test and here comes a bottleneck. &nbsp; &nbsp;
+        </p>
+
+        <p>
+            You may wonder what it is that. There comes a feature of ASP.NET MVC 3 framework. During HTTP post action the framework validates the employee model 
+            and sets the EmployeeController&#8217;s Property <em>ModelState.IsValid</em> to true or false. <b>It occurs only during HTTP post. </b>
+            In our unit test code we are actually calling the action methods of the controller and not making any HTTP post. 
+            So, the ModalState is always true whenever we call the action methods of a controller from a unit testing code.&nbsp;
+        </p>
+
+        <p>
+            In our second test case, we need to setup a controller in such a way that its ModelState property is InValid. 
+            We can do this by adding a ModelError to the ModelState property of the EmployeeController. In fact it is what MVC3 framework is doing under the 
+            hood when making HTTP post.&nbsp;
+        </p>
+
+        <div style="clear: both; text-align: center;">
+                <img src="http://4.bp.blogspot.com/-iVcBB1yZRLI/TkYrDW5JloI/AAAAAAAAAKM/li_PACoQS1E/s1600/EmpControllerUnitTest2.png" />
+        </div>
+        
+        <p>
+            Now we Test drived the controller&#8217;s responsibility in the context of model validation. 
+            In my <a href="/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/">next blog post</a> &nbsp;
+            I&#8217;d showcase how to test drive the model validation itself.
+        </p>
+
+    </div>
+</div>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://www.p3programmer.com/blog/2011/08/13/test-driving-model-validation-in-aspnet/';
+        var disqus_url = 'http://www.p3programmer.com/blog/2011/08/13/test-driving-model-validation-in-aspnet/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

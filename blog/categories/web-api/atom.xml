@@ -4,7 +4,7 @@
   <title><![CDATA[Category: web-api | P3 Programmer]]></title>
   <link href="http://www.p3programmer.com/blog/categories/web-api/atom.xml" rel="self"/>
   <link href="http://www.p3programmer.com/"/>
-  <updated>2015-02-20T22:40:15+05:30</updated>
+  <updated>2015-02-20T22:56:33+05:30</updated>
   <id>http://www.p3programmer.com/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -15,14 +15,14 @@
   
   <entry>
     <title type="html"><![CDATA[Step-2 Fsharp-PhoneCat Views using Razor]]></title>
-    <link href="http://www.p3programmer.com/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
+    <link href="http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
     <updated>2014-12-23T19:47:20+05:30</updated>
-    <id>http://www.p3programmer.com/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
+    <id>http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 2 of my blog series on <a href="/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 2 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
+<p>In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
 
 <h3 id="phone-view">Phone View</h3>
 <p><img src="/images/fsharp_phonecat/step_2/Phone.png"></p>
@@ -360,14 +360,14 @@ Manufactures View follows the similar steps that we have used to create the Phon
   
   <entry>
     <title type="html"><![CDATA[Step 1 - Phonecat backend using Web Api and TypeProviders]]></title>
-    <link href="http://www.p3programmer.com/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/"/>
+    <link href="http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/"/>
     <updated>2014-12-17T17:31:44+05:30</updated>
-    <id>http://www.p3programmer.com/2014/12/17/phonecat-backend-using-web-api-and-typeproviders</id>
+    <id>http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 1 of my blog series on <a href="/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 1 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">last blog post</a> we have created the basic home page of phone cat with the placeholders and in this post we are going it wire the home page with the backend web apis.</p>
+<p>In the <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">last blog post</a> we have created the basic home page of phone cat with the placeholders and in this post we are going it wire the home page with the backend web apis.</p>
 
 <p><img src="/images/fsharp_phonecat/step_1/home_page.png"></p>
 
