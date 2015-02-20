@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: fsharp | Tamizh's Thoughts]]></title>
-  <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
-  <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-02-20T07:07:53+05:30</updated>
-  <id>http://blog.tamizhvendan.in/</id>
+  <title><![CDATA[Category: fsharp | P3 Programmer]]></title>
+  <link href="http://www.p3programmer.com/blog/categories/fsharp/atom.xml" rel="self"/>
+  <link href="http://www.p3programmer.com/"/>
+  <updated>2015-02-20T08:09:24+05:30</updated>
+  <id>http://www.p3programmer.com/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Step-6 Authentication using Owin authentication Middleware and ASP.NET Identity]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/"/>
+    <link href="http://www.p3programmer.com/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/"/>
     <updated>2015-02-04T17:24:22+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity</id>
+    <id>http://www.p3programmer.com/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 6 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
@@ -410,9 +410,9 @@
   
   <entry>
     <title type="html"><![CDATA[Step-5 Advanced Search DSL using FParsec]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/"/>
+    <link href="http://www.p3programmer.com/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/"/>
     <updated>2015-01-18T19:52:26+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec</id>
+    <id>http://www.p3programmer.com/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 5 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
@@ -826,9 +826,9 @@
   
   <entry>
     <title type="html"><![CDATA[Step-4 Build automation using FAKE]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake/"/>
+    <link href="http://www.p3programmer.com/blog/2015/01/06/step-4-build-automation-using-fake/"/>
     <updated>2015-01-06T05:22:32+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake</id>
+    <id>http://www.p3programmer.com/blog/2015/01/06/step-4-build-automation-using-fake</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 4 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
@@ -1031,9 +1031,9 @@
   
   <entry>
     <title type="html"><![CDATA[Step-3 PhoneCat Recommendation System using F# Agents, SignalR and Rx]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/"/>
+    <link href="http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/"/>
     <updated>2015-01-02T05:44:52+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
+    <id>http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 3 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
@@ -1416,9 +1416,9 @@
   
   <entry>
     <title type="html"><![CDATA[Step-2 Fsharp-PhoneCat Views using Razor]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
+    <link href="http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
     <updated>2014-12-23T19:47:20+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
+    <id>http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 2 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
