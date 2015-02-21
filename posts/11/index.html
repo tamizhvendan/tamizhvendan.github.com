@@ -1,0 +1,480 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Mar 25th, 2011 data access, entity framework Comments Entity Framework 4.0 - Class Library - Part 1 In this blog post we are going to explore how to &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/blog/posts/11/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/blog/favicon.png" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/blog/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/blog/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/blog/archives">Archives</a></li>
+    <li><a href="/blog/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blogblog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blogblog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blogblog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blogblog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blogblog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blogblog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blogblog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blogblog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blogblog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blogblog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blogblog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blogblog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blogblog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blogblog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blogblog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blogblog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blogblog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blogblog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blogblog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blogblog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blogblog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blogblog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blogblog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blogblog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-25T00:00:00+05:30" data-updated="true" itemprop="datePublished">Mar 25<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/data-access/'>data access</a>, <a class='category' href='/blog/blog/categories/entity-framework/'>entity framework</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/03/25/entity-framework-40-class-library-part/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/03/25/entity-framework-40-class-library-part/" itemprop="url">Entity Framework 4.0 - Class Library - Part 1</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>In this blog post we are going to explore how to create the data access layer as a class library using Entity Framework 4.0. By defining the data access layer as class library, you can reuse it across many applications just by adding areference to the class library. In my next blog post, we&#8217;ll explore how to consume the library in an application. </p>
+        <p>Entity Framework 4.0 enables the developer to concentrate on the business logic and business objects without bothering how it has been manipulated at the database level. You can find a very good tutorial onEntity Framework <a href="http://www.dotnetcurry.com/ShowArticle.aspx?ID=599">here</a> to get started.This blog post uses a sample database named &#8220;HRD&#8221; which has two tables, Employee and Department. </p>
+
+        <h4>Step 1: Create a Class Library</h4>
+
+        <p>Create a new class library project with the name &#8220;HRD.DataAccess&#8221; and click &#8220;Ok&#8221;. After creating a new project delete the &#8220;Class1.cs&#8221; which is created by default.</p>
+        <a href="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s1600/1.Class-Library-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
+            <img alt="" border="0" id="Img1" src="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s400/1.Class-Library-Creation.PNG" /></a>
+
+        <h4>Step 2: Create the Entity class using the entity framework</h4>
+
+        <p>Right click on the project name &#8220;HRD.DataAccess&#8221; and select &#8220;Add -&gt; New item&#8221;.Select &#8220;Data&#8221; under installed templates and then select &#8220;ADO.NET Data Entity Model&#8221;. Type the name as &#8220;HrdModel.edmx&#8221; and click &#8220;Add&#8221;. </p>
+        <a href="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s1600/2.%2BEdmx-File-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588018736147760674" src="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s400/2.%2BEdmx-File-Creation.PNG" />
+        </a>
+
+        <p>In the Entity Data Model Wizard select &#8220;Generate from database&#8221; and click &#8220;Next&#8221;</p>
+        <a href="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s1600/3.%2BEntity%2BData%2BModel%2BWizard.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
+            <img alt="" border="0" id="Img2" src="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s400/3.%2BEntity%2BData%2BModel%2BWizard.PNG" /></a>
+
+        <p>In the next step select the database name &#8220;PCName\sqlexpress.HRD.dbo&#8221; and select &#8220;Next&#8221;</p>
+        <a href="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s1600/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019738534634002" src="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s400/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG" /></a>
+
+        <p>In the next step select the tables names &#8220;Department&#8221; &amp; &#8220;Employee&#8221; and click &#8220;Finish&#8221;</p>
+        <a href="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s1600/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019795895543346" src="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s400/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG" /></a>
+
+        <p>Now we have created the entity model which represent the Object/Relation mapping</p>
+        <a href="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s1600/6.%2BEDMX%2BSuccessful%2BCreation.PNG">
+            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019838615201234" src="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s400/6.%2BEDMX%2BSuccessful%2BCreation.PNG" style="cursor: pointer; height: 289px; width: 400px;" /></a>
+
+        <h4>Step 3: Building the class library</h4>
+        <ol>
+            <li>Select &#8220;Build-&gt;Configuration Manager&#8221;</li>
+            <li>Change the Configuration of the Project &#8220;HRD.DataAccess&#8221; to &#8220;Release&#8221;. By default it is &#8220;Debug&#8221;</li>
+            <li>Click &#8220;Close&#8221;</li>
+            <li>Select &#8220;Build-&gt;Build HRD.DataAccess&#8221;</li>
+        </ol>
+        That&#8217;s it!!. Now we have the DataAccess Library ready!! We can reuse it across different .Net Applications 
+	
+        <h4>Summary</h4>
+        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="/blog/blog/2011/04/01/entity-framework-40-as-class-library/">next blog</a>, we&#8217;d be exploring on how to consume the data access library in an application. </p>
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-23T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 23<sup>rd</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/asp-dot-net/'>asp.net</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/02/23/ajax-update-master-page-from-content/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/02/23/ajax-update-master-page-from-content/" itemprop="url">Ajax Update Master Page From Content Page</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>
+            In this blog post we are going to see how can we update the master page from content page using ajax updatepanel in <a href="http://www.amazon.com/Beginning-ASP-NET-VB-Wrox-Programmer/dp/0470502215?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">ASP.NET</a>.
+            The sample website we are going to build will have a content page which allows to change the header of the website(which is present in master page) via Ajax.
+        </p>
+        <img src="http://codeasp.net/Assets/Uploaded-CMS-Files/c15554a1-7e4e-498b-9c5e-a1365cf4643aAjaxifyMasterPage1.PNG" width="358px" /><img src="http://codeasp.net/Assets/Uploaded-CMS-Files/8feb0ea9-adf4-4bc6-99ae-4c9b28ed1cc1AjaxifyMasterPage2.PNG" />
+        <p>The tasks involved in creating this website are as follows: </p>
+
+        <ul>
+            <li>Create an updatepanel in masterpage which holds the website header.</li>
+            <li>Create a method in MasterPage codebehind which changes the website header.</li>
+            <li>Create the content page with master page reference and an update panel which holds controls to triggers the header change.</li>
+            <li>Call the MasterPage method from content page.</li>
+        </ul>
+        <h3>1. Create an updatepanel in masterpage which holds the website header.</h3>
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.aspx'></script>
+<noscript><pre><code>&lt;div class=&quot;title&quot;&gt;
+    &lt;h1&gt;
+        &lt;asp:UpdatePanel ID=&quot;UpdatePanelWebsiteHeader&quot; runat=&quot;server&quot;ChildrenAsTriggers=&quot;false&quot; UpdateMode=&quot;Conditional&quot;&gt;
+            &lt;ContentTemplate&gt;
+                &lt;asp:Label ID=&quot;lblWebsiteHeader&quot; runat=&quot;server&quot; Text=&quot;Label&quot;&gt;My ASP.NET Application&lt;/asp:Label&gt;
+            &lt;/ContentTemplate&gt;
+        &lt;/asp:UpdatePanel&gt;                    
+    &lt;/h1&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+	
+            <p>Make Sure the two properties of UpdatePanel <strong>&#8220;ChildrenAsTriggers&#8221;</strong> is set to false and <strong>&#8220;UpdateMode&#8221;</strong> is set to conditional, to prevent the unneccessary updation of updatepanel from its child controls.</p>
+
+        <h3>2. Create a method in MasterPage codebehind which changes the website header.</h3>
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.cs'></script>
+<noscript><pre><code>public void ChangeWebsiteHeader(string newHeader)
+{
+    lblWebsiteHeader.Text = newHeader;
+    //Calling the Update method of UpdatePanel will trigger the Updatepanel
+    UpdatePanelWebsiteHeader.Update();
+}</code></pre></noscript></div>
+
+
+            <h3>3. Create the content page with master page reference and an update panel which holds controls to triggers the header change.</h3>
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=masterPage.aspx'></script>
+<noscript><pre><code>&lt;%@ Page Title=&quot;Home Page&quot; Language=&quot;C#&quot; MasterPageFile=&quot;~/Site.master&quot; AutoEventWireup=&quot;true&quot;CodeFile=&quot;Default.aspx.cs&quot; Inherits=&quot;_Default&quot; %&gt;
+&lt;%@ MasterType VirtualPath=&quot;~/Site.master&quot; %&gt;</code></pre></noscript></div>
+
+            <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=changeHandler.cs'></script>
+<noscript><pre><code>protected void btnChangeHeader_Click(object sender, EventArgs e)
+{   
+    Master.ChangeWebsiteHeader(Server.HtmlEncode(txtHeader.Text));
+}</code></pre></noscript></div>
+
+
+            <h3>4. Call the MasterPage method from content page.</h3>
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=contentTemplate.aspx'></script>
+<noscript><pre><code>&lt;asp:UpdatePanel ID=&quot;UpdatePanelChangeHeader&quot; runat=&quot;server&quot; UpdateMode=&quot;Conditional&quot;&gt;
+    &lt;ContentTemplate&gt;
+        &lt;p&gt;Enter the Website Header: &lt;asp:TextBox ID=&quot;txtHeader&quot; runat=&quot;server&quot; /&gt; &lt;/p&gt;
+        &lt;asp:Button ID=&quot;btnChangeHeader&quot; runat=&quot;server&quot; Text=&quot;Change Header&quot; onclick=&quot;btnChangeHeader_Click&quot; /&gt;
+    &lt;/ContentTemplate&gt;
+&lt;/asp:UpdatePanel&gt;</code></pre></noscript></div>
+
+
+            <h3>Summary:</h3>
+        <p>In this blog we have seen how can we update the master page from the content page using ajax update panel. You can download the source code from <a href="http://www.box.net/shared/gpa9dlo668">here</a></p>
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-10T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 10<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/jquery/'>jquery</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/02/10/in-this-blog-we-are-going-to-see-how/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/02/10/in-this-blog-we-are-going-to-see-how/" itemprop="url">DropDownList Manipulation Using jQuery</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>
+            In this blog post we are going to see how can we manipulate a dropdownlist using <a href="http://www.amazon.com/jQuery-Action-Second-Bear-Bibeault/dp/1935182323?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">jQuery</a><img alt="" border="0" height="1px" src="http://www.assoc-amazon.com/e/ir?t=bor0b-20&amp;l=btl&amp;camp=213689&amp;creative=392969&amp;o=1&amp;a=1935182323" style="border-bottom: medium none; border-left: medium none; border-right: medium none; border-top: medium none; margin: 0px; padding-bottom: 0px! important; padding-left: 0px! important; padding-right: 0px! important; padding-top: 0px! important;" width="1px" />. Here is the brief overview what we are exactly going to do.<br />
+        </p>
+        <ol>
+            <li>Dynamically populating the dropdownlist</li>
+            <li>Handling the item change event of a dropdownlist</li>
+            <li>Getting the value and the text of the dropdownlist selected item</li>
+            <li>Programmatically setting the item of the dropdownlist</li>
+        </ol>
+
+        <h3>1. Dynamically populating the dropdownlist</h3>
+
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=documentInit.js'></script>
+<noscript><pre><code>$(document).ready(function () {
+    
+    function loadDropDownList(collection) {
+        $.each(collection, function (index, value) {
+            var listItem = $(&quot;&lt;option&gt;&lt;/option&gt;&quot;).val(index).html(value);
+            $(&quot;#countries&quot;).append(listItem);
+        });
+    }
+
+    var myCollection = {'IN': 'India','AUS': 'Australia','ENG': 'England'};
+    loadDropDownList(myCollection);
+})</code></pre></noscript></div>
+
+	
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=layout.html'></script>
+<noscript><pre><code>Countries: &lt;select id=&quot;countries&quot;&gt;&lt;/select&gt;</code></pre></noscript></div>
+
+	
+        <p>
+            The function loadDropDownList will take a collection (a key-value pair array) and populate the dropdownlist “countries”. “$.each” is a jQuery function which iterates the array item by item and calls the “function(index,value)” for each item where index would be the item’s key and value would be the item’s value. Then the list item html markup is created for the list item and appended to the dropdownlist
+        </p>
+
+        <h3>2. Handling the item change event of a dropdownlist</h3>
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=handleChange.js'></script>
+<noscript><pre><code>$(document).ready(function () {
+    $(&quot;#countries&quot;).change(function () {
+        // Place your code here
+    });
+});</code></pre></noscript></div>
+
+        <p>
+            The jQuery API offers lot of useful functions to operate with the html form elements. One of such function is “change()” which will called whenever the item value is get changed.
+        </p>
+        <h3>3. Getting the value and the text of the dropdownlist selected item</h3>
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=listChange.js'></script>
+<noscript><pre><code>$(document).ready(function () {
+    $(&quot;#countries&quot;).change(function () {
+    	var selectedValue = $(&quot;#countries&quot;).val();
+        $(&quot;#countryValue&quot;).text(selectedValue);
+        $(&quot;#countryText&quot;).text($(&quot;#countries &gt; option[value='&quot; + selectedValue + &quot;']&quot;).html());
+    });
+});</code></pre></noscript></div>
+
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=newLayout.html'></script>
+<noscript><pre><code>Selected Country’s Text: &lt;span id=&quot;countryText&quot;&gt;&lt;/span&gt; &lt;br /&gt;
+Selected Country’s Value:  &lt;span id=&quot;countryValue&quot;&gt;&lt;/span&gt;&lt;br /&gt;</code></pre></noscript></div>
+
+        <p>The jQuery code mentioned above will set the two span labels “countryValue” and “countryText” with the value and text of the selected item in the “countries” dropdownlist, when we select an item in the “countries” dropdownlist. The jQuery function “val()” enable us to find out the value of a form element, in our case we have utilized it to get the value of the “countries” dropdownlist. To get the selected item’s text we have to use the child and attribute selector together as a selector. “#countries &gt; option[value=&#8217;IN&#8217;]” – will selects all option child elements(with appropriate value) of item with the id “countries”. “html()” retrieves the html of the selected element. “text(value)” will set the text of the selector.</p>
+        <h3>4. Programmatically setting the item of the dropdownlist</h3>
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=btnClick.js'></script>
+<noscript><pre><code>$(&quot;#btnIn&quot;).click(function () {
+    $(&quot;#countries&quot;).val('IN');
+});
+
+$(&quot;#btnEng&quot;).click(function () {
+    $(&quot;#countries&quot;).val('ENG');
+});
+
+$(&quot;#btnAus&quot;).click(function () {
+    $(&quot;#countries&quot;).val('AUS');
+});</code></pre></noscript></div>
+
+
+        <h2>Demo</h2>
+        <iframe width="100%" height="300" src="http://jsfiddle.net/uE78v/2/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+        <a href="10" class="prev">Prev</a>
+    
+    
+        <a href="12" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,485 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Nov 3rd, 2011 c#, programming Comments Think Before You LINQ LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/blog/posts/7/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/blog/favicon.png" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/blog/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/blog/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/blog/archives">Archives</a></li>
+    <li><a href="/blog/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blogblog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blogblog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blogblog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blogblog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blogblog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blogblog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blogblog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blogblog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blogblog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blogblog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blogblog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blogblog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blogblog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blogblog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blogblog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blogblog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blogblog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blogblog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blogblog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blogblog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blogblog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blogblog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blogblog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blogblog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-11-03T00:00:00+05:30" data-updated="true" itemprop="datePublished">Nov 3<sup>rd</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/blog/categories/programming/'>programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/11/03/think-before-you-linq/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/11/03/think-before-you-linq/" itemprop="url">Think Before You LINQ</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+<div>
+<p>LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness and the power it offers to the code are simply amazing. In general when we think of abstractions, we tend to think towards expressiveness and <a href="http://martinfowler.com/bliki/FluentInterface.html">fluent interfaces</a> and get carried away.</p>
+
+<p>Efficiency of an abstraction is often an afterthought (Based on my experience, correct me if am wrong) and also it is very hard to define an abstraction which should be efficient for all the real world problems it address. When we encountered any efficiency issue in an abstraction, it is our primary responsibility to get rid of it.</p>
+
+<p>Let us assume that you have found an efficiency issue with an abstraction. How would you troubleshoot it? Think! I believe, awareness of internals of the abstraction would be the prime prerequisite to circumvent the problem.&nbsp; Hence as a professional developer we should be aware of what is happening under the hood when we use LINQ or any such kind of abstractions. Though we are not going to employ this in most of our coding efforts, I feel it would be an ideal weapon that we should keep in our arsenal.</p>
+
+<p>I have encountered one of such efficiency issue with LINQ and it really made me to think twice (even thrice) before applying LINQ to solve the problems. Let me explain it through a simple example. Here is the problem which I am going to solve through LINQ.</p>
+
+<p>“I need a method that should take a collection of numbers as its parameter and write all the numbers in the console. If the collection contains only one number it should not write anything”</p>
+
+<p>Here is the code snippet which address this problem and along with the output.
+	<br>
+  <img src="http://4.bp.blogspot.com/-22Zod3zjsX0/TrJi6zjlU9I/AAAAAAAAALc/oK_RVfhUQOs/s1600/1.PNG" alt="">
+</p>
+
+<p>I have used two abstractions on this function, one is the LINQ extension method “Count” and the other one is iterating through the enumeration abstraction. Would you able to find an efficiency issue lurking on this very simple function? Kudos if you find it out.
+</p>
+
+<p>Let me give a small background about LINQ extension methods and Enumeration. Most of the LINQ extension methods are using lazy execution internally and computes the enumeration on demand basis. However some extension methods (Count, Sum) collectively called <a href="http://code.msdn.microsoft.com/LINQ-Aggregate-Operators-c51b3869">Aggregate Operators</a> causes immediate execution instead of lazy execution on the enumeration. We can we make an enumeration to enumerate lazily by using <a href="http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx">“yield”</a> statements. Enough theory, &nbsp;let us see some code which shows the efficiency issue associated with the function that we have seen earlier</p>
+
+<br>
+<div>
+  <img src="http://2.bp.blogspot.com/-Gfsxz8fP4WU/TrJi642QHRI/AAAAAAAAALk/OsojBB--7jM/s1600/2.PNG">
+</div>
+
+
+<p>I have added some code in “PrintMe” method to log how it is actually getting executed. Also I have added the “GetNumbers” method which lazily creates a list of numbers using yield statement. </p>
+
+<p>Now can you able to find the exact issue associated with the method “PrintMe”? The red lines are areas of concern. The list is yielded twice!! One while using the Aggregate Operator of LINQ “Count” which causes immediate execution results enumeration all the yields and the second one is yielding the list once again lazily when enumerating through “foreach” loop.</p>
+
+<p>Though it is just a matter of nanoseconds in this example, it may be possible candidate of bottleneck in real world. So, whenever you are doing more than one operation on LINQ or an enumeration or both combined, do not forget think about efficiency. <em>In fact we should give a special attention to the speed of our algorithm when we are actually coding it.</em> (Refer <a href="http://pragprog.com/the-pragmatic-programmer">Pragmatic Programmer</a>, Chapter 6, While You Are Coding)</p>
+
+<p>I hope now you are ready to think about efficiency when you code. Here in our case we can get rid of the efficiency issue by converting the enumeration of number to an array or a list using LINQ <a href="http://code.msdn.microsoft.com/LINQ-Conversion-Operators-e4e59714">convertor operators</a> ToArray or ToList respectively. Like aggregate operators it causes immediate execution and converts the enumeration to the target type. Then we can do the operations on the converted target. Here is the code snippet of that with the output.</p>
+
+<br>
+<img src="http://3.bp.blogspot.com/-sJ0FDYxkl9Y/TrJi63comkI/AAAAAAAAALg/iPn8h9xdVOQ/s1600/3.PNG" alt="">
+
+<p>The modified code now iterate through the list only once!!</p>
+
+<h4>Summary:</h4>
+
+<p>Would you use powerful weapons to get rid of smaller problems, certainly not? LINQ is such kind of powerful weapon which is meant to solve powerful problems. So, think twice before using LINQ and don’t use it blindly. Efficiency Matters!! &nbsp;</p>
+</div></div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-15T00:00:00+05:30" data-updated="true" itemprop="datePublished">Sep 15<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/craftsmanship/'>craftsmanship</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/09/15/practice-practice-practice/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/09/15/practice-practice-practice/" itemprop="url">Practice, Practice, Practice !!</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+<div>
+	<p>In the pursuit of becoming a better programmer, I have come across lot of good things, which in fact have a lot of positive impact on my thinking, attitude and the way I approach a problem. &nbsp;One of such thing is the book “<a href="http://pragprog.com/book/cfcar2/the-passionate-programmer">Passionate Programmer</a>” which I am currently reading. It is all about creating a remarkable career in software development. If you are a developer, it is a highly recommended book. &nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+	<p>There are a lot of impressive tips we can learn from this book of wisdom. One of Such tip is “Practice, Practice, and Practice!!” It talks about how to practice as a software developer. Though it seems like a mighty task, the author “Chad Fowler” convey this by breaking the might task into the following three category (Divide and Conquer Approach).</p>
+
+<dl>
+	<dt>Physical/Coordination</dt>
+	<dd>
+		<ul>
+			<li>Learn and master the unexplored areas of the language that you are working with. Say for example, Regular Expressions</li>
+			<li>Dig your language’s API and don’t reinvent the wheel</li>
+		</ul>
+	</dd>
+	<dt>Sight Reading</dt>
+	<dd>
+		<ul>
+			<li>Learn by reading the code </li>
+			<li>Pick any of your favorite open source, explore it understand and learn the tips and tricks of the trade</li>
+			<li>Add some new feature</li>
+			<li>Be sure to vary the software you work with</li>
+		</ul>
+	</dd>
+	<dt>Improvisation</dt>
+	<dd>
+		<ul>
+			<li>Takes some structure or constraint and creating something new, on the fly on top of that structure. For example pick a simple program and try to write it with the self-imposed constraints</li>
+			<li>Play with <a href="http://codekata.pragprog.com/">Code Katas</a></li>
+		</ul>
+	</dd> 
+</dl>
+
+<h4>It’s time for action</h4>
+
+<p>I believe these three very fundamental aspects makes a lot of difference. So, I’ve decided to get my hands dirty with these three things and here is my list of to dos.</p>
+
+<dl>
+	<dt>Physical/Coordination – (I pick C# as its my primary language in my current role)</dt>
+	<dd>
+		<ul>
+			<li>Regular Expressions</li>
+			<li>Dynamic Programming</li>
+			<li>Multithreading</li>
+			<li>Parallel Programming</li>
+			<li>LINQ</li>
+			<li>Reflection</li>
+			<li>Streams and Networking</li>
+			<li>Entity Framework</li>
+			<li>Data Structures and Algorithms</li>
+			<li>Customizing MVC3 Framework</li>
+		</ul>
+	</dd>
+	<dt>Sight Reading</dt>
+	<dd>
+		<ul>
+			<li>Exploring ASP.NET MVC3 source code</li>
+			<li>Exploring Nunit source Code</li>
+			<li>Blog my understanding during this exploration</li>
+		</ul>
+	</dd>
+	<dt>Improvisation</dt>
+	<dd>
+		<ul>
+			<li>Make most of Code Katas</li>
+			<li>Active participation in Technical Forums</li>
+		</ul>
+	</dd>
+</dl>	
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-17T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 17<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/blog/categories/entity-framework/'>entity framework</a>, <a class='category' href='/blog/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/" itemprop="url">Test Driving Model Validation in ASP.NET MVC3 - Part 2</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <p>
+    <p>
+        In <a href="/blog/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>of this small blog post series, 
+            we have explored a way to do the TDD of controller’s responsibility in the context of model validation. 
+            In this Part-2 we are going to see <strong>“How to do the TDD of Model Validation”</strong>
+    </p>
+
+    <p>
+        Before getting into the business let us have a quick look at how ASP.NET MVC3 does the model validation. 
+            Internally when making an Http POST/GET request, MVC3 makes use of a helper class 
+            <strong><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validator.aspx">Validator</a></strong>
+        located in the namespace <em>System.ComponentModel.DataAnnotations.</em>
+        Validator can be used to validate the models based on the <strong>
+            <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationattribute.aspx">ValidationAttribute</a></strong>
+        attributes associate with the model. After validating MVC3 adds the validation results to the controller’s <em>ModelState</em>
+        Property by the <em>AddModelError</em> method which in turn sets the<em> ModelState.IsValid</em> property 
+            (Refer <a href="/blog/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>). We are actually going to make use of this <em>Validator</em>
+        helper class going to test drive the model validation. 
+    </p>
+
+    <h4>Let us start with a small requirement</h4>
+    <p>
+        <em>“Employee name should not be empty”</em>
+    </p>
+
+    <p>The corresponding unit test will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://4.bp.blogspot.com/-3Ql_dP2wJkE/Tku0g78apHI/AAAAAAAAAKw/gV-lTvda50I/s1600/UnitTest1.PNG" />
+    </div>
+
+    <p>ValidateObject Method determines whether the specified object is valid using the validation context and throws a ValidationException if the object is invalid.</p>
+
+
+    <p>Employee Model will be like as follows</p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-URfST5ZPMwo/Tku0gsJJAxI/AAAAAAAAAKs/5K0GYH1ObLs/s1600/Emp1.PNG" />
+    </div>
+
+    <p>
+        When you run the test “EmployeeNameShouldNotBeEmpty”, it will <strong><span style="color: red;">Fail</span></strong> with the error message 
+        <em>“System.ComponentModel.DataAnnotations.ValidationException was expected”</em>. Now it’s time to make it <strong>
+            <span style="color: #00b050;">Pass. </span></strong>Thanks to <em>RequiredAttribute</em> we can make the test the pass without much effort. 
+        Just decorate the Name property with the <em>[Required]</em> Attribute. That’s it. Now run the test and it will 
+        <strong><span style="color: #00b050;">Pass.</span></strong> As there is no scope for Refactoring, we will be ignoring it.
+    </p>
+
+    <p>Well, we have done the TDD of model validation. Now let’s move onto the next requirement.</p>
+    <p>
+        <em>“Employee age should be greater than 30”</em>
+    </p>
+    <br />
+    <p>
+        Let’s write the unit test for this requirement.
+    </p>
+
+    <div style="clear: both; text-align: center;">
+        <img src="http://3.bp.blogspot.com/-cXpXTstCDr4/Tku0hg4cWDI/AAAAAAAAAK0/hahJBKoWOLI/s1600/UnitTest2.PNG" />
+    </div>
+
+    <p>When we run the test, we’d get a failing test with error message “System.ComponentModel.DataAnnotations.ValidationException was expected”</p>
+
+    <p>Like <em>RequiredAttribute</em> we don’t have any AgeLimit Attribute to make the test pass. However we can create such kind of CustomAttributes. 
+        Another approach would be making use of <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.ivalidatableobject.aspx">
+            <em>IValiadatableObject</em></a></p>
+
+    <p>I will be using the latter option in this blog post, if you are interested in creating custom attribute refer this <a href="http://www.devtrends.co.uk/blog/the-complete-guide-to-validation-in-asp.net-mvc-3-part-2">blog post</a></p>
+
+    <p>Here we go; the modified Employee model will look like as follows </p>
+
+    <div style="clear: both; text-align: center;">
+            <img src="http://1.bp.blogspot.com/-zAsuau_JXwA/Tku0iUzEgFI/AAAAAAAAAK4/J1t3gYaECmw/s1600/Emp2.PNG" />
+    </div>
+
+    <p>
+        The <em>Validator</em> helper class will invoke the Validate method of the model if the model passed to the <em>ValidateObject</em> 
+        Method implements the <em>IValidatableObject</em>.
+    </p>
+
+    <p>Hurrah! Now you will be getting a passing test. We have done the TDD of Model Validation. </p>
+    <h3>Summary</h3>
+    <p>The bottom-line is we should not combine the unit tests of model validation with the controller’s unit tests and both should be kept separate. 
+        You can download the source code which we’ve seen in this blog post series from <a href="http://www.box.net/shared/73e9m5d2ufyi6pazfq4j">here</a></p>
+</div>
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+        <a href="6" class="prev">Prev</a>
+    
+    
+        <a href="8" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

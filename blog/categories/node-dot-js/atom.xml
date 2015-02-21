@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: node.js | P3 Programmer]]></title>
-  <link href="http://www.p3programmer.com/blog/categories/node-dot-js/atom.xml" rel="self"/>
-  <link href="http://www.p3programmer.com/"/>
-  <updated>2015-02-20T22:56:33+05:30</updated>
-  <id>http://www.p3programmer.com/</id>
+  <link href="http://www.p3programmer.com/blog/blog/categories/node-dot-js/atom.xml" rel="self"/>
+  <link href="http://www.p3programmer.com/blog/"/>
+  <updated>2015-02-21T12:00:25+05:30</updated>
+  <id>http://www.p3programmer.com/blog/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[A hybrid application using ASP.NET MVC3 and Node.js]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/"/>
     <updated>2012-06-01T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/06/01/hybrid-application-using-aspnet-mvc3</id>
+    <id>http://www.p3programmer.com/blog/blog/2012/06/01/hybrid-application-using-aspnet-mvc3</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
         Each and every technology has its pros and cons and there is
@@ -62,9 +62,9 @@
   
   <entry>
     <title type="html"><![CDATA[Jade Visualizer using Node.js and Socket.io]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/05/19/jade-visualizer-using-nodejs-and/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2012/05/19/jade-visualizer-using-nodejs-and/"/>
     <updated>2012-05-19T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/05/19/jade-visualizer-using-nodejs-and</id>
+    <id>http://www.p3programmer.com/blog/blog/2012/05/19/jade-visualizer-using-nodejs-and</id>
     <content type="html"><![CDATA[<div class="post">
     <p><strong>Hurrah! Finally I made it</strong></p> <blockquote> 
     <p><em>“None of my inventions came by accident. I see a worthwhile need to be met and I make trial after trial until it comes. 

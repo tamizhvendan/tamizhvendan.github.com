@@ -1,0 +1,610 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Aug 13th, 2011 asp.net mvc, entity framework, unit testing Comments Test Driving Model Validation in ASP.NET MVC3 - Part 1 Entity Framework 4.1(EF4. &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/blog/posts/8/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/blog/favicon.png" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/blog/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/blog/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/blog/archives">Archives</a></li>
+    <li><a href="/blog/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blogblog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blogblog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blogblog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blogblog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blogblog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blogblog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blogblog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blogblog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blogblog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blogblog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blogblog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blogblog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blogblog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blogblog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blogblog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blogblog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blogblog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blogblog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blogblog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blogblog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blogblog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blogblog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blogblog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blogblog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-13T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 13<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/blog/categories/entity-framework/'>entity framework</a>, <a class='category' href='/blog/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/08/13/test-driving-model-validation-in-aspnet/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/08/13/test-driving-model-validation-in-aspnet/" itemprop="url">Test Driving Model Validation in ASP.NET MVC3 - Part 1</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>
+            Entity Framework 4.1(EF4.1) provides in-built support for defining the validation
+             constraints in model through Data Annotation attributes and Fluent API. It’s
+             one of the cool features provided by EF4.1 that enables the developers to define
+             validation rules of the model in an easy and more maintainable way. In addition
+             to that MVC3 framework makes use of these validation model and supports both
+             client and server side validation without writing any code!
+        </p>
+
+        <p>
+            I’m in the early days of practicing Test Driven Development (TDD). Fortunately I
+             have got an opportunity to implement TDD in my current assignment. I feel I am
+             much oriented and focused towards the solution while using TDD. Also it makes
+             me to critique my design and the way I do the coding. I would like to be a
+             better programmer and looking forward to improve myself and hence TDD suits me
+             more. Learning TDD and practicing it is totally different! Yes, in theory it
+             is very easy to read and understand TDD. But when you practice it, you will
+             encounter many more interesting things about TDD and in fact it’s where you can
+             actually learn TDD.
+        </p>
+
+        <p>
+            Okay, how to do TDD with Controller&#8217;s responsibility in the context of Model validation in MVC3. Well, it is easy but
+                we should understand and find out what exactly we want to test and the way to test them. Many articles and blog posts suggest doing it through the controller.
+                Is it really a good approach to test the model validation through controller?&nbsp;&nbsp; Kindly think of it for a moment. 
+                I feel it is not a right way to deal this stuff.&nbsp;
+        </p>
+
+        <p>
+            Let me explain it through a small example. Consider an Employee model which has two properties Name and Age&nbsp;and an EmployeeController responsible for doing
+            CRUD on Employee Model. What is the responsibility of EmployeeController when creating a new Employee data? It should check whether the posted employee model is 
+            valid or not, if it is valid add to the database else return the view with the validation errors. MVC3 framework makes life easy by automatically validating the 
+            Posted model and set the <b>IsValid</b> Property of the ModelState and also add validation errors to the model. Hence controller&#8217;s job is very easy as follows
+        </p>
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img border="0" src="http://2.bp.blogspot.com/-gMWdWyjaBxQ/TkYnWEIpWQI/AAAAAAAAAKI/mvc7iTeatok/s1600/Employee.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img src="http://1.bp.blogspot.com/-DSw1qdzt9ZA/TkYYuJLxKGI/AAAAAAAAAJw/5k1AerK1wiE/s1600/EmpControllerResponsibility.png" />
+        </div>
+        <h4>Corresponding TestCases</h4>
+
+        <ul>
+            <li>When creating a new employee, if the passed employee data is valid, it should be added to the database</li>
+            <li>When creating a new employee, if the passed employee data is InValid, it should not add to the database and show the view with validation errors.</li>
+        </ul>
+        <br />
+        <p>The first unit test will be as following:</p>
+
+        <<div style="clear: both; text-align: center;">
+            <img src="http://3.bp.blogspot.com/-XEBOUhl7_WM/TkYgBqYX9VI/AAAAAAAAAJ0/wqKLvm_NGnw/s1600/EmpControllerUnitTest1.png" />
+        </div>
+
+        <p>
+            This unit test makes use of the following fake Database implementation.
+        </p>
+
+        <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-c1GRZq3f1Ms/TkYiTwN9z4I/AAAAAAAAAJ4/lma-KtsMK6Q/s1600/fakeDatabase.png" />
+        </div>
+        <p>
+            To keep this blog post simple, I am not showcasing the TDD steps which I have done here and the EmployeeController Code would be as follows.
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img src="http://1.bp.blogspot.com/-QRcFWLWNsmg/TkYkHGAoWnI/AAAAAAAAAJ8/FEit5wZZWs0/s1600/EmpController.png" />
+        </div>
+        
+        <p>
+            Employee Controller makes use of an InMemory Database (Simplest option!!) &nbsp;which implements the IRepository interface.&nbsp;
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://1.bp.blogspot.com/-xy_kB-hQk9o/TkYlRVdooZI/AAAAAAAAAKA/nnxYCWTdTLg/s1600/IRepository.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://2.bp.blogspot.com/-yU6djR74NeA/TkYlXKnjBOI/AAAAAAAAAKE/eXcZL2_7qew/s1600/InMemoryDb.png" />
+        </div>
+        
+        <p>
+            I have done all the wire ups to make the first unit test pass. (Pardon me! For the sake of simplicity of this blog post I&#8217;ve violated TDD rules. 
+            Hope you can infer the TDD steps from the coding samples). Its time to &nbsp;move to the next unit test and here comes a bottleneck. &nbsp; &nbsp;
+        </p>
+
+        <p>
+            You may wonder what it is that. There comes a feature of ASP.NET MVC 3 framework. During HTTP post action the framework validates the employee model 
+            and sets the EmployeeController&#8217;s Property <em>ModelState.IsValid</em> to true or false. <b>It occurs only during HTTP post. </b>
+            In our unit test code we are actually calling the action methods of the controller and not making any HTTP post. 
+            So, the ModalState is always true whenever we call the action methods of a controller from a unit testing code.&nbsp;
+        </p>
+
+        <p>
+            In our second test case, we need to setup a controller in such a way that its ModelState property is InValid. 
+            We can do this by adding a ModelError to the ModelState property of the EmployeeController. In fact it is what MVC3 framework is doing under the 
+            hood when making HTTP post.&nbsp;
+        </p>
+
+        <div style="clear: both; text-align: center;">
+                <img src="http://4.bp.blogspot.com/-iVcBB1yZRLI/TkYrDW5JloI/AAAAAAAAAKM/li_PACoQS1E/s1600/EmpControllerUnitTest2.png" />
+        </div>
+        
+        <p>
+            Now we Test drived the controller&#8217;s responsibility in the context of model validation. 
+            In my <a href="/blog/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/">next blog post</a> &nbsp;
+            I&#8217;d showcase how to test drive the model validation itself.
+        </p>
+
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-04T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 4<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/data-access/'>data access</a>, <a class='category' href='/blog/blog/categories/entity-framework/'>entity framework</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/08/04/ef-code-first-41-in-console-application/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/08/04/ef-code-first-41-in-console-application/" itemprop="url">EF Code First 4.1 in Console Application</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+	<div>
+		<p>
+			Whenever I learn any new things in .Net or experimenting with something, I always prefer to use <em>Console Applications.</em>
+			I personally feel it helps me to concentrate more on what actually I am trying to learn or experiment without any sort of distractions. 
+			Moreover it keeps things simple.
+		</p>
+
+		<p>
+			I would like to do the same while learning EF Code First 4.1. 
+			Though most of articles in web explain EF with respect to ASP.NET MVC, 
+			I favor learning it through my own way using console application without creating any controllers and views!!
+		</p>
+
+		<h4>Following are the prerequisites to work with EF Code First 4.1</h4>
+		<ul>
+			<li>
+				<a href="http://weblogs.asp.net/scottgu/archive/2011/03/15/visual-studio-2010-sp1.aspx">Visual Studio 2010 SP1</a>
+			</li>
+			<li>
+				<a href="http://blogs.msdn.com/b/adonet/archive/2011/04/11/ef-4-1-released.aspx">Entity Framework 4.1</a>
+			</li>
+			<li>
+				<a href="http://weblogs.asp.net/scottgu/archive/2011/01/11/vs-2010-sp1-and-sql-ce.aspx">SQL CE</a> or 
+				SQL Express (SQL CE would be an ideal option for learning purpose)
+			</li>
+
+		</ul>
+
+		<h4>Show me the Code!</h4>
+		<p>After creating a console application project, the initial step would be adding references to the following assemblies.</p>
+		<ul>
+			<li>EntityFramework (Version 4.1)</li>
+			<li>System.Data.Entity</li>
+			<li>System.ComponentModel.DataAnnotations</li>
+		</ul>		
+
+		<p>Now it’s time to defining the model and the data context. To keep it simple, I am going to define only one model “User”.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-FxoouXlWKxw/TjqAva1qsWI/AAAAAAAAAJM/5PLCVnNFhDQ/s1600/User.PNG" alt="" />
+		</div>
+
+		<p>The data context would be as following.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://3.bp.blogspot.com/-2pLPCQePVKY/TjqAwJ-QD4I/AAAAAAAAAJU/X66hDdCw6eo/s1600/MyDataContext.PNG" alt="" />
+		</div>
+
+		<p>
+			This basic infrastructure is sufficient to run the console application. However as we are using the data context for learning purpose, 
+			we might change the model often and doing so will make it inconsistent with the database created automatically when you run the application for the first time.
+		</p>
+
+		<p>
+			We can circumvent this situation by creating new Data Context initialize class that inherits from <em>DropCreateDatabaseIfModelChanges</em>
+			&lt;TContext&gt; where TContext is the data context that you want to sync with the database always. 
+			This class also offers an override function <em>“Seed”</em> using which we can fill the database with some initial data.
+		</p>
+
+		<p>The finished code of DataContext initialize class will be like the following.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://2.bp.blogspot.com/-fFqQJzPBGkY/TjqAwOW4nMI/AAAAAAAAAJY/DDY_VyYQHfI/s1600/MyDataContextInit.PNG" alt="" />
+		</div>
+
+		<p>
+			This datacontext initialize class would create the database whenever the database model changes and create two users by default. 
+			Now it’s time to code our Main method.
+		</p>
+		<p>
+			Here we go. Pay close attention to the first statement in the Main method that initializes the database with an instance of DataContextInit 
+			class that we have created.
+		</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-jl5r5Sk7m0Q/TjqAvdAJRPI/AAAAAAAAAJQ/elZcjzTNgEE/s1600/EFConsoleApp.PNG" alt="" />
+		</div>
+
+
+		<p>
+			Now you can run the application without any configurations. The default behavior of EF Code First will create the database 
+			with the same name as your data context name here “MyDataContext” in the SQL Express server installed in the local machine. 
+			If you wish to change this default behavior and wanted to use SQL CE instead of SQL Express just add an App.Config to 
+			the project and create a connection string with the name of your data context as follows.
+		</p>
+
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-YUZyAGX2KyA/TjqAvBuEd4I/AAAAAAAAAJI/p_UjE-K_lR8/s1600/Configuration.PNG" alt="" />
+		</div>
+
+
+
+		<p>That’s it. “Ctrl+F5” and here is the output</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://3.bp.blogspot.com/-l0IfgWCGZfQ/TjqAwX_8pnI/AAAAAAAAAJc/RLcjASqgaBo/s1600/Output.PNG" alt="" />
+		</div>
+
+
+		<h4>Summary</h4>
+		<p>
+			In this blog post we have explore the basic foundation on how to work with EF CodeFirst using console application. 
+			If you want to get your dirty with EF Code First without any distraction Console Application is a better one. 
+			You can download the sample code used in this blog post from <a href="http://www.box.net/shared/s0yu8b4sebp3dh9ru5gb">here.</a>
+	</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-03T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 3<sup>rd</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/08/03/using-ajaxbeginform-aspnet-mvc3-ajax/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/08/03/using-ajaxbeginform-aspnet-mvc3-ajax/" itemprop="url">Using Ajax.BeginForm – ASP.NET MVC3 Ajax – Part III</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+
+    <p>
+        In my previous blog posts 
+	    <a href="/blog/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">Part 1</a>, 
+	    <a href="/blog/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/">Part 2</a>
+        we have explored how to use the <em>Ajax.ActionLink()</em> helper method to implement a basic Ajax request. 
+	    In this blog post we have are going to see an another useful helper method <em>Ajax.BeginForm()</em>
+    </p>
+
+    <p>
+        We will be implementing the following scenario using the <em>Ajax.BeginForm()</em>. 
+    The scenario would be having a view consisting of a simple form with name and email field.
+    </p>
+    <div style="clear: both; text-align: center">
+        <img src="http://3.bp.blogspot.com/-ymtu1zLXx3A/TjkOu1RpS_I/AAAAAAAAAIs/dbURJFeRGeA/s1600/AjaxBeginForm1.PNG" />
+    </div>
+
+    <p>Upon clicking the “Submit” button, the data will be sent back to the server via Ajax Post request and get a confirmation like this.</p>
+    <div style="clear: both; text-align: center">
+        <img src="http://4.bp.blogspot.com/-SvRqB-F2Yu4/TjkOuy-BpiI/AAAAAAAAAIw/er75G6DKkcU/s1600/AjaxBeginForm2.PNG" />
+    </div>
+
+    <p>
+        ASP.NET MVC3 offers an intuitive way to submitting/posting the form data to server via ajax using 
+        <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a> helper method. 
+        Lets start developing the scenario by first defining the Model (Not using TDD to keep this blog post simple).
+    </p>
+
+    <div><script src='https://gist.github.com/546d5c4d9476826dfe14.js?file=PersonalDetail.cs'></script>
+<noscript><pre><code>using System.ComponentModel.DataAnnotations;
+namespace UsingAjaxForms.Models
+{
+    public class PersonalDetail
+    {
+        [Required]
+        public string Name { get; set; }
+
+        [Required]
+        public string Email { get; set; }
+    }
+}</code></pre></noscript></div>
+
+
+    <p>
+        To keep things simple, Our PersonalDetailsController will be having only two action methods. 
+        One will handling the “Get” request for Creating PersonalDetail and the other one for handling “Post” request for Creating PersonalDetail.
+    </p>
+
+    <div><script src='https://gist.github.com/546d5c4d9476826dfe14.js?file=PersonalDetailController.cs'></script>
+<noscript><pre><code>using System.Web.Mvc;
+using UsingAjaxForms.Models;
+namespace UsingAjaxForms.Controllers
+{
+    public class PersonalDetailController : Controller
+    {
+        public ActionResult Create()
+        {
+            var personalDetail = new PersonalDetail();
+            return View(personalDetail);
+        }
+
+        [HttpPost]
+        public string Create(PersonalDetail personalDetails)
+        {
+            return &quot;Hi &quot; + personalDetails.Name + &quot;!. Thanks for providing the details.&quot;;
+        }
+    }
+}</code></pre></noscript></div>
+
+
+	<p>
+        Now, the stage is set to play using ajax. The View for Creating new PersonalDetail using Ajax is similar to that of using ordinary post back except one factor. 
+        We need to replace the Html.BeginForm helper method with the 
+        <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.ajax.ajaxextensions.beginform.aspx"><em>Ajax.BeginForm</em></a>
+    </p>
+
+    <p>
+        Ajax.BeginForm method has 11 overloads. On this blog post we are going to use the following overload. 
+        <em>Ajax.BeginForm(string actionName, string controllerName, AjaxOptions ajaxOptions)</em>
+    </p>
+
+    <p>
+        The actionName and controllerName points to the handler which is going to handle the ajax request and the ajaxOptions defines the behavior of the ajax request. 
+        The View for Creating PersonalDetail will look like this
+    </p>
+
+    <div style="clear: both; text-align: center">
+        <img src="http://2.bp.blogspot.com/-MbuiTU8NMKU/TjkOurokTOI/AAAAAAAAAIo/9FvQ9vtIDzw/s1600/AjaxBeginFormView.PNG" />
+    </div>
+
+    <p>That’s it!! All you need to do is to enclose your form into an Ajax.BeginForm method wired with the necessary configurations. 
+        In this example the ajax form method takes care of wiring up submit form action to the given action method of the controller and 
+        update the result which it receives from the server using the <em>UpdateTargetId</em>. 
+        You can also play with the Ajax request by adding a loading animation as I have mentioned in 
+        <a href="/blog/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/">Part II blog post</a>. 
+        <strong>Note:</strong> Dont forget to add references to the jQuery script files</p>
+
+    <h4>Summary:</h4>
+    <p>In this blog post we have seen a very basic way to create Ajax forms in ASP.NET MVC3. 
+        You can download the source code of this blog post from <a href="http://www.box.net/shared/kvktovzz5fiihtxemvr0">here</a></p>
+</div>
+	
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+        <a href="7" class="prev">Prev</a>
+    
+    
+        <a href="9" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

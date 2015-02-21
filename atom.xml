@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[P3 Programmer]]></title>
-  <link href="http://www.p3programmer.com/atom.xml" rel="self"/>
-  <link href="http://www.p3programmer.com/"/>
-  <updated>2015-02-20T22:56:33+05:30</updated>
-  <id>http://www.p3programmer.com/</id>
+  <link href="http://www.p3programmer.com/blog/atom.xml" rel="self"/>
+  <link href="http://www.p3programmer.com/blog/"/>
+  <updated>2015-02-21T12:00:25+05:30</updated>
+  <id>http://www.p3programmer.com/blog/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,22 +15,22 @@
   
   <entry>
     <title type="html"><![CDATA[Step-6 Authentication using Owin authentication Middleware and ASP.NET Identity]]></title>
-    <link href="http://www.p3programmer.com/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/"/>
     <updated>2015-02-04T17:24:22+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity</id>
+    <id>http://www.p3programmer.com/blog/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 6 of my blog series on <a href="http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 6 of my blog series on <a href="http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="http://www.p3programmer.com/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">last blog post</a> we have added an interactive feature to search phones and in this blog post we are going to add authentication to our PhoneCat application using Owin Authentication Middleware and ASP.NET identity.</p>
+<p>In the <a href="http://www.p3programmer.com/blog/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">last blog post</a> we have added an interactive feature to search phones and in this blog post we are going to add authentication to our PhoneCat application using Owin Authentication Middleware and ASP.NET identity.</p>
 
 <p>In the first half of this blog post we are going to see how to implement a new user registration workflow </p>
 
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_6/registration_workflow.png" /></p>
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_6/registration_workflow.png" /></p>
 
 <p>And in the second half, we are going to see how to do authentication using the registered login credentials</p>
 
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_6/login_workflow.png" /></p>
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_6/login_workflow.png" /></p>
 
 <h3 id="owin-authentication-middleware-in-brief">Owin Authentication Middleware in brief</h3>
 
@@ -154,7 +154,7 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p><em>Note: I’ve intentionally ignored the bootstrap css form styles here to keep the code snippet less noisy</em></p>
 
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_6/new_user_registration.png" /></p>
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_6/new_user_registration.png" /></p>
 
 <p>It’s a typical razor view representing the registration screen. For the sake of simplicity I’ve ignored the retype password field. </p>
 
@@ -338,7 +338,7 @@
 </span><span class="line">  <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span><span class="nt">&gt;</span>Log in<span class="nt">&lt;/button&gt;</span>
 </span><span class="line">}
 </span></code></pre></td></tr></table></div></figure></notextile></div>
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_6/login.png" /></p>
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_6/login.png" /></p>
 
 <p>The next step is the crux of this blog post. Challenging the incoming user login credentials against its corresponding registered one.</p>
 
@@ -548,16 +548,16 @@
   
   <entry>
     <title type="html"><![CDATA[Step-5 Advanced Search DSL using FParsec]]></title>
-    <link href="http://www.p3programmer.com/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/"/>
     <updated>2015-01-18T19:52:26+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec</id>
+    <id>http://www.p3programmer.com/blog/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 5 of my blog series on <a href="http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 5 of my blog series on <a href="http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
 <p>In this blog post we are going create an advanced Search <a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> for searching Phones in the PhoneCat application that we are building in this blog series, using a F# parser combinator library called <a href="http://www.quanttec.com/fparsec/">FParsec</a>. </p>
 
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_5/search_results.png" /></p>
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_5/search_results.png" /></p>
 
 <p>As you seen in the screenshot above the DSL that we are going to build will enable us to search phones using three search filters (parameters) <strong>weight</strong>, <strong>screen</strong> and <strong>ram</strong>. The values (value filters) of these search filters can be defined in three ways as <strong>&gt;</strong>(greater than), <strong>-</strong>(range) and <strong>{value}</strong>(actual value itself i.e <em>=</em>). Each of these values should be accompanied with their unit of measures <strong>g</strong>, <strong>inch</strong> and <strong>MB</strong> respectively. For simplicity, I’ve expressed these units in singulars. The <strong>:</strong> symbol is used to separate Search Filter and Value Filter. Multiple filters can be used by seperating thing using the <strong>;</strong> symbol. </p>
 
@@ -946,7 +946,7 @@
 
 <h2 id="exposing-the-phone-search-as-web-api">Exposing the phone search as web-api</h2>
 
-<p>Open the <code>PhonesController</code> that we have added in the <a href="http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">step-1</a> and update it as below</p>
+<p>Open the <code>PhonesController</code> that we have added in the <a href="http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">step-1</a> and update it as below</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -1036,7 +1036,7 @@
 
 <p>The final step of the creating a view for the Phone Search which enable the user to search the phones using the DSL that we have created so far.</p>
 
-<p>It is straight forward razor view creation as we have seen in <a href="http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. Add an action method <code>Search</code> in the <code>PhoneController</code> as below</p>
+<p>It is straight forward razor view creation as we have seen in <a href="http://www.p3programmer.com/blog/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. Add an action method <code>Search</code> in the <code>PhoneController</code> as below</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -1059,14 +1059,14 @@
   
   <entry>
     <title type="html"><![CDATA[Step-4 Build automation using FAKE]]></title>
-    <link href="http://www.p3programmer.com/blog/2015/01/06/step-4-build-automation-using-fake/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2015/01/06/step-4-build-automation-using-fake/"/>
     <updated>2015-01-06T05:22:32+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2015/01/06/step-4-build-automation-using-fake</id>
+    <id>http://www.p3programmer.com/blog/blog/2015/01/06/step-4-build-automation-using-fake</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 4 of my blog series on <a href="http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 4 of my blog series on <a href="http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the last three steps, we have seen how to build an web application in fsharp by leveraging <a href="http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web-Api</a>, <a href="http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor</a> and <a href="http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">SignalR</a>. In this step for a change we are going to take the <a href="http://en.wikipedia.org/wiki/DevOps">DevOps</a> side of the application and going to add the build automation capabilities for the application. Let’s get stated!</p>
+<p>In the last three steps, we have seen how to build an web application in fsharp by leveraging <a href="http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web-Api</a>, <a href="http://www.p3programmer.com/blog/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor</a> and <a href="http://www.p3programmer.com/blog/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">SignalR</a>. In this step for a change we are going to take the <a href="http://en.wikipedia.org/wiki/DevOps">DevOps</a> side of the application and going to add the build automation capabilities for the application. Let’s get stated!</p>
 
 <h2 id="fake---an-awesome-build-automation-library">Fake - An awesome build automation library</h2>
 
@@ -1296,14 +1296,14 @@
   
   <entry>
     <title type="html"><![CDATA[Step-3 PhoneCat Recommendation System using F# Agents, SignalR and Rx]]></title>
-    <link href="http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/"/>
     <updated>2015-01-02T05:44:52+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
+    <id>http://www.p3programmer.com/blog/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 3 of my blog series on <a href="http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 3 of my blog series on <a href="http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the last two steps we have seen how to create a <a href="http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">web apis</a> and <a href="http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
+<p>In the last two steps we have seen how to create a <a href="http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">web apis</a> and <a href="http://www.p3programmer.com/blog/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
 
 <h3 id="a-small-flashback">A Small Flashback</h3>
 <p>I’ve actually planned to put this blog post for the great fsharp community initiative <a href="https://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/">F# Advent Calender</a>. Unfortunately it was not able to get through as I’ve <a href="http://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/#comment-4135">nominated myself</a> little late. I always believe there is an opportunity behind every adversity. I didn’t get hung up and I knew this is one of the great topic to blog about. When I decided to blog about it, I needed a sample web application. So, I was creating that sample application and it suddenly strikes! <em>How about a blog series on web application development in fsharp?</em> I’ve immediately started working on it and hence this blog series.</p>
@@ -1312,10 +1312,10 @@
 <p>In this blog post we are going to build a recommendation system which keeps track of what phones that the user is viewing, and based on his navigation history, we will be recommending a phone that he might be interested in</p>
 
 <p style="text-align:center"> <strong> User visits &#8220;Motorola XOOM™&#8221; </strong> </p>
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_3/Phone_1.png" /></p>
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_3/Phone_1.png" /></p>
 
 <p style="text-align:center"> <strong> User visits &#8220;Motorola XOOM™ with Wi-Fi&#8221; </strong> </p>
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_3/Phone_2.png" /></p>
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_3/Phone_2.png" /></p>
 
 <p>Let us start the implementation by defining two high level tasks</p>
 
@@ -1326,9 +1326,9 @@
 
 <h3 id="tracking-user-navigation">1. Tracking user navigation</h3>
 
-<p><img class="center" src="http://www.p3programmer.com/images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png" width="600" height="500" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png" width="600" height="500" /></p>
 
-<p>The first two components has been already implemented as part of <a href="http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
+<p>The first two components has been already implemented as part of <a href="http://www.p3programmer.com/blog/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
 
 <p>Create a source file in the <strong>Web</strong> project and name it as <code>PhoneViewTracker</code>. Add a function <code>observePhonesViewed</code> which will be invoked when you a user visits a phone.</p>
 
@@ -1515,7 +1515,7 @@
 
 <p><strong>Workflow</strong></p>
 
-<p><img class="center" src="http://www.p3programmer.com/images/fsharp_phonecat/step_3/Phone_Recommendation_Workflow.png" width="600" height="500" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_3/Phone_Recommendation_Workflow.png" width="600" height="500" /></p>
 
 <ol>
   <li>User initiates the recommendation request using SignalR</li>
@@ -1793,17 +1793,17 @@
   
   <entry>
     <title type="html"><![CDATA[Step-2 Fsharp-PhoneCat Views using Razor]]></title>
-    <link href="http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
     <updated>2014-12-23T19:47:20+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
+    <id>http://www.p3programmer.com/blog/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 2 of my blog series on <a href="http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 2 of my blog series on <a href="http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
+<p>In the <a href="http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
 
 <h3 id="phone-view">Phone View</h3>
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_2/Phone.png" /></p>
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_2/Phone.png" /></p>
 
 <p>As we did it in the step-1 we are going to start with the controller which serves the phone view. Let’s get started by creating a source file in <strong>Web</strong> project under the folders <em>Controllers</em> with the name <code>PhoneController</code></p>
 
@@ -2167,7 +2167,7 @@
 <p>That’s it. Phone View is up and running! Click the Phone Links in the Home Page it will take you to the Phones View Page.</p>
 
 <h3 id="manufacturers-view">Manufacturers View</h3>
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_2/Manufacturer.png" /><br />
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_2/Manufacturer.png" /><br />
 Manufactures View follows the similar steps that we have used to create the Phone View. It displays the Phones manufactured by a selected manufacturer in the home page.</p>
 
 <p>Let’s start from the controller. Create a controller in the <strong>Web</strong> project with the name <code>ManufacturerController</code></p>
@@ -2300,16 +2300,16 @@ Manufactures View follows the similar steps that we have used to create the Phon
   
   <entry>
     <title type="html"><![CDATA[Step 1 - Phonecat backend using Web Api and TypeProviders]]></title>
-    <link href="http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/"/>
     <updated>2014-12-17T17:31:44+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders</id>
+    <id>http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 1 of my blog series on <a href="http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 1 of my blog series on <a href="http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="http://www.p3programmer.com/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">last blog post</a> we have created the basic home page of phone cat with the placeholders and in this post we are going it wire the home page with the backend web apis.</p>
+<p>In the <a href="http://www.p3programmer.com/blog/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">last blog post</a> we have created the basic home page of phone cat with the placeholders and in this post we are going it wire the home page with the backend web apis.</p>
 
-<p><img src="http://www.p3programmer.com/images/fsharp_phonecat/step_1/home_page.png" /></p>
+<p><img src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_1/home_page.png" /></p>
 
 <p>As the above screenshot indicates we are going to develop three web api endpoints which serve the data to the front-end and we are going to use the existing json data available in <a href="https://github.com/angular/angular-phonecat/tree/master/app/phones">angular-phonecat</a> repository as our backend data store.</p>
 
@@ -3158,11 +3158,11 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
   
   <entry>
     <title type="html"><![CDATA[Step 0 - Setting up the fsharp-phonecat Solution]]></title>
-    <link href="http://www.p3programmer.com/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/"/>
     <updated>2014-12-10T22:15:50+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution</id>
+    <id>http://www.p3programmer.com/blog/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 0 of my blog series on <a href="http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 0 of my blog series on <a href="http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
 <p>In this blog post, we are going to set up the visual studio solution and create the high level project structure for the <em>fsharp-phonecat</em> application. </p>
@@ -3173,25 +3173,25 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
 
 <p>The first step is to create an blank visual studio solution and name it as <strong>PhoneCat</strong></p>
 
-<p><img class="center" src="http://www.p3programmer.com/images/fsharp_phonecat/step_0/BlankSolution.png" width="700" height="700" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_0/BlankSolution.png" width="700" height="700" /></p>
 
 <p>After creating the blank solution create two fsharp class libraries and name it as <strong>Domain</strong> and <strong>DataAccess</strong> respectively.</p>
 
-<p><img class="center" src="http://www.p3programmer.com/images/fsharp_phonecat/step_0/ClassLibrary.png" width="700" height="700" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_0/ClassLibrary.png" width="700" height="700" /></p>
 
 <p>Do delete the sample fsharp files Domain1.fs, DataAccess1.fs and Script.fsx that are created by default while creating the class libraries</p>
 
 <p>Then create a ASP.NET MVC web project using <a href="https://visualstudiogallery.msdn.microsoft.com/39ae8dec-d11a-4ac9-974e-be0fdadec71b">F# MVC 5 template</a> and name it as <em>Web</em></p>
 
-<p><img class="center" src="http://www.p3programmer.com/images/fsharp_phonecat/step_0/WebProject.png" width="700" height="700" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_0/WebProject.png" width="700" height="700" /></p>
 
-<p><img class="center" src="http://www.p3programmer.com/images/fsharp_phonecat/step_0/MVC5.png" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_0/MVC5.png" /></p>
 
 <p>We are going to use TDD, so create test projects for each of the above projects created and name it as <strong>Domain.Tests</strong>, <strong>DataAccess.Tests</strong> and <strong>Web.Tests</strong> respectively.</p>
 
 <p>The final project structure would look like</p>
 
-<p><img class="center" src="http://www.p3programmer.com/images/fsharp_phonecat/step_0/ProjectStructure.png" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_0/ProjectStructure.png" /></p>
 
 <p>F# MVC 5 template comes with a default Bootstrap theme and we are going to extend it by using e-commerce theme from <a href="http://startbootstrap.com/template-overviews/shop-homepage/">Start Bootstrap</a>. Download the theme and add <em>shop-homepage.css</em> to the Content directory of <strong>Web</strong> project. After adding it update <em>Global.asax.fs</em> to include this css file while bundling.</p>
 
@@ -3231,17 +3231,17 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
 
 <p>Now the stage is set for awesomeness. Update <strong>_Layout.cshtml</strong> and <strong>Index.cshtml</strong> as mentioned in the bootstrap theme and run the web project.</p>
 
-<p><img class="center" src="http://www.p3programmer.com/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800" /></p>
 
-<p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the <a href="http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">next-post</a> we will be wiring up the backend. Stay tuned !</p>
+<p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the <a href="http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">next-post</a> we will be wiring up the backend. Stay tuned !</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Web Application Development in Fsharp using ASP.NET MVC]]></title>
-    <link href="http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/"/>
     <updated>2014-12-10T17:07:48+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc</id>
+    <id>http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc</id>
     <content type="html"><![CDATA[<h3 id="introduction">Introduction</h3>
 
 <p>Fsharp is my new favorite language in recent times and I’ve been learning it for the last six months. I always believe the best way to learn a language / technology / framework is to create something using it and also learning from the mistakes while creating it. So, here is my attempt to create a sample web application in fsharp using ASP.NET MVC framework. In this series of blog posts I’m going to share my experience on creating “phone-cat” web application inspired from the <a href="https://github.com/angular/angular-phonecat">angular-phonecat</a>. </p>
@@ -3251,13 +3251,13 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
 <h3 id="blog-series-links">Blog Series Links</h3>
 
 <ul>
-  <li><strong>Step 0</strong> - <a href="http://www.p3programmer.com/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
-  <li><strong>Step 1</strong> - <a href="http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Creating Web Api endpoints for fsharp-phonecat using Web Api 2</a></li>
-  <li><strong>Step 2</strong> - <a href="http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Creating ASP.NET MVC Razor Views for fsharp-phonecat</a></li>
-  <li><strong>Step 3</strong> - <a href="http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">PhoneCat Recommendation System using F# Agents, SignalR and Rx</a></li>
-  <li><strong>Step 4</strong> - <a href="http://www.p3programmer.com/blog/2015/01/06/step-4-build-automation-using-fake/">Build Automation using Fake</a></li>
-  <li><strong>Step 5</strong> - <a href="http://www.p3programmer.com/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">Advanced Search DSL using FSParsec</a></li>
-  <li><strong>Step 6</strong> - <a href="http://www.p3programmer.com/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Authentication using Owin and Asp.Net Identity</a></li>
+  <li><strong>Step 0</strong> - <a href="http://www.p3programmer.com/blog/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
+  <li><strong>Step 1</strong> - <a href="http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Creating Web Api endpoints for fsharp-phonecat using Web Api 2</a></li>
+  <li><strong>Step 2</strong> - <a href="http://www.p3programmer.com/blog/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Creating ASP.NET MVC Razor Views for fsharp-phonecat</a></li>
+  <li><strong>Step 3</strong> - <a href="http://www.p3programmer.com/blog/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">PhoneCat Recommendation System using F# Agents, SignalR and Rx</a></li>
+  <li><strong>Step 4</strong> - <a href="http://www.p3programmer.com/blog/blog/2015/01/06/step-4-build-automation-using-fake/">Build Automation using Fake</a></li>
+  <li><strong>Step 5</strong> - <a href="http://www.p3programmer.com/blog/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">Advanced Search DSL using FSParsec</a></li>
+  <li><strong>Step 6</strong> - <a href="http://www.p3programmer.com/blog/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Authentication using Owin and Asp.Net Identity</a></li>
 </ul>
 
 <h4 id="upcoming-posts">Upcoming Posts</h4>
@@ -3273,9 +3273,9 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
   
   <entry>
     <title type="html"><![CDATA[Verbs - Buried abstraction in OO World]]></title>
-    <link href="http://www.p3programmer.com/blog/2014/09/26/verbs-buried-abstraction-in-oo-world/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2014/09/26/verbs-buried-abstraction-in-oo-world/"/>
     <updated>2014-09-26T12:44:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2014/09/26/verbs-buried-abstraction-in-oo-world</id>
+    <id>http://www.p3programmer.com/blog/blog/2014/09/26/verbs-buried-abstraction-in-oo-world</id>
     <content type="html"><![CDATA[<p>In Object Oriented Programming, the problem domain is being modeled as objects(nouns) which collaborate with one another in the form of messages(verbs). We are actually creating abstractions and through which we are solving the problems in an organized and cleaner way. But this way of creating abstractions does not scale in all the scenarios.</p>
 
 <p>Let me share it through an example </p>
@@ -3428,13 +3428,13 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
 
 <p>Just two lines instead of two comparers. All we did is just changed the way we create abstractions. Let me explain it using some visuals.</p>
 
-<p><img class="center" src="http://www.p3programmer.com/images/VerbsInOoWorld/Students_Sorted_By_Name.png" title="" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/VerbsInOoWorld/Students_Sorted_By_Name.png" title="" /></p>
 
 <p>OrderBy is an abstraction which does only one thing, that is order the objects in an ascending order and does it to the perfection. But to use this abstraction we need to provide two inputs, the objects and a function which provides the propery by which the objects to be sorted </p>
 
 <p>Does it closely resemble what we have seen earlier in the pseudocode ? Since it is generic, we can also use it for all other objects (Product, Customer, etc.,) too !</p>
 
-<p><img class="center" src="http://www.p3programmer.com/images/VerbsInOoWorld/Students_Sorted_By_Age.png" title="" /></p>
+<p><img class="center" src="http://www.p3programmer.com/blog/images/VerbsInOoWorld/Students_Sorted_By_Age.png" title="" /></p>
 
 <h4 id="summary">Summary</h4>
 
@@ -3444,9 +3444,9 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
   
   <entry>
     <title type="html"><![CDATA[If your fsharp code compiles it usually works]]></title>
-    <link href="http://www.p3programmer.com/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/"/>
     <updated>2013-08-08T11:39:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works</id>
+    <id>http://www.p3programmer.com/blog/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works</id>
     <content type="html"><![CDATA[<div class="post">
 
   <p>
@@ -3555,9 +3555,9 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
   
   <entry>
     <title type="html"><![CDATA[A hybrid application using ASP.NET MVC3 and Node.js]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/"/>
     <updated>2012-06-01T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/06/01/hybrid-application-using-aspnet-mvc3</id>
+    <id>http://www.p3programmer.com/blog/blog/2012/06/01/hybrid-application-using-aspnet-mvc3</id>
     <content type="html"><![CDATA[<div class='post'>
     <div>
         Each and every technology has its pros and cons and there is
@@ -3601,9 +3601,9 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
   
   <entry>
     <title type="html"><![CDATA[Jade Visualizer using Node.js and Socket.io]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/05/19/jade-visualizer-using-nodejs-and/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2012/05/19/jade-visualizer-using-nodejs-and/"/>
     <updated>2012-05-19T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/05/19/jade-visualizer-using-nodejs-and</id>
+    <id>http://www.p3programmer.com/blog/blog/2012/05/19/jade-visualizer-using-nodejs-and</id>
     <content type="html"><![CDATA[<div class='post'>
     <p><strong>Hurrah! Finally I made it</strong></p> <blockquote> 
     <p><em>“None of my inventions came by accident. I see a worthwhile need to be met and I make trial after trial until it comes. 
@@ -3611,15 +3611,15 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
     <p>Today I’m very glad and excited to announce my little contribution to the open source community called 
     <a href="http://jade-visualizer.herokuapp.com/">“Jade-Visualizer”</a> a web-based visualizer/translator which targets the beginners 
     of <a href="http://jade-lang.com/">Jade</a> (A widely used <a href="http://nodejs.org">Node.js</a> view engine) to learn it effectively. </p> 
-    <p>Its the inspiration from good bloggers, kindled me to <a href="http://www.p3programmer.com/blog/2011/01/05/thank-god/">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133"></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122"></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96"></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li></ul> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li></ul> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p>
+    <p>Its the inspiration from good bloggers, kindled me to <a href="http://www.p3programmer.com/blog/blog/2011/01/05/thank-god/">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133"></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122"></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96"></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li></ul> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li></ul> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p>
 </div>]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[An interesting JSON Model Binding behaviour in ASP.NET MVC3]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/04/13/interesting-json-model-binding/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2012/04/13/interesting-json-model-binding/"/>
     <updated>2012-04-13T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/04/13/interesting-json-model-binding</id>
+    <id>http://www.p3programmer.com/blog/blog/2012/04/13/interesting-json-model-binding</id>
     <content type="html"><![CDATA[<div class='post'>
     <h3>Introduction</h3>
     <p>
@@ -3651,16 +3651,16 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
 
     <h3>Show me the code</h3>
     <p>Core classes</p>
-    <p><img class="center" src="http://www.p3programmer.com/images/JsonModelBinding/CoreClasses.png" title="" ></p>
+    <p><img class="center" src="http://www.p3programmer.com/blog/images/JsonModelBinding/CoreClasses.png" title="" ></p>
     <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
     <p>
-    <p><img class="center" src="http://www.p3programmer.com/images/JsonModelBinding/MobileController.png" title="" ></p>
+    <p><img class="center" src="http://www.p3programmer.com/blog/images/JsonModelBinding/MobileController.png" title="" ></p>
     <p>
         Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
         the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
     </p>
     <p>
-    <p><img class="center" src="http://www.p3programmer.com/images/JsonModelBinding/MobileFilter.png" title="" ></p>
+    <p><img class="center" src="http://www.p3programmer.com/blog/images/JsonModelBinding/MobileFilter.png" title="" ></p>
     </p> <p>
         The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
         One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
@@ -3675,13 +3675,13 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
         will happily accepts them as a parameter and continue its work without any mishaps.
     </p>
 
-    <p><img class="center" src="http://www.p3programmer.com/images/JsonModelBinding/Problem.png" title="" ></p>
+    <p><img class="center" src="http://www.p3programmer.com/blog/images/JsonModelBinding/Problem.png" title="" ></p>
     <p>
         But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
         reference exception and breaks the functionality!!
     </p>
-    <p><img class="center" src="http://www.p3programmer.com/images/JsonModelBinding/BadWorld.png" title="" ></p>
-    <p><img class="center" src="http://www.p3programmer.com/images/JsonModelBinding/NullException.png" title="" ></p>
+    <p><img class="center" src="http://www.p3programmer.com/blog/images/JsonModelBinding/BadWorld.png" title="" ></p>
+    <p><img class="center" src="http://www.p3programmer.com/blog/images/JsonModelBinding/NullException.png" title="" ></p>
 
     <p>
         <em>
@@ -3707,7 +3707,7 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
 
     <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
     <p>
-        <img class="center" src="http://www.p3programmer.com/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
+        <img class="center" src="http://www.p3programmer.com/blog/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
     </p>
 
     <p>
@@ -3717,11 +3717,11 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
     </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
 
     <p>
-        <img class="center" src="http://www.p3programmer.com/images/JsonModelBinding/Global.png" title="" >
+        <img class="center" src="http://www.p3programmer.com/blog/images/JsonModelBinding/Global.png" title="" >
     </p>
     <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
     <p>
-        <img class="center" src="http://www.p3programmer.com/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
+        <img class="center" src="http://www.p3programmer.com/blog/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
     </p> 
     <h3>Conclusion</h3> 
     <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
@@ -3732,9 +3732,9 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
   
   <entry>
     <title type="html"><![CDATA[Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/"/>
     <updated>2012-03-04T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/03/04/unit-testing-html-helpers-in-aspnet</id>
+    <id>http://www.p3programmer.com/blog/blog/2012/03/04/unit-testing-html-helpers-in-aspnet</id>
     <content type="html"><![CDATA[<div class='post'>
     <p>Would you like if your unit test have an assertion like this ?</p>
     <div style="text-align: center;clear:both">
@@ -3851,12 +3851,12 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
   
   <entry>
     <title type="html"><![CDATA[Unit Testing Custom Model Binders in MVC3]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/02/11/unit-testing-custom-model-binders-in/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2012/02/11/unit-testing-custom-model-binders-in/"/>
     <updated>2012-02-11T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/02/11/unit-testing-custom-model-binders-in</id>
+    <id>http://www.p3programmer.com/blog/blog/2012/02/11/unit-testing-custom-model-binders-in</id>
     <content type="html"><![CDATA[<div class='post'>
     <p>
-        In <a href="http://www.p3programmer.com/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
+        In <a href="http://www.p3programmer.com/blog/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
         with Sessions in MVC3 using Custom model binders. In this blog post we are going to see how to do unit test the model binder itself.
     </p>
     <p>
@@ -3868,7 +3868,7 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
             the <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.imodelbinder.bindmodel.aspx">BindModel</a> method
     </p>
     <br />
-    <img class="center" src="http://www.p3programmer.com/images/UnitTesting_ModelBinders/BindModel.png">
+    <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_ModelBinders/BindModel.png">
        
         <p>
             In the BindModel method we are making use of Session property in the HttpContext object which is in turn a property of 
@@ -3878,11 +3878,11 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
     </p>
 
     <p>How to get control over those properties ? Thanks to <a href="http://msdn.microsoft.com/en-us/library/dd460098.aspx">a constructor of ControllerContext</a></p>
-    <br /><img class="center" src="http://www.p3programmer.com/images/UnitTesting_ModelBinders/ControllerContext.png">        
+    <br /><img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_ModelBinders/ControllerContext.png">        
         <p>ControllerContext uses the constructor dependency injection to get rid of the direct dependency on <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontextbase.aspx">HttpContextBase</a> and we are going to exploit this to do unit testing. Using a mocking framework we can easily create a mock of HttpContetBase and drive the unit test.</p>
     <p>The Session property of the HttpContextBase is of type <a href="http://msdn.microsoft.com/en-us/library/system.web.httpsessionstatebase.aspx">HttpSessionStateBase</a> which can also be mocked.</p>
-    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="http://www.p3programmer.com/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
-    <br /><img class="center" src="http://www.p3programmer.com/images/UnitTesting_ModelBinders/UnitTest.png">      
+    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="http://www.p3programmer.com/blog/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
+    <br /><img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_ModelBinders/UnitTest.png">      
 
 </div>
 ]]></content>
@@ -3890,9 +3890,9 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
   
   <entry>
     <title type="html"><![CDATA[Unit Testing with Sessions in ASP.NET MVC3]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/"/>
     <updated>2012-02-02T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/02/02/unit-testing-with-sessions-in-aspnet</id>
+    <id>http://www.p3programmer.com/blog/blog/2012/02/02/unit-testing-with-sessions-in-aspnet</id>
     <content type="html"><![CDATA[<div class='post'>
     <h3>Introduction</h3>
         
@@ -3913,29 +3913,29 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
         So, I am going to show an app called “MyShop” a mini shopping site through which I am going to explain the concepts involved. 
         The application flow would be as follows</p>
         
-            <img class="center" src="http://www.p3programmer.com/images/UnitTesting_With_Session/Cart.png">
-            <img class="center" src="http://www.p3programmer.com/images/UnitTesting_With_Session/Cart2.png">       
+            <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_With_Session/Cart.png">
+            <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_With_Session/Cart2.png">       
         
 
         <h4>Models</h4>
         
         <p>The models are simple, straight forward and self explanatory.</p>
-    <img class="center" src="http://www.p3programmer.com/images/UnitTesting_With_Session/model.png">  
-    <img class="center" src="http://www.p3programmer.com/images/UnitTesting_With_Session/CartCsharp.png">    
+    <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_With_Session/model.png">  
+    <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_With_Session/CartCsharp.png">    
         <p>I’ve tried my level best to keep the model as simple as possible. 
         So, Cart in MyShop will have only two public methods. One to add a product to the Cart’s Line and another one to retrieve all the 
         products inside the Cart’s line.</p>
         
         <h4>The CartController Version 1.0</h4>
-        <img class="center" src="http://www.p3programmer.com/images/UnitTesting_With_Session/CartController.png"> 
+        <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_With_Session/CartController.png"> 
         <p>In this CartController version 1.0 we have two public methods Index and AddToCart which are dependent on HttpSession object. 
             This dependency inside the methods is actually preventing us from unit testing the CartController in simple way and we have no 
             choice other than implementing a “Http Simulator” to unit test these two methods. As I said before there is better to do is! Here we go!!</p>
         
         <h4>The CartController Version 2.0</h4>
-        <img class="center" src="http://www.p3programmer.com/images/UnitTesting_With_Session/CartController2.png"> 
+        <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_With_Session/CartController2.png"> 
     <p>No more Sessions!!.. Yeah.. We have got rid of the dependency on the session object by adding a new parameter called cart. Now you can use easily unit test the CartController as follows</p>
-        <img class="center" src="http://www.p3programmer.com/images/UnitTesting_With_Session/UnitTest.png"> 
+        <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_With_Session/UnitTest.png"> 
         <p>Okay we made it easy for unit testing by moving the dependency out of the method and introduced the cart as the parameter. But how does my MVC3 framework will know the cart parameter should come from session object ?… Good Catch!! and here comes the magic called custom ModelBinder</p>
        
         <h4>ModelBinder – A brief background</h4>
@@ -3951,9 +3951,9 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
         <p>“<em>Hey! If there is any parameter of type Cart in controller action method, then use my own custom model binder called CartModelBinder to create the object</em>”</p>
         <p>There are two steps to do the above said operation</p>
         <p>1. Creating the custom model binder by inheriting the IModelBinder interface</p>
-        <img class="center" src="http://www.p3programmer.com/images/UnitTesting_With_Session/CartModelBinder.png"> 
+        <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_With_Session/CartModelBinder.png"> 
         <p>2. Registering our custom model binder in the Global.asax.cs file</p>
-        <img class="center" src="http://www.p3programmer.com/images/UnitTesting_With_Session/AppStart.png"> 
+        <img class="center" src="http://www.p3programmer.com/blog/images/UnitTesting_With_Session/AppStart.png"> 
         <p>
         That’s all.. MVC3 takes care of rest</p>
         
@@ -3961,7 +3961,7 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
         <p>In this blog post we have explored how we can get rid of “Http Simulator” to unit test the controllers which involves Session objects using 
             custom model binder. You can download the working example of “MyShop” showcased in this blog post 
             from <a href="http://www.box.com/s/b9lf2heukyivh68921jj">here</a>. 
-            Refer <a href="http://www.p3programmer.com/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
+            Refer <a href="http://www.p3programmer.com/blog/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
             unit testing with the custom model binder itself.</p>
 </div>
 ]]></content>
@@ -3969,18 +3969,18 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
   
   <entry>
     <title type="html"><![CDATA[2012 – A year of aspirations]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/12/29/2012-year-of-aspirations/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2011/12/29/2012-year-of-aspirations/"/>
     <updated>2011-12-29T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/12/29/2012-year-of-aspirations</id>
+    <id>http://www.p3programmer.com/blog/blog/2011/12/29/2012-year-of-aspirations</id>
     <content type="html"><![CDATA[<div class='post'>
 <div dir="ltr" style="text-align: left;" trbidi="on"><div align="justify"><br /></div><div align="justify">2011 has been a magnificent year for me both professionally and personally. The most significant thing about the year 2011 was the time that I have spent with my mentor, team mate and a good friend <a href="http://www.linkedin.com/pub/jijesh-mohan/a/488/545">Jijesh Mohan</a>. I have started the year with full of ambitions but with the uncertainty of how to achieve them. Though I have worked really hard to achieve those ambitions, I failed plenty of times while trying to reach the next level and the reason is absence of direction. Jijesh shared his experience with me and helped a lot in understanding various aspects of programming, software development and much more. Hearty thanks Jijesh <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="http://lh4.ggpht.com/-n3NYjmGhjro/TvyccIdnG0I/AAAAAAAAANY/-8YxbNYlPjU/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" /> . The difference you made in my life as a programmer can not be expressed just by words.&nbsp; <br /><br /></div><div align="justify">It was a tough decision to make, but I have decided to leave Cognizant to explore different real time problems which are totally outside my comfort zone. I would like to thank my cherished manager&nbsp; <a href="http://www.linkedin.com/pub/ramakrishnan-venkatasubramanian/8/85/6a0">Ramakrishnan</a>, and beloved leads <a href="http://in.linkedin.com/pub/vijay-krishnan-ramaswamy/43/738/766">Vijay</a> and <a href="http://www.facebook.com/profile.php?id=100003088519900">Karthik</a>. Thank you all three for the inspiration, responsibilities and freedom you offered me to explore, learn, apply and adopt new technologies on various assignments. The trust you had in me helped a lot to shape up my professional career. I will surely miss you.<br /><br /></div><div align="justify"><strong>What’s Next ?</strong></div><div align="justify"><br />I will be joining <a href="http://www.advisory.com/">Advisory Board</a> in the first week on February 2012. I am very excited about it as it is a position that enable me to solve complex problems which involves huge volumes of data.&nbsp; <br /><br /></div><div align="justify"><strong>Goals </strong></div><div align="justify"><br />The one thing which keep me passionate and crazy about Computer Science is <strong>It is a path with no destination</strong>. One good lesson which I have learned last year is having goals like WaterFall model will not keep you valuable in the market. Like the requirements, the technologies are also volatile so the right way I believe is <strong>being Agile </strong>and the bottom line is set big goals, but make constant corrections along the way. My focus for the year 2012 would be</div><ul><li> <div align="justify">Javascript, HTML5, interactive Web Applications</div></li><li> <div align="justify">Functional Programming</div></li><li> <div align="justify">Working with huge volume of data</div></li><li> <div align="justify">Agile Methodologies</div></li><li> <div align="justify">Open Source Contributions</div></li><li> <div align="justify">Knowledge sharing through blogs and webinars</div></li></ul><div align="justify">Wish you all a very happy and prosperous new year.</div></div></div>]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[Going Declarative in C#]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/11/22/going-declarative-in-c/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2011/11/22/going-declarative-in-c/"/>
     <updated>2011-11-22T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/11/22/going-declarative-in-c</id>
+    <id>http://www.p3programmer.com/blog/blog/2011/11/22/going-declarative-in-c</id>
     <content type="html"><![CDATA[<div class='post'>
 
     <p>
@@ -4068,9 +4068,9 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
   
   <entry>
     <title type="html"><![CDATA[Think Before You LINQ]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/11/03/think-before-you-linq/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2011/11/03/think-before-you-linq/"/>
     <updated>2011-11-03T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/11/03/think-before-you-linq</id>
+    <id>http://www.p3programmer.com/blog/blog/2011/11/03/think-before-you-linq</id>
     <content type="html"><![CDATA[<div class='post'>
 <div>
 <p>LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness and the power it offers to the code are simply amazing. In general when we think of abstractions, we tend to think towards expressiveness and <a href="http://martinfowler.com/bliki/FluentInterface.html">fluent interfaces</a> and get carried away.</p>
@@ -4121,9 +4121,9 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
   
   <entry>
     <title type="html"><![CDATA[Practice, Practice, Practice !!]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/09/15/practice-practice-practice/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2011/09/15/practice-practice-practice/"/>
     <updated>2011-09-15T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/09/15/practice-practice-practice</id>
+    <id>http://www.p3programmer.com/blog/blog/2011/09/15/practice-practice-practice</id>
     <content type="html"><![CDATA[<div class='post'>
 <div>
 	<p>In the pursuit of becoming a better programmer, I have come across lot of good things, which in fact have a lot of positive impact on my thinking, attitude and the way I approach a problem. &nbsp;One of such thing is the book “<a href="http://pragprog.com/book/cfcar2/the-passionate-programmer">Passionate Programmer</a>” which I am currently reading. It is all about creating a remarkable career in software development. If you are a developer, it is a highly recommended book. &nbsp;&nbsp;&nbsp;&nbsp;</p>

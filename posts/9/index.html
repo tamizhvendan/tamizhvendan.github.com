@@ -1,0 +1,571 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Jul 27th, 2011 craftsmanship Comments A Journey Towards Software Craftsmanship Programming has been my passion right from the day I have seen &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/blog/posts/9/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/blog/favicon.png" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/blog/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/blog/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/blog/archives">Archives</a></li>
+    <li><a href="/blog/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blogblog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blogblog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blogblog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blogblog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blogblog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blogblog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blogblog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blogblog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blogblog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blogblog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blogblog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blogblog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blogblog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blogblog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blogblog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blogblog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blogblog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blogblog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blogblog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blogblog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blogblog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blogblog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blogblog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blogblog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-27T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jul 27<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/craftsmanship/'>craftsmanship</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/07/27/journey-towards-software-craftsmanship/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/07/27/journey-towards-software-craftsmanship/" itemprop="url">A Journey Towards Software Craftsmanship</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>Programming has been my passion right from the day I have seen computer. After nearly 3.7 years of experience (2 years of freelancing and 1.7 years of Industry), I found that there are lot of areas in programming where I need to improve myself especially in the art of software craftsmanship. Programming is really an art!!</p>
+        <p>Fine, I have the passion and wish to move to the next level but the key is get started and focusing my efforts on a right path. After some extensive internet searches and fruitful discussions with my colleagues, I have drawn a road map. I feel it is worth sharing through this blog as it might help someone who aspires to reach the next level in programming. </p>
+        <p>We can’t become Einstein in single night. We can’t become Sachin just by scoring a match winning century in a single match either. Likewise we can’t become a Master in Software Craftsmanship by just creating a single Killer Application. It takes a lot of efforts, passion, endurance persistence, temperament and a well-defined path to reach the top. </p>
+        <p>As a programmer/developer we all know very well about the benefits of Code Reuse. Have you ever thought of <i>Experience Reuse!! </i>Just think about it for some minutes. Obviously there is no replacement/substitute for Experience but what’s wrong in learning from others experience. It requires both hard work and smart work to make it to the next level. Here I am mentioning about smart work. Why are we doing the same mistakes which some people did already in their lives? <span style="mso-spacerun: yes;">&nbsp;</span>Why don’t we just learn it from them and get rid of those recurring mistakes. Come on, we are programmers, be smarter. Let’s learn from the some of the masters in the field and do some new mistakes.</p>
+        <p>Before start mentioning about those masters, I would like to thank my colleague “Jijesh Mohan” who has helped a lot and inspired me to start the journey (Now I hope, you will know what is mean by Experience Reuse). Here is the list of Masters.</p>
+    </div>
+    <ul>
+        <li><a href="http://blog.objectmentor.com/">Robert C Martin</a></li>
+        <li><a href="http://pragdave.pragprog.com/">Dave Thomas</a></li>
+        <li><a href="http://martinfowler.com/">Martin Fowler</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/Ward_Cunningham">Ward Cunningham</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/Kent_Beck">Kent Beck</a></li>
+        <li><a href="http://en.wikipedia.org/wiki/Grady_Booch">Grady Booch</a></li>
+        <li><a href="http://www.joelonsoftware.com/">Joel Spolsky</a></li>
+        <li><a href="http://www.catb.org/~esr/">Eric S Raymond</a></li>
+    </ul>
+    <p>One great thing about all these excellent folks is they share their knowledge, either through Books or through their blogs. We are very fortunate. Now it’s our turn to learn from their wisdom and move forward.</p>
+    <blockquote><p>The man who does not read good books has no advantage over the man who can&#8217;t read them.</p><footer><strong>Mark Twain</strong></footer></blockquote><div>I have found the following magnificent books in the quest</div>
+    <ul>
+        <li>Pragmatic Programmer – Andrew Hunt, Dave Thomas</li>
+        <ul>
+            <li>Must Read for every programmer. In my perspective it is the Bible of Programming</li>
+        </ul>
+        <li>Clean Code – Robert C Martin</li>
+        <li>Refactoring – Martin Fowler</li>
+        <li>Art of Unix Programming – Eric S Raymond</li>
+    </ul>
+    <p>I’ve read the Pragmatic Programmer and all others are in my “To-Read” list. I am really searching for words in dictionary to describe about “Pragmatic Programmer”. It is a “Gem”.</p>
+    <p>When it comes to blogs, we have “Google Reader”. Just subscribe to the blog posts of these eminent people through Google Reader and learn the art of programming.</p>
+    <p>The stage has been setup. No one can ride bicycle by reading a book on “How to Ride Bicycle”. What books and blog posts would offer us is knowledge. In addition to knowledge to move further we need another thing called “Practice”. Yes get your hands dirty. Experiment, Research, Critique, Analyse, involve in healthy debates with your colleagues on various aspects of software craftsmanship, work and feel passionate about your work.</p>
+    <p>I have pledged myself to follow the best practices in all my development works and no compromise on the quality of the code I write. In nutshell, I am going to care about my craft, think about my work and strive for excellence.</p>
+    <p>I am in the very early stage of becoming a better programmer and looking forward to listen to your suggestions and inputs on this. When we grow older, we will be stronger. With all blessings and hope, the journey begins!</p>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-07-13T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jul 13<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/blog/categories/programming/'>programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/07/13/observer-pattern-using-delegates-vs/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/07/13/observer-pattern-using-delegates-vs/" itemprop="url">Observer Pattern Using Delegates v/s Observer Pattern Using Events and Delegates</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+	<p>
+		Most of the articles and texts in C# demonstrate the observer pattern using events and delegates. When going through one such text, a thought come across my mind. Why we are going for events when we can easily achieve the multicasting using Delegates alone. After some R&amp;D, I found it out why and hence this blog post.
+	</p>
+	<p>I am going to explain this “why” using a Weather Station example. To keep things simple, the Weather Station that we are going to see will keep track of only the temperature. Whenever the temperature changes, it simplify notifies its subscribers with the new temperature. Flash News is one of the subscribers which show the temperature in flash news. News Feed, another subscriber which adds the temperature information to the news feed. Fine, enough theory! It’s time to see the code.</p>
+	<p>Here is the implementation of Observer Pattern using Delegates alone. </p>
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    class WeatherStation
+    {
+        private int _temperature;
+        public TemperatureReporter Reporter { get; set; }
+
+        public int Temperature
+        {
+            get { return _temperature; }
+            set
+            {
+                if (Reporter != null)
+                {
+                    Reporter(value);
+                }
+                _tempearture = value;
+            }
+        }
+    }
+
+    class NewsFeed
+    {
+        WeatherStation weatherStation;
+
+        public void AddTemperatureInfoToFeed(int temperature)
+        {
+            Console.WriteLine(&quot;News Feed: New temperature &quot; + temperature + &quot; added to feed.&quot;);
+        }
+
+        public NewsFeed(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+            weatherStation.Reporter += AddTemperatureInfoToFeed;
+        }
+    }
+
+    class FlashNews
+    {
+        WeatherStation weatherStation;
+
+        public void ShowTemperatureInfoInFlashNews(int temperature)
+        {
+            Console.WriteLine(&quot;Flash News: New temperature is &quot; + temperature + &quot;.&quot;);
+        }
+
+        public FlashNews(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+            weatherStation.Reporter += ShowTemperatureInfoInFlashNews;
+        }
+    }
+}</code></pre></noscript></div>
+
+
+	<h4>The Main Program</h4>
+
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=Program.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    public delegate void TemperatureReporter(int tempearture);
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Observer Pattern Using Delegates
+            WeatherStation weatherStation = new WeatherStation();
+            FlashNews flashNews = new FlashNews(weatherStation);
+            NewsFeed newsFeed = new NewsFeed(weatherStation);
+            weatherStation.Temperature = 30;
+            weatherStation.Temperature = 15;
+            weatherStation.Temperature = 45;
+        }
+    }
+}</code></pre></noscript></div>
+
+	<h4>The output</h4>
+	<div style="clear: both; text-align: center;">
+		<img src="http://1.bp.blogspot.com/-LjDx8rPsr50/Th0bSdtTyHI/AAAAAAAAAHk/dMBuF4GLgD0/s1600/delegates-output.PNG" /></div>
+	<p>Hurrah! It’s working as expected. Both subscribers are get notified. We can implement the observer pattern using delegates alone. Stop for a minute and go through the code, is the implementation robust? Kudos if you are able to find the shortcomings of this implementation. If not continue reading. </p>
+	<p>Think of a world where everyone is good. There is no need of police, no need of court either. But it is not the case. You may wonder why I am mentioning this here. This analogy holds true for the objective of this blog post too. There is no need of using events in the c# programming world if all the subscribers are good. Miserably, here also it is not the case. Hence we are going for events instead of using delegates alone. </p>
+	<h4>Drawbacks of using delegates alone</h4>
+	<ul>
+		<li>A subscriber can replace other subscribers by reassigning the delegate</li>
+		<li>A subscriber can clear all other subscribers also (by setting the delegate to null). </li>
+		<li>A subscriber can broadcast to other subscribers by invoking the delegate</li>
+	</ul>
+	Clearly all the above 3 drawbacks violates the Observer Pattern.Here is our evil subscriber code implementation. 
+<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    class EvilSubscriber
+    {
+        WeatherStation weatherStation;
+
+        public void EvilMessage(int temperature)
+        {
+            Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
+        }
+
+        public EvilSubscriber(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+
+            // Broadcast to all the subscriber
+            weatherStation.Reporter(60);
+
+            // Reassign the subscriber            
+            weatherStation.Reporter = EvilMessage;
+
+            // Replace all the subscribers            
+            weatherStation.Reporter = null;
+        }
+    }
+}</code></pre></noscript></div>
+
+
+	<p>Hope now you understand the need of a better implementation of observer pattern. Here comes the salvage. Event! Use event along with delegates. With event in place, compiler will not allow the evil subscriber to get compiled. </p>
+	<h4>Robust implementation of Weather Station using events</h4>
+
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub2.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{ 
+    class WeatherStation2 
+    { 
+        private int _tempearture; 
+        
+        public event TemperatureReporter Reporter; 
+        
+        public int Temperature 
+        { 
+            get 
+            { 
+                return _tempearture; 
+            } 
+            set 
+            { 
+                if (Reporter != null) 
+                { 
+                    Reporter(value); 
+                } 
+                _tempearture = value; 
+            } 
+        }
+    } 
+    
+    class NewsFeed2 
+    { 
+        WeatherStation2 weatherStation; 
+        
+        public void AddTemperatureInfoToFeed(int temperature) 
+        { 
+            Console.WriteLine(&quot;News Feed2: New temperature &quot; + temperature + &quot; added to feed.&quot;); 
+        } 
+        
+        public NewsFeed2(WeatherStation2 weatherStation) 
+        { 
+            this.weatherStation = weatherStation; 
+            weatherStation.Reporter += AddTemperatureInfoToFeed; 
+        } 
+    } 
+    
+    class FlashNews2 
+    { 
+        
+        WeatherStation2 weatherStation; 
+        
+        public void ShowTemperatureInfoInFlashNews(int temperature) 
+        { 
+            Console.WriteLine(&quot;Flash News2: New temperature is &quot; + temperature + &quot;.&quot;); 
+        } 
+        
+        public FlashNews2(WeatherStation2 weatherStation) 
+        { 
+            this.weatherStation = weatherStation; weatherStation.Reporter += ShowTemperatureInfoInFlashNews; 
+        } 
+    } 
+}    			</code></pre></noscript></div>
+
+
+	<p>The unfortunate evil subscriber no longer compiles with events!</p>
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber2.cs'></script>
+<noscript><pre><code>class EvilSubscriber2
+{
+    WeatherStation2 weatherStation;
+
+    public void EvilMessage(int temperature)
+    {
+        Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
+    }
+
+    public EvilSubscriber2(WeatherStation2 weatherStation)
+    {
+        this.weatherStation = weatherStation;
+
+        // Broadcast to all the subscriber         
+        weatherStation.Reporter(60); // Compiler Error                
+
+        // Reassign the subscriber                
+        weatherStation.Reporter = EvilMessage; // Compiler Error  
+
+        // Replace all the subscribers                 
+        weatherStation.Reporter = null; // Compiler Error    
+    }
+}</code></pre></noscript></div>
+
+	<br />
+	You&nbsp;can download the source code from <a href="http://www.box.net/shared/kunno1y9noj26qodstnz">here</a>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-26T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jun 26<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/" itemprop="url">ASP.NET MVC3 Ajax Part II - Adding Animation to Action Link</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+	<div>
+		<p>This blog post is the continuation of my <a href="/blog/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">previous blog post</a>. In the last blog post we have seen how to achieve the basic Ajax functionality using <em>Ajax.ActionLink()</em> helper method. Probably in many websites you might have seen whenever any ajax request is raised by the user, there would be an associated loading text or a loading gif will be displayed which inform the user that something is going on the background. We are now going to see how to achieve the same using the <em>ActionLink()</em> method.</p>
+		<p>
+			<em>ActionLink()</em> method uses a&nbsp;declarative approach to do this. All we need to do is to create a div element contains the element which will be displayed during the Ajax request and associate the div element to the <em>ActionLink()</em> method by assigning the &#8221;<em>LoadingElementId</em>&#8221; AjaxOption to the div element&#8217;s id. Let us see how to do this by using the MVC3 app that we have seen in the <a href="/blog/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">previous blog post</a>.
+		</p>
+		<h3>Adding Loading Div Element</h3>
+		Open &#8220;Index.cshtml&#8221; and append the following div. It just contains image element which will be displayed during ajax request.
+<div><script src='https://gist.github.com/2ca8aaef6714aafaa889.js?file=Index.cshtml'></script>
+<noscript><pre><code>&lt;div id=&quot;divLoading&quot; style=&quot;display:none&quot;&gt;
+	&lt;img src=&quot;../../Content/images/loading.gif&quot; /&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+
+	<p>Note the inline style. The display has been set to none as it not intended to display only during Ajax request. </p>
+		<h3>Associate Div Element with <em>ActionLink()</em> method</h3>
+		<p>This is very simple. We just need to add the AjaxOption &#8221;<em>LoadingElementId</em>&#8221; and assign it to the loading div element&#8217;s id. The modified <em>ActionLink()</em> method will look as follows.</p>
+		<div style="clear: both; text-align: center;">
+			<img src="http://1.bp.blogspot.com/-6NlSqFH_RBU/TgbDPO7tB_I/AAAAAAAAAHc/BEEQT3XEWmQ/s1600/ActionLink+Method.png" /></div>
+		<br />
+		<h3>Simulating a delay in Action Method</h3>
+		<p>Now when we run the application we might not get a chance to see the loading gif as everything takes place is very less time. In order to see the loading gif, we need to increase the processing time taken by the GreetMe action method. The modified GreetMe action method in <em>HomeController.cs</em> will look as follows. The delay has been introduced by using the <em>Thread.Sleep()</em> method which delay the process by 2 seconds. </p>
+		<div><script src='https://gist.github.com/2ca8aaef6714aafaa889.js?file=HomeController.cs'></script>
+<noscript><pre><code>public string GreetMe() 
+{
+  System.Threading.Thread.Sleep(2000);
+  return &quot;Hello ASP.NET MVC3 Ajax !!&quot;;
+}</code></pre></noscript></div>
+
+	<br />
+		Now when we run the application we will be able to see the loading gif when the Greet Me link is clicked.
+	<h3>Summary</h3>
+		In the Part i &amp; ii of this series we have seen a basic Ajax functionality using <em>Ajax.ActionLink()</em> method. The source code of the demo application can be downloaded from <a href="http://www.box.net/shared/zmn84rj31g2kdx19flxq">here</a>.
+	</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+        <a href="8" class="prev">Prev</a>
+    
+    
+        <a href="10" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

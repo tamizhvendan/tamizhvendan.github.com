@@ -1,0 +1,534 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Apr 13th, 2012 asp.net mvc, craftsmanship, programming Comments An Interesting JSON Model Binding Behaviour in ASP.NET MVC3 Introduction Model &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/blog/posts/5/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/blog/favicon.png" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/blog/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/blog/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/blog/archives">Archives</a></li>
+    <li><a href="/blog/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blogblog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blogblog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blogblog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blogblog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blogblog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blogblog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blogblog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blogblog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blogblog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blogblog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blogblog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blogblog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blogblog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blogblog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blogblog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blogblog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blogblog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blogblog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blogblog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blogblog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blogblog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blogblog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blogblog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blogblog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-13T00:00:00+05:30" data-updated="true" itemprop="datePublished">Apr 13<sup>th</sup>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/blog/categories/programming/'>programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2012/04/13/interesting-json-model-binding/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2012/04/13/interesting-json-model-binding/" itemprop="url">An Interesting JSON Model Binding Behaviour in ASP.NET MVC3</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <h3>Introduction</h3>
+    <p>
+        <a href="http://msdn.microsoft.com/en-us/library/dd410405.aspx">Model Binding</a> is one of the coolest feature in ASP.NET MVC3.
+        Like a magic wand, your form element values, <a href="http://www.json.org/">JSON values</a>, also query string values automatically get converted to the equivalent C# object and
+        makes the life of the developer easier.
+    </p> <p>
+        The default behaviour of MVC3 model binding works well in more common scenarios.
+        But in certain cases it wont work as expected, and in such situations we need to <a href="http://odetocode.com/blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx">
+            write
+            custom model binders
+        </a>. Two weeks before while I was working with model binding on JSON values, I’ve encountered an interesting behaviour of JSON model binding.
+    </p>
+
+    <p>
+        If a JSON property contains a string, it get bind to a string property of the equivalent C# object. But if that same JSON property contains a empty string, while model binding,
+        the equivalent C# object’s property is assigned to null and not to empty string! The same happened with arrays. If it contains elements, it get bind without any problems.
+        But if the array is empty it get bind to null!!
+    </p> <p>
+        In this blog post, we are going to get rid of this intriguing behaviour by writing a Custom JSON model binder.
+        Hope it would be useful and save you some hairs <i class='emoji smile'></i>
+
+        <h3>The Sample Application – “MyMobileStore”</h3>
+    <p>
+        In this blog post we are going to see a small application called “MyMobileStore”. This sample app has two features. One will help you to search the mobiles
+        in the “MyMobileStore” by using the company name and the mobile types. An another feature will help you to find out the sales details of the mobiles from a given
+        company for the specified mobile types.
+    </p>
+
+    <h3>Show me the code</h3>
+    <p>Core classes</p>
+    <p><img class="center" src="/blog/images/JsonModelBinding/CoreClasses.png" title="" ></p>
+    <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
+    <p>
+    <p><img class="center" src="/blog/images/JsonModelBinding/MobileController.png" title="" ></p>
+    <p>
+        Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
+        the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
+    </p>
+    <p>
+    <p><img class="center" src="/blog/images/JsonModelBinding/MobileFilter.png" title="" ></p>
+    </p> <p>
+        The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
+        One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
+        action method blank to keep it simple. Both actions returns a JSON result to make them consumed by ajax.
+    </p>
+
+    <p><em>(Note: I’ve violated some design principles in the sample code as I just wanted to make this blog post as simple as possible) </em></p>
+
+    <h3>The Problem (Opportunity in my language)</h3>
+    <p>
+        In a good world, if the user selected either or both the company name and the mobiles types to be filtered, then our controller in “MyMobileStore”
+        will happily accepts them as a parameter and continue its work without any mishaps.
+    </p>
+
+    <p><img class="center" src="/blog/images/JsonModelBinding/Problem.png" title="" ></p>
+    <p>
+        But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
+        reference exception and breaks the functionality!!
+    </p>
+    <p><img class="center" src="/blog/images/JsonModelBinding/BadWorld.png" title="" ></p>
+    <p><img class="center" src="/blog/images/JsonModelBinding/NullException.png" title="" ></p>
+
+    <p>
+        <em>
+            (Now you might have understood why I added a tweak in the number of mobile types
+            <i class='emoji smile'></i>)
+        </em>
+    </p>
+    <h3>Possible Solutions</h3>
+    <ol>
+        <li>Perform null check inside the “SearchMobiles” action method and assign empty array.</li>
+        <li>Write a Custom Model Binder for “MobileFilter” and perform the null check inside the model binding logic</li>
+    </ol>
+    <p>
+        Though the option 1 is a simple and straightforward thing, what would you do if the “SalesDetails” action method works with the mobile types collection.
+        You certainly need to duplicate the null checking inside it also. Let us assume that we have some more action methods in our “MyMobileStore” which has “MobileFilter”
+        as their parameter. Do you still duplicate the null check there ?. Think!!
+    </p>
+    <p>
+        If you do so, I am sorry my dear friend, you are violating the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> principle and creating
+        <a href="http://pragprog.com/the-pragmatic-programmer/extracts/software-entropy">a broken window</a> in your codebase! So, lets go ahead and write
+        <a href="http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882">clean code</a> by making use of Custom Model Binder for our “MobileFilter”.
+    </p>
+
+    <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
+    <p>
+        <img class="center" src="/blog/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
+    </p>
+
+    <p>
+        Our custom model binder is very simple, it just makes use of Default Model binding behaviour. After the default behaviour has been done,
+        it checks for null values using <a href="http://msdn.microsoft.com/en-us/library/ms173224.aspx">Null-Coalescing operator</a> and assign empty values if
+        the values are null.
+    </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
+
+    <p>
+        <img class="center" src="/blog/images/JsonModelBinding/Global.png" title="" >
+    </p>
+    <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
+    <p>
+        <img class="center" src="/blog/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
+    </p> 
+    <h3>Conclusion</h3> 
+    <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
+        binding problems. In my next blog post I would share my experiences in how to unit test this custom model binders. 
+    You can download the source code that I have used in this blog post from <a href="http://www.box.com/s/16dbb662bb2f94babe27">here</a></p>
+</div>
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-04T00:00:00+05:30" data-updated="true" itemprop="datePublished">Mar 4<sup>th</sup>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/" itemprop="url">Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <p>Would you like if your unit test have an assertion like this ?</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh5.ggpht.com/-Z7XXVGQ3sX4/T1J73ct1gqI/AAAAAAAAASQ/qw-uSNrLoOE/image_thumb3.png?imgmax=800">
+    </div>
+    <p>
+        IMHO having a unit test assertion like this with a long magical string value would become a maintenance problem with additional logic being added.
+        It breaks with even minor changes like “adding an extra whitespace” though it is logically correct(Browsers ignores the whitespaces while rendering html)!.
+        It is harder to debug to!!
+    </p>
+    <p>
+        How can we get rid of this long string assertion ? Is there any better way to do assertion against this long magical string ejected from a
+        <a href="http://stephenwalther.com/blog/archive/2009/03/03/chapter-6-understanding-html-helpers.aspx">HtmlHelper</a> ? One thing which strikes on my mind when I come
+        across this problem is why don’t we parse the string as an xml and assert against the xml element instead. It might appear like laborious at the first sight,
+        but by making use of <a href="http://msdn.microsoft.com/en-us/library/system.xml.linq.xelement.aspx">XElement</a> and
+        <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a> we can easily do that.
+    </p>
+
+    <p>In the blog post we are going to see how can we implement this in a more cleaner way. </p>
+
+    <p>Okay.. Enough texts.. Its time to see some code!!</p>
+
+    <p>
+        The first step is to convert the “html string” returned by the html helper to XElement. Generally most of the helpers returns
+        <a href="http://stackoverflow.com/questions/2293357/what-is-an-mvchtmlstring-and-when-should-i-use-it">MvcHtmlString</a>, So, we can easily achieve this
+        by writing an extension method called “ToXElement” on MvcHtmlString.
+    </p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-cwtnsV7pl2c/T1J763QmH1I/AAAAAAAAASg/6QKxAEGZ5uM/image_thumb%25255B2%25255D.png?imgmax=800">
+    </div>
+
+    <p>That’s it! All set to redefine the way custom html helpers are being tested. </p>
+
+    <p>Fine, Let us see it in action. We will start with a handy HtmlHelper method called “Button” which would render a “Html button tag” and here is the test to assert it.</p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-Zl-hH4zYH1A/T1J7_Y9Qr3I/AAAAAAAAASw/PyWZZJMadV0/image_thumb%25255B10%25255D.png?imgmax=800">
+    </div>
+    <p>
+        The first test uses the ToXElement extension method and assert against the XElement’s properties whereas the second test uses the
+        “magical string with tags added” to do the assertion. Now you may feel what’s wrong with this guy the second test look clean to me,
+        why he is making fuss about it. Yes you are correct, the second one looks clean. But it appears to be clean as the requirement in hand is very simple.
+    </p>
+    <p>IMHO the custom html helpers that we are building in our real world application won’t be as simple as having a button tag with just plain caption in it. </p>
+    <p>Fine, lets see the real world. Voice from your team lead <em></em></p>
+    <p>
+        <em>
+            Hey! the Button HtmlHelper you designed has did a tremendous job. Can you make a small change on it so that it would
+            <strong>generate a button with a class attribute having the value ‘appbutton’ by default</strong>.
+            We need it because it make the button styling consistent with rest of our application ”
+        </em>
+    </p>
+
+    <p>Let us implement the feature by starting with the test for it</p>
+    <p>
+        <a href="http://lh4.ggpht.com/-HScL-9YaD1s/T1J8Awk2YbI/AAAAAAAAAS4/Q3E6JlpRItM/s1600-h/image%25255B23%25255D.png">
+            <img src="http://lh5.ggpht.com/-MyHzxXBfdCM/T1J8DL_KgbI/AAAAAAAAATA/Vvt1j4k-KYo/image_thumb%25255B14%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>
+        Now tell me is the second test clean ? I don’t think so. The generate html string is bit long now also having double quotes inside double quotes makes it hard to read.
+        At the same time the first test remains robust and clean.
+    </p>
+
+    <p>
+        Still not convinced, okay just go up and see the very first test that we have wrote to test the button caption.
+        Do you think the <strong>hard way test</strong> with the “<strong>long magical string</strong>” still pass ??
+    </p>
+
+    <p style="text-align: center; color: #ff0000; font-weight: bold">It would fail</p>
+
+    <p>Why ?? Here is the error message </p>
+    <p>
+        <a href="http://lh5.ggpht.com/-K6RjhSEMhLA/T1J8EpZAZ-I/AAAAAAAAATI/TUutsjz0XdE/s1600-h/image%25255B28%25255D.png">
+            <img src="http://lh4.ggpht.com/-SpmB-mDwffk/T1J8HO3Np4I/AAAAAAAAATQ/oKxboMdbr6I/image_thumb%25255B17%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>Now what would you do, if you decided to persist with the “long magical string”, then your action would be editing the test as below</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh6.ggpht.com/-RJKnvJ5K8dI/T1J8LTJG_iI/AAAAAAAAATg/TAKyOA5Ej9w/image_thumb%25255B21%25255D.png?imgmax=800">
+    </div>
+    <p>Nice job. Now tell me what is the difference between this one and the below one</p>
+    <div style="text-align: center;clear:both">
+        <a href="http://lh6.ggpht.com/-ps4dX_FO-B0/T1J8MhVBtwI/AAAAAAAAATo/u003U24qiBo/s1600-h/image%25255B42%25255D.png">
+            <img src="http://lh3.ggpht.com/-i5zAV0v0JfY/T1J8O7pNIiI/AAAAAAAAATw/Fuo_4WMsFzk/image_thumb%25255B27%25255D.png?imgmax=800">
+        </a>
+    </div>
+    <p>
+        Apart from the test method name everything is same. Is the test clean ? Is the test clearly saying what it is trying to assert ?
+        What would happen if we got the requirement to add one more attribute or even more? Think !!
+    </p>
+
+    <p>But at the same time the tests which written using XElement assertion would remain healthy and their test method name mean what it is testing </p>
+    <p>
+        <a href="http://lh6.ggpht.com/-t5GRHpUvWSI/T1J8Qh6dvqI/AAAAAAAAAT4/WaaIvzaEKCY/s1600-h/image%25255B47%25255D.png">
+            <img src="http://lh3.ggpht.com/-fQ_eFoBZqnE/T1J8TPZgtFI/AAAAAAAAAUA/1wGDDsT5J8Y/image_thumb%25255B30%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>I leave it you to decide which one is cleaner. </p>
+    <h4>Summary</h4>
+    <p>Here is the implementation of “Button HtmlHelper” that we unit tested so far</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-lg0jE79JCVI/T1J8Y3QGqOI/AAAAAAAAAUQ/gif78dMv6XI/image_thumb%25255B33%25255D.png?imgmax=800">
+    </div>
+    <p>
+        My humble request to the readers of this blog post, please take care of your “Unit tests” and give some more importance to it.
+        An hour spent upfront would save a day in future.
+    </p>
+    <p>“Beauty is in the eye of the beholder”, If you have a better idea to do the same, kindly leave a comment, I am open to learn from you.</p>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-11T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 11<sup>th</sup>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2012/02/11/unit-testing-custom-model-binders-in/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2012/02/11/unit-testing-custom-model-binders-in/" itemprop="url">Unit Testing Custom Model Binders in MVC3</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <p>
+        In <a href="/blog/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
+        with Sessions in MVC3 using Custom model binders. In this blog post we are going to see how to do unit test the model binder itself.
+    </p>
+    <p>
+        One remarkable thing which everybody hails in MVC3 is its extensibility and its testability. You can extend/customize the components in the 
+        framework and also you can unit test them with ease.
+    </p>
+    <p>
+        Before getting into unit testing the custom model binder, Lets have a closer look at 
+            the <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.imodelbinder.bindmodel.aspx">BindModel</a> method
+    </p>
+    <br />
+    <img class="center" src="/blog/images/UnitTesting_ModelBinders/BindModel.png">
+       
+        <p>
+            In the BindModel method we are making use of Session property in the HttpContext object which is in turn a property of 
+            the <a href="http://msdn.microsoft.com/en-us/library/dd492673.aspx">ControllerContext</a> object that is passed to the BindModel method as 
+            a parameter by the MVC3 framework. In order to unit test this method we need to have to control over the HttpContext property of 
+            the ControllerContext and the Session property of the HttpContext.
+    </p>
+
+    <p>How to get control over those properties ? Thanks to <a href="http://msdn.microsoft.com/en-us/library/dd460098.aspx">a constructor of ControllerContext</a></p>
+    <br /><img class="center" src="/blog/images/UnitTesting_ModelBinders/ControllerContext.png">        
+        <p>ControllerContext uses the constructor dependency injection to get rid of the direct dependency on <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontextbase.aspx">HttpContextBase</a> and we are going to exploit this to do unit testing. Using a mocking framework we can easily create a mock of HttpContetBase and drive the unit test.</p>
+    <p>The Session property of the HttpContextBase is of type <a href="http://msdn.microsoft.com/en-us/library/system.web.httpsessionstatebase.aspx">HttpSessionStateBase</a> which can also be mocked.</p>
+    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="/blog/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
+    <br /><img class="center" src="/blog/images/UnitTesting_ModelBinders/UnitTest.png">      
+
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+        <a href="4" class="prev">Prev</a>
+    
+    
+        <a href="6" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

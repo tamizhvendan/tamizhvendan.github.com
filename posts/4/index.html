@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Mar 25th, 2011 data access, entity framework Comments Entity Framework 4.0 - Class Library - Part 1 In this blog post we are going to explore how to &hellip;">
+	<meta name="description" content="Aug 8th, 2013 fsharp Comments If Your Fsharp Code Compiles It Usually Works When I first started learning fsharp, one of the astounding fact that &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,11 +19,11 @@
 
 	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
 	
-	<link rel="canonical" href="http://www.p3programmer.com/posts/4/">
+	<link rel="canonical" href="http://www.p3programmer.com/blog/posts/4/">
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
-	<link href="/favicon.png" rel="shortcut icon">
-	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/blog/favicon.png" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/blog/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -51,7 +51,7 @@
 			<div class="intrude-less">
 			<header id="header" class="inner"><div class="profilepic">
 	
-	<script src="/javascripts/md5.js"></script>
+	<script src="/blog/javascripts/md5.js"></script>
 	<script type="text/javascript">
 		$(function(){
 			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
@@ -61,10 +61,10 @@
 </div>
 
 <nav id="main-nav"><ul class="main">
-    <li><a href="/">Blog</a></li>
+    <li><a href="/blog/">Blog</a></li>
     <li><a href="http://about.me/tamizhvendan">About</a></li>
-    <li><a href="/blog/archives">Archives</a></li>
-    <li><a href="/open-source-contributions">Contributions</a></li>
+    <li><a href="/blog/blog/archives">Archives</a></li>
+    <li><a href="/blog/open-source-contributions">Contributions</a></li>
 </ul>
 <a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
 </nav>
@@ -99,7 +99,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blogblog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blogblog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blogblog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blogblog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blogblog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blogblog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blogblog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blogblog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blogblog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blogblog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blogblog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blogblog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blogblog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blogblog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blogblog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blogblog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blogblog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blogblog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blogblog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blogblog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blogblog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blogblog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blogblog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blogblog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -128,288 +128,124 @@
   
 
 
-<time datetime="2011-03-25T00:00:00+05:30" data-updated="true" itemprop="datePublished">Mar 25<sup>th</sup>, 2011</time></div>
+<time datetime="2013-08-08T11:39:00+05:30" data-updated="true" itemprop="datePublished">Aug 8<sup>th</sup>, 2013</time></div>
 		<div class="tags">
 
 
-	<a class='category' href='/blog/categories/data-access/'>data access</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>
+	<a class='category' href='/blog/blog/categories/fsharp/'>fsharp</a>
 
 
 </div>
 		
-			<span class="comments"><a href="/blog/2011/03/25/entity-framework-40-class-library-part/#disqus_thread">Comments</a></span>
+			<span class="comments"><a href="/blog/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/#disqus_thread">Comments</a></span>
 		
 	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/03/25/entity-framework-40-class-library-part/" itemprop="url">Entity Framework 4.0 - Class Library - Part 1</a></h1>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/" itemprop="url">If Your Fsharp Code Compiles It Usually Works</a></h1>
 	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>In this blog post we are going to explore how to create the data access layer as a class library using Entity Framework 4.0. By defining the data access layer as class library, you can reuse it across many applications just by adding areference to the class library. In my next blog post, we&#8217;ll explore how to consume the library in an application. </p>
-        <p>Entity Framework 4.0 enables the developer to concentrate on the business logic and business objects without bothering how it has been manipulated at the database level. You can find a very good tutorial onEntity Framework <a href="http://www.dotnetcurry.com/ShowArticle.aspx?ID=599">here</a> to get started.This blog post uses a sample database named &#8220;HRD&#8221; which has two tables, Employee and Department. </p>
+		<div class="post">
 
-        <h4>Step 1: Create a Class Library</h4>
+  <p>
+    When I first started learning fsharp, one of the astounding fact that hit my mind was <em>&#8220;If the code compiles it usually works!&#8221;</em> For a guy who is coming from c# and java Programming background it was bit weird! After delving deep into f# I have found it very useful and inspired by its awesomeness. In this blog-post I&#8217;ll be covering some of my experiences that I come across while learning this great feature!  
+  </p>
 
-        <p>Create a new class library project with the name &#8220;HRD.DataAccess&#8221; and click &#8220;Ok&#8221;. After creating a new project delete the &#8220;Class1.cs&#8221; which is created by default.</p>
-        <a href="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s1600/1.Class-Library-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
-            <img alt="" border="0" id="Img1" src="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s400/1.Class-Library-Creation.PNG" /></a>
+  <h3>Fever Diagnosis Program</h3>
+  <p>
+    Let us consider a simple fever diagnosis program. If your temperature is greater than 37.5 Celsius or 99.0 Fahrenheit then you are suffering from fever else you are all right.  
+  </p>
 
-        <h4>Step 2: Create the Entity class using the entity framework</h4>
+  <h3>Defining Temperature Types</h3>
+  <p>One of the cool feature that I like about f# is its less verbosity. You can do lot of magic things with less lines of code! Consider our fever diagnosis program, A temperature can be either in Celsius or in Fahrenheit. Here is the equivalent type defined in f#</p>
 
-        <p>Right click on the project name &#8220;HRD.DataAccess&#8221; and select &#8220;Add -&gt; New item&#8221;.Select &#8220;Data&#8221; under installed templates and then select &#8220;ADO.NET Data Entity Model&#8221;. Type the name as &#8220;HrdModel.edmx&#8221; and click &#8220;Add&#8221;. </p>
-        <a href="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s1600/2.%2BEdmx-File-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588018736147760674" src="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s400/2.%2BEdmx-File-Creation.PNG" />
-        </a>
-
-        <p>In the Entity Data Model Wizard select &#8220;Generate from database&#8221; and click &#8220;Next&#8221;</p>
-        <a href="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s1600/3.%2BEntity%2BData%2BModel%2BWizard.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
-            <img alt="" border="0" id="Img2" src="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s400/3.%2BEntity%2BData%2BModel%2BWizard.PNG" /></a>
-
-        <p>In the next step select the database name &#8220;PCName\sqlexpress.HRD.dbo&#8221; and select &#8220;Next&#8221;</p>
-        <a href="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s1600/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019738534634002" src="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s400/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG" /></a>
-
-        <p>In the next step select the tables names &#8220;Department&#8221; &amp; &#8220;Employee&#8221; and click &#8220;Finish&#8221;</p>
-        <a href="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s1600/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019795895543346" src="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s400/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG" /></a>
-
-        <p>Now we have created the entity model which represent the Object/Relation mapping</p>
-        <a href="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s1600/6.%2BEDMX%2BSuccessful%2BCreation.PNG">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019838615201234" src="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s400/6.%2BEDMX%2BSuccessful%2BCreation.PNG" style="cursor: pointer; height: 289px; width: 400px;" /></a>
-
-        <h4>Step 3: Building the class library</h4>
-        <ol>
-            <li>Select &#8220;Build-&gt;Configuration Manager&#8221;</li>
-            <li>Change the Configuration of the Project &#8220;HRD.DataAccess&#8221; to &#8220;Release&#8221;. By default it is &#8220;Debug&#8221;</li>
-            <li>Click &#8220;Close&#8221;</li>
-            <li>Select &#8220;Build-&gt;Build HRD.DataAccess&#8221;</li>
-        </ol>
-        That&#8217;s it!!. Now we have the DataAccess Library ready!! We can reuse it across different .Net Applications 
-	
-        <h4>Summary</h4>
-        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="/blog/2011/04/01/entity-framework-40-as-class-library/">next blog</a>, we&#8217;d be exploring on how to consume the data access library in an application. </p>
-    </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
+    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Temperature.fs'></script>
+<noscript><pre><code>type Temperature = 
+  | Celsius of double
+  | Fahrenheit of double</code></pre></noscript></div>
 
 
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
+  <p>Just 3 lines of code!</p>
+  <p>The type Temperature has been defined as a <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Discriminated_Unions">discriminated union.</a> In brief, Discriminated union represent data that can take on one of a few different types of results.</p> <p>Also in this 3 lines we have described the strongly typed alias for temperature in both Celsius and in Fahrenheit. With this code in place if you want to describe a temperature in Celsius or in Fahrenheit all you need to use the following syntax</p>
+
+    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Declaration.fs'></script>
+<noscript><pre><code>let tempInCelsius = Celsius 10.8
+let tempInFahernheit = Fahrenheit 10.6</code></pre></noscript></div>
 
 
+  <p>By defining strongly typed cases like this we can make our code cleaner and preventing ourselves from various logic errors that we usually do when we interpret the values of these types. Though we can achieve the same in c# by the following code, it is very elegant to do in f# </p>
 
-
-
-
-
-
-  
-
-
-<time datetime="2011-02-23T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 23<sup>rd</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net/'>asp.net</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/02/23/ajax-update-master-page-from-content/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/02/23/ajax-update-master-page-from-content/" itemprop="url">Ajax Update Master Page From Content Page</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>
-            In this blog post we are going to see how can we update the master page from content page using ajax updatepanel in <a href="http://www.amazon.com/Beginning-ASP-NET-VB-Wrox-Programmer/dp/0470502215?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">ASP.NET</a>.
-            The sample website we are going to build will have a content page which allows to change the header of the website(which is present in master page) via Ajax.
-        </p>
-        <img src="http://codeasp.net/Assets/Uploaded-CMS-Files/c15554a1-7e4e-498b-9c5e-a1365cf4643aAjaxifyMasterPage1.PNG" width="358px" /><img src="http://codeasp.net/Assets/Uploaded-CMS-Files/8feb0ea9-adf4-4bc6-99ae-4c9b28ed1cc1AjaxifyMasterPage2.PNG" />
-        <p>The tasks involved in creating this website are as follows: </p>
-
-        <ul>
-            <li>Create an updatepanel in masterpage which holds the website header.</li>
-            <li>Create a method in MasterPage codebehind which changes the website header.</li>
-            <li>Create the content page with master page reference and an update panel which holds controls to triggers the header change.</li>
-            <li>Call the MasterPage method from content page.</li>
-        </ul>
-        <h3>1. Create an updatepanel in masterpage which holds the website header.</h3>
-        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.aspx'></script>
-<noscript><pre><code>&lt;div class=&quot;title&quot;&gt;
-    &lt;h1&gt;
-        &lt;asp:UpdatePanel ID=&quot;UpdatePanelWebsiteHeader&quot; runat=&quot;server&quot;ChildrenAsTriggers=&quot;false&quot; UpdateMode=&quot;Conditional&quot;&gt;
-            &lt;ContentTemplate&gt;
-                &lt;asp:Label ID=&quot;lblWebsiteHeader&quot; runat=&quot;server&quot; Text=&quot;Label&quot;&gt;My ASP.NET Application&lt;/asp:Label&gt;
-            &lt;/ContentTemplate&gt;
-        &lt;/asp:UpdatePanel&gt;                    
-    &lt;/h1&gt;
-&lt;/div&gt;</code></pre></noscript></div>
-	
-            <p>Make Sure the two properties of UpdatePanel <strong>&#8220;ChildrenAsTriggers&#8221;</strong> is set to false and <strong>&#8220;UpdateMode&#8221;</strong> is set to conditional, to prevent the unneccessary updation of updatepanel from its child controls.</p>
-
-        <h3>2. Create a method in MasterPage codebehind which changes the website header.</h3>
-        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.cs'></script>
-<noscript><pre><code>public void ChangeWebsiteHeader(string newHeader)
+    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Temperature.cs'></script>
+<noscript><pre><code>public abstract class Temperature 
 {
-    lblWebsiteHeader.Text = newHeader;
-    //Calling the Update method of UpdatePanel will trigger the Updatepanel
-    UpdatePanelWebsiteHeader.Update();
-}</code></pre></noscript></div>
+  public double Value { get; private set; }
 
+  protected Temperature(double value) 
+  {
+    Value = value;
+  }
+}
 
-            <h3>3. Create the content page with master page reference and an update panel which holds controls to triggers the header change.</h3>
-        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=masterPage.aspx'></script>
-<noscript><pre><code>&lt;%@ Page Title=&quot;Home Page&quot; Language=&quot;C#&quot; MasterPageFile=&quot;~/Site.master&quot; AutoEventWireup=&quot;true&quot;CodeFile=&quot;Default.aspx.cs&quot; Inherits=&quot;_Default&quot; %&gt;
-&lt;%@ MasterType VirtualPath=&quot;~/Site.master&quot; %&gt;</code></pre></noscript></div>
+public class Celsius : Temperature
+{
+  public Celsius (double value) : base(value)
+  {
 
-            <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=changeHandler.cs'></script>
-<noscript><pre><code>protected void btnChangeHeader_Click(object sender, EventArgs e)
-{   
-    Master.ChangeWebsiteHeader(Server.HtmlEncode(txtHeader.Text));
-}</code></pre></noscript></div>
+  }
+}
 
-
-            <h3>4. Call the MasterPage method from content page.</h3>
-        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=contentTemplate.aspx'></script>
-<noscript><pre><code>&lt;asp:UpdatePanel ID=&quot;UpdatePanelChangeHeader&quot; runat=&quot;server&quot; UpdateMode=&quot;Conditional&quot;&gt;
-    &lt;ContentTemplate&gt;
-        &lt;p&gt;Enter the Website Header: &lt;asp:TextBox ID=&quot;txtHeader&quot; runat=&quot;server&quot; /&gt; &lt;/p&gt;
-        &lt;asp:Button ID=&quot;btnChangeHeader&quot; runat=&quot;server&quot; Text=&quot;Change Header&quot; onclick=&quot;btnChangeHeader_Click&quot; /&gt;
-    &lt;/ContentTemplate&gt;
-&lt;/asp:UpdatePanel&gt;</code></pre></noscript></div>
-
-
-            <h3>Summary:</h3>
-        <p>In this blog we have seen how can we update the master page from the content page using ajax update panel. You can download the source code from <a href="http://www.box.net/shared/gpa9dlo668">here</a></p>
-    </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-02-10T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 10<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/jquery/'>jquery</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/02/10/in-this-blog-we-are-going-to-see-how/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/02/10/in-this-blog-we-are-going-to-see-how/" itemprop="url">DropDownList Manipulation Using jQuery</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>
-            In this blog post we are going to see how can we manipulate a dropdownlist using <a href="http://www.amazon.com/jQuery-Action-Second-Bear-Bibeault/dp/1935182323?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">jQuery</a><img alt="" border="0" height="1px" src="http://www.assoc-amazon.com/e/ir?t=bor0b-20&amp;l=btl&amp;camp=213689&amp;creative=392969&amp;o=1&amp;a=1935182323" style="border-bottom: medium none; border-left: medium none; border-right: medium none; border-top: medium none; margin: 0px; padding-bottom: 0px! important; padding-left: 0px! important; padding-right: 0px! important; padding-top: 0px! important;" width="1px" />. Here is the brief overview what we are exactly going to do.<br />
-        </p>
-        <ol>
-            <li>Dynamically populating the dropdownlist</li>
-            <li>Handling the item change event of a dropdownlist</li>
-            <li>Getting the value and the text of the dropdownlist selected item</li>
-            <li>Programmatically setting the item of the dropdownlist</li>
-        </ol>
-
-        <h3>1. Dynamically populating the dropdownlist</h3>
-
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=documentInit.js'></script>
-<noscript><pre><code>$(document).ready(function () {
+public class Fahrenheit : Temperature
+{
+  public Fahrenheit (double value) : base(value)
+  {
     
-    function loadDropDownList(collection) {
-        $.each(collection, function (index, value) {
-            var listItem = $(&quot;&lt;option&gt;&lt;/option&gt;&quot;).val(index).html(value);
-            $(&quot;#countries&quot;).append(listItem);
-        });
-    }
+  }
+} 
 
-    var myCollection = {'IN': 'India','AUS': 'Australia','ENG': 'England'};
-    loadDropDownList(myCollection);
-})</code></pre></noscript></div>
-
-	
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=layout.html'></script>
-<noscript><pre><code>Countries: &lt;select id=&quot;countries&quot;&gt;&lt;/select&gt;</code></pre></noscript></div>
-
-	
-        <p>
-            The function loadDropDownList will take a collection (a key-value pair array) and populate the dropdownlist “countries”. “$.each” is a jQuery function which iterates the array item by item and calls the “function(index,value)” for each item where index would be the item’s key and value would be the item’s value. Then the list item html markup is created for the list item and appended to the dropdownlist
-        </p>
-
-        <h3>2. Handling the item change event of a dropdownlist</h3>
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=handleChange.js'></script>
-<noscript><pre><code>$(document).ready(function () {
-    $(&quot;#countries&quot;).change(function () {
-        // Place your code here
-    });
-});</code></pre></noscript></div>
-
-        <p>
-            The jQuery API offers lot of useful functions to operate with the html form elements. One of such function is “change()” which will called whenever the item value is get changed.
-        </p>
-        <h3>3. Getting the value and the text of the dropdownlist selected item</h3>
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=listChange.js'></script>
-<noscript><pre><code>$(document).ready(function () {
-    $(&quot;#countries&quot;).change(function () {
-    	var selectedValue = $(&quot;#countries&quot;).val();
-        $(&quot;#countryValue&quot;).text(selectedValue);
-        $(&quot;#countryText&quot;).text($(&quot;#countries &gt; option[value='&quot; + selectedValue + &quot;']&quot;).html());
-    });
-});</code></pre></noscript></div>
-
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=newLayout.html'></script>
-<noscript><pre><code>Selected Country’s Text: &lt;span id=&quot;countryText&quot;&gt;&lt;/span&gt; &lt;br /&gt;
-Selected Country’s Value:  &lt;span id=&quot;countryValue&quot;&gt;&lt;/span&gt;&lt;br /&gt;</code></pre></noscript></div>
-
-        <p>The jQuery code mentioned above will set the two span labels “countryValue” and “countryText” with the value and text of the selected item in the “countries” dropdownlist, when we select an item in the “countries” dropdownlist. The jQuery function “val()” enable us to find out the value of a form element, in our case we have utilized it to get the value of the “countries” dropdownlist. To get the selected item’s text we have to use the child and attribute selector together as a selector. “#countries &gt; option[value=&#8217;IN&#8217;]” – will selects all option child elements(with appropriate value) of item with the id “countries”. “html()” retrieves the html of the selected element. “text(value)” will set the text of the selector.</p>
-        <h3>4. Programmatically setting the item of the dropdownlist</h3>
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=btnClick.js'></script>
-<noscript><pre><code>$(&quot;#btnIn&quot;).click(function () {
-    $(&quot;#countries&quot;).val('IN');
-});
-
-$(&quot;#btnEng&quot;).click(function () {
-    $(&quot;#countries&quot;).val('ENG');
-});
-
-$(&quot;#btnAus&quot;).click(function () {
-    $(&quot;#countries&quot;).val('AUS');
-});</code></pre></noscript></div>
+public class Program 
+{
+  public static void Main() 
+  {
+    Temperature tempInCelsius = new Celsius(10.8);
+    Temperature tempInFahernheit = new Fahrenheit(10.6);
+  }  
+}</code></pre></noscript></div>
 
 
-        <h2>Demo</h2>
-        <iframe width="100%" height="300" src="http://jsfiddle.net/uE78v/2/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+<p>34 lines of code to achieve the same!!</p>
 
-    </div>
+<h3>Let&#8217;s diagnosis fever</h3>
+<p>With the types for the two representation of temperature in place, our next step is to check the values and find out whether the concerned person is having fever or not. You can do this in f# by using <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Pattern_Matching_Basics">pattern matching</a></p>
+<div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=HasFever.fs'></script>
+<noscript><pre><code>let hasFever temperature =
+  match temperature with 
+  | Celsius value -&gt; (value &gt; 37.5)
+  | Fahrenheit value -&gt; (value &gt; 99.0)</code></pre></noscript></div>
+
+
+<p>f# automatically takes care of decomposing our data into appropriate data structure and all we need to concentrate on our business logic. For a beginner the syntax might look intimidating at first sight but if we use it quite some time you will fell in love with f#</p> 
+
+<h4>How can I call this function?</h4>
+<div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=CallingHasFever.fs'></script>
+<noscript><pre><code>hasFever (Celsius 10.5)
+hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
+
+
+<p>Based on the type we are passing in the hasFever function, the corresponding pattern will be matched then the value is decomposed and verified with their respective numbers. Code is prettier, isn&#8217;t it ?</p>
+
+<h3>What&#8217;s the big deal in it?</h3>
+<p>You might think apart from reducing the lines of code what else f# adds ?. Great! I was exactly like you when I first come across it. Later I&#8217;ve found out it how it can help us to save some hairs ;-) </p>
+
+<p>Let us assume that we forget to handle Fahrenheit in hasFever function</p>
+    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=CompilerError.fs'></script>
+<noscript><pre><code>let hasFever temperature =
+  match temperature with 
+  | Celsius value -&gt; (value &gt; 37.5)</code></pre></noscript></div>
+
+<p>Typically in C# if we missed to handle one of the cases like this we won&#8217;t be getting any compiler error and It&#8217;d crash the application in the runtime. But in f#, the above code would result in following compiler error</p>
+<pre>warning FS0025: Incomplete pattern matches on this expression, For example, the value 'Fahrenheit (_)' may indicate a case not covered by the pattern(s)</pre>
+<p>So, if you make any logical error like this is your f# code, compiler will show compile time errors and prevents you from building buggy code!</p>
+
+<h3>Summary</h3>
+<p>If you follow the idioms of f#, it will let you write a better code and even if do some logical error the compiler will come as a rescue!. You can check the source code live in <a href="http://www.tryfsharp.org/create/tamizhvendan/fever_diagnosis.fsx">tryfsharp</a> </p>
 </div>
-
 		
 		
 	</div>
@@ -431,244 +267,59 @@ $(&quot;#btnAus&quot;).click(function () {
   
 
 
-<time datetime="2011-02-07T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 7<sup>th</sup>, 2011</time></div>
+<time datetime="2012-06-01T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jun 1<sup>st</sup>, 2012</time></div>
 		<div class="tags">
 
 
-	<a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/jquery/'>jquery</a>
+	<a class='category' href='/blog/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/blog/categories/node-dot-js/'>node.js</a>
 
 
 </div>
 		
-			<span class="comments"><a href="/blog/2011/02/07/creating-webpage-like-igoogle-using/#disqus_thread">Comments</a></span>
+			<span class="comments"><a href="/blog/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/#disqus_thread">Comments</a></span>
 		
 	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/02/07/creating-webpage-like-igoogle-using/" itemprop="url">Creating a Webpage Like iGoogle Using jQuery</a></h1>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/" itemprop="url">A Hybrid Application Using ASP.NET MVC3 and Node.js</a></h1>
 	<div class="entry-content" itemprop="articleBody">
 		<div class='post'>
     <div>
-        <p>Would you like to create a webpage like <a href="http://www.igoogleportal.com/portal/index.php">iGoogle</a>??
-        This blog post is for you!!</p>
+        Each and every technology has its pros and cons and there is
+        <a href="http://people.eecs.ku.edu/~saiedian/Teaching/Sp08/816/Papers/Background-Papers/no-silver-bullet.pdf">no silver bullet!</a><br />
 
-        <p>I hope you are aware of the following stuffs which are the building blocks of this blog post.</p>
-        <ol>
-            <li>
-                <a href="http://www.amazon.com/Head-First-HTML-CSS-XHTML/dp/059610197X?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">HTML </a>
-            </li>
-            <li><a href="http://www.amazon.com/CSS-Missing-David-Sawyer-McFarland/dp/0596802447?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">CSS</a><img alt="" border="0" height="1" src="http://www.assoc-amazon.com/e/ir?t=bor0b-20&amp;l=btl&amp;camp=213689&amp;creative=392969&amp;o=1&amp;a=0596802447" style="border: none !important; margin: 0px !important; padding: 0px !important;" width="1" /></li>
-            <li>
-                <a href="http://www.amazon.com/jQuery-Novice-Ninja-Earle-Castledine/dp/0980576857?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">jQuery</a><img alt="" border="0" height="1" src="http://www.assoc-amazon.com/e/ir?t=bor0b-20&amp;l=btl&amp;camp=213689&amp;creative=392969&amp;o=1&amp;a=0980576857" style="border: none !important; margin: 0px !important; padding: 0px !important;" width="1" />
-            </li>
-        </ol>
-       
-        <p>Let us design the page using “Divide and Conquer” Approach. The tasks involved are</p>
-        <ol>
-            <li>Defining the webpage layout using HTML</li>
-            <li>Style the webpage and Widgets(Sample iGoogle Mock up Widgets) using CSS</li>
-            <li>Add the drag and drop functionality using jQuery</li>
-        </ol>     
-        
-        <h3>Task 1: Defining the webpage layout using HTML</h3>
-        <p>The HTML is very straight forward. Entire webpage contents have been placed inside a div with the id “iGoogle”. Then each column (iGoogle uses three column layout) is defined by a div element with the id representing the corresponding columns. These columns act as a placeholder for Widgets. Each widget defined as a div element which contains two div elements inside it which represents the header and the body of the Widgets<br />
-        </p>
-        <div><script src='https://gist.github.com/8cc8e2868203484754b1.js'></script>
-<noscript><pre><code>&lt;div id=&quot;column1&quot;&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader PurpleWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 1&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 2&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 3&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-&lt;/div&gt;
-
-&lt;div id=&quot;column2&quot;&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 4&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-&lt;/div&gt;
-
-&lt;div id=&quot;column3&quot;&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 5&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 6&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-&lt;/div&gt;</code></pre></noscript></div>
-
-
-        <h3>Task 2: Style the webpage and widgets</h3>
-        <p>Now we have the HTML Layout ready. Our next task would be applying style to the webpage and the widgets using CSS.</p>
-        <div><script src='https://gist.github.com/e841e3643400836bd57f.js'></script>
-<noscript><pre><code>/* Entire Page has been divided into 3Columns. Note: iGoogle Page has 3 columns */
-#column1, #column2, #column3
-{
-    display: inline-block;
-    float: left;
-    width: 33%;
-    height: auto;
-    text-align: center;
-    padding-bottom: 100px;
-}
-/* Css Classes for Entire Widget */
-.Widget
-{
-    margin: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 95%;
-    min-height: 200px;
-    border: 1px solid Black;
-}
-/* Css Classes for Widget Headers */
-.WidgetHeader
-{
-    height: 25px;
-    cursor: move;
-    text-align: left;
-    padding-left: 3px;
-    color: White;
-    font-weight: bold;
-}
-.GreenWidgetHeader
-{
-    background-color: Green;
-}
-.GrayWidgetHeader
-{
-    background-color: Gray;
-}
-.PurpleWidgetHeader
-{
-    background-color: Purple;
-}
-/* Css Classes for Widget Body */
-.WidgetBody
-{
-    min-height: 175px;
-    height: auto;
-    background: #F0F0F0;
-}
-/* Placeholder while dragging the widget using jQuery*/
-.ui-sortable-placeholder
-{
-    border: 1px dashed black;
-    visibility: visible !important;
-    height: 50px !important;
-}
-.ui-sortable-placeholder *
-{
-    visibility: hidden;
-}
-.footer
-{
-    clear: both;
-    display: block;
-    position: absolute;
-    color: Green;
-    bottom: 5px;
-    right: 5px;
-}</code></pre></noscript></div>
-
-
-        <h3>Task 3:  Add the drag and drop functionality using jQuery</h3>
-        <p>jQuery offers a rich set of functionality which can be implemented by less lines of coding. With jQuery you can “write less and do more”.  All you need to refer the jQuery API files in your javascript and make use of the functionality it provides. To implement the drag and drop functionality we need the following jQuery library files which can be downloaded from the locations mentioned in the “src” attribute</p>
-        <div><script src='https://gist.github.com/afd522c53a67db5e497b.js'></script>
-<noscript><pre><code>&lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.core.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.widget.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.mouse.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.sortable.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></pre></noscript></div>
-
-
-	<p>Now we have the necessary jQuery libraries to implement the drag and drop functionality and all set for implementing the drag and drop support. Here is the code part which implements the drag and drop functionality.</p>
-
-        <div><script src='https://gist.github.com/20061eca688b51e73df8.js'></script>
-<noscript><pre><code>$(document).ready(function () {        
-    $(&quot;#column1,#column2,#column3&quot;).sortable({
-        connectWith: &quot;#column1,#column2,#column3&quot;,
-        handle: '.WidgetHeader', opacity: 0.6
-    }); 
-    
-    $(&quot;#column1,#column2,#column3&quot;).disableSelection();
-});</code></pre></noscript></div>
-
-
-    <p>Yes!! That’s it!! Just three function calls and seven lines of coding!! Now you can drag and drop the widgets and play!!  </p>
-
-        <p>Well, let me explain the jQuery code</p>
-
-        <p>The jQuery UI Sortable plugin makes selected elements sortable by dragging with the mouse. Here in our case the selected elements refer to “column1, column2, colum3” which are the placeholders of the widgets. This sortable plugin has many optional arguments which define how drag and drop should be done. </p>
-        <p>
-            “connectWith” option allows drag and drop between the columns. i.e., Elements (Widgets in our case) inside the column1 or column2 or column3 can be dragged and dropped on column1 or column2 or column3. 
-        </p>
-        <p>“handle” option specifies the element which can be used to drag the widget between the columns. “opacity” option defines the transparency of the widget while dragging.  The “disableSelection()” function disable text selection in a widget which often occur while dragging a mouse across a widget. Reference: http://docs.jquery.com/UI/Sortable</p>
-
-        <h5>Summary:</h5>
-        To keep the blog post simple, I didn’t implement the persistence of the widget positions. So widgets should not retain its positions when you refresh the page. You can see the source code of this blog post <a href="https://gist.github.com/3632472">here</a>
+        <br />If you would ask me what you have learnt in your profession so far, I would say the above line as the first one. One technology / platform / language is good at
+        solving one kind of problems and bad at solving other kind of problems. The key is leveraging existing <em>platforms</em> with <em>languages</em> targeted at
+        specific problems and applications to solve the business problems in hand.<br /><br />Three months ago I
+        have come across <a href="http://www.infoq.com/presentations/10-Ways-to-Better-Code-Neal-Ford">an excellent presentation</a> from Neil Ford “10 ways to improve your
+        code”. As a 8th way he talks about “Polyglot Programming”. Its about picking the right tool to do the right job. I am inspired by this presentation and started
+        exploring the “right tools”.<br /><br />In the pursuit of “Right tools”, I’ve come across the young awesome framework <a href="http://nodejs.org/">node.js</a> which is
+        really cool and perfect for real-time applications. On the other hand frameworks like <a href="http://www.asp.net/mvc">ASP.NET MVC3</a> is not meant for creating real-time
+        applications and they address different set of other problems. <br /><br />In this blog post, I going to share my recent exploration on leveraging node.js in an
+        ASP.NET MVC3 application using a “Chat” feature. Though we can achieve it using <a href="http://signalr.net/">SignalR</a>, I’ve preferred node.js as it is a right tool
+        for the chat feature IMO also I wanted to get my hands dirty in creating a hybrid application.<br /><strong><br /></strong><br /><strong>The Node.js Part</strong>
+        <br /><br /><a href="http://lh5.ggpht.com/-HLh-ldizDJ0/T8kHC3Ao5_I/AAAAAAAAAZA/vI0DypFIKh8/s1600-h/image%25255B4%25255D.png">
+                        <img src="http://lh6.ggpht.com/-rcbRWOlpeBc/T8kHHp32UJI/AAAAAAAAAZI/ypOCgUHMrN0/image_thumb%25255B2%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="589" />
+                    </a><br /><br />The chat server that we are going to use in the MVC3 application has been created using <a href="http://socket.io/">socket.io</a> which makes web-socket programming insanely easy!<br />Its listen for three events<br /><ul><li><em>join</em> – It will be triggered when a new user joined the chat and it broadcast the user name to all the connected users  </li><li><em>message</em> – It willed be triggered when an user send a message in the chat application and broadcast it to the other users  </li><li><em>disconnect</em>– It willed be triggered when an user closes the chat or closes the browser </li></ul>That’s it bang!<br /><strong><br /></strong><br /><strong>The ASP.NET MVC3 side</strong><br /><br /><a href="http://lh6.ggpht.com/-pQEJCXkjOuw/T8kHJFR0zVI/AAAAAAAAAZQ/FTqswQ8XvtY/s1600-h/image%25255B9%25255D.png"><img alt="image" border="0" height="197" src="http://lh6.ggpht.com/-TMmsX9z4rRc/T8kHLTRTuYI/AAAAAAAAAZY/MQurv3YzYIw/image_thumb%25255B5%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="387" /></a><br /><br />The controller side of Chat just renders the “Index view”. The index view has the following javascript code, and it completes the client side part of the chat application<br /><br /><a href="http://lh5.ggpht.com/-QnLwJvxMIR8/T8kHMoTx1qI/AAAAAAAAAZg/VYhVayPULm4/s1600-h/image%25255B14%25255D.png"><img alt="image" border="0" height="403" src="http://lh5.ggpht.com/-XxmqzAqX1i8/T8kHQ1J07tI/AAAAAAAAAZo/sMw8RevtD9k/image_thumb%25255B8%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="530" /></a><br /><strong><br /></strong><br />
+        <strong>Chat feature in Action</strong><br /><br />
+        <a href="http://lh3.ggpht.com/-OoM7_UDFHzQ/T8kHSZP8R8I/AAAAAAAAAZw/QcXNptcqe1I/s1600-h/image%25255B17%25255D.png">
+            <img src="http://lh5.ggpht.com/-B4IkFTFavZI/T8kHVZP234I/AAAAAAAAAZ4/IGC3r-10yBA/image_thumb%25255B9%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh3.ggpht.com/-xWwrw06nVTk/T8kHW9r2X1I/AAAAAAAAAaA/-g8XAZDm-Qg/s1600-h/image%25255B21%25255D.png">
+                <img src="http://lh3.ggpht.com/-F7UPYcQXT14/T8kHZfq0W8I/AAAAAAAAAaI/hLP9g4s8QGA/image_thumb%25255B11%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-OI01pFQYBEs/T8kHaT3_bmI/AAAAAAAAAaQ/GM-QdsQzTVU/s1600-h/image%25255B25%25255D.png">
+            <img src="http://lh4.ggpht.com/-VIPYKbYG-rs/T8kHbgnYkBI/AAAAAAAAAaY/24TJhDEHqA8/image_thumb%25255B13%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-_jFs2OzmBx0/T8kHczZpZBI/AAAAAAAAAag/-FMnxb_cD9w/s1600-h/image%25255B29%25255D.png">
+            <img alt="image" src="http://lh4.ggpht.com/-KwvpW47kGxI/T8kHeUKp3BI/AAAAAAAAAao/GP4naqkNkvc/image_thumb%25255B15%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh4.ggpht.com/-YNLo_UVoZf0/T8kHfwe76BI/AAAAAAAAAaw/dq8JfcSfYRE/s1600-h/image%25255B33%25255D.png">
+            <img alt="image" src="http://lh3.ggpht.com/-tcpQUHyW58I/T8kHhrerqxI/AAAAAAAAAa4/ZEJOJK8swnk/image_thumb%25255B17%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-j4AUmiQEA5k/T8kHioICVWI/AAAAAAAAAbA/ZAuJNXh4oZ4/s1600-h/image%25255B37%25255D.png">
+            <img src="http://lh3.ggpht.com/-KoM6ka9qFxc/T8kHkUP0AGI/AAAAAAAAAbI/ZuGQ-d8KKS8/image_thumb%25255B19%25255D.png?imgmax=800" />
+        </a></div><strong><br /></strong><br /><strong>Summary</strong><br /><br />The objective behind this blog post is just to share the knowledge that I’ve gained in my recent exploration and its just a proof of concept of how to leverage node.js in an MVC3 application. The bottom-line is “Identify and pick the right tool to do the right job”. If you want to play with the source code, don’t forget to clone <a href="https://github.com/tamizhvendan/a-hybrid-app">the repository </a>
     </div>
 </div>
-
 		
 		
 	</div>
@@ -690,233 +341,29 @@ $(&quot;#btnAus&quot;).click(function () {
   
 
 
-<time datetime="2011-01-07T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jan 7<sup>th</sup>, 2011</time></div>
+<time datetime="2012-05-19T00:00:00+05:30" data-updated="true" itemprop="datePublished">May 19<sup>th</sup>, 2012</time></div>
 		<div class="tags">
 
 
-	<a class='category' href='/blog/categories/programming/'>programming</a>
+	<a class='category' href='/blog/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/blog/categories/node-dot-js/'>node.js</a>
 
 
 </div>
 		
-			<span class="comments"><a href="/blog/2011/01/07/programmatic-solution-for-real-time/#disqus_thread">Comments</a></span>
+			<span class="comments"><a href="/blog/blog/2012/05/19/jade-visualizer-using-nodejs-and/#disqus_thread">Comments</a></span>
 		
 	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/01/07/programmatic-solution-for-real-time/" itemprop="url">Programmatic Solution for a Real Time Numerology Belief</a></h1>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2012/05/19/jade-visualizer-using-nodejs-and/" itemprop="url">Jade Visualizer Using Node.js and Socket.io</a></h1>
 	<div class="entry-content" itemprop="articleBody">
 		<div class='post'>
-<div>
-  
-  <p>Three years back, I got a call from one of my friend. During the call he conveyed that he bought a new motor bike and asked my help to get the registration number for his motorbike. You may ponder how I am going to help to him in this regard.</p>
-
-  <p>Actually he was looking for an exclusive four digit registration number for his motor vehicle based on numerology with the following conditions.</p>
-  <ol>
-  <li>The recursive sum of all the four digits should be 1.</li>
-  <li>Four digits of the number should be in ascending order. i.e., First number should be less than second, second less than third and third less than fourth.</li>
-  </ol>
-
-    <p>To be honest, I was puzzled when he stated the above conditions. I asked him to give some time to find out those exclusive numbers. When I thought of this problem, I felt why didn’t automate this task by writing a program!! Hence this blog post!!</p>
-    <p>I usually do coding by divide and conquer approach. i.e., Split the entire problem into small logical units, and then integrate those small logical units to create the final one. Here in this case the following are the logical units.
-    </p>
-    <ol>
-    <li>Unit to find those exclusive vehicle registration numbers.</li>
-    <li>Unit to find the recursive sum of a number.</li>
-    <li>Unit to check whether the digits of the given number are in ascending order are not.</li>
-  </ol>
-
-    <p>When you look sharper at the logical unit 2, it can be divided further into a small logical unit.</p>
-    <ol>
-    <li>Unit to find those exclusive vehicle registration numbers.</li>
-    <li>Unit to find the recursive sum of digits of a number</li>
-    <li>Unit to find the sum of digits of a number</li>
-    <li>Unit to check whether the digits of the given number are in ascending order are not.</li>
-  </ol>
-
-    <p>That’s it. All things were nicely setup to create a program which solves my friend’s vehicle registration number numerology problem. Still one thing is missing the logical flow of program. Before sitting in front of the system and start coding, It is highly recommended to manually work out the program logic in a paper. If you follow this approach, you can develop the program with free of bugs :P So What is the logic to solve this problem ??</p>
-
-    <p>Here is the logic!!</p>
-    <ol>
-    <li>Traverse from 1000 to 9999</li>
-    <li>For each no check whether the digits are in ascending order.If the digits are in ascending order, then check whether the recursive sum of the digits of the number is 1 or not. If the recursive sum is 1, My friend got the solution for his problem.</li>
-  <div><script src='https://gist.github.com/4f1344a3c43e2b9fbd93.js'></script>
-<noscript><pre><code>using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace VehicleRegNo
-{
-    class Program
-    {
-        private static int[] GetExclusiveVehicleRegNos()
-        {
-            List exclusiveVehicleRegNosList = new List();
-
-            // Range of all four digit numbers is 1000 to 9999
-            int count = 0;
-            for (int i = 1000; i &lt; 9999; i++)
-            {
-                if (IsDigitsInAscendingOrder(i))
-                {
-                    if (FindRecursiveSumOfDigits(i) == 1)
-                    {
-                        exclusiveVehicleRegNosList.Add(i);
-                        count++;
-                    }
-
-                }
-            }
-
-            return exclusiveVehicleRegNosList.ToArray();
-        }
-
-        private static int FindRecursiveSumOfDigits(int number)
-        {
-            // Find recursive sum till the sum become a single digit.
-            // Eg:- 9999 =&gt; 9 + 9 + 9 + 9 = 36 =&gt; 3 + 6 = 9
-            int sum = FindSumOfDigits(number);
-            while (sum &gt; 9)
-            {
-                sum = FindSumOfDigits(sum);
-            }
-            return sum;
-        }
-
-        private static int FindSumOfDigits(int number)
-        {
-            int sum = 0;
-            while (number &gt; 0)
-            {
-                sum += (number % 10);
-                number /= 10;
-            }
-            return sum;
-        }
-
-        private static bool IsDigitsInAscendingOrder(int number)
-        {
-            bool isDigitsInAscendingOrder = false;
-
-            // Getting the first digit
-            int firstDigit = number / 1000;
-
-            // Getting the second digit
-            number %= 1000;
-            int secondDigit = number / 100;
-
-            // Getting the third digit
-            number %= 100;
-            int thirdDigit = number / 10;
-
-            int fourthDigit = number % 10;
-
-            if (firstDigit &lt; secondDigit &amp;&amp; secondDigit &lt; thirdDigit 
-                                            &amp;&amp; thirdDigit &lt; fourthDigit)
-            {
-                isDigitsInAscendingOrder = true;
-            }
-
-            return isDigitsInAscendingOrder;
-        }
-
-        static void Main(string[] args)
-        {
-            int[] exclusiveVehicleRegNos = GetExclusiveVehicleRegNos();
-            string t = &quot;&quot;;
-            for (int i = 0; i &lt; exclusiveVehicleRegNos.Length; i++)
-            {
-                // Printing those exclusive nos                
-                Console.WriteLine(exclusiveVehicleRegNos[i]);
-            }
-
-            /********** Output *********************
-            1234
-            1279
-            1369
-            1378
-            1459
-            1468
-            1567
-            2359
-            2368
-            2458
-            2467
-            3457
-            4789
-            5689
-            ****************************************/
-        }
-
-    }
-}</code></pre></noscript></div>
-
+    <p><strong>Hurrah! Finally I made it</strong></p> <blockquote> 
+    <p><em>“None of my inventions came by accident. I see a worthwhile need to be met and I make trial after trial until it comes. 
+        What it boils down to is one per cent inspiration and ninety-nine per cent perspiration”&nbsp; - Thomas Alva Edison</em></p></blockquote> 
+    <p>Today I’m very glad and excited to announce my little contribution to the open source community called 
+    <a href="http://jade-visualizer.herokuapp.com/">“Jade-Visualizer”</a> a web-based visualizer/translator which targets the beginners 
+    of <a href="http://jade-lang.com/">Jade</a> (A widely used <a href="http://nodejs.org">Node.js</a> view engine) to learn it effectively. </p> 
+    <p>Its the inspiration from good bloggers, kindled me to <a href="/blog/blog/2011/01/05/thank-god/">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133"></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122"></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96"></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li></ul> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li></ul> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p>
 </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-01-05T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jan 5<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/others/'>others</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/01/05/thank-god/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/01/05/thank-god/" itemprop="url">Thank God !!</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>I do google whenever had difficulties while coding (Typical style of Programming
-        isn’t it ???)</p>
-        <p>During those never ending google searches I usually land up in the blog posts which
-        salvage my difficulties.</p>
-        
-        <p>I wonder what would be the life of programmers if there is no such blogs exists!!</p>
-        
-        <p>Fine.. I don’t wanna write an essay describing my first blog. In simple words, I
-        just wanted to put all my knowledge gained under single roof and share with the
-        developers across the globe.</p>
-        <p>So, Here We Go !!</p>
-        <div><script src='https://gist.github.com/b9256c6eef44561dc8b5.js'></script>
-<noscript><pre><code>namespace Earth.Developers
-{
-    class Tamizhvendan
-    {
-        public static void Main(string[] args)
-        {
-            System.Console.WriteLine(&quot;Hearty Thanks to all blog writers &quot; + 
-                                        &quot;across the globe who inspired me to write this blog !!&quot;);
-        }
-    }
-}</code></pre></noscript></div>
-
-    </div>
-</div>
-
 		
 		
 	</div>
@@ -929,7 +376,9 @@ namespace VehicleRegNo
         <a href="3" class="prev">Prev</a>
     
     
-    <div class="center"><a href="/blog/archives">Blog Archives</a></div>
+        <a href="5" class="next">Next</a>
+    
+    <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
 </nav></div>
 			</div>
 			<footer id="footer" class="inner">Copyright &copy; 2015

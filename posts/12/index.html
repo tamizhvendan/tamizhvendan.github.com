@@ -1,0 +1,682 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Feb 7th, 2011 javascript, jquery Comments Creating a Webpage Like iGoogle Using jQuery Would you like to create a webpage like iGoogle?? This blog &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://www.p3programmer.com/blog/posts/12/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/blog/favicon.png" rel="shortcut icon">
+	<link href="/blog/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/blog/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/blog/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/blog/archives">Archives</a></li>
+    <li><a href="/blog/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blogblog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blogblog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blogblog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blogblog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blogblog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blogblog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blogblog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blogblog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blogblog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blogblog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blogblog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blogblog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blogblog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blogblog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blogblog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blogblog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blogblog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blogblog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blogblog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blogblog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blogblog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blogblog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blogblog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blogblog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner">
+<div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-07T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 7<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/blog/categories/jquery/'>jquery</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/02/07/creating-webpage-like-igoogle-using/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/02/07/creating-webpage-like-igoogle-using/" itemprop="url">Creating a Webpage Like iGoogle Using jQuery</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>Would you like to create a webpage like <a href="http://www.igoogleportal.com/portal/index.php">iGoogle</a>??
+        This blog post is for you!!</p>
+
+        <p>I hope you are aware of the following stuffs which are the building blocks of this blog post.</p>
+        <ol>
+            <li>
+                <a href="http://www.amazon.com/Head-First-HTML-CSS-XHTML/dp/059610197X?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">HTML </a>
+            </li>
+            <li><a href="http://www.amazon.com/CSS-Missing-David-Sawyer-McFarland/dp/0596802447?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">CSS</a><img alt="" border="0" height="1" src="http://www.assoc-amazon.com/e/ir?t=bor0b-20&amp;l=btl&amp;camp=213689&amp;creative=392969&amp;o=1&amp;a=0596802447" style="border: none !important; margin: 0px !important; padding: 0px !important;" width="1" /></li>
+            <li>
+                <a href="http://www.amazon.com/jQuery-Novice-Ninja-Earle-Castledine/dp/0980576857?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">jQuery</a><img alt="" border="0" height="1" src="http://www.assoc-amazon.com/e/ir?t=bor0b-20&amp;l=btl&amp;camp=213689&amp;creative=392969&amp;o=1&amp;a=0980576857" style="border: none !important; margin: 0px !important; padding: 0px !important;" width="1" />
+            </li>
+        </ol>
+       
+        <p>Let us design the page using “Divide and Conquer” Approach. The tasks involved are</p>
+        <ol>
+            <li>Defining the webpage layout using HTML</li>
+            <li>Style the webpage and Widgets(Sample iGoogle Mock up Widgets) using CSS</li>
+            <li>Add the drag and drop functionality using jQuery</li>
+        </ol>     
+        
+        <h3>Task 1: Defining the webpage layout using HTML</h3>
+        <p>The HTML is very straight forward. Entire webpage contents have been placed inside a div with the id “iGoogle”. Then each column (iGoogle uses three column layout) is defined by a div element with the id representing the corresponding columns. These columns act as a placeholder for Widgets. Each widget defined as a div element which contains two div elements inside it which represents the header and the body of the Widgets<br />
+        </p>
+        <div><script src='https://gist.github.com/8cc8e2868203484754b1.js'></script>
+<noscript><pre><code>&lt;div id=&quot;column1&quot;&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader PurpleWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 1&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 2&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 3&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;column2&quot;&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 4&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;column3&quot;&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 5&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 6&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+
+
+        <h3>Task 2: Style the webpage and widgets</h3>
+        <p>Now we have the HTML Layout ready. Our next task would be applying style to the webpage and the widgets using CSS.</p>
+        <div><script src='https://gist.github.com/e841e3643400836bd57f.js'></script>
+<noscript><pre><code>/* Entire Page has been divided into 3Columns. Note: iGoogle Page has 3 columns */
+#column1, #column2, #column3
+{
+    display: inline-block;
+    float: left;
+    width: 33%;
+    height: auto;
+    text-align: center;
+    padding-bottom: 100px;
+}
+/* Css Classes for Entire Widget */
+.Widget
+{
+    margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    min-height: 200px;
+    border: 1px solid Black;
+}
+/* Css Classes for Widget Headers */
+.WidgetHeader
+{
+    height: 25px;
+    cursor: move;
+    text-align: left;
+    padding-left: 3px;
+    color: White;
+    font-weight: bold;
+}
+.GreenWidgetHeader
+{
+    background-color: Green;
+}
+.GrayWidgetHeader
+{
+    background-color: Gray;
+}
+.PurpleWidgetHeader
+{
+    background-color: Purple;
+}
+/* Css Classes for Widget Body */
+.WidgetBody
+{
+    min-height: 175px;
+    height: auto;
+    background: #F0F0F0;
+}
+/* Placeholder while dragging the widget using jQuery*/
+.ui-sortable-placeholder
+{
+    border: 1px dashed black;
+    visibility: visible !important;
+    height: 50px !important;
+}
+.ui-sortable-placeholder *
+{
+    visibility: hidden;
+}
+.footer
+{
+    clear: both;
+    display: block;
+    position: absolute;
+    color: Green;
+    bottom: 5px;
+    right: 5px;
+}</code></pre></noscript></div>
+
+
+        <h3>Task 3:  Add the drag and drop functionality using jQuery</h3>
+        <p>jQuery offers a rich set of functionality which can be implemented by less lines of coding. With jQuery you can “write less and do more”.  All you need to refer the jQuery API files in your javascript and make use of the functionality it provides. To implement the drag and drop functionality we need the following jQuery library files which can be downloaded from the locations mentioned in the “src” attribute</p>
+        <div><script src='https://gist.github.com/afd522c53a67db5e497b.js'></script>
+<noscript><pre><code>&lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.core.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.widget.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.mouse.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.sortable.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></pre></noscript></div>
+
+
+	<p>Now we have the necessary jQuery libraries to implement the drag and drop functionality and all set for implementing the drag and drop support. Here is the code part which implements the drag and drop functionality.</p>
+
+        <div><script src='https://gist.github.com/20061eca688b51e73df8.js'></script>
+<noscript><pre><code>$(document).ready(function () {        
+    $(&quot;#column1,#column2,#column3&quot;).sortable({
+        connectWith: &quot;#column1,#column2,#column3&quot;,
+        handle: '.WidgetHeader', opacity: 0.6
+    }); 
+    
+    $(&quot;#column1,#column2,#column3&quot;).disableSelection();
+});</code></pre></noscript></div>
+
+
+    <p>Yes!! That’s it!! Just three function calls and seven lines of coding!! Now you can drag and drop the widgets and play!!  </p>
+
+        <p>Well, let me explain the jQuery code</p>
+
+        <p>The jQuery UI Sortable plugin makes selected elements sortable by dragging with the mouse. Here in our case the selected elements refer to “column1, column2, colum3” which are the placeholders of the widgets. This sortable plugin has many optional arguments which define how drag and drop should be done. </p>
+        <p>
+            “connectWith” option allows drag and drop between the columns. i.e., Elements (Widgets in our case) inside the column1 or column2 or column3 can be dragged and dropped on column1 or column2 or column3. 
+        </p>
+        <p>“handle” option specifies the element which can be used to drag the widget between the columns. “opacity” option defines the transparency of the widget while dragging.  The “disableSelection()” function disable text selection in a widget which often occur while dragging a mouse across a widget. Reference: http://docs.jquery.com/UI/Sortable</p>
+
+        <h5>Summary:</h5>
+        To keep the blog post simple, I didn’t implement the persistence of the widget positions. So widgets should not retain its positions when you refresh the page. You can see the source code of this blog post <a href="https://gist.github.com/3632472">here</a>
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-07T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jan 7<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/programming/'>programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/01/07/programmatic-solution-for-real-time/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/01/07/programmatic-solution-for-real-time/" itemprop="url">Programmatic Solution for a Real Time Numerology Belief</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+<div>
+  
+  <p>Three years back, I got a call from one of my friend. During the call he conveyed that he bought a new motor bike and asked my help to get the registration number for his motorbike. You may ponder how I am going to help to him in this regard.</p>
+
+  <p>Actually he was looking for an exclusive four digit registration number for his motor vehicle based on numerology with the following conditions.</p>
+  <ol>
+  <li>The recursive sum of all the four digits should be 1.</li>
+  <li>Four digits of the number should be in ascending order. i.e., First number should be less than second, second less than third and third less than fourth.</li>
+  </ol>
+
+    <p>To be honest, I was puzzled when he stated the above conditions. I asked him to give some time to find out those exclusive numbers. When I thought of this problem, I felt why didn’t automate this task by writing a program!! Hence this blog post!!</p>
+    <p>I usually do coding by divide and conquer approach. i.e., Split the entire problem into small logical units, and then integrate those small logical units to create the final one. Here in this case the following are the logical units.
+    </p>
+    <ol>
+    <li>Unit to find those exclusive vehicle registration numbers.</li>
+    <li>Unit to find the recursive sum of a number.</li>
+    <li>Unit to check whether the digits of the given number are in ascending order are not.</li>
+  </ol>
+
+    <p>When you look sharper at the logical unit 2, it can be divided further into a small logical unit.</p>
+    <ol>
+    <li>Unit to find those exclusive vehicle registration numbers.</li>
+    <li>Unit to find the recursive sum of digits of a number</li>
+    <li>Unit to find the sum of digits of a number</li>
+    <li>Unit to check whether the digits of the given number are in ascending order are not.</li>
+  </ol>
+
+    <p>That’s it. All things were nicely setup to create a program which solves my friend’s vehicle registration number numerology problem. Still one thing is missing the logical flow of program. Before sitting in front of the system and start coding, It is highly recommended to manually work out the program logic in a paper. If you follow this approach, you can develop the program with free of bugs :P So What is the logic to solve this problem ??</p>
+
+    <p>Here is the logic!!</p>
+    <ol>
+    <li>Traverse from 1000 to 9999</li>
+    <li>For each no check whether the digits are in ascending order.If the digits are in ascending order, then check whether the recursive sum of the digits of the number is 1 or not. If the recursive sum is 1, My friend got the solution for his problem.</li>
+  <div><script src='https://gist.github.com/4f1344a3c43e2b9fbd93.js'></script>
+<noscript><pre><code>using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace VehicleRegNo
+{
+    class Program
+    {
+        private static int[] GetExclusiveVehicleRegNos()
+        {
+            List exclusiveVehicleRegNosList = new List();
+
+            // Range of all four digit numbers is 1000 to 9999
+            int count = 0;
+            for (int i = 1000; i &lt; 9999; i++)
+            {
+                if (IsDigitsInAscendingOrder(i))
+                {
+                    if (FindRecursiveSumOfDigits(i) == 1)
+                    {
+                        exclusiveVehicleRegNosList.Add(i);
+                        count++;
+                    }
+
+                }
+            }
+
+            return exclusiveVehicleRegNosList.ToArray();
+        }
+
+        private static int FindRecursiveSumOfDigits(int number)
+        {
+            // Find recursive sum till the sum become a single digit.
+            // Eg:- 9999 =&gt; 9 + 9 + 9 + 9 = 36 =&gt; 3 + 6 = 9
+            int sum = FindSumOfDigits(number);
+            while (sum &gt; 9)
+            {
+                sum = FindSumOfDigits(sum);
+            }
+            return sum;
+        }
+
+        private static int FindSumOfDigits(int number)
+        {
+            int sum = 0;
+            while (number &gt; 0)
+            {
+                sum += (number % 10);
+                number /= 10;
+            }
+            return sum;
+        }
+
+        private static bool IsDigitsInAscendingOrder(int number)
+        {
+            bool isDigitsInAscendingOrder = false;
+
+            // Getting the first digit
+            int firstDigit = number / 1000;
+
+            // Getting the second digit
+            number %= 1000;
+            int secondDigit = number / 100;
+
+            // Getting the third digit
+            number %= 100;
+            int thirdDigit = number / 10;
+
+            int fourthDigit = number % 10;
+
+            if (firstDigit &lt; secondDigit &amp;&amp; secondDigit &lt; thirdDigit 
+                                            &amp;&amp; thirdDigit &lt; fourthDigit)
+            {
+                isDigitsInAscendingOrder = true;
+            }
+
+            return isDigitsInAscendingOrder;
+        }
+
+        static void Main(string[] args)
+        {
+            int[] exclusiveVehicleRegNos = GetExclusiveVehicleRegNos();
+            string t = &quot;&quot;;
+            for (int i = 0; i &lt; exclusiveVehicleRegNos.Length; i++)
+            {
+                // Printing those exclusive nos                
+                Console.WriteLine(exclusiveVehicleRegNos[i]);
+            }
+
+            /********** Output *********************
+            1234
+            1279
+            1369
+            1378
+            1459
+            1468
+            1567
+            2359
+            2368
+            2458
+            2467
+            3457
+            4789
+            5689
+            ****************************************/
+        }
+
+    }
+}</code></pre></noscript></div>
+
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-05T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jan 5<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/blog/categories/others/'>others</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/blog/2011/01/05/thank-god/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/blog/2011/01/05/thank-god/" itemprop="url">Thank God !!</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>I do google whenever had difficulties while coding (Typical style of Programming
+        isn’t it ???)</p>
+        <p>During those never ending google searches I usually land up in the blog posts which
+        salvage my difficulties.</p>
+        
+        <p>I wonder what would be the life of programmers if there is no such blogs exists!!</p>
+        
+        <p>Fine.. I don’t wanna write an essay describing my first blog. In simple words, I
+        just wanted to put all my knowledge gained under single roof and share with the
+        developers across the globe.</p>
+        <p>So, Here We Go !!</p>
+        <div><script src='https://gist.github.com/b9256c6eef44561dc8b5.js'></script>
+<noscript><pre><code>namespace Earth.Developers
+{
+    class Tamizhvendan
+    {
+        public static void Main(string[] args)
+        {
+            System.Console.WriteLine(&quot;Hearty Thanks to all blog writers &quot; + 
+                                        &quot;across the globe who inspired me to write this blog !!&quot;);
+        }
+    }
+}</code></pre></noscript></div>
+
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
+
+</div>
+<nav id="pagenavi">
+    
+        <a href="11" class="prev">Prev</a>
+    
+    
+    <div class="center"><a href="/blog/blog/archives">Blog Archives</a></div>
+</nav></div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

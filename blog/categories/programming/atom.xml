@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: programming | P3 Programmer]]></title>
-  <link href="http://www.p3programmer.com/blog/categories/programming/atom.xml" rel="self"/>
-  <link href="http://www.p3programmer.com/"/>
-  <updated>2015-02-20T22:56:33+05:30</updated>
-  <id>http://www.p3programmer.com/</id>
+  <link href="http://www.p3programmer.com/blog/blog/categories/programming/atom.xml" rel="self"/>
+  <link href="http://www.p3programmer.com/blog/"/>
+  <updated>2015-02-21T12:00:25+05:30</updated>
+  <id>http://www.p3programmer.com/blog/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[An interesting JSON Model Binding behaviour in ASP.NET MVC3]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/04/13/interesting-json-model-binding/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2012/04/13/interesting-json-model-binding/"/>
     <updated>2012-04-13T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/04/13/interesting-json-model-binding</id>
+    <id>http://www.p3programmer.com/blog/blog/2012/04/13/interesting-json-model-binding</id>
     <content type="html"><![CDATA[<div class="post">
     <h3>Introduction</h3>
     <p>
@@ -132,9 +132,9 @@
   
   <entry>
     <title type="html"><![CDATA[Going Declarative in C#]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/11/22/going-declarative-in-c/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2011/11/22/going-declarative-in-c/"/>
     <updated>2011-11-22T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/11/22/going-declarative-in-c</id>
+    <id>http://www.p3programmer.com/blog/blog/2011/11/22/going-declarative-in-c</id>
     <content type="html"><![CDATA[<div class="post">
 
     <p>
@@ -222,9 +222,9 @@
   
   <entry>
     <title type="html"><![CDATA[Think Before You LINQ]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/11/03/think-before-you-linq/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2011/11/03/think-before-you-linq/"/>
     <updated>2011-11-03T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/11/03/think-before-you-linq</id>
+    <id>http://www.p3programmer.com/blog/blog/2011/11/03/think-before-you-linq</id>
     <content type="html"><![CDATA[<div class="post">
 <div>
 <p>LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness and the power it offers to the code are simply amazing. In general when we think of abstractions, we tend to think towards expressiveness and <a href="http://martinfowler.com/bliki/FluentInterface.html">fluent interfaces</a> and get carried away.</p>
@@ -275,9 +275,9 @@
   
   <entry>
     <title type="html"><![CDATA[Observer Pattern using Delegates V/s Observer Pattern using Events and Delegates]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/07/13/observer-pattern-using-delegates-vs/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2011/07/13/observer-pattern-using-delegates-vs/"/>
     <updated>2011-07-13T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/07/13/observer-pattern-using-delegates-vs</id>
+    <id>http://www.p3programmer.com/blog/blog/2011/07/13/observer-pattern-using-delegates-vs</id>
     <content type="html"><![CDATA[<div class="post">
 	<p>
 		Most of the articles and texts in C# demonstrate the observer pattern using events and delegates. When going through one such text, a thought come across my mind. Why we are going for events when we can easily achieve the multicasting using Delegates alone. After some R&amp;D, I found it out why and hence this blog post.
@@ -500,9 +500,9 @@
   
   <entry>
     <title type="html"><![CDATA[Dynamic Polymorphism - A Real time example]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/04/24/dynamic-polymorphism-real-time-example/"/>
+    <link href="http://www.p3programmer.com/blog/blog/2011/04/24/dynamic-polymorphism-real-time-example/"/>
     <updated>2011-04-24T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/04/24/dynamic-polymorphism-real-time-example</id>
+    <id>http://www.p3programmer.com/blog/blog/2011/04/24/dynamic-polymorphism-real-time-example</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
         <p>
