@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: data access | P3 Programmer]]></title>
-  <link href="http://www.p3programmer.com/blog/blog/categories/data-access/atom.xml" rel="self"/>
-  <link href="http://www.p3programmer.com/blog/"/>
-  <updated>2015-02-21T12:03:56+05:30</updated>
-  <id>http://www.p3programmer.com/blog/</id>
+  <link href="http://www.p3programmer.com/blog/categories/data-access/atom.xml" rel="self"/>
+  <link href="http://www.p3programmer.com/"/>
+  <updated>2015-02-21T12:08:39+05:30</updated>
+  <id>http://www.p3programmer.com/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[EF Code First 4.1  in Console Application]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2011/08/04/ef-code-first-41-in-console-application/"/>
+    <link href="http://www.p3programmer.com/blog/2011/08/04/ef-code-first-41-in-console-application/"/>
     <updated>2011-08-04T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2011/08/04/ef-code-first-41-in-console-application</id>
+    <id>http://www.p3programmer.com/blog/2011/08/04/ef-code-first-41-in-console-application</id>
     <content type="html"><![CDATA[<div class="post">
 	<div>
 		<p>
@@ -132,9 +132,9 @@
   
   <entry>
     <title type="html"><![CDATA[Entity Framework 4.0 As Class Library - Part 2]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2011/04/01/entity-framework-40-as-class-library/"/>
+    <link href="http://www.p3programmer.com/blog/2011/04/01/entity-framework-40-as-class-library/"/>
     <updated>2011-04-01T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2011/04/01/entity-framework-40-as-class-library</id>
+    <id>http://www.p3programmer.com/blog/2011/04/01/entity-framework-40-as-class-library</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
         <p>As the continuation of my previous <a href="/blog/2011/03/25/entity-framework-40-class-library-part/">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
@@ -199,9 +199,9 @@ namespace HrdConsoleApp
   
   <entry>
     <title type="html"><![CDATA[Entity Framework 4.0 - Class library - Part 1]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2011/03/25/entity-framework-40-class-library-part/"/>
+    <link href="http://www.p3programmer.com/blog/2011/03/25/entity-framework-40-class-library-part/"/>
     <updated>2011-03-25T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2011/03/25/entity-framework-40-class-library-part</id>
+    <id>http://www.p3programmer.com/blog/2011/03/25/entity-framework-40-class-library-part</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
         <p>In this blog post we are going to explore how to create the data access layer as a class library using Entity Framework 4.0. By defining the data access layer as class library, you can reuse it across many applications just by adding areference to the class library. In my next blog post, we'll explore how to consume the library in an application. </p>

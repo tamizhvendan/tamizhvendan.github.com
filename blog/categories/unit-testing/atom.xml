@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: unit testing | P3 Programmer]]></title>
-  <link href="http://www.p3programmer.com/blog/blog/categories/unit-testing/atom.xml" rel="self"/>
-  <link href="http://www.p3programmer.com/blog/"/>
-  <updated>2015-02-21T12:03:56+05:30</updated>
-  <id>http://www.p3programmer.com/blog/</id>
+  <link href="http://www.p3programmer.com/blog/categories/unit-testing/atom.xml" rel="self"/>
+  <link href="http://www.p3programmer.com/"/>
+  <updated>2015-02-21T12:08:39+05:30</updated>
+  <id>http://www.p3programmer.com/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/"/>
+    <link href="http://www.p3programmer.com/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/"/>
     <updated>2012-03-04T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2012/03/04/unit-testing-html-helpers-in-aspnet</id>
+    <id>http://www.p3programmer.com/blog/2012/03/04/unit-testing-html-helpers-in-aspnet</id>
     <content type="html"><![CDATA[<div class="post">
     <p>Would you like if your unit test have an assertion like this ?</p>
     <div style="text-align: center;clear:both">
@@ -134,9 +134,9 @@
   
   <entry>
     <title type="html"><![CDATA[Unit Testing Custom Model Binders in MVC3]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2012/02/11/unit-testing-custom-model-binders-in/"/>
+    <link href="http://www.p3programmer.com/blog/2012/02/11/unit-testing-custom-model-binders-in/"/>
     <updated>2012-02-11T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2012/02/11/unit-testing-custom-model-binders-in</id>
+    <id>http://www.p3programmer.com/blog/2012/02/11/unit-testing-custom-model-binders-in</id>
     <content type="html"><![CDATA[<div class="post">
     <p>
         In <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
@@ -173,9 +173,9 @@
   
   <entry>
     <title type="html"><![CDATA[Unit Testing with Sessions in ASP.NET MVC3]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/"/>
+    <link href="http://www.p3programmer.com/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/"/>
     <updated>2012-02-02T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2012/02/02/unit-testing-with-sessions-in-aspnet</id>
+    <id>http://www.p3programmer.com/blog/2012/02/02/unit-testing-with-sessions-in-aspnet</id>
     <content type="html"><![CDATA[<div class="post">
     <h3>Introduction</h3>
         
@@ -253,9 +253,9 @@
   
   <entry>
     <title type="html"><![CDATA[Test Driving Model Validation in ASP.NET MVC3 - Part 2]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/"/>
+    <link href="http://www.p3programmer.com/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/"/>
     <updated>2011-08-17T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2011/08/17/test-driving-model-validation-in-aspnet_17</id>
+    <id>http://www.p3programmer.com/blog/2011/08/17/test-driving-model-validation-in-aspnet_17</id>
     <content type="html"><![CDATA[<div class="post">
     <p>
     <p>
@@ -348,9 +348,9 @@
   
   <entry>
     <title type="html"><![CDATA[Test Driving Model Validation in ASP.NET MVC3 - Part 1]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2011/08/13/test-driving-model-validation-in-aspnet/"/>
+    <link href="http://www.p3programmer.com/blog/2011/08/13/test-driving-model-validation-in-aspnet/"/>
     <updated>2011-08-13T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2011/08/13/test-driving-model-validation-in-aspnet</id>
+    <id>http://www.p3programmer.com/blog/2011/08/13/test-driving-model-validation-in-aspnet</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
         <p>

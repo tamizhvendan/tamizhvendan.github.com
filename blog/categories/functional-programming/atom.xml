@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: functional-programming | P3 Programmer]]></title>
-  <link href="http://www.p3programmer.com/blog/blog/categories/functional-programming/atom.xml" rel="self"/>
-  <link href="http://www.p3programmer.com/blog/"/>
-  <updated>2015-02-21T12:03:56+05:30</updated>
-  <id>http://www.p3programmer.com/blog/</id>
+  <link href="http://www.p3programmer.com/blog/categories/functional-programming/atom.xml" rel="self"/>
+  <link href="http://www.p3programmer.com/"/>
+  <updated>2015-02-21T12:08:39+05:30</updated>
+  <id>http://www.p3programmer.com/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Step-3 PhoneCat Recommendation System using F# Agents, SignalR and Rx]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/"/>
+    <link href="http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/"/>
     <updated>2015-01-02T05:44:52+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
+    <id>http://www.p3programmer.com/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 3 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
@@ -400,9 +400,9 @@
   
   <entry>
     <title type="html"><![CDATA[Step-2 Fsharp-PhoneCat Views using Razor]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
+    <link href="http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
     <updated>2014-12-23T19:47:20+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
+    <id>http://www.p3programmer.com/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 2 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
@@ -745,9 +745,9 @@ Manufactures View follows the similar steps that we have used to create the Phon
   
   <entry>
     <title type="html"><![CDATA[Step 1 - Phonecat backend using Web Api and TypeProviders]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/"/>
+    <link href="http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/"/>
     <updated>2014-12-17T17:31:44+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders</id>
+    <id>http://www.p3programmer.com/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 1 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
@@ -1339,9 +1339,9 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
   
   <entry>
     <title type="html"><![CDATA[Step 0 - Setting up the fsharp-phonecat Solution]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/"/>
+    <link href="http://www.p3programmer.com/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/"/>
     <updated>2014-12-10T22:15:50+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution</id>
+    <id>http://www.p3programmer.com/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 0 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
@@ -1405,9 +1405,9 @@ type BundleConfig() =<br />
   
   <entry>
     <title type="html"><![CDATA[Web Application Development in Fsharp using ASP.NET MVC]]></title>
-    <link href="http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/"/>
+    <link href="http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/"/>
     <updated>2014-12-10T17:07:48+05:30</updated>
-    <id>http://www.p3programmer.com/blog/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc</id>
+    <id>http://www.p3programmer.com/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc</id>
     <content type="html"><![CDATA[<h3 id="introduction">Introduction</h3>
 
 <p>Fsharp is my new favorite language in recent times and I’ve been learning it for the last six months. I always believe the best way to learn a language / technology / framework is to create something using it and also learning from the mistakes while creating it. So, here is my attempt to create a sample web application in fsharp using ASP.NET MVC framework. In this series of blog posts I’m going to share my experience on creating “phone-cat” web application inspired from the <a href="https://github.com/angular/angular-phonecat">angular-phonecat</a>. </p>
