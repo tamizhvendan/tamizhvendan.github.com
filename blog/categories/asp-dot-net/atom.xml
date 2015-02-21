@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: asp.net | P3 Programmer]]></title>
-  <link href="http://www.p3programmer.com/blog/categories/asp-dot-net/atom.xml" rel="self"/>
-  <link href="http://www.p3programmer.com/"/>
-  <updated>2015-02-21T12:08:39+05:30</updated>
-  <id>http://www.p3programmer.com/</id>
+  <link href="http://blog.tamizhvendan.in/blog/categories/asp-dot-net/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2015-02-21T12:15:07+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Ajax Update master page from content Page]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/02/23/ajax-update-master-page-from-content/"/>
+    <link href="http://blog.tamizhvendan.in/blog/2011/02/23/ajax-update-master-page-from-content/"/>
     <updated>2011-02-23T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/02/23/ajax-update-master-page-from-content</id>
+    <id>http://blog.tamizhvendan.in/blog/2011/02/23/ajax-update-master-page-from-content</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
         <p>

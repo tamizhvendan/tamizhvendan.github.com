@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: craftsmanship | P3 Programmer]]></title>
-  <link href="http://www.p3programmer.com/blog/categories/craftsmanship/atom.xml" rel="self"/>
-  <link href="http://www.p3programmer.com/"/>
-  <updated>2015-02-21T12:08:39+05:30</updated>
-  <id>http://www.p3programmer.com/</id>
+  <link href="http://blog.tamizhvendan.in/blog/categories/craftsmanship/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2015-02-21T12:15:07+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[An interesting JSON Model Binding behaviour in ASP.NET MVC3]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/04/13/interesting-json-model-binding/"/>
+    <link href="http://blog.tamizhvendan.in/blog/2012/04/13/interesting-json-model-binding/"/>
     <updated>2012-04-13T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/04/13/interesting-json-model-binding</id>
+    <id>http://blog.tamizhvendan.in/blog/2012/04/13/interesting-json-model-binding</id>
     <content type="html"><![CDATA[<div class="post">
     <h3>Introduction</h3>
     <p>
@@ -132,9 +132,9 @@
   
   <entry>
     <title type="html"><![CDATA[Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way]]></title>
-    <link href="http://www.p3programmer.com/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/"/>
+    <link href="http://blog.tamizhvendan.in/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/"/>
     <updated>2012-03-04T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2012/03/04/unit-testing-html-helpers-in-aspnet</id>
+    <id>http://blog.tamizhvendan.in/blog/2012/03/04/unit-testing-html-helpers-in-aspnet</id>
     <content type="html"><![CDATA[<div class="post">
     <p>Would you like if your unit test have an assertion like this ?</p>
     <div style="text-align: center;clear:both">
@@ -251,9 +251,9 @@
   
   <entry>
     <title type="html"><![CDATA[Practice, Practice, Practice !!]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/09/15/practice-practice-practice/"/>
+    <link href="http://blog.tamizhvendan.in/blog/2011/09/15/practice-practice-practice/"/>
     <updated>2011-09-15T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/09/15/practice-practice-practice</id>
+    <id>http://blog.tamizhvendan.in/blog/2011/09/15/practice-practice-practice</id>
     <content type="html"><![CDATA[<div class="post">
 <div>
 	<p>In the pursuit of becoming a better programmer, I have come across lot of good things, which in fact have a lot of positive impact on my thinking, attitude and the way I approach a problem. &nbsp;One of such thing is the book “<a href="http://pragprog.com/book/cfcar2/the-passionate-programmer">Passionate Programmer</a>” which I am currently reading. It is all about creating a remarkable career in software development. If you are a developer, it is a highly recommended book. &nbsp;&nbsp;&nbsp;&nbsp;</p>
@@ -329,9 +329,9 @@
   
   <entry>
     <title type="html"><![CDATA[A journey towards software craftsmanship]]></title>
-    <link href="http://www.p3programmer.com/blog/2011/07/27/journey-towards-software-craftsmanship/"/>
+    <link href="http://blog.tamizhvendan.in/blog/2011/07/27/journey-towards-software-craftsmanship/"/>
     <updated>2011-07-27T00:00:00+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2011/07/27/journey-towards-software-craftsmanship</id>
+    <id>http://blog.tamizhvendan.in/blog/2011/07/27/journey-towards-software-craftsmanship</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
         <p>Programming has been my passion right from the day I have seen computer. After nearly 3.7 years of experience (2 years of freelancing and 1.7 years of Industry), I found that there are lot of areas in programming where I need to improve myself especially in the art of software craftsmanship. Programming is really an art!!</p>

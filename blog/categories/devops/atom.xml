@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: devops | P3 Programmer]]></title>
-  <link href="http://www.p3programmer.com/blog/categories/devops/atom.xml" rel="self"/>
-  <link href="http://www.p3programmer.com/"/>
-  <updated>2015-02-21T12:08:39+05:30</updated>
-  <id>http://www.p3programmer.com/</id>
+  <link href="http://blog.tamizhvendan.in/blog/categories/devops/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2015-02-21T12:15:07+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
     <email><![CDATA[tamizh88@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Step-4 Build automation using FAKE]]></title>
-    <link href="http://www.p3programmer.com/blog/2015/01/06/step-4-build-automation-using-fake/"/>
+    <link href="http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake/"/>
     <updated>2015-01-06T05:22:32+05:30</updated>
-    <id>http://www.p3programmer.com/blog/2015/01/06/step-4-build-automation-using-fake</id>
+    <id>http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake</id>
     <content type="html"><![CDATA[<blockquote>
   <p>This is step 4 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
