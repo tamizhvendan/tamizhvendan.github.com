@@ -10,7 +10,7 @@ categories:
 
 > This is step 7 of my blog series on [Web Application Development in Fsharp using ASP.NET MVC]({% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %})
 
-In the [last blog post]({% post_url 2015-02-04-step-6-authentication-using-owin-middleware-and-asp-dot-net-identity %}) we have seen how to register a new user using Asp.Net Identity Management framework. Validating the incoming data before updating the backend datastore is a typical task in a web application. In this blog post we are going to see how to achieve it in a web application written in fsharp. As mentioned in the last blog post we will be adding validation logic for new user registration using [Railway oriented Programming](http://fsharpforfunandprofit.com/rop/) aka **ROP**.
+In the [last blog post]({% post_url 2015-02-04-step-6-authentication-using-owin-middleware-and-asp-dot-net-identity %}) we have seen how to register a new user using Asp.Net Identity Management framework. Validating the incoming data before updating the backend datastore is a typical task in a web application. In this blog post we are going to see how to achieve it in a web application written in fsharp. As mentioned in the last blog post we will be adding validation logic for new user registration using [Railway oriented Programming](http://fsharpforfunandprofit.com/rop/) aka *ROP*.
 
 
 ### Cleanup
@@ -41,7 +41,7 @@ type CreateUserRequest = {Name: string; Password: string; Email : string}
 Then move the user creation logic from Authentication Controller's [Register action method](https://github.com/tamizhvendan/fsharp-phonecat/blob/6/Web/Controllers/AuthenticationController.fs#L62-L65) to ```UserStorage``` and update it to use ```CreateUserRequest```.
 
 ```fsharp
-let private createUser (userManager : UserManager<User>) createUserRequest =
+let createUser (userManager : UserManager<User>) createUserRequest =
     
   let user = new User(Name = createUserRequest.Name, 
                       UserName = createUserRequest.Email, 
@@ -90,7 +90,7 @@ module Rop =
 
 The ```Error``` type provides the metadata associated with the error.
 
-Now, its time to add the validation rules. Lets start with Name validation. Create a source file ```NameValidation``` in **Identity** project and add the following code
+Let's start writing validation rules from validating Name. Create a source file ```NameValidation``` in **Identity** project and add the following code
 
 ```fsharp
 module NameValidation = 
@@ -180,7 +180,7 @@ We also need a small utility function to check the emptiness of the string. So a
 let isNonEmptyString str = str <> null && str <> String.Empty
 ```
 
-With these functions in place it's time to refactor the validation rules that we written before.
+With these functions in place we can refactor the validation rules that we written before.
 
 ```fsharp
 module NameValidation = 
@@ -225,3 +225,96 @@ module PasswordValidation =
       "Password" 
       errorMessage
 ```
+Much cleaner than the previous version isn't it ?
+
+The final validation is Email validation. It is very similar to the other validations that we have seen so far. One extra validation is verifying the uniqueness of the email id being used to register.
+
+Create a new source file ```EmailValidation``` and add the validations
+
+```fsharp
+module EmailValidation =   
+  let isUniqueEmailAddr (userManager : UserManager<User>) emailAddr =
+    let user = userManager.FindByName(emailAddr)
+    user = null 
+    
+  let isValidEmailAddress emailAddr =
+    let emailAddrRegex = 
+      @"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)" +
+        "*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z"
+    Regex.IsMatch(emailAddr, emailAddrRegex, RegexOptions.IgnoreCase)
+
+  let validateEmailEmptiness =
+    validate 
+      (fun createUserRequest -> isNonEmptyString createUserRequest.Email) 
+      "Email" 
+      "Email is required"    
+
+  let validateEmailUniqueness isUniqueEmailAddr createUserRequest =
+    validate 
+      (fun createUserRequest -> isUniqueEmailAddr createUserRequest.Email) 
+      "Email" 
+      "Email address already exists"    
+
+  let validateEmailCorrectness =
+    validate 
+      (fun createUserRequest -> isValidEmailAddress createUserRequest.Email) 
+      "Email" 
+      "Email address is invalid"
+```
+
+### Putting all the validations together
+
+So far we have seen individual properties validation rules. It's time put all these pieces togehter and validate the ```CreateUserRequest``` as a whole.
+
+Create a source file ```UserValidation``` and update it as below
+
+{% img /images/fsharp_phonecat/step_7/uservalidation_match.png %}
+
+Wait.. Wait.. I know how do you feel here.. It's too much of code! Can we do it in a better way ? 
+
+
+
+### Using Railway Oriented Programming (ROP)
+
+Thanks to ROP, we can make the mighty code smaller and more readable. I am going ahead with an assumption that you are aware of ROP. In case if you are not aware of it then watch this [excellent presentation](http://vimeo.com/97344498) by [Scott Wlaschin](https://twitter.com/ScottWlaschin)
+
+{% img center /images/fsharp_phonecat/step_7/bind_function.png 350 500 %}
+
+The crux of ROP is the bind function which composes two functions where the output type of one function is not matching with that of input. If you want to know more this bind function, do visit this [awesome blog post](http://adit.io./posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html) by [Aditya](https://twitter.com/_egonschiele). In this blog post he explains about the bind function under the title **Monads**
+
+Let's start by adding this bind function in the module ```Rop``` that we have already created.
+
+```fsharp
+let bind f1 f2 x =
+  match f1 str with
+  | Success x -> f2 x
+  | Failure err -> Failure err
+
+let inline (>>=) f1 f2 = bind f1 f2
+```
+
+The bind function here calls the function ```f1``` with the given input ```x``` if it succeed then executes the second function ```f2``` with ```x```. In case if the execution of ```f1``` resulted in failure then it just passes without executing the second function. 
+
+The infix operator ```>>=``` is a standard way of aliasing bind function. 
+
+With the help of this bind function we can rewrite the ```validateCreateUserRequest``` function in a better way as below
+
+```fsharp
+module UserValidation = 
+  let validateCreateUserRequest userManager  = 
+      validateEmailEmptiness 
+        >>= validateEmailCorrectness
+        >>= validateEmailUniqueness (isUniqueEmailAddr userManager)
+        >>= validateNameEmptiness
+        >>= validateNameLength
+        >>= validatePasswordEmptiness
+        >>= validatePasswordLength
+        >>= validatePasswordStrength
+```
+
+It's awesome! Isn't it ?? If you are still wondering what's happening here! Watch the Scott's presentation one more time.
+
+
+### Adding validation before saving
+
+Now we have the validation infrastructure in place. So, let's go ahead and add it before creating a new user. 
