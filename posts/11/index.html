@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Mar 25th, 2011 data access, entity framework Comments Entity Framework 4.0 - Class Library - Part 1 In this blog post we are going to explore how to &hellip;">
+	<meta name="description" content="Apr 1st, 2011 data access, entity framework Comments Entity Framework 4.0 as Class Library - Part 2 As the continuation of my previous blog post, In &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -99,7 +99,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 140.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 104.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -112,6 +112,101 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-01T00:00:00+05:30" data-updated="true" itemprop="datePublished">Apr 1<sup>st</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/data-access/'>data access</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/04/01/entity-framework-40-as-class-library/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/04/01/entity-framework-40-as-class-library/" itemprop="url">Entity Framework 4.0 as Class Library - Part 2</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>As the continuation of my previous <a href="/blog/2011/03/25/entity-framework-40-class-library-part/">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
+
+        <p>Consuming the Data Access Library created using Entity Framework 4.0 involves the following two steps.</p>
+        <ol>
+            <li>Adding reference to the class library</li>
+            <li>Adding the connection string in the config file (App.config or Web.config)</li>
+        </ol>
+        <p>Let us see how can we do these steps using a console application. To keep things simple I have opt for a console application. It holds the same for an ASP.NET , Windows Form, WPF,WCF, etc.</p>
+
+        <h4>Console Application Creation</h4>
+        <p>Create a new console application called &#8220;HrdConsoleApp&#8221;</p>
+        <img src="http://1.bp.blogspot.com/-jd1uE7HyzUY/TZw4OSKgKVI/AAAAAAAAAFw/O0t-17BazAk/s1600/1.ConsoleAppCreation.PNG" />
+
+        <h4>Add a reference to the Class library</h4>
+        <p>Right click on references and refer the class library &#8220;HRD.DataAccess&#8221; that we have created in the last blog.</p>
+        <img src="http://4.bp.blogspot.com/-238LBeCcS-8/TZw4UoXoTyI/AAAAAAAAAF0/Z-wMwpTZD1k/s1600/2.ReferenceLibrary.PNG" />
+
+        <p>Add reference to System.Data.Entity Library</p>
+        <img src="http://4.bp.blogspot.com/-TIhl2OiTt68/TZw59TQrQ6I/AAAAAAAAAF8/WM5ffjSpETo/s1600/5.DataEntityReference.PNG" />
+
+        <p>Add the App.Config file to the console application by right clicking on the project name in the solution explorer and select &#8220;Add-&gt;New Item&#8221;. Then Copy the connection string from the App.Config file created in the HrdDataAccess Class library Project created earlier and paste it in the App.config file created in the previous step.</p>
+        <img src="http://2.bp.blogspot.com/-ZqMXJ5KdLy8/TZw4Y1uECQI/AAAAAAAAAF4/fIcRIy1se5c/s1600/3.AppConfigCreation.PNG" />
+
+        <img src="http://2.bp.blogspot.com/-HgFzRYacpQA/TZw6IqMd5oI/AAAAAAAAAGA/q_IiJsTNYvU/s1600/4.AppConfig.PNG" />
+        <p>That&#8217;s all now it is all set to access the database with only minimal amount of code.. Here we go!!</p>
+        <h4>Code Please!</h4>
+        <div><script src='https://gist.github.com/7794bb7ac98d6de3b962.js'></script>
+<noscript><pre><code>using System;
+using System.Linq;
+using HRD.DataAccess;
+namespace HrdConsoleApp
+{
+    class Program
+    { 
+        static void Main(string[] args) 
+        { 
+            var hrdEntities = new HRDEntities(); 
+            foreach (Employee employee in hrdEntities.Employees)
+            { 
+                Console.WriteLine(&quot;Name: &quot; + employee.Name); 
+                Console.WriteLine(&quot;Department: &quot; + employee.Department.Name); 
+                Console.WriteLine(&quot;########################&quot;); 
+            } 
+        } 
+    }
+}</code></pre></noscript></div>
+
+
+        <h4>Output</h4>
+        <img src="http://1.bp.blogspot.com/-Fooy-W2-OCQ/TZw6M7tVqTI/AAAAAAAAAGE/tJ5UYVi5LRI/s1600/6.Output.PNG" />
+
+        <h4>Summary:</h4>
+        <p>
+            In this blog series (Part 1 and Part 2) we have seen how to create the data access layer using Entity Framework 4.0 as class library and how to consume it in an application. With the introduction of Entity Framework developing the code for data access layer is no longer a tidy and time consuming job!!
+        </p>
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -288,125 +383,6 @@
 
             <h3>Summary:</h3>
         <p>In this blog we have seen how can we update the master page from the content page using ajax update panel. You can download the source code from <a href="http://www.box.net/shared/gpa9dlo668">here</a></p>
-    </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-02-10T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 10<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/jquery/'>jquery</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/02/10/in-this-blog-we-are-going-to-see-how/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/02/10/in-this-blog-we-are-going-to-see-how/" itemprop="url">DropDownList Manipulation Using jQuery</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>
-            In this blog post we are going to see how can we manipulate a dropdownlist using <a href="http://www.amazon.com/jQuery-Action-Second-Bear-Bibeault/dp/1935182323?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">jQuery</a><img alt="" border="0" height="1px" src="http://www.assoc-amazon.com/e/ir?t=bor0b-20&amp;l=btl&amp;camp=213689&amp;creative=392969&amp;o=1&amp;a=1935182323" style="border-bottom: medium none; border-left: medium none; border-right: medium none; border-top: medium none; margin: 0px; padding-bottom: 0px! important; padding-left: 0px! important; padding-right: 0px! important; padding-top: 0px! important;" width="1px" />. Here is the brief overview what we are exactly going to do.<br />
-        </p>
-        <ol>
-            <li>Dynamically populating the dropdownlist</li>
-            <li>Handling the item change event of a dropdownlist</li>
-            <li>Getting the value and the text of the dropdownlist selected item</li>
-            <li>Programmatically setting the item of the dropdownlist</li>
-        </ol>
-
-        <h3>1. Dynamically populating the dropdownlist</h3>
-
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=documentInit.js'></script>
-<noscript><pre><code>$(document).ready(function () {
-    
-    function loadDropDownList(collection) {
-        $.each(collection, function (index, value) {
-            var listItem = $(&quot;&lt;option&gt;&lt;/option&gt;&quot;).val(index).html(value);
-            $(&quot;#countries&quot;).append(listItem);
-        });
-    }
-
-    var myCollection = {'IN': 'India','AUS': 'Australia','ENG': 'England'};
-    loadDropDownList(myCollection);
-})</code></pre></noscript></div>
-
-	
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=layout.html'></script>
-<noscript><pre><code>Countries: &lt;select id=&quot;countries&quot;&gt;&lt;/select&gt;</code></pre></noscript></div>
-
-	
-        <p>
-            The function loadDropDownList will take a collection (a key-value pair array) and populate the dropdownlist “countries”. “$.each” is a jQuery function which iterates the array item by item and calls the “function(index,value)” for each item where index would be the item’s key and value would be the item’s value. Then the list item html markup is created for the list item and appended to the dropdownlist
-        </p>
-
-        <h3>2. Handling the item change event of a dropdownlist</h3>
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=handleChange.js'></script>
-<noscript><pre><code>$(document).ready(function () {
-    $(&quot;#countries&quot;).change(function () {
-        // Place your code here
-    });
-});</code></pre></noscript></div>
-
-        <p>
-            The jQuery API offers lot of useful functions to operate with the html form elements. One of such function is “change()” which will called whenever the item value is get changed.
-        </p>
-        <h3>3. Getting the value and the text of the dropdownlist selected item</h3>
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=listChange.js'></script>
-<noscript><pre><code>$(document).ready(function () {
-    $(&quot;#countries&quot;).change(function () {
-    	var selectedValue = $(&quot;#countries&quot;).val();
-        $(&quot;#countryValue&quot;).text(selectedValue);
-        $(&quot;#countryText&quot;).text($(&quot;#countries &gt; option[value='&quot; + selectedValue + &quot;']&quot;).html());
-    });
-});</code></pre></noscript></div>
-
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=newLayout.html'></script>
-<noscript><pre><code>Selected Country’s Text: &lt;span id=&quot;countryText&quot;&gt;&lt;/span&gt; &lt;br /&gt;
-Selected Country’s Value:  &lt;span id=&quot;countryValue&quot;&gt;&lt;/span&gt;&lt;br /&gt;</code></pre></noscript></div>
-
-        <p>The jQuery code mentioned above will set the two span labels “countryValue” and “countryText” with the value and text of the selected item in the “countries” dropdownlist, when we select an item in the “countries” dropdownlist. The jQuery function “val()” enable us to find out the value of a form element, in our case we have utilized it to get the value of the “countries” dropdownlist. To get the selected item’s text we have to use the child and attribute selector together as a selector. “#countries &gt; option[value=&#8217;IN&#8217;]” – will selects all option child elements(with appropriate value) of item with the id “countries”. “html()” retrieves the html of the selected element. “text(value)” will set the text of the selector.</p>
-        <h3>4. Programmatically setting the item of the dropdownlist</h3>
-        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=btnClick.js'></script>
-<noscript><pre><code>$(&quot;#btnIn&quot;).click(function () {
-    $(&quot;#countries&quot;).val('IN');
-});
-
-$(&quot;#btnEng&quot;).click(function () {
-    $(&quot;#countries&quot;).val('ENG');
-});
-
-$(&quot;#btnAus&quot;).click(function () {
-    $(&quot;#countries&quot;).val('AUS');
-});</code></pre></noscript></div>
-
-
-        <h2>Demo</h2>
-        <iframe width="100%" height="300" src="http://jsfiddle.net/uE78v/2/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
-
     </div>
 </div>
 

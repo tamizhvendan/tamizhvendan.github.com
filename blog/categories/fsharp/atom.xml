@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fsharp | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-02-21T12:15:07+05:30</updated>
+  <updated>2015-03-07T18:01:07+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,418 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Step-7 Validation and Error Handling using ROP]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/"/>
+    <updated>2015-03-02T12:30:33+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/03/02/step-7-validation-and-error-handling-using-rop</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 7 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">last blog post</a> we have seen how to register a new user using the Asp.Net Identity Management framework. Validating the incoming data before updating the backend datastore and handling error while saving are typical tasks in a web application. In this blog post we are going to see how to achieve these things in a web application written in fsharp. As mentioned in the last blog post we will be adding validation logic for new user registration using <a href="http://fsharpforfunandprofit.com/rop/">Railway oriented Programming</a> aka <em>ROP</em>.</p>
+
+<h3 id="cleanup">Cleanup</h3>
+
+<p>Before adding the validation,  let’s do some cleanup and make it ready for adding validation. </p>
+
+<p>Create a new source file <code>UserStorage</code> in the <strong>Identity</strong> project and move the user manager creation logic from <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/6/Web/MvcInfrastructure.fs#L15-L20">MvcInfrastructure</a> to here.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;AutoOpen&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>module UserStorage =   
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let createUserManager () =
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    let userStore = new UserStore&lt;User&gt;(new UserDbContext())
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    let userManager = new UserManager&lt;User&gt;(userStore) 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    let userValidator = new UserValidator&lt;User&gt;(userManager)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    userValidator.AllowOnlyAlphanumericUserNames &lt;- false   
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    userManager.UserValidator &lt;- userValidator
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    userManager
+</pre></div>
+</div>
+</div>
+
+<p>Create a Request record type in <code>Users</code> that represents the request for creating a new user</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type CreateUserRequest = {Name: string; Password: string; Email : string}
+</pre></div>
+</div>
+</div>
+
+<p>Then move the user creation logic from Authentication Controller’s <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/6/Web/Controllers/AuthenticationController.fs#L62-L65">Register action method</a> to <code>UserStorage</code> and update it to use <code>CreateUserRequest</code>.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let createUser (userManager : UserManager&lt;User&gt;) createUserRequest =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let user = new User(Name = createUserRequest.Name, 
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>                      UserName = createUserRequest.Email, 
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>                      Email = createUserRequest.Email)
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  userManager.Create(user, createUserRequest.Password)
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>    
+</pre></div>
+</div>
+</div>
+
+<p>Finally, update the <code>Register</code> action method in <code>AuthenticationController</code> to use the above function</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;HttpPost&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>[&lt;ValidateAntiForgeryToken&gt;]
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>member this.Register(registerViewModel : RegisterViewModel) : ActionResult =
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let createUserRequest : CreateUserRequest = {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    Name = registerViewModel.Name; 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    Email = registerViewModel.Email; 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    Password = registerViewModel.Password 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  }
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let userCreateResult = Users.createUser userManager createUserRequest
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  if (userCreateResult.Succeeded) then
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    signin userManager base.Request user      
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    this.RedirectToAction(&quot;Index&quot;, &quot;Home&quot;) :&gt; ActionResult
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  else
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    userCreateResult.Errors
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    |&gt; Seq.iter(fun err -&gt; this.ModelState.AddModelError(&quot;&quot;, err))
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    this.View(registerViewModel) :&gt; ActionResult
+</pre></div>
+</div>
+</div>
+
+<p>With this we are wrapping the cleanup work and all set for adding validation.</p>
+
+<h3 id="adding-validation">Adding Validation</h3>
+
+<p>The first step in ROP is defining the “two tracks”. The track <code>Success</code> represents a successful operation (here its validation) and the other track <code>Failure</code> represents the failure while executing an operation. Usually these “two tracks” will be defined using a discriminated union.</p>
+
+<p>Create a source file <code>Rop</code> in the <strong>Identity</strong> project and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>module Rop = 
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  type Error = {Property : string; Message : string}
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  type Result&lt;'a&gt; = 
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    | Success of 'a
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    | Failure of Error
+</pre></div>
+</div>
+</div>
+
+<p>The <code>Error</code> type provides the metadata associated with the error.</p>
+
+<p>Let’s start writing validation rules from validating Name. Create a source file <code>NameValidation</code> in <strong>Identity</strong> project and add the following code</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module NameValidation = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let validateNameEmptiness createUserRequest =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    if (createUserRequest.Name &lt;&gt; null &amp;&amp; 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>          createUserRequest.Name &lt;&gt; String.Empty) then
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>      Success createUserRequest
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    else
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      Failure { Property = &quot;Name&quot;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>                Message = &quot;Name is required&quot;}       
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let validateNameLength createUserRequest =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    if (createUserRequest.Name.Length &lt;= 50) then
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>        Success createUserRequest
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    else
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      Failure { Property = &quot;Name&quot; 
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>                Message = &quot;Name should not contain more than 50 characters&quot;}
+</pre></div>
+</div>
+</div>
+
+<p>Hope these rules are self-explanatory. We are just validating the name for emptiness and length, and based on the result we are returning either the <code>Success</code> track or <code>Failure</code> track.</p>
+
+<p>Next, add validation rules for Password. Similar to Name Validation add a source file with the name <code>PasswordValidation</code> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module PasswordValidation = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let validatePasswordEmptiness createUserRequest = 
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    if (createUserRequest.Password &lt;&gt; null &amp;&amp; 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>          createUserRequest.Password &lt;&gt; String.Empty) then 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>      Success createUserRequest
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    else 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      Failure { Property = &quot;Password&quot;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>                Message = &quot;Password is required&quot; }
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let validatePasswordLength createUserRequest = 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    if (createUserRequest.Password.Length &lt;= 10) then 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      Success createUserRequest
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    else 
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      Failure { Property = &quot;Password&quot;
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>                Message = &quot;Password should not contain more than 10 characters&quot; }
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let validatePasswordStrength  = 
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    let specialCharacters = [ &quot;*&quot;; &quot;&amp;&quot;; &quot;%&quot;; &quot;$&quot; ]
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    let hasSpecialCharacters (str : String) = 
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      specialCharacters |&gt; List.exists (fun c -&gt; str.Contains(c))
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    let errorMessage = 
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      &quot;Password should contain atleast one of the special characters &quot; 
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>        + String.Join(&quot;,&quot;, specialCharacters)
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    validate 
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>      (fun createUserRequest -&gt; 
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>        hasSpecialCharacters createUserRequest.Password) 
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>      &quot;Password&quot; 
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>      errorMessage
+</pre></div>
+</div>
+</div>
+
+<p>In addition to the two validation rules that we have seen in <code>NameValidation</code> here we have added one more validation to verify the presence of special characters in the <code>Password</code>.</p>
+
+<p>There is a pattern in all the validation rules that we have seen so far. </p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_7/validation_pattern.png" width="450" height="450"></p>
+
+<p>Let’s extract this pattern out of these validation rules and reduce the lines of code!</p>
+
+<p>Create a new source file <code>Validation</code> and add the write this pattern as a function</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>module Validation =  
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let validate isValid property message createUserRequest =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    if isValid createUserRequest then
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>      Success createUserRequest
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    else
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>      Failure {Property = property; Message = message}      
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>
+</pre></div>
+</div>
+</div>
+<p>The <code>validate</code> function represents the outer box of the above diagram which takes four inputs</p>
+
+<ul>
+  <li>A function to validate the createUserRequest <code>isValid</code> which has the signature
+<code>'a -&gt; bool</code> that represents the validation rule</li>
+  <li>A string to show which property is invalid in the error <code>property</code></li>
+  <li>A string representing the error <code>message</code></li>
+  <li>The last is the incoming userCreateRequest <code>createUserRequest</code></li>
+</ul>
+
+<p><em>Note: Property and Message parameters are not shown in the diagram just to express the pattern clearly</em></p>
+
+<p>We also need a small utility function to check the emptiness of the string. So add it in <code>Validation</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let isNonEmptyString str = str &lt;&gt; null &amp;&amp; str &lt;&gt; String.Empty
+</pre></div>
+</div>
+</div>
+
+<p>With these functions in place we can refactor the validation rules that we written before.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module NameValidation = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let validateNameEmptiness =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    validate 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      (fun createUserRequest -&gt; isNonEmptyString createUserRequest.Name) 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>      &quot;Name&quot; 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      &quot;Name is required&quot;        
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let validateNameLength  =
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    validate 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      (fun createUserRequest -&gt; createUserRequest.Name.Length &lt;= 50) 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      &quot;Name&quot; 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      &quot;Name should not contain more than 50 characters&quot;
+</pre></div>
+</div>
+</div>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module PasswordValidation = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let validatePasswordEmptiness =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    validate 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      (fun createUserRequest -&gt; isNonEmptyString createUserRequest.Password) 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>      &quot;Password&quot; 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      &quot;Password is required&quot;     
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let validatePasswordLength = 
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    validate 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      (fun createUserRequest -&gt; createUserRequest.Name.Length &lt;= 10) 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      &quot;Password&quot; 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      &quot;Password should not contain more than 10 characters&quot;    
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let hasSpecialCharacters specialCharacters (str : String) = 
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    specialCharacters |&gt; List.exists (fun c -&gt; str.Contains(c))
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let validatePasswordStrength  = 
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    let specialCharacters = [ &quot;*&quot;; &quot;&amp;&quot;; &quot;%&quot;; &quot;$&quot; ]
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    let errorMessage = 
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      &quot;Password should contain atleast one of the special characters &quot; 
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>        + String.Join(&quot;,&quot;, specialCharacters)
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>    validate 
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>      (fun createUserRequest -&gt; 
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>        hasSpecialCharacters specialCharacters createUserRequest.Password) 
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>      &quot;Password&quot; 
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>      errorMessage
+</pre></div>
+</div>
+</div>
+<p>Much cleaner than the previous version, isn’t it?</p>
+
+<p>The final validation is Email validation. It is very similar to the other validations that we have seen so far. One extra validation is verifying the uniqueness of the email id being used to register.</p>
+
+<p>Create a new source file <code>EmailValidation</code> and add the validations</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module EmailValidation =   
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let isUniqueEmailAddr (userManager : UserManager&lt;User&gt;) emailAddr =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let user = userManager.FindByName(emailAddr)
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    user = null 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let isValidEmailAddress emailAddr =
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    let emailAddrRegex = 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      @&quot;\A(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)&quot; +
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        &quot;*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z&quot;
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    Regex.IsMatch(emailAddr, emailAddrRegex, RegexOptions.IgnoreCase)
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  let validateEmailEmptiness =
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    validate 
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      (fun createUserRequest -&gt; isNonEmptyString createUserRequest.Email) 
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      &quot;Email&quot; 
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>      &quot;Email is required&quot;    
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  let validateEmailUniqueness isUniqueEmailAddr createUserRequest =
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    validate 
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      (fun createUserRequest -&gt; isUniqueEmailAddr createUserRequest.Email) 
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>      &quot;Email&quot; 
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      &quot;Email address already exists&quot;    
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>  let validateEmailCorrectness =
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    validate 
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>      (fun createUserRequest -&gt; isValidEmailAddress createUserRequest.Email) 
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>      &quot;Email&quot; 
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>      &quot;Email address is invalid&quot;
+</pre></div>
+</div>
+</div>
+
+<h3 id="putting-all-the-validations-together">Putting all the validations together</h3>
+
+<p>So far we have seen individual property validation rules. It’s time to put all these pieces together and validate the <code>CreateUserRequest</code> as a whole.</p>
+
+<p>Create a source file <code>UserValidation</code> and update it as below</p>
+
+<p><img src="/images/fsharp_phonecat/step_7/uservalidation_match.png"></p>
+
+<p>Wait.. Wait.. I know how do you feel here.. It’s too much code! Can we do it in a better way? </p>
+
+<h3 id="using-railway-oriented-programming-rop">Using Railway Oriented Programming (ROP)</h3>
+
+<p>Thanks to ROP, we can make the mighty code smaller and more readable. I am going ahead with an assumption that you are aware of ROP. In case if you are not aware of it then watch this <a href="http://vimeo.com/97344498">excellent presentation</a> by <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_7/bind_function.png" width="350" height="500"></p>
+
+<p>The crux of ROP is the bind function which composes two functions where the output type of one function is not matching with that of the input. If you want to know more this bind function, do visit this <a href="http://adit.io./posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html">awesome blog post</a> by <a href="https://twitter.com/_egonschiele">Aditya</a>. In this blog post he explains about the bind function under the title <strong>Monads</strong></p>
+
+<p>Let’s start by adding this bind function in the module <code>Rop</code> that we have already created.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let bind f1 f2 x =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  match f1 str with
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  | Success x -&gt; f2 x
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  | Failure err -&gt; Failure err
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>let inline (&gt;&gt;=) f1 f2 = bind f1 f2
+</pre></div>
+</div>
+</div>
+
+<p>The bind function here calls the function <code>f1</code> with the given input <code>x</code> if it succeeds, then executes the second function <code>f2</code> with <code>x</code>. In case if the execution of <code>f1</code> resulted in failure then it just passes without executing the second function. </p>
+
+<p>The infix operator <code>&gt;&gt;=</code> is an alias of bind function. </p>
+
+<p>With the help of this bind function, we can rewrite the <code>validateCreateUserRequest</code> function in a better way as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module UserValidation = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let validateCreateUserRequest userManager  = 
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>      validateEmailEmptiness 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>        &gt;&gt;= validateEmailCorrectness
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        &gt;&gt;= validateEmailUniqueness (isUniqueEmailAddr userManager)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>        &gt;&gt;= validateNameEmptiness
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        &gt;&gt;= validateNameLength
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        &gt;&gt;= validatePasswordEmptiness
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        &gt;&gt;= validatePasswordLength
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        &gt;&gt;= validatePasswordStrength
+</pre></div>
+</div>
+</div>
+
+<p>It’s awesome! Isn’t it? If you are still wondering what’s happening here! Watch the Scott’s presentation one more time.</p>
+
+<h3 id="adding-validation-before-saving">Adding validation before saving</h3>
+
+<p>Now we have the validation infrastructure in place. So, let’s go ahead and add it before creating a new user in the backend. As part of this refactoring we are also going to do error handling of new user creation. </p>
+
+<p>Create a new private function in <code>UserStorage</code> to create a new user with error handling</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let private createUser' (userManager : UserManager&lt;User&gt;) createUserRequest =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  try
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let user = new User(Name = createUserRequest.Name, 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>                        UserName = createUserRequest.Email, 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>                        Email = createUserRequest.Email)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    let identityResult = userManager.Create(user, createUserRequest.Password)
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    if identityResult.Succeeded then
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      Success createUserRequest
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    else
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      let errors = String.concat &quot;,&quot; identityResult.Errors
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      Failure { Property = &quot;&quot;; 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>                Message = errors}
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  with
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    | _ -&gt;
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      Failure { Property = &quot;&quot;; 
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>                Message = &quot;An unexpected error happened while creating new user&quot;}
+</pre></div>
+</div>
+</div>
+
+<p>Like validation rules defined before this new <code>createUser'</code> function is also outputs “two tracks”, Success if the user creation is successful others it outputs Failure. Because of this change in function signature <br />
+(<code>UserManager&lt;User&gt; -&gt; CreateUserRequest -&gt; Result&lt;CreateUserRequest&gt;</code>) we can fit this easily into the bind function.</p>
+
+<p>Modify the existing <code>CreateUser</code> function to use this</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let createUser (userManager : UserManager&lt;User&gt;) =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>      validateCreateUserRequest userManager &gt;&gt;= createUser' userManager
+</pre></div>
+</div>
+</div>
+
+<p>Thanks to <a href="http://fsharpforfunandprofit.com/posts/partial-application/">Partial application</a> we have created new functions on the fly by passing only the partial parameters (<code>UserManager</code> in this case) and make it fit with less code. </p>
+
+<p>Since we have changed the signature of the <code>createUser</code> function from <code>UserManager&lt;User&gt; -&gt; CreateUserRequest -&gt; IdentityResult</code> to <code>UserManager&lt;User&gt; -&gt; CreateUserRequest -&gt; Result&lt;CreateUserRequest&gt;</code> we need to change the <code>Register</code> action method in the <code>AuthenticationController</code>.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;HttpPost&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>[&lt;ValidateAntiForgeryToken&gt;]
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>member this.Register(registerViewModel : RegisterViewModel) : ActionResult =
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let createUserRequest : CreateUserRequest = {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    Name = registerViewModel.Name; 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    Email = registerViewModel.Email; 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    Password = registerViewModel.Password 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  }
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  match UserStorage.createUser userManager createUserRequest with
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  | Failure error -&gt;
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    this.ModelState.AddModelError(error.Property, error.Message)
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    this.View(registerViewModel) :&gt; ActionResult
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  | Success createUserRequest' -&gt;                      
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    let user = userManager.Find(createUserRequest'.Email, createUserRequest'.Password)        
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    signin userManager base.Request user      
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    this.RedirectToAction(&quot;Index&quot;, &quot;Home&quot;) :&gt; ActionResult
+</pre></div>
+</div>
+</div>
+
+<p>That’s it, we are ready to go!</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>In this blog post we have seen how to add validations and error handling in fsharp using ROP. Though it is little hard to get this kind of functional thinking, it offers a great deal of expressiveness and flexibility to your codebase. Just like any other skills if you practice it for quite time you can also master it. You can find the source code associated with this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/7">github repository</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Step-6 Authentication using Owin authentication Middleware and ASP.NET Identity]]></title>
@@ -1411,351 +1823,6 @@
 <p>Last but not the least, Thanks to <a href="https://sergeytihon.wordpress.com">Sergey Tihon</a> for the words of encouragement to write the blog post on this topic.</p>
 
 <p>You can find the source code of this step in <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/3">the github repository</a>. </p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Step-2 Fsharp-PhoneCat Views using Razor]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/"/>
-    <updated>2014-12-23T19:47:20+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
-    <content type="html"><![CDATA[<blockquote>
-  <p>This is step 2 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
-
-<h3 id="phone-view">Phone View</h3>
-<p><img src="/images/fsharp_phonecat/step_2/Phone.png"></p>
-
-<p>As we did it in the step-1 we are going to start with the controller which serves the phone view. Let’s get started by creating a source file in <strong>Web</strong> project under the folders <em>Controllers</em> with the name <code>PhoneController</code></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type PhoneController(phones : seq&lt;Phone&gt;) =
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  inherit Controller()
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  member this.Show (id : string) = 
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    let phone = phones |&gt; Seq.find (fun p -&gt; p.Id = id) |&gt; PhoneViewModel.ToPhoneViewModel 
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    this.View(phone)
-</pre></div>
-</div>
-</div>
-
-<p>The action method <code>Show</code> just picks the phone with the given id, converts the selected phone to a view model and returns the view.</p>
-
-<p>The <code>phones</code> data which is being passed to the controller is actually a domain model representing the data that are required to show in the UI. Let’s create it in the <em>Domain</em> project. Create a source file in the <strong>Domain</strong> project and name it as <code>Catalog</code>.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace PhoneCat.Domain
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open PhoneCat.Domain.Measures
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>module Catalog =    
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  type Display = {
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    ScreenResolution : string
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    ScreenSize : float&lt;inch&gt;
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    TouchScreen : bool
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  }
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  type Storage = {
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    Flash : float&lt;MB&gt;
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    Ram : float&lt;MB&gt;
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  }
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  type Android = {
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    OS : string
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    UI : string
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  }
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  type Camera = {
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    Features : seq&lt;string&gt;
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    Primary : string
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  }
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>
-<span class="line-numbers"><a href="#n27" name="n27">27</a></span>  type Phone = {
-<span class="line-numbers"><a href="#n28" name="n28">28</a></span>    Id : string
-<span class="line-numbers"><a href="#n29" name="n29">29</a></span>    Name : string
-<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>    Description : string
-<span class="line-numbers"><a href="#n31" name="n31">31</a></span>    Android : Android
-<span class="line-numbers"><a href="#n32" name="n32">32</a></span>    Camera : Camera
-<span class="line-numbers"><a href="#n33" name="n33">33</a></span>    Display : Display
-<span class="line-numbers"><a href="#n34" name="n34">34</a></span>    Weight : float&lt;g&gt;
-<span class="line-numbers"><a href="#n35" name="n35">35</a></span>    Storage : Storage
-<span class="line-numbers"><a href="#n36" name="n36">36</a></span>    Images : seq&lt;string&gt;
-<span class="line-numbers"><a href="#n37" name="n37">37</a></span>  }
-</pre></div>
-</div>
-</div>
-<p>It’s a <a href="http://fsharpforfunandprofit.com/series/understanding-fsharp-types.html">typical type definition</a> in fsharp which describes the domain model <code>Phone</code>. Also if you remember we have already created a type with the same name <code>Phone</code> in <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33">the previous step</a>. Though they share the name both are being used for different purposes. One for showing all the details of a phone and other one is for showing only few details about a phone. </p>
-
-<p>This is what we call us <a href="http://martinfowler.com/bliki/BoundedContext.html">bounded context in DDD</a>. In fsharp we can easily achieve it using modules with less verbosity.</p>
-
-<p>We have also used another awesome feature of fsharp called <a href="http://fsharpforfunandprofit.com/posts/units-of-measure/">units-of-measure</a> which help us <a href="http://en.wikipedia.org/wiki/Mars_Climate_Orbiter#Cause_of_failure">avoid failures in unit-coversion</a> by providing strong typed data.</p>
-
-<p>In the later posts we will be extending the domain based on theses measure types right now it just expresses the domain correct. These measure types are not created yet so lets create them by adding a source file in <strong>Domain</strong> project with the name <code>Measures</code></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace PhoneCat.Domain
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>module Measures = 
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  [&lt;Measure&gt;] type inch
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  [&lt;Measure&gt;] type g
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  [&lt;Measure&gt;] type MB
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let private toUOM (measureString : string) stringToReplace (uom : float&lt;_&gt;) = 
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    let value = 
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      if measureString = &quot;&quot; then 0.
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      else measureString.Replace(stringToReplace, &quot;&quot;) |&gt; float
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    value |&gt; ((*) uom)
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let toInch (inchStr : string) = toUOM inchStr &quot;inches&quot; 1.0&lt;inch&gt;
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let toGram (weightStr : string) = toUOM weightStr &quot;grams&quot; 1.0&lt;g&gt;
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  let toMB (storageStr : string) = toUOM storageStr &quot;MB&quot; 1.0&lt;MB&gt;
-</pre></div>
-</div>
-</div>
-
-<p>We have defined types to represents measures in inch, gram and megabytes. We have also added few utility methods to translate the raw string to strongly typed data which does the following</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>&quot;200.5inches&quot; to 200.5&lt;inch&gt;
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>&quot;1200MB&quot; to 1200.&lt;MB&gt;
-</pre></div>
-</div>
-</div>
-<p>With the domain model in place the next step is to populate this domain model from the data-store. To do it we are going to reuse the PhoneTypeProvider that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/DataAccess/TypeProviders.fs#L25">created in the step-1</a>. Since it has all the properties that we needed, we just need to add a function which does the mapping.</p>
-
-<p>Open <code>TypeProviders</code> and add the below function</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let ToCatalogPhone(phone : PhoneTypeProvider.Root) = 
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let android = { OS = phone.Android.Os; UI = phone.Android.Ui }
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>      
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let camera = 
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    { Features = phone.Camera.Features
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      Primary = phone.Camera.Primary }        
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let display = 
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    { ScreenResolution = phone.Display.ScreenResolution
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      ScreenSize = toInch phone.Display.ScreenSize
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      TouchScreen = phone.Display.TouchScreen }
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  let storage = 
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    { Flash = toMB phone.Storage.Flash
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      Ram = toMB phone.Storage.Ram}
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  { Id = phone.Id
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    Name = phone.Name
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    Description = phone.Description
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    Android = android
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    Camera = camera
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>    Display = display
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    Weight = toGram phone.SizeAndWeight.Weight
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    Storage = storage 
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    Images = phone.Images}
-</pre></div>
-</div>
-</div>
-<p>We are leveraging the utility functions <code>toGram</code>, <code>toMB</code> defined above as part of measure types and do seamless mapping of domain model from data store.</p>
-
-<p>The next step is wiring the controller with the domain model and the data-store. We are going to follow the same <strong>Composition Root</strong> design as we <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Infrastructure.fs#L19-38">did in step-1</a></p>
-
-<p>Add a source file in the <em>Web</em> project with the name <code>MvcInfrastructure</code> and add the following code</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace PhoneCat.Web
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open PhoneCat.DataAccess
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open PhoneCat.Domain
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open PhoneCat.Web.Controllers
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open System
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open System.Web.Mvc
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>module MvcInfrastructure = 
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  type CompositionRoot(phones : seq&lt;PhoneTypeProvider.Root&gt;) = 
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    inherit DefaultControllerFactory() with
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      override this.GetControllerInstance(requestContext, controllerType) = 
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>        if controllerType = typeof&lt;HomeController&gt; then 
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>          let homeController = new HomeController()
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>          homeController :&gt; IController
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>        else if controllerType = typeof&lt;PhoneController&gt; then
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>          let phones' = phones |&gt; Seq.map TypeProviders.ToCatalogPhone
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>          let phoneController = new PhoneController(phones')
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>          phoneController :&gt; IController
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>        else
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>          raise &lt;| ArgumentException((sprintf &quot;Unknown controller type requested: %A&quot; controllerType))
-</pre></div>
-</div>
-</div>
-
-<p>Similar to step-1 we are creating the composition root by passing the phones data and doing the wiring of different components.</p>
-
-<p>Since we have created our custom ControllerFactory, we need to update the MVC configuration to use it when the framework creates the controllers.</p>
-
-<p>Update the ```Global.asax.fs`` file as below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>member x.Application_Start() =
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let phones = GitHubRepository.getPhones()
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  AreaRegistration.RegisterAllAreas()
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  GlobalConfiguration.Configure(new Action&lt;HttpConfiguration&gt;(fun config -&gt; Global.RegisterWebApi(config, phones)))
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Global.RegisterFilters(GlobalFilters.Filters)
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  Global.RegisterRoutes(RouteTable.Routes)
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  ControllerBuilder.Current.SetControllerFactory(MvcInfrastructure.CompositionRoot(phones))
-<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  BundleConfig.RegisterBundles BundleTable.Bundles
-</pre></div>
-</div>
-</div>
-<p>In the last step the we have retrieved the phones data <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Global.asax.fs#L65">inside the RegisterWebApi method</a> and in this step we have moved it outside so that it can be used by both MVC Controllers and Web-Api controllers.</p>
-
-<p>We have also changed the signature of RegisterWebApi method. In the <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Web/Global.asax.fs#L51">earlier step</a> it gets the configuration parameter alone and now it has two parameters <code>httpConfiguration</code> and <code>phones</code></p>
-
-<p>The next pending task in Phone View is translating the Phone Domain model to Phone View Model. Add the Phone View model in the <code>PhoneController</code> created before and update it us below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type PhoneViewModel = 
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  {
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    Name : string
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    Description : string
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    Os : string
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    Ui : string
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    Flash : string
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    Ram : string
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    Weight : string
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    ScreenResolution : string
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    ScreenSize : string
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    TouchScreen : string
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    Primary : string
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    Features : seq&lt;string&gt;
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    Images : seq&lt;string&gt;    
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  }
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  with static member ToPhoneViewModel(phone : Phone) =
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    let roundToDigits (value:float) = String.Format(&quot;{0:0.00}&quot;, value)
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    let concatWithSpace str2 str1 = str1 + &quot; &quot; + str2
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    let uomToString (measureValue: float&lt;_&gt;) measureName =
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      measureValue |&gt; float |&gt; roundToDigits |&gt; concatWithSpace measureName
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    { 
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>      Name = phone.Name
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>      Description = phone.Description
-<span class="line-numbers"><a href="#n27" name="n27">27</a></span>      Os = phone.Android.OS
-<span class="line-numbers"><a href="#n28" name="n28">28</a></span>      Ui = phone.Android.UI
-<span class="line-numbers"><a href="#n29" name="n29">29</a></span>      Flash = phone.Storage.Flash |&gt; int |&gt; sprintf &quot;%d MB&quot;
-<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>      Ram =  phone.Storage.Ram |&gt; int |&gt; sprintf &quot;%d MB&quot;
-<span class="line-numbers"><a href="#n31" name="n31">31</a></span>      Weight = uomToString phone.Weight &quot;grams&quot;
-<span class="line-numbers"><a href="#n32" name="n32">32</a></span>      ScreenResolution = phone.Display.ScreenResolution
-<span class="line-numbers"><a href="#n33" name="n33">33</a></span>      ScreenSize = uomToString phone.Display.ScreenSize &quot;inches&quot;
-<span class="line-numbers"><a href="#n34" name="n34">34</a></span>      TouchScreen = if phone.Display.TouchScreen then &quot;Yes&quot; else &quot;No&quot;
-<span class="line-numbers"><a href="#n35" name="n35">35</a></span>      Primary = phone.Camera.Primary
-<span class="line-numbers"><a href="#n36" name="n36">36</a></span>      Features = phone.Camera.Features
-<span class="line-numbers"><a href="#n37" name="n37">37</a></span>      Images = phone.Images
-<span class="line-numbers"><a href="#n38" name="n38">38</a></span>    }
-</pre></div>
-</div>
-</div>
-<p>With all in place, we just need to create a razor view with the name <code>Show.cshtml</code> inside the <strong>View</strong> -&gt; <strong>Phone</strong> directory of <em>Web</em> project and update it <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Phone/Show.cshtml">as mentioned here.</a> </p>
-
-<p>That’s it. Phone View is up and running! Click the Phone Links in the Home Page it will take you to the Phones View Page.</p>
-
-<h3 id="manufacturers-view">Manufacturers View</h3>
-<p><img src="/images/fsharp_phonecat/step_2/Manufacturer.png"><br />
-Manufactures View follows the similar steps that we have used to create the Phone View. It displays the Phones manufactured by a selected manufacturer in the home page.</p>
-
-<p>Let’s start from the controller. Create a controller in the <strong>Web</strong> project with the name <code>ManufacturerController</code></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace PhoneCat.Web.Controllers
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open System.Web
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open System.Web.Mvc
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open PhoneCat.Domain
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open System
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>type ManufacturerViewModel = {
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  Name : string
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  Phones : seq&lt;Phone&gt;
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>}
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>with static member ToManufacturerViewModel (name, phones) =
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      {Name = ManufacturerName.ToString name; Phones = phones}
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>type ManufacturerController 
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  (
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    getPhones : ManufacturerName -&gt; (ManufacturerName * seq&lt;Phone&gt;)
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  ) =
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  inherit Controller()
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  member this.Show (id : string) = 
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>    
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    let viewModel = 
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>      id 
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>      |&gt; ManufacturerName.ToManufacturerName
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>      |&gt; getPhones
-<span class="line-numbers"><a href="#n27" name="n27">27</a></span>      |&gt; ManufacturerViewModel.ToManufacturerViewModel
-<span class="line-numbers"><a href="#n28" name="n28">28</a></span>
-<span class="line-numbers"><a href="#n29" name="n29">29</a></span>    this.View(viewModel)
-</pre></div>
-</div>
-</div>
-
-<p>The <code>ManufacturerController</code> depends on the function <code>getPhones</code> which gives the Phones manufactured by the given manufacturer. The action method <code>Show</code> converts given id to the manufaturer name,  gets the Phones, converts them to <code>ManufacturerViewModel</code> and renders the view.</p>
-
-<p>The domain model <code>Phone</code> mentioned here is the one that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/1/Domain/Production.fs#L29-L33">already created in step-1</a>. The <code>getPhones</code> domain function is yet to be created. </p>
-
-<p>Open <code>Phones</code> file in the <em>Domain</em> project and add the <code>getPhonesOfManufacturer</code> function.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getPhonesOfManufacturer (phones : seq&lt;Phone&gt;) (manufacturerName) =
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>    let phones' = 
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>      phones
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>      |&gt; Seq.filter (fun p -&gt; ManufacturerName.ToManufacturerName p.Name = manufacturerName)
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    (manufacturerName, phones')
-</pre></div>
-</div>
-</div>
-<p>The <code>getPhonesOfManufacturer</code> function takes a sequence of phones and a manufacturer name, filters them for the given manufacturer and return a <a href="http://fsharpforfunandprofit.com/posts/tuples/">tuple</a> that contain the manufacturer name and the sequence of phones.</p>
-
-<p>As we have already created the data-store functions which serves the required data, we just need to wire up the controller.</p>
-
-<p>Update <code>MvcInfrastructure</code> file in the <em>Web</em> project to create <code>ManufacturerController</code></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module MvcInfrastructure = 
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  type CompositionRoot(phones : seq&lt;PhoneTypeProvider.Root&gt;) = 
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    inherit DefaultControllerFactory() with
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      override this.GetControllerInstance(requestContext, controllerType) = 
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        // ... Existing code ignored for brevity 
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>        else if controllerType = typeof&lt;ManufacturerController&gt; then
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>          let getPhonesByManufactuerName = phones |&gt; Seq.map TypeProviders.ToPhone |&gt; Phones.getPhonesOfManufacturer
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>          let manufacturerController = new ManufacturerController(getPhonesByManufactuerName)
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>          manufacturerController :&gt; IController
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        else
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>          raise &lt;| ArgumentException((sprintf &quot;Unknown controller type requested: %A&quot; controllerType))
-</pre></div>
-</div>
-</div>
-
-<p>Thanks to the <a href="http://fsharpforfunandprofit.com/posts/partial-application/">partial function</a> we have partially applied the first parameter alone for the <code>Phones.getPhonesOfManufacturer</code> function which has the signature </p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>seq&lt;Phone&gt; -&gt; ManufacturerName -&gt; seq&lt;Phone&gt;
-</pre></div>
-</div>
-</div>
-<p>and created a new function on the fly with the signature </p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>ManufacturerName -&gt; seq&lt;Phone&gt;
-</pre></div>
-</div>
-</div>
-<p>which is the exactly the function that is needed by the <code>ManufacturerController</code></p>
-
-<p>The final step is to create a razor view with the name <code>Show.cshtml</code> inside the <strong>View</strong> -&gt; <strong>Manufacturer</strong> directory of <strong>Web</strong> project and update it <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Views/Manufacturer/Show.cshtml">as mentioned here.</a> </p>
-
-<h3 id="summary">Summary</h3>
-<p>In this blog post we have seen how to create MVC Razor views in fsharp. You can find the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/2">source code in the github repository</a>. In the later posts we will be adding more interactivity. Stay tuned !!</p>
 ]]></content>
   </entry>
   

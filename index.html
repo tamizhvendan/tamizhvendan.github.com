@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Feb 4th, 2015 asp.net-identity, fsharp, owin Comments Step-6 Authentication Using Owin Authentication Middleware and ASP.NET Identity This is step 6 &hellip;">
+	<meta name="description" content="Mar 2nd, 2015 fsharp, rop Comments Step-7 Validation and Error Handling Using ROP This is step 7 of my blog series on Web Application Development in &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -99,7 +99,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 140.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 104.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -112,6 +112,600 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-02T12:30:33+05:30" data-updated="true" itemprop="datePublished">Mar 2<sup>nd</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/rop/'>rop</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/" itemprop="url">Step-7 Validation and Error Handling Using ROP</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote>
+  <p>This is step 7 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">last blog post</a> we have seen how to register a new user using the Asp.Net Identity Management framework. Validating the incoming data before updating the backend datastore and handling error while saving are typical tasks in a web application. In this blog post we are going to see how to achieve these things in a web application written in fsharp. As mentioned in the last blog post we will be adding validation logic for new user registration using <a href="http://fsharpforfunandprofit.com/rop/">Railway oriented Programming</a> aka <em>ROP</em>.</p>
+
+<h3 id="cleanup">Cleanup</h3>
+
+<p>Before adding the validation,  let’s do some cleanup and make it ready for adding validation. </p>
+
+<p>Create a new source file <code>UserStorage</code> in the <strong>Identity</strong> project and move the user manager creation logic from <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/6/Web/MvcInfrastructure.fs#L15-L20">MvcInfrastructure</a> to here.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">AutoOpen</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">module</span> <span class="nn">UserStorage</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">createUserManager</span> <span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">userStore</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UserStore</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;(</span><span class="k">new</span> <span class="n">UserDbContext</span><span class="bp">()</span><span class="o">)</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">userManager</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;(</span><span class="n">userStore</span><span class="o">)</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">userValidator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UserValidator</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;(</span><span class="n">userManager</span><span class="o">)</span>
+</span><span class="line">    <span class="n">userValidator</span><span class="o">.</span><span class="n">AllowOnlyAlphanumericUserNames</span> <span class="o">&lt;-</span> <span class="k">false</span>
+</span><span class="line">    <span class="n">userManager</span><span class="o">.</span><span class="n">UserValidator</span> <span class="o">&lt;-</span> <span class="n">userValidator</span>
+</span><span class="line">    <span class="n">userManager</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Create a Request record type in <code>Users</code> that represents the request for creating a new user</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CreateUserRequest</span> <span class="o">=</span> <span class="o">{</span><span class="n">Name</span><span class="o">:</span> <span class="kt">string</span><span class="o">;</span> <span class="n">Password</span><span class="o">:</span> <span class="kt">string</span><span class="o">;</span> <span class="n">Email</span> <span class="o">:</span> <span class="kt">string</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then move the user creation logic from Authentication Controller’s <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/6/Web/Controllers/AuthenticationController.fs#L62-L65">Register action method</a> to <code>UserStorage</code> and update it to use <code>CreateUserRequest</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">createUser</span> <span class="o">(</span><span class="n">userManager</span> <span class="o">:</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;)</span> <span class="n">createUserRequest</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="n">Name</span> <span class="o">=</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Name</span><span class="o">,</span>
+</span><span class="line">                      <span class="n">UserName</span> <span class="o">=</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Email</span><span class="o">,</span>
+</span><span class="line">                      <span class="n">Email</span> <span class="o">=</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Email</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">userManager</span><span class="o">.</span><span class="n">Create</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Password</span><span class="o">)</span>
+</span><span class="line">
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Finally, update the <code>Register</code> action method in <code>AuthenticationController</code> to use the above function</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">HttpPost</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="o">[&lt;</span><span class="n">ValidateAntiForgeryToken</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Register</span><span class="o">(</span><span class="n">registerViewModel</span> <span class="o">:</span> <span class="n">RegisterViewModel</span><span class="o">)</span> <span class="o">:</span> <span class="n">ActionResult</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">createUserRequest</span> <span class="o">:</span> <span class="n">CreateUserRequest</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">Name</span> <span class="o">=</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span>
+</span><span class="line">    <span class="n">Email</span> <span class="o">=</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Email</span><span class="o">;</span>
+</span><span class="line">    <span class="n">Password</span> <span class="o">=</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Password</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">userCreateResult</span> <span class="o">=</span> <span class="nn">Users</span><span class="p">.</span><span class="n">createUser</span> <span class="n">userManager</span> <span class="n">createUserRequest</span>
+</span><span class="line">  <span class="k">if</span> <span class="o">(</span><span class="n">userCreateResult</span><span class="o">.</span><span class="n">Succeeded</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">    <span class="n">signin</span> <span class="n">userManager</span> <span class="k">base</span><span class="o">.</span><span class="n">Request</span> <span class="n">user</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">RedirectToAction</span><span class="o">(</span><span class="s">&quot;Index&quot;</span><span class="o">,</span> <span class="s">&quot;Home&quot;</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">ActionResult</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="n">userCreateResult</span><span class="o">.</span><span class="n">Errors</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">iter</span><span class="o">(</span><span class="k">fun</span> <span class="n">err</span> <span class="o">-&gt;</span> <span class="n">this</span><span class="o">.</span><span class="n">ModelState</span><span class="o">.</span><span class="n">AddModelError</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">,</span> <span class="n">err</span><span class="o">))</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="o">(</span><span class="n">registerViewModel</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">ActionResult</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>With this we are wrapping the cleanup work and all set for adding validation.</p>
+
+<h3 id="adding-validation">Adding Validation</h3>
+
+<p>The first step in ROP is defining the “two tracks”. The track <code>Success</code> represents a successful operation (here its validation) and the other track <code>Failure</code> represents the failure while executing an operation. Usually these “two tracks” will be defined using a discriminated union.</p>
+
+<p>Create a source file <code>Rop</code> in the <strong>Identity</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Rop</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">type</span> <span class="nc">Error</span> <span class="o">=</span> <span class="o">{</span><span class="n">Property</span> <span class="o">:</span> <span class="kt">string</span><span class="o">;</span> <span class="n">Message</span> <span class="o">:</span> <span class="kt">string</span><span class="o">}</span>
+</span><span class="line">  <span class="k">type</span> <span class="nc">Result</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">=</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Success</span> <span class="k">of</span> <span class="k">&#39;</span><span class="n">a</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Failure</span> <span class="k">of</span> <span class="n">Error</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>Error</code> type provides the metadata associated with the error.</p>
+
+<p>Let’s start writing validation rules from validating Name. Create a source file <code>NameValidation</code> in <strong>Identity</strong> project and add the following code</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">NameValidation</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">validateNameEmptiness</span> <span class="n">createUserRequest</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">createUserRequest</span><span class="o">.</span><span class="n">Name</span> <span class="o">&lt;&gt;</span> <span class="k">null</span> <span class="o">&amp;&amp;</span>
+</span><span class="line">          <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Name</span> <span class="o">&lt;&gt;</span> <span class="nn">String</span><span class="p">.</span><span class="n">Empty</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">      <span class="n">Success</span> <span class="n">createUserRequest</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">Failure</span> <span class="o">{</span> <span class="n">Property</span> <span class="o">=</span> <span class="s">&quot;Name&quot;</span>
+</span><span class="line">                <span class="n">Message</span> <span class="o">=</span> <span class="s">&quot;Name is required&quot;</span><span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">validateNameLength</span> <span class="n">createUserRequest</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">createUserRequest</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">Length</span> <span class="o">&lt;=</span> <span class="mi">50</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">        <span class="n">Success</span> <span class="n">createUserRequest</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">Failure</span> <span class="o">{</span> <span class="n">Property</span> <span class="o">=</span> <span class="s">&quot;Name&quot;</span>
+</span><span class="line">                <span class="n">Message</span> <span class="o">=</span> <span class="s">&quot;Name should not contain more than 50 characters&quot;</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Hope these rules are self-explanatory. We are just validating the name for emptiness and length, and based on the result we are returning either the <code>Success</code> track or <code>Failure</code> track.</p>
+
+<p>Next, add validation rules for Password. Similar to Name Validation add a source file with the name <code>PasswordValidation</code> and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">PasswordValidation</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">validatePasswordEmptiness</span> <span class="n">createUserRequest</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">createUserRequest</span><span class="o">.</span><span class="n">Password</span> <span class="o">&lt;&gt;</span> <span class="k">null</span> <span class="o">&amp;&amp;</span>
+</span><span class="line">          <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Password</span> <span class="o">&lt;&gt;</span> <span class="nn">String</span><span class="p">.</span><span class="n">Empty</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">      <span class="n">Success</span> <span class="n">createUserRequest</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">Failure</span> <span class="o">{</span> <span class="n">Property</span> <span class="o">=</span> <span class="s">&quot;Password&quot;</span>
+</span><span class="line">                <span class="n">Message</span> <span class="o">=</span> <span class="s">&quot;Password is required&quot;</span> <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">validatePasswordLength</span> <span class="n">createUserRequest</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">createUserRequest</span><span class="o">.</span><span class="n">Password</span><span class="o">.</span><span class="n">Length</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">      <span class="n">Success</span> <span class="n">createUserRequest</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">Failure</span> <span class="o">{</span> <span class="n">Property</span> <span class="o">=</span> <span class="s">&quot;Password&quot;</span>
+</span><span class="line">                <span class="n">Message</span> <span class="o">=</span> <span class="s">&quot;Password should not contain more than 10 characters&quot;</span> <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">validatePasswordStrength</span>  <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">specialCharacters</span> <span class="o">=</span> <span class="o">[</span> <span class="s">&quot;*&quot;</span><span class="o">;</span> <span class="s">&quot;&amp;&quot;</span><span class="o">;</span> <span class="s">&quot;%&quot;</span><span class="o">;</span> <span class="s">&quot;$&quot;</span> <span class="o">]</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">hasSpecialCharacters</span> <span class="o">(</span><span class="n">str</span> <span class="o">:</span> <span class="n">String</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">      <span class="n">specialCharacters</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">exists</span> <span class="o">(</span><span class="k">fun</span> <span class="n">c</span> <span class="o">-&gt;</span> <span class="n">str</span><span class="o">.</span><span class="n">Contains</span><span class="o">(</span><span class="n">c</span><span class="o">))</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">errorMessage</span> <span class="o">=</span>
+</span><span class="line">      <span class="s">&quot;Password should contain atleast one of the special characters &quot;</span>
+</span><span class="line">        <span class="o">+</span> <span class="nn">String</span><span class="p">.</span><span class="n">Join</span><span class="o">(</span><span class="s">&quot;,&quot;</span><span class="o">,</span> <span class="n">specialCharacters</span><span class="o">)</span>
+</span><span class="line">    <span class="n">validate</span>
+</span><span class="line">      <span class="o">(</span><span class="k">fun</span> <span class="n">createUserRequest</span> <span class="o">-&gt;</span>
+</span><span class="line">        <span class="n">hasSpecialCharacters</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Password</span><span class="o">)</span>
+</span><span class="line">      <span class="s">&quot;Password&quot;</span>
+</span><span class="line">      <span class="n">errorMessage</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>In addition to the two validation rules that we have seen in <code>NameValidation</code> here we have added one more validation to verify the presence of special characters in the <code>Password</code>.</p>
+
+<p>There is a pattern in all the validation rules that we have seen so far. </p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_7/validation_pattern.png" width="450" height="450" /></p>
+
+<p>Let’s extract this pattern out of these validation rules and reduce the lines of code!</p>
+
+<p>Create a new source file <code>Validation</code> and add the write this pattern as a function</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Validation</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">validate</span> <span class="n">isValid</span> <span class="n">property</span> <span class="n">message</span> <span class="n">createUserRequest</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">isValid</span> <span class="n">createUserRequest</span> <span class="k">then</span>
+</span><span class="line">      <span class="n">Success</span> <span class="n">createUserRequest</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">Failure</span> <span class="o">{</span><span class="n">Property</span> <span class="o">=</span> <span class="n">property</span><span class="o">;</span> <span class="n">Message</span> <span class="o">=</span> <span class="n">message</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>The <code>validate</code> function represents the outer box of the above diagram which takes four inputs</p>
+
+<ul>
+  <li>A function to validate the createUserRequest <code>isValid</code> which has the signature
+<code>'a -&gt; bool</code> that represents the validation rule</li>
+  <li>A string to show which property is invalid in the error <code>property</code></li>
+  <li>A string representing the error <code>message</code></li>
+  <li>The last is the incoming userCreateRequest <code>createUserRequest</code></li>
+</ul>
+
+<p><em>Note: Property and Message parameters are not shown in the diagram just to express the pattern clearly</em></p>
+
+<p>We also need a small utility function to check the emptiness of the string. So add it in <code>Validation</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">isNonEmptyString</span> <span class="n">str</span> <span class="o">=</span> <span class="n">str</span> <span class="o">&lt;&gt;</span> <span class="k">null</span> <span class="o">&amp;&amp;</span> <span class="n">str</span> <span class="o">&lt;&gt;</span> <span class="nn">String</span><span class="p">.</span><span class="n">Empty</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>With these functions in place we can refactor the validation rules that we written before.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">NameValidation</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">validateNameEmptiness</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">validate</span>
+</span><span class="line">      <span class="o">(</span><span class="k">fun</span> <span class="n">createUserRequest</span> <span class="o">-&gt;</span> <span class="n">isNonEmptyString</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Name</span><span class="o">)</span>
+</span><span class="line">      <span class="s">&quot;Name&quot;</span>
+</span><span class="line">      <span class="s">&quot;Name is required&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">validateNameLength</span>  <span class="o">=</span>
+</span><span class="line">    <span class="n">validate</span>
+</span><span class="line">      <span class="o">(</span><span class="k">fun</span> <span class="n">createUserRequest</span> <span class="o">-&gt;</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">Length</span> <span class="o">&lt;=</span> <span class="mi">50</span><span class="o">)</span>
+</span><span class="line">      <span class="s">&quot;Name&quot;</span>
+</span><span class="line">      <span class="s">&quot;Name should not contain more than 50 characters&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">PasswordValidation</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">validatePasswordEmptiness</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">validate</span>
+</span><span class="line">      <span class="o">(</span><span class="k">fun</span> <span class="n">createUserRequest</span> <span class="o">-&gt;</span> <span class="n">isNonEmptyString</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Password</span><span class="o">)</span>
+</span><span class="line">      <span class="s">&quot;Password&quot;</span>
+</span><span class="line">      <span class="s">&quot;Password is required&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">validatePasswordLength</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">validate</span>
+</span><span class="line">      <span class="o">(</span><span class="k">fun</span> <span class="n">createUserRequest</span> <span class="o">-&gt;</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Name</span><span class="o">.</span><span class="n">Length</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="o">)</span>
+</span><span class="line">      <span class="s">&quot;Password&quot;</span>
+</span><span class="line">      <span class="s">&quot;Password should not contain more than 10 characters&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">hasSpecialCharacters</span> <span class="n">specialCharacters</span> <span class="o">(</span><span class="n">str</span> <span class="o">:</span> <span class="n">String</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">specialCharacters</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">exists</span> <span class="o">(</span><span class="k">fun</span> <span class="n">c</span> <span class="o">-&gt;</span> <span class="n">str</span><span class="o">.</span><span class="n">Contains</span><span class="o">(</span><span class="n">c</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">validatePasswordStrength</span>  <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">specialCharacters</span> <span class="o">=</span> <span class="o">[</span> <span class="s">&quot;*&quot;</span><span class="o">;</span> <span class="s">&quot;&amp;&quot;</span><span class="o">;</span> <span class="s">&quot;%&quot;</span><span class="o">;</span> <span class="s">&quot;$&quot;</span> <span class="o">]</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">errorMessage</span> <span class="o">=</span>
+</span><span class="line">      <span class="s">&quot;Password should contain atleast one of the special characters &quot;</span>
+</span><span class="line">        <span class="o">+</span> <span class="nn">String</span><span class="p">.</span><span class="n">Join</span><span class="o">(</span><span class="s">&quot;,&quot;</span><span class="o">,</span> <span class="n">specialCharacters</span><span class="o">)</span>
+</span><span class="line">    <span class="n">validate</span>
+</span><span class="line">      <span class="o">(</span><span class="k">fun</span> <span class="n">createUserRequest</span> <span class="o">-&gt;</span>
+</span><span class="line">        <span class="n">hasSpecialCharacters</span> <span class="n">specialCharacters</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Password</span><span class="o">)</span>
+</span><span class="line">      <span class="s">&quot;Password&quot;</span>
+</span><span class="line">      <span class="n">errorMessage</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Much cleaner than the previous version, isn’t it?</p>
+
+<p>The final validation is Email validation. It is very similar to the other validations that we have seen so far. One extra validation is verifying the uniqueness of the email id being used to register.</p>
+
+<p>Create a new source file <code>EmailValidation</code> and add the validations</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">EmailValidation</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">isUniqueEmailAddr</span> <span class="o">(</span><span class="n">userManager</span> <span class="o">:</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;)</span> <span class="n">emailAddr</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="n">userManager</span><span class="o">.</span><span class="n">FindByName</span><span class="o">(</span><span class="n">emailAddr</span><span class="o">)</span>
+</span><span class="line">    <span class="n">user</span> <span class="o">=</span> <span class="k">null</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">isValidEmailAddress</span> <span class="n">emailAddr</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">emailAddrRegex</span> <span class="o">=</span>
+</span><span class="line">      <span class="s">@&quot;\A(?:[a-z0-9!#$%&amp;&#39;*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;&#39;*+/=?^_`{|}~-]+)&quot;</span> <span class="o">+</span>
+</span><span class="line">        <span class="s">&quot;*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?</span><span class="err">\</span><span class="s">.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)</span><span class="err">\</span><span class="s">Z&quot;</span>
+</span><span class="line">    <span class="nn">Regex</span><span class="p">.</span><span class="n">IsMatch</span><span class="o">(</span><span class="n">emailAddr</span><span class="o">,</span> <span class="n">emailAddrRegex</span><span class="o">,</span> <span class="nn">RegexOptions</span><span class="p">.</span><span class="n">IgnoreCase</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">validateEmailEmptiness</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">validate</span>
+</span><span class="line">      <span class="o">(</span><span class="k">fun</span> <span class="n">createUserRequest</span> <span class="o">-&gt;</span> <span class="n">isNonEmptyString</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Email</span><span class="o">)</span>
+</span><span class="line">      <span class="s">&quot;Email&quot;</span>
+</span><span class="line">      <span class="s">&quot;Email is required&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">validateEmailUniqueness</span> <span class="n">isUniqueEmailAddr</span> <span class="n">createUserRequest</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">validate</span>
+</span><span class="line">      <span class="o">(</span><span class="k">fun</span> <span class="n">createUserRequest</span> <span class="o">-&gt;</span> <span class="n">isUniqueEmailAddr</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Email</span><span class="o">)</span>
+</span><span class="line">      <span class="s">&quot;Email&quot;</span>
+</span><span class="line">      <span class="s">&quot;Email address already exists&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">validateEmailCorrectness</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">validate</span>
+</span><span class="line">      <span class="o">(</span><span class="k">fun</span> <span class="n">createUserRequest</span> <span class="o">-&gt;</span> <span class="n">isValidEmailAddress</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Email</span><span class="o">)</span>
+</span><span class="line">      <span class="s">&quot;Email&quot;</span>
+</span><span class="line">      <span class="s">&quot;Email address is invalid&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="putting-all-the-validations-together">Putting all the validations together</h3>
+
+<p>So far we have seen individual property validation rules. It’s time to put all these pieces together and validate the <code>CreateUserRequest</code> as a whole.</p>
+
+<p>Create a source file <code>UserValidation</code> and update it as below</p>
+
+<p><img src="/images/fsharp_phonecat/step_7/uservalidation_match.png" /></p>
+
+<p>Wait.. Wait.. I know how do you feel here.. It’s too much code! Can we do it in a better way? </p>
+
+<h3 id="using-railway-oriented-programming-rop">Using Railway Oriented Programming (ROP)</h3>
+
+<p>Thanks to ROP, we can make the mighty code smaller and more readable. I am going ahead with an assumption that you are aware of ROP. In case if you are not aware of it then watch this <a href="http://vimeo.com/97344498">excellent presentation</a> by <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_7/bind_function.png" width="350" height="500" /></p>
+
+<p>The crux of ROP is the bind function which composes two functions where the output type of one function is not matching with that of the input. If you want to know more this bind function, do visit this <a href="http://adit.io./posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html">awesome blog post</a> by <a href="https://twitter.com/_egonschiele">Aditya</a>. In this blog post he explains about the bind function under the title <strong>Monads</strong></p>
+
+<p>Let’s start by adding this bind function in the module <code>Rop</code> that we have already created.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">bind</span> <span class="n">f1</span> <span class="n">f2</span> <span class="n">x</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">f1</span> <span class="n">str</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Success</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">f2</span> <span class="n">x</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Failure</span> <span class="n">err</span> <span class="o">-&gt;</span> <span class="n">Failure</span> <span class="n">err</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">inline</span> <span class="o">(&gt;&gt;=)</span> <span class="n">f1</span> <span class="n">f2</span> <span class="o">=</span> <span class="n">bind</span> <span class="n">f1</span> <span class="n">f2</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The bind function here calls the function <code>f1</code> with the given input <code>x</code> if it succeeds, then executes the second function <code>f2</code> with <code>x</code>. In case if the execution of <code>f1</code> resulted in failure then it just passes without executing the second function. </p>
+
+<p>The infix operator <code>&gt;&gt;=</code> is an alias of bind function. </p>
+
+<p>With the help of this bind function, we can rewrite the <code>validateCreateUserRequest</code> function in a better way as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">UserValidation</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">validateCreateUserRequest</span> <span class="n">userManager</span>  <span class="o">=</span>
+</span><span class="line">      <span class="n">validateEmailEmptiness</span>
+</span><span class="line">        <span class="o">&gt;&gt;=</span> <span class="n">validateEmailCorrectness</span>
+</span><span class="line">        <span class="o">&gt;&gt;=</span> <span class="n">validateEmailUniqueness</span> <span class="o">(</span><span class="n">isUniqueEmailAddr</span> <span class="n">userManager</span><span class="o">)</span>
+</span><span class="line">        <span class="o">&gt;&gt;=</span> <span class="n">validateNameEmptiness</span>
+</span><span class="line">        <span class="o">&gt;&gt;=</span> <span class="n">validateNameLength</span>
+</span><span class="line">        <span class="o">&gt;&gt;=</span> <span class="n">validatePasswordEmptiness</span>
+</span><span class="line">        <span class="o">&gt;&gt;=</span> <span class="n">validatePasswordLength</span>
+</span><span class="line">        <span class="o">&gt;&gt;=</span> <span class="n">validatePasswordStrength</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>It’s awesome! Isn’t it? If you are still wondering what’s happening here! Watch the Scott’s presentation one more time.</p>
+
+<h3 id="adding-validation-before-saving">Adding validation before saving</h3>
+
+<p>Now we have the validation infrastructure in place. So, let’s go ahead and add it before creating a new user in the backend. As part of this refactoring we are also going to do error handling of new user creation. </p>
+
+<p>Create a new private function in <code>UserStorage</code> to create a new user with error handling</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">private</span> <span class="n">createUser&#39;</span> <span class="o">(</span><span class="n">userManager</span> <span class="o">:</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;)</span> <span class="n">createUserRequest</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">try</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="n">Name</span> <span class="o">=</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Name</span><span class="o">,</span>
+</span><span class="line">                        <span class="n">UserName</span> <span class="o">=</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Email</span><span class="o">,</span>
+</span><span class="line">                        <span class="n">Email</span> <span class="o">=</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Email</span><span class="o">)</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">identityResult</span> <span class="o">=</span> <span class="n">userManager</span><span class="o">.</span><span class="n">Create</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="n">createUserRequest</span><span class="o">.</span><span class="n">Password</span><span class="o">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">identityResult</span><span class="o">.</span><span class="n">Succeeded</span> <span class="k">then</span>
+</span><span class="line">      <span class="n">Success</span> <span class="n">createUserRequest</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">errors</span> <span class="o">=</span> <span class="nn">String</span><span class="p">.</span><span class="n">concat</span> <span class="s">&quot;,&quot;</span> <span class="n">identityResult</span><span class="o">.</span><span class="n">Errors</span>
+</span><span class="line">      <span class="n">Failure</span> <span class="o">{</span> <span class="n">Property</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">;</span>
+</span><span class="line">                <span class="n">Message</span> <span class="o">=</span> <span class="n">errors</span><span class="o">}</span>
+</span><span class="line">  <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="n">Failure</span> <span class="o">{</span> <span class="n">Property</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">;</span>
+</span><span class="line">                <span class="n">Message</span> <span class="o">=</span> <span class="s">&quot;An unexpected error happened while creating new user&quot;</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Like validation rules defined before this new <code>createUser'</code> function is also outputs “two tracks”, Success if the user creation is successful others it outputs Failure. Because of this change in function signature <br />
+(<code>UserManager&lt;User&gt; -&gt; CreateUserRequest -&gt; Result&lt;CreateUserRequest&gt;</code>) we can fit this easily into the bind function.</p>
+
+<p>Modify the existing <code>CreateUser</code> function to use this</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">createUser</span> <span class="o">(</span><span class="n">userManager</span> <span class="o">:</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">      <span class="n">validateCreateUserRequest</span> <span class="n">userManager</span> <span class="o">&gt;&gt;=</span> <span class="n">createUser&#39;</span> <span class="n">userManager</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Thanks to <a href="http://fsharpforfunandprofit.com/posts/partial-application/">Partial application</a> we have created new functions on the fly by passing only the partial parameters (<code>UserManager</code> in this case) and make it fit with less code. </p>
+
+<p>Since we have changed the signature of the <code>createUser</code> function from <code>UserManager&lt;User&gt; -&gt; CreateUserRequest -&gt; IdentityResult</code> to <code>UserManager&lt;User&gt; -&gt; CreateUserRequest -&gt; Result&lt;CreateUserRequest&gt;</code> we need to change the <code>Register</code> action method in the <code>AuthenticationController</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">HttpPost</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="o">[&lt;</span><span class="n">ValidateAntiForgeryToken</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Register</span><span class="o">(</span><span class="n">registerViewModel</span> <span class="o">:</span> <span class="n">RegisterViewModel</span><span class="o">)</span> <span class="o">:</span> <span class="n">ActionResult</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">createUserRequest</span> <span class="o">:</span> <span class="n">CreateUserRequest</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">Name</span> <span class="o">=</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span>
+</span><span class="line">    <span class="n">Email</span> <span class="o">=</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Email</span><span class="o">;</span>
+</span><span class="line">    <span class="n">Password</span> <span class="o">=</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Password</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">UserStorage</span><span class="p">.</span><span class="n">createUser</span> <span class="n">userManager</span> <span class="n">createUserRequest</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Failure</span> <span class="n">error</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">ModelState</span><span class="o">.</span><span class="n">AddModelError</span><span class="o">(</span><span class="n">error</span><span class="o">.</span><span class="n">Property</span><span class="o">,</span> <span class="n">error</span><span class="o">.</span><span class="n">Message</span><span class="o">)</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="o">(</span><span class="n">registerViewModel</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">ActionResult</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Success</span> <span class="n">createUserRequest&#39;</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="n">userManager</span><span class="o">.</span><span class="n">Find</span><span class="o">(</span><span class="n">createUserRequest&#39;</span><span class="o">.</span><span class="n">Email</span><span class="o">,</span> <span class="n">createUserRequest&#39;</span><span class="o">.</span><span class="n">Password</span><span class="o">)</span>
+</span><span class="line">    <span class="n">signin</span> <span class="n">userManager</span> <span class="k">base</span><span class="o">.</span><span class="n">Request</span> <span class="n">user</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">RedirectToAction</span><span class="o">(</span><span class="s">&quot;Index&quot;</span><span class="o">,</span> <span class="s">&quot;Home&quot;</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">ActionResult</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That’s it, we are ready to go!</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>In this blog post we have seen how to add validations and error handling in fsharp using ROP. Though it is little hard to get this kind of functional thinking, it offers a great deal of expressiveness and flexibility to your codebase. Just like any other skills if you practice it for quite time you can also master it. You can find the source code associated with this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/7">github repository</a></p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1206,271 +1800,6 @@
 <h2 id="summary">Summary</h2>
 
 <p>Its a little longer post than I expected and I am glad that you have read it this far. I’d like give credit to this <a href="http://blog.fogcreek.com/fparsec/">blog post</a> by <a href="http://haolian.org/">Hao Lian</a> which I’ve used as a reference to come up with this implementation. As usual you can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/5">phonecat github repository</a>.</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-01-06T05:22:32+05:30" data-updated="true" itemprop="datePublished">Jan 6<sup>th</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/devops/'>devops</a>, <a class='category' href='/blog/categories/fake/'>fake</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/01/06/step-4-build-automation-using-fake/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/01/06/step-4-build-automation-using-fake/" itemprop="url">Step-4 Build Automation Using FAKE</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<blockquote>
-  <p>This is step 4 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In the last three steps, we have seen how to build an web application in fsharp by leveraging <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web-Api</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor</a> and <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">SignalR</a>. In this step for a change we are going to take the <a href="http://en.wikipedia.org/wiki/DevOps">DevOps</a> side of the application and going to add the build automation capabilities for the application. Let’s get stated!</p>
-
-<h2 id="fake---an-awesome-build-automation-library">Fake - An awesome build automation library</h2>
-
-<p><a href="http://fsharp.github.io/FAKE/">Fake</a> is a F# version of very successful and widely used build automation libraries <a href="http://www.gnu.org/software/make/">Make</a> and <a href="http://en.wikipedia.org/wiki/Rake_%28software%29">Rake</a>. The combination of <a href="http://fsharp.org/testimonials/">fsharp’s expressiveness</a> and the <a href="http://fsharp.github.io/FAKE/gettingstarted.html">Fake’s DSL</a> is a visual treat to the eyes and especially if you are someone who is using <a href="http://en.wikipedia.org/wiki/MSBuild">MsBuild</a> xml files for doing build automation you will definitely appreciate it.</p>
-
-<h3 id="adding-nugetexe-to-nuget-folder">Adding nuget.exe to .nuget folder</h3>
-
-<p>As we are going to drive the nuget packages installation from the fsharp script file, we will be needing a <a href="nuget.org/nuget.exe">command line version of nuget</a>. Download it and place it inside the <strong>.nuget</strong> folder</p>
-
-<p>Also its a good practice to add a <a href="http://docs.nuget.org/docs/reference/nuget-config-settings">Nuget.config file</a>. Add it too under <strong>.nuget</strong> folder. </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
-</span><span class="line"><span class="nt">&lt;configuration&gt;</span>
-</span><span class="line">  <span class="nt">&lt;packageSources&gt;</span>
-</span><span class="line">    <span class="nt">&lt;add</span> <span class="na">key=</span><span class="s">&quot;nuget.org&quot;</span> <span class="na">value=</span><span class="s">&quot;https://www.nuget.org/api/v2/&quot;</span> <span class="nt">/&gt;</span>
-</span><span class="line">  <span class="nt">&lt;/packageSources&gt;</span>
-</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="adding-buildbat-file">Adding build.bat file</h3>
-
-<p>Create a batch file <strong>build.bat</strong> in the root directory of the solution. It is going act as bootstrap file which initiates the entire build process.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="p">@</span><span class="k">echo</span> <span class="k">off</span>
-</span><span class="line"><span class="k">cls</span>
-</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;FAKE&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
-</span><span class="line"><span class="s2">&quot;tools\FAKE\tools\Fake.exe&quot;</span> build.fsx
-</span><span class="line"><span class="k">pause</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>It just download the Fake nuget package using the nuget.exe that we added earlier and call the fake.exe with the fsharp build script <strong>build.fsx</strong>.</p>
-
-<h3 id="adding-buildfsx-file">Adding build.fsx file</h3>
-
-<p>Create a <a href="http://blogs.msdn.com/b/chrsmith/archive/2008/09/12/scripting-in-f.aspx">fsharp script file</a> with the name <strong>build.fsx</strong> in the root directory. This script is going to implement all our build automation tasks by using fake library.</p>
-
-<h3 id="cleaning-the-build-directory">Cleaning the build directory</h3>
-
-<p>Just a like any other build process, the first step is to clear the build directory. Fake follows the same convention of MsBuild’s <a href="http://msdn.microsoft.com/en-us/library/ms171462.aspx">Targets</a>. Defining targets in Fake is less verbose compare to its MsBuild’s counterpart. As a matter of fact, it is a fsharp function that take two parameters, the name of the target and a function which defines the target. </p>
-
-<p>Since it is a script file we need to add reference to the <strong>FakeLib.dll</strong> before writing the actual code.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">r</span> <span class="s">&quot;tools/FAKE/tools/FakeLib.dll&quot;</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Fake</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">buildDir</span> <span class="o">=</span> <span class="s">&quot;./build&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">Target</span> <span class="s">&quot;Clean&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">CleanDir</span> <span class="n">buildDir</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Less verbose, Isn’t it ?</p>
-
-<p>The <code>CleanDir</code> is a predefined function in Fake library which clean up this build directory. If the directory doesn’t exist it creates the directory. </p>
-
-<h3 id="build-the-solution">Build the solution</h3>
-
-<p>After cleaning the build directory the next step is to carrying out the actual build process. Before building the application we need to resolve the nuget packages being referred in the application. It’s so simple in Fake. All you need to do is just call predefined function <code>RestorePackages</code>.    </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Build&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">RestorePackages</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">!!</span> <span class="s">&quot;./PhoneCat.sln&quot;</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="n">MSBuildRelease</span> <span class="n">buildDir</span> <span class="s">&quot;Build&quot;</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="n">Log</span> <span class="s">&quot;Build-Output: &quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>The <code>!!</code> is a function which takes a file path and returns <a href="http://fsharp.github.io/FAKE/apidocs/fake-filesystem-fileincludes.html">FileIncludes</a> which is Fake’s internal representation of a file set.</p>
-
-<p>FileIncludes <a href="https://github.com/fsharp/FAKE/blob/master/src/app/FakeLib/Globbing/FileSystem.fs#L95-l117">implements</a> <code>IEnumerable&lt;string&gt;</code> so it can be used wherever we need an <code>IEnumerable&lt;string&gt;</code>. </p>
-
-<p>The <code>MsBuildRelease</code> is also a predefined function in Fake which builds the given solution (which is piped from the <code>!!</code>). The first two parameters are the output build directory path and the target names which should be run by MsBuild. Fake offers lot of functional wrappers on top of MsBuild and you can find more about it in this <a href="http://fsharp.github.io/FAKE/apidocs/fake-msbuildhelper.html">api documentation.</a>. </p>
-
-<p>The last line just pipes the log result from the <code>MsBuildRelease</code> function to the log output.</p>
-
-<h3 id="running-unit-tests-using-nunitrunner">Running unit tests using Nunit.Runner</h3>
-
-<p>Now we have built the solution and the next step is running the unit test cases. Since I’ve written the test cases using Nunit and we are going to see how to run nunit tests using Fake. Fake also supports <a href="http://fsharp.github.io/FAKE/apidocs/fake-xunithelper.html">XUnit</a> and <a href="http://fsharp.github.io/FAKE/apidocs/fake-mstest.html">MsTest</a>. Porting the below code to other unit testing framework is very straight forward.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Test&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
-</span><span class="line">  <span class="o">!!</span> <span class="o">(</span><span class="n">buildDir</span> <span class="o">+</span> <span class="s">&quot;/*.Tests.dll&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="n">NUnit</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">p</span> <span class="k">with</span> <span class="n">ToolPath</span> <span class="o">=</span> <span class="s">&quot;./tools/NUnit.Runners/tools&quot;</span> <span class="o">})</span>
-</span><span class="line"><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>As we did it in the build target, the <code>!!</code> function picks all the unit test files (I’ve used a convention of naming the unit tests projects with the <strong>.Tests</strong> suffix) in the build directory and transform them to FileIncludes. </p>
-
-<p>The <code>NUnit</code> is yet another <a href="http://fsharp.github.io/FAKE/apidocs/fake-nunitsequential.html">inbuilt function of Fake</a> which runs nunit on the given group of assemblies.</p>
-
-<p>It takes two parameter, a function that returns the modified default <code>NUnitParams</code> value and a sequence of assembly paths. We have modified the default <code>ToolPath</code> property which specifies the file path of <strong>NUnit Runner</strong> </p>
-
-<p>As we did for Fake we have to modify the batch file as below to install the Nunit Runner nuget package before running the actual script.  </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="p">@</span><span class="k">echo</span> <span class="k">off</span>
-</span><span class="line"><span class="k">cls</span>
-</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;FAKE&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
-</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;NUnit.Runners&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="s2">&quot;tools\FAKE\tools\Fake.exe&quot;</span> build.fsx
-</span><span class="line"><span class="k">pause</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="deploy-the-application-in-iis">Deploy the application in IIS</h3>
-
-<p>Well, now we are at the final step of the build process which deploy the application in the local IIS server. </p>
-
-<p>Deploying an application in IIS is super easy using Fake. All you need to do is just input necessary things like site name, virtual directory name, etc., and call the <code>IIS</code> function in <strong>Fake.IIS</strong> library which is installed as part of Fake.</p>
-
-<p>To begin with we need to add reference in the beginning <strong>build.fsx</strong> to include the <strong>Fake.IIS</strong> library. </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">r</span> <span class="s">&quot;tools/FAKE/tools/Fake.IIS.dll&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>This <strong>Fake.IIS</strong> makes heavy use of <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.servermanager(v=vs.90).aspx">ServerManager</a> which helps to dynamically configure IIS 7.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Deploy&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">siteName</span> <span class="o">=</span> <span class="s">&quot;fsharp&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">appPool</span> <span class="o">=</span> <span class="s">&quot;fsharp.appPool&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">port</span> <span class="o">=</span> <span class="s">&quot;:9999:&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">vdir</span> <span class="o">=</span> <span class="s">&quot;/phonecat&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">webBuildPath</span> <span class="o">=</span> <span class="n">buildDir</span> <span class="o">+</span> <span class="s">&quot;/_PublishedWebsites/Web&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">sitePhysicalPath</span> <span class="o">=</span> <span class="s">@&quot;c:\inetpub\wwwroot\phonecat&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">XCopy</span> <span class="n">webBuildPath</span> <span class="n">sitePhysicalPath</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">(</span><span class="n">IIS</span>
-</span><span class="line">    <span class="o">(</span><span class="n">Site</span> <span class="n">siteName</span> <span class="s">&quot;http&quot;</span> <span class="n">port</span> <span class="s">@&quot;C:\inetpub\wwwroot&quot;</span> <span class="n">appPool</span><span class="o">)</span>
-</span><span class="line">    <span class="o">(</span><span class="n">ApplicationPool</span> <span class="n">appPool</span> <span class="k">true</span> <span class="s">&quot;v4.0&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="o">(</span><span class="n">Some</span><span class="o">(</span><span class="n">Application</span> <span class="n">vdir</span> <span class="n">sitePhysicalPath</span><span class="o">)))</span>
-</span><span class="line"><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>When we build a web project using MsBuild in release mode, it creates a deployable directory which can be accessed using the path <em>/_PublishedWebsites/Web</em> in the build directory. So, after building the application we just need to copy this deployable directory to the <strong>intepub\wwwroot</strong> directory using the XCopy function in Fake.</p>
-
-<p>The <code>IIS</code> function takes three parameters</p>
-
-<ul>
-  <li>site - A function with the signature <code>ServerManager -&gt; Site</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.site(v=vs.90).aspx">Site</a> with the given site settings. </li>
-  <li>appPool - A function with the signature <code>ServerManager -&gt; ApplicationPool</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.applicationpool(v=vs.90).aspx">AppPool</a> with the given appPool settings.  </li>
-  <li>app - An option type with the signature <code>(Site -&gt; ServerManager -&gt; Application) option</code> provides the <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.application(v=vs.90).aspx">Application</a>  </li>
-</ul>
-
-<p>Fake’s IIS helper library has in-built function for Site, ApplicationPool and Application which takes the necessary inputs need for its creation and returns the associated instances. All of these function creates Site, ApplicationPool and Application respectively if they are not available in the IIS. </p>
-
-<h3 id="running-the-targets">Running the Targets</h3>
-
-<p>In the above steps we just defined various Fake targets. These targets doesn’t execute on its own and we need to explicitly define the order of its execution and initiate.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="s">&quot;Clean&quot;</span>
-</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Build&quot;</span>
-</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Test&quot;</span>
-</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Deploy&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">RunTargetOrDefault</span> <span class="s">&quot;Deploy&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>==&gt;</code> is one of <a href="http://fsharp.github.io/FAKE/apidocs/fake-additionalsyntax.html">the DSL in Fake</a> which is actually a function that defines the target execution order.</p>
-
-<p>The <code>RunTargetOrDefault</code> function runs the target specified in the parameter or executes the default target.</p>
-
-<h3 id="summary">Summary</h3>
-
-<p>Fake is just awesome. We can automate so much things with very few lines of code and the beauty is it can be used in <strong>any .net projects</strong>. If you are using MsBuild Xml scripts, do try Fake! It will make you super productive. You can find the source of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/4">fsharp-phonecat repository</a>. </p>
-
 
 		
 		

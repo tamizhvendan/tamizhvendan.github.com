@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Nov 3rd, 2011 c#, programming Comments Think Before You LINQ LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness &hellip;">
+	<meta name="description" content="Nov 22nd, 2011 c#, programming Comments Going Declarative in C# Declarative programming is a simpler, more concise way to describe the behavior of a &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -99,7 +99,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 136.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 140.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 104.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -112,6 +112,124 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-11-22T00:00:00+05:30" data-updated="true" itemprop="datePublished">Nov 22<sup>nd</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/categories/programming/'>programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/11/22/going-declarative-in-c/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/11/22/going-declarative-in-c/" itemprop="url">Going Declarative in C#</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+
+    <p>
+        <a href="http://en.wikipedia.org/wiki/Declarative_programming">Declarative programming</a> is a simpler, more concise way to describe the 
+            behavior of a software program than <a href="http://en.wikipedia.org/wiki/Imperative_programming">imperative programming</a>. 
+            I am an admirer of declarative aspects of programming ever since I have started writing SQL queries. We always do our best to write code 
+            that is easier to read and maintain. Declarative style is one of the proven ways to write clean code. 
+            <a href="http://msdn.microsoft.com/en-us/library/bb308959.aspx">LINQ</a> is an excellent example of declarative style programming that 
+            enables the developers to simply state what they want to do. When I was learning <a href="http://learnyouahaskell.com/higher-order-functions">higher order functions in Haskell</a>, I have found the interrelationship between the higher order functions and the LINQ. 
+            It really made me to think in a different way to solve a problem. 
+            Through this blog post I would like to share my experiments on <a href="http://en.wikipedia.org/wiki/Higher-order_function">higher order functions</a> in C#.
+    </p>
+
+    <p>Let me start with a very simple requirement. </p>
+    <blockquote>Write a program to print the even numbers present in the given n numbers</blockquote>
+    <p>The code implementation fairly straight forward as below</p>
+    <div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://2.bp.blogspot.com/-F8d-q0yfDxQ/TsutZtHjXFI/AAAAAAAAAMM/VZOQO-TrRkM/s1600/PrintEvenNumbers.PNG" />
+    </div>
+
+    <p>Nothing fancy about this trivial thing. Let me add some more twist to the code by adding two more requirements.</p>
+    <blockquote>Modify the program implemented above to print odd numbers and multiples of four present in the given n numbers</blockquote>
+
+    <p>To be honest, If I have encountered this requirements before I have learnt Higher Order Functions my implementation would be as follows.</p>
+    <br />
+    <div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://2.bp.blogspot.com/-6Yj8HNUD34s/Tsutfjqe-AI/AAAAAAAAAMU/Oq7SKgTBOyA/s1600/TwoMoreReq.PNG"/>
+    </div>
+    
+    <p>If you look at the above implementation with a critical eye, you can find a potential candidate of duplication. 
+        Let me explain the common pattern that is being used in the implemented PrintXXXX functions. 
+        For each number in the numbers enumerable we are doing the following</p>
+    <ul>
+        <li>Deciding whether the number should be printed or not <em>(Deciding)</em></li>  
+        <li>Printing the number if it is passes the above decision <em>(Doing)</em></li>  
+    </ul>    
+<br />
+    <div class="separator" style="clear: both; text-align: center;">
+        <img src="http://1.bp.blogspot.com/-9xr-Hu8TT7U/TsutkGNc9SI/AAAAAAAAAMc/_JeMMy5u1RY/s1600/Duplication.PNG">
+    </div>
+<p>All the three functions iterate over the numbers enumerable and print the numbers. The only thing which actually differentiates the functions is deciding which numbers to be printed.</p>
+<p>Now the question is how can we eliminate this duplication????</p>
+<p>It’s where higher order functions come into picture. If we move the deciding part of the function away from its implementation then we can easily achieve it.&nbsp;&nbsp; Here we go! The brand new implementation of Print would be </p>
+
+<br /><div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://2.bp.blogspot.com/-9RF4Km0s1NA/TsutoVD_WkI/AAAAAAAAAMk/GWASEODqJTk/s1600/HigherOrderPrint.PNG"/>
+</div>
+
+
+<p>In the new implementation we have just isolated the deciding part of the function from its implementation and parameterize it as function delegate that takes an integer as its input and return a Boolean value.&nbsp; In the client code (Main function) we are actually just calling the print function and declaratively telling it to print only those numbers which satisfies the given condition. As we separated the deciding part from the actual implementation, we can easily accommodate any future requirements like “<i style="mso-bidi-font-style: normal;">Printing multiples of five, printing only single digit numbers</i>” by declarative calling the Print function like as below</p>
+<br /><div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://4.bp.blogspot.com/-iunnD2jPXv8/TsutsrFa_4I/AAAAAAAAAMs/oE81RX5J8gY/s1600/AccomodatedRequirement.PNG" />
+</div>
+
+<p>Cool.. Isn’t it ? Let me complicate the things little more. What would you do if you want to call this Print method across different classes?. A notorious option would be creating a <a href="http://en.wikipedia.org/wiki/Utility_class">Utility class</a> with the Print method and calling it from the other classes. We can also solve these using <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">Extension methods</a> which results a clean readable code like as below</p>
+<br /><div class="separator" style="clear: both; text-align: center;">
+    <img border="0" src="http://4.bp.blogspot.com/-DZVepYydQ84/TsutwLqz__I/AAAAAAAAAM0/eNlsA0F2jzI/s1600/ExtensionMethod.PNG" />
+</div>
+
+<p>So far, so good. We have started with a single function and then we added two more, then eliminated the duplication using Higher Order functions and 
+    finally we have made the code readable by using extension method. </p>
+<p>Okay. Now “<i>I want to print the strings which starts with ‘s’ in the given n strings </i>”. Pardon me for complicating things, I will stop by this one.</p>
+<p>It is almost logically similar to what we have done so far. Instead of numbers here it is string. How can we put it into action?. 
+    Thanks to <a href="http://msdn.microsoft.com/en-us/library/512aeb7t%28v=vs.80%29.aspx">Generics</a>. We can easily achieve this by modifying the extension method to support generic type as below</p>
+    <br />
+<div class="separator" style="clear: both; text-align: center;">
+   <img border="0" src="http://3.bp.blogspot.com/-Cwp_3vrURcU/Tsut-VkAqjI/AAAAAAAAAM8/UrutESWMdw4/s1600/GenericExtensionMethod.PNG" />
+</div>
+
+
+<div>That’s it. Now you are free to play with all sort of logic you want. You can play with different set of conditions to print the elements or even you can also use different collection of your custom classes. And all can be done declaratively!!</div>
+<div>Now its time to reveal to the interrelationship exists between the LINQ and the higher order functions. All the LINQ methods are actually using these Print extension methods kind of extension methods under the hood and makes the life of developer easily but letting them to work declaratively. </div>
+<div><a href="http://msdn.microsoft.com/en-us/library/system.threading.tasks.parallel.aspx">Parallel Class</a> a new addition in C# 4.0, also uses higher order functions and enables the developer to say “Hey CLR, I wanna run these methods parallel”. </div>
+<br /><div class="separator" style="clear: both; text-align: center;">
+        <img border="0" src="http://3.bp.blogspot.com/-oghYOKAdsl4/TsuuMGSPzJI/AAAAAAAAANE/YVpPV4cfTOU/s1600/Parallel+Invoke.PNG" />
+</div>
+
+<p>Awesome! No new thread creation and no verbose. </p>
+<h4>Summary</h4>
+<p>Declarative Programming is powerful tool. It creates more readable, cleaner code and also reduces the possibility of logical mistakes in 
+    multiple similar algorithms. That means fewer mistakes now and in the future.</p>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -294,127 +412,6 @@
 </div>
 </div>
 
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-08-17T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 17<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/" itemprop="url">Test Driving Model Validation in ASP.NET MVC3 - Part 2</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <p>
-    <p>
-        In <a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>of this small blog post series, 
-            we have explored a way to do the TDD of controller’s responsibility in the context of model validation. 
-            In this Part-2 we are going to see <strong>“How to do the TDD of Model Validation”</strong>
-    </p>
-
-    <p>
-        Before getting into the business let us have a quick look at how ASP.NET MVC3 does the model validation. 
-            Internally when making an Http POST/GET request, MVC3 makes use of a helper class 
-            <strong><a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validator.aspx">Validator</a></strong>
-        located in the namespace <em>System.ComponentModel.DataAnnotations.</em>
-        Validator can be used to validate the models based on the <strong>
-            <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationattribute.aspx">ValidationAttribute</a></strong>
-        attributes associate with the model. After validating MVC3 adds the validation results to the controller’s <em>ModelState</em>
-        Property by the <em>AddModelError</em> method which in turn sets the<em> ModelState.IsValid</em> property 
-            (Refer <a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>). We are actually going to make use of this <em>Validator</em>
-        helper class going to test drive the model validation. 
-    </p>
-
-    <h4>Let us start with a small requirement</h4>
-    <p>
-        <em>“Employee name should not be empty”</em>
-    </p>
-
-    <p>The corresponding unit test will be like as follows</p>
-
-    <div style="clear: both; text-align: center;">
-        <img src="http://4.bp.blogspot.com/-3Ql_dP2wJkE/Tku0g78apHI/AAAAAAAAAKw/gV-lTvda50I/s1600/UnitTest1.PNG" />
-    </div>
-
-    <p>ValidateObject Method determines whether the specified object is valid using the validation context and throws a ValidationException if the object is invalid.</p>
-
-
-    <p>Employee Model will be like as follows</p>
-
-    <div style="clear: both; text-align: center;">
-            <img src="http://4.bp.blogspot.com/-URfST5ZPMwo/Tku0gsJJAxI/AAAAAAAAAKs/5K0GYH1ObLs/s1600/Emp1.PNG" />
-    </div>
-
-    <p>
-        When you run the test “EmployeeNameShouldNotBeEmpty”, it will <strong><span style="color: red;">Fail</span></strong> with the error message 
-        <em>“System.ComponentModel.DataAnnotations.ValidationException was expected”</em>. Now it’s time to make it <strong>
-            <span style="color: #00b050;">Pass. </span></strong>Thanks to <em>RequiredAttribute</em> we can make the test the pass without much effort. 
-        Just decorate the Name property with the <em>[Required]</em> Attribute. That’s it. Now run the test and it will 
-        <strong><span style="color: #00b050;">Pass.</span></strong> As there is no scope for Refactoring, we will be ignoring it.
-    </p>
-
-    <p>Well, we have done the TDD of model validation. Now let’s move onto the next requirement.</p>
-    <p>
-        <em>“Employee age should be greater than 30”</em>
-    </p>
-    <br />
-    <p>
-        Let’s write the unit test for this requirement.
-    </p>
-
-    <div style="clear: both; text-align: center;">
-        <img src="http://3.bp.blogspot.com/-cXpXTstCDr4/Tku0hg4cWDI/AAAAAAAAAK0/hahJBKoWOLI/s1600/UnitTest2.PNG" />
-    </div>
-
-    <p>When we run the test, we’d get a failing test with error message “System.ComponentModel.DataAnnotations.ValidationException was expected”</p>
-
-    <p>Like <em>RequiredAttribute</em> we don’t have any AgeLimit Attribute to make the test pass. However we can create such kind of CustomAttributes. 
-        Another approach would be making use of <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.ivalidatableobject.aspx">
-            <em>IValiadatableObject</em></a></p>
-
-    <p>I will be using the latter option in this blog post, if you are interested in creating custom attribute refer this <a href="http://www.devtrends.co.uk/blog/the-complete-guide-to-validation-in-asp.net-mvc-3-part-2">blog post</a></p>
-
-    <p>Here we go; the modified Employee model will look like as follows </p>
-
-    <div style="clear: both; text-align: center;">
-            <img src="http://1.bp.blogspot.com/-zAsuau_JXwA/Tku0iUzEgFI/AAAAAAAAAK4/J1t3gYaECmw/s1600/Emp2.PNG" />
-    </div>
-
-    <p>
-        The <em>Validator</em> helper class will invoke the Validate method of the model if the model passed to the <em>ValidateObject</em> 
-        Method implements the <em>IValidatableObject</em>.
-    </p>
-
-    <p>Hurrah! Now you will be getting a passing test. We have done the TDD of Model Validation. </p>
-    <h3>Summary</h3>
-    <p>The bottom-line is we should not combine the unit tests of model validation with the controller’s unit tests and both should be kept separate. 
-        You can download the source code which we’ve seen in this blog post series from <a href="http://www.box.net/shared/73e9m5d2ufyi6pazfq4j">here</a></p>
-</div>
 		
 		
 	</div>
