@@ -70,3 +70,68 @@ module CartStorage =
 ```
 
 The code is very straight forward to understand. It contains typcial CRUD operations of shopping cart using an in-memory dictionary object.
+
+### Shopping Cart Api
+
+It's time to code the api for the shopping cart. Let's add a source file ```ShoppingCartController``` in the **Web** project and update it as below
+
+```fsharp
+[<RoutePrefix("api/cart")>]
+type ShoppingCartController 
+  (
+    cart : Cart,
+    updateCart : Cart -> Cart
+  ) =
+  inherit ApiController () 
+
+  [<Route("")>]
+  member this.Get() = cart
+
+  [<HttpPost>]
+  [<Route("add")>]
+  member this.AddItem([<FromBody>]productId : string) = 
+    addItem cart productId |> updateCart
+```
+
+The ```ShoppingCartController``` has two dependencies.
+  1. ```Cart``` - Cart associated with the current session
+  2. ```updateCart``` - a function to update the cart
+
+To keep it simple, I haven't added error handling or validation here. The action method ```Get``` returns the cart and the action method ```AddItem``` adds the item to the cart and then update the cart in the storage.
+
+
+### Wiring things up
+
+Now we have all the pieces to add shopping cart to our application and the final step is tying them together. As we did it in other steps we need to do it in the composition root. Open ```Infrastructure``` in the **Web** project and update it as below
+
+```fsharp
+type CompositionRoot 
+  (
+    // ... Exisitng Code ...
+  ) = 
+  interface IHttpControllerActivator with           
+    member this.Create(request, controllerDescriptor, controllerType) =
+      // ... Exisiting Code ...
+      else if controllerType = typeof<ShoppingCartController> then                  
+        let anonymousID = HttpContext.Current.Request.AnonymousID
+        let shoppingCart = 
+          match CartStorage.get anonymousID with
+          | Some cart -> cart
+          | None -> CartStorage.create anonymousID ShoppingCart.Empty
+                                                                                  
+        let shoppingCartController = new ShoppingCartController(shoppingCart, CartStorage.update anonymousID)
+        shoppingCartController :> IHttpController
+      // ... Existing Code ...
+```
+
+Here before the creating an instance of ```ShoppingCartController``` we retreive the anonymous id from the incoming request and get the cart associated with the anonymous id from the storage. In case if the cart is not available we are creating one. For the ```update``` function we pass the partially applied ```update``` function of ```CartStorage```.
+
+That's it !!
+
+### The front-end code
+
+In the front end we just call the ```ShoppingCartController``` action methods using plain jQuery ajax methods and update the UI. Since it is out of the scope of this blog post I haven't covered it here and you can find [the code here](https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Scripts/site.js).
+
+### Summary
+
+In this blog post we have seen how to implement shopping cart in a web application written in fsharp. I leave some exercises to you to extend it to use some other storage and also to add validation and error handling. You can find the source code in the [github phonecat repository](https://github.com/tamizhvendan/fsharp-phonecat/tree/8).
