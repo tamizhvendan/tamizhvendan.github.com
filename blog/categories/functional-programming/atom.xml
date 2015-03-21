@@ -4,7 +4,7 @@
   <title><![CDATA[Category: functional-programming | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/functional-programming/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-03-07T18:01:07+05:30</updated>
+  <updated>2015-03-21T14:24:30+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -1425,6 +1425,7 @@ type BundleConfig() =<br />
   <li><strong>Step 5</strong> - <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">Advanced Search DSL using FSParsec</a></li>
   <li><strong>Step 6</strong> - <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Authentication using Owin and Asp.Net Identity</a></li>
   <li><strong>Step 7</strong> - <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">Validation and Error handling using ROP</a></li>
+  <li><strong>Step 8</strong> - <a href="/blog/2015/03/20/step-8-adding-shopping-cart/">Adding Shopping Cart</a></li>
 </ul>
 ]]></content>
   </entry>

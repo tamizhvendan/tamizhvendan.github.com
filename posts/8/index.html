@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Aug 17th, 2011 asp.net mvc, entity framework, unit testing Comments Test Driving Model Validation in ASP.NET MVC3 - Part 2 In Part-1of this small &hellip;">
+	<meta name="description" content="Sep 15th, 2011 craftsmanship Comments Practice, Practice, Practice !! In the pursuit of becoming a better programmer, I have come across lot of good &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -99,7 +99,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 140.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 104.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 144.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 104.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 112.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -112,6 +112,112 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-09-15T00:00:00+05:30" data-updated="true" itemprop="datePublished">Sep 15<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/09/15/practice-practice-practice/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/09/15/practice-practice-practice/" itemprop="url">Practice, Practice, Practice !!</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+<div>
+	<p>In the pursuit of becoming a better programmer, I have come across lot of good things, which in fact have a lot of positive impact on my thinking, attitude and the way I approach a problem. &nbsp;One of such thing is the book “<a href="http://pragprog.com/book/cfcar2/the-passionate-programmer">Passionate Programmer</a>” which I am currently reading. It is all about creating a remarkable career in software development. If you are a developer, it is a highly recommended book. &nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+	<p>There are a lot of impressive tips we can learn from this book of wisdom. One of Such tip is “Practice, Practice, and Practice!!” It talks about how to practice as a software developer. Though it seems like a mighty task, the author “Chad Fowler” convey this by breaking the might task into the following three category (Divide and Conquer Approach).</p>
+
+<dl>
+	<dt>Physical/Coordination</dt>
+	<dd>
+		<ul>
+			<li>Learn and master the unexplored areas of the language that you are working with. Say for example, Regular Expressions</li>
+			<li>Dig your language’s API and don’t reinvent the wheel</li>
+		</ul>
+	</dd>
+	<dt>Sight Reading</dt>
+	<dd>
+		<ul>
+			<li>Learn by reading the code </li>
+			<li>Pick any of your favorite open source, explore it understand and learn the tips and tricks of the trade</li>
+			<li>Add some new feature</li>
+			<li>Be sure to vary the software you work with</li>
+		</ul>
+	</dd>
+	<dt>Improvisation</dt>
+	<dd>
+		<ul>
+			<li>Takes some structure or constraint and creating something new, on the fly on top of that structure. For example pick a simple program and try to write it with the self-imposed constraints</li>
+			<li>Play with <a href="http://codekata.pragprog.com/">Code Katas</a></li>
+		</ul>
+	</dd> 
+</dl>
+
+<h4>It’s time for action</h4>
+
+<p>I believe these three very fundamental aspects makes a lot of difference. So, I’ve decided to get my hands dirty with these three things and here is my list of to dos.</p>
+
+<dl>
+	<dt>Physical/Coordination – (I pick C# as its my primary language in my current role)</dt>
+	<dd>
+		<ul>
+			<li>Regular Expressions</li>
+			<li>Dynamic Programming</li>
+			<li>Multithreading</li>
+			<li>Parallel Programming</li>
+			<li>LINQ</li>
+			<li>Reflection</li>
+			<li>Streams and Networking</li>
+			<li>Entity Framework</li>
+			<li>Data Structures and Algorithms</li>
+			<li>Customizing MVC3 Framework</li>
+		</ul>
+	</dd>
+	<dt>Sight Reading</dt>
+	<dd>
+		<ul>
+			<li>Exploring ASP.NET MVC3 source code</li>
+			<li>Exploring Nunit source Code</li>
+			<li>Blog my understanding during this exploration</li>
+		</ul>
+	</dd>
+	<dt>Improvisation</dt>
+	<dd>
+		<ul>
+			<li>Make most of Code Katas</li>
+			<li>Active participation in Technical Forums</li>
+		</ul>
+	</dd>
+</dl>	
+</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -377,150 +483,6 @@
         </p>
 
     </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-08-04T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 4<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/data-access/'>data access</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/08/04/ef-code-first-41-in-console-application/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/08/04/ef-code-first-41-in-console-application/" itemprop="url">EF Code First 4.1 in Console Application</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-	<div>
-		<p>
-			Whenever I learn any new things in .Net or experimenting with something, I always prefer to use <em>Console Applications.</em>
-			I personally feel it helps me to concentrate more on what actually I am trying to learn or experiment without any sort of distractions. 
-			Moreover it keeps things simple.
-		</p>
-
-		<p>
-			I would like to do the same while learning EF Code First 4.1. 
-			Though most of articles in web explain EF with respect to ASP.NET MVC, 
-			I favor learning it through my own way using console application without creating any controllers and views!!
-		</p>
-
-		<h4>Following are the prerequisites to work with EF Code First 4.1</h4>
-		<ul>
-			<li>
-				<a href="http://weblogs.asp.net/scottgu/archive/2011/03/15/visual-studio-2010-sp1.aspx">Visual Studio 2010 SP1</a>
-			</li>
-			<li>
-				<a href="http://blogs.msdn.com/b/adonet/archive/2011/04/11/ef-4-1-released.aspx">Entity Framework 4.1</a>
-			</li>
-			<li>
-				<a href="http://weblogs.asp.net/scottgu/archive/2011/01/11/vs-2010-sp1-and-sql-ce.aspx">SQL CE</a> or 
-				SQL Express (SQL CE would be an ideal option for learning purpose)
-			</li>
-
-		</ul>
-
-		<h4>Show me the Code!</h4>
-		<p>After creating a console application project, the initial step would be adding references to the following assemblies.</p>
-		<ul>
-			<li>EntityFramework (Version 4.1)</li>
-			<li>System.Data.Entity</li>
-			<li>System.ComponentModel.DataAnnotations</li>
-		</ul>		
-
-		<p>Now it’s time to defining the model and the data context. To keep it simple, I am going to define only one model “User”.</p>
-		<div style="clear: both; text-align: center">
-            <br />
-			<img src="http://4.bp.blogspot.com/-FxoouXlWKxw/TjqAva1qsWI/AAAAAAAAAJM/5PLCVnNFhDQ/s1600/User.PNG" alt="" />
-		</div>
-
-		<p>The data context would be as following.</p>
-		<div style="clear: both; text-align: center">
-            <br />
-			<img src="http://3.bp.blogspot.com/-2pLPCQePVKY/TjqAwJ-QD4I/AAAAAAAAAJU/X66hDdCw6eo/s1600/MyDataContext.PNG" alt="" />
-		</div>
-
-		<p>
-			This basic infrastructure is sufficient to run the console application. However as we are using the data context for learning purpose, 
-			we might change the model often and doing so will make it inconsistent with the database created automatically when you run the application for the first time.
-		</p>
-
-		<p>
-			We can circumvent this situation by creating new Data Context initialize class that inherits from <em>DropCreateDatabaseIfModelChanges</em>
-			&lt;TContext&gt; where TContext is the data context that you want to sync with the database always. 
-			This class also offers an override function <em>“Seed”</em> using which we can fill the database with some initial data.
-		</p>
-
-		<p>The finished code of DataContext initialize class will be like the following.</p>
-		<div style="clear: both; text-align: center">
-            <br />
-			<img src="http://2.bp.blogspot.com/-fFqQJzPBGkY/TjqAwOW4nMI/AAAAAAAAAJY/DDY_VyYQHfI/s1600/MyDataContextInit.PNG" alt="" />
-		</div>
-
-		<p>
-			This datacontext initialize class would create the database whenever the database model changes and create two users by default. 
-			Now it’s time to code our Main method.
-		</p>
-		<p>
-			Here we go. Pay close attention to the first statement in the Main method that initializes the database with an instance of DataContextInit 
-			class that we have created.
-		</p>
-		<div style="clear: both; text-align: center">
-            <br />
-			<img src="http://4.bp.blogspot.com/-jl5r5Sk7m0Q/TjqAvdAJRPI/AAAAAAAAAJQ/elZcjzTNgEE/s1600/EFConsoleApp.PNG" alt="" />
-		</div>
-
-
-		<p>
-			Now you can run the application without any configurations. The default behavior of EF Code First will create the database 
-			with the same name as your data context name here “MyDataContext” in the SQL Express server installed in the local machine. 
-			If you wish to change this default behavior and wanted to use SQL CE instead of SQL Express just add an App.Config to 
-			the project and create a connection string with the name of your data context as follows.
-		</p>
-
-		<div style="clear: both; text-align: center">
-            <br />
-			<img src="http://4.bp.blogspot.com/-YUZyAGX2KyA/TjqAvBuEd4I/AAAAAAAAAJI/p_UjE-K_lR8/s1600/Configuration.PNG" alt="" />
-		</div>
-
-
-
-		<p>That’s it. “Ctrl+F5” and here is the output</p>
-		<div style="clear: both; text-align: center">
-            <br />
-			<img src="http://3.bp.blogspot.com/-l0IfgWCGZfQ/TjqAwX_8pnI/AAAAAAAAAJc/RLcjASqgaBo/s1600/Output.PNG" alt="" />
-		</div>
-
-
-		<h4>Summary</h4>
-		<p>
-			In this blog post we have explore the basic foundation on how to work with EF CodeFirst using console application. 
-			If you want to get your dirty with EF Code First without any distraction Console Application is a better one. 
-			You can download the sample code used in this blog post from <a href="http://www.box.net/shared/s0yu8b4sebp3dh9ru5gb">here.</a>
-	</div>
 </div>
 
 		

@@ -1,0 +1,380 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Step-8 Adding Shopping Cart - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Step-8 Adding Shopping Cart This is step 8 of my blog series on Web Application Development in Fsharp using ASP.NET MVC In the last blog post we &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 144.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 104.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 112.0%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Step-8 Adding Shopping Cart</h1>
+	<div class="entry-content" itemprop="articleBody"><blockquote>
+  <p>This is step 8 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">last blog post</a> we have seen how to do validation and error handling in fsharp and in this blog post we are going to add shopping cart feature to the phone-cat application that we are developing in this blog series. To keep this blog post simple, we are going to see only adding an item to shopping cart. Remvoing an item from shopping cart is a straightforward implementation and I leave it to you as an exercise</p>
+
+<p><img src="/images/fsharp_phonecat/step_8/cart_intro.png" /></p>
+
+<h3 id="the-shopping-cart-domain">The Shopping Cart Domain</h3>
+
+<p>Let’s start with defining the domain model for handling shopping cart. Create a source file <code>ShoppingCart</code> in the <strong>Domain</strong> project and add the following code</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">ShoppingCart</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">type</span> <span class="nc">ProductId</span> <span class="o">=</span> <span class="kt">string</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">type</span> <span class="nc">Cart</span> <span class="o">=</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Empty</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Active</span> <span class="k">of</span> <span class="n">ProductId</span> <span class="n">List</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">addItem</span> <span class="n">cart</span> <span class="n">productId</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">cart</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Empty</span> <span class="o">-&gt;</span> <span class="n">Active</span> <span class="o">[</span><span class="n">productId</span><span class="o">]</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Active</span> <span class="n">items</span> <span class="o">-&gt;</span> <span class="n">Active</span> <span class="o">(</span><span class="n">productId</span> <span class="o">::</span> <span class="n">items</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>ProductId</code> is an alias of <code>string</code> type represents the id of the phone.</p>
+
+<p>The <code>Cart</code> is a <code>Sum</code> type represents the two possible states of Shopping Cart. The <code>Cart</code> would be either empty or contain product ids that has been added to the cart.</p>
+
+<p>We have added a function which adds a product id to the cart. It just checks the state of the cart and based on the state it either creates the cart with <code>Active</code> state or appends the product id to the existing list.</p>
+
+<p>Thanks to the strong fsharp type system, we have modeled the domain with less lines of code.</p>
+
+<h3 id="persisting-shopping-cart">Persisting Shopping Cart</h3>
+
+<p>Now we have the domain logic to represent the shopping cart and adding items to it. The next step is persisting the cart. We can persist it anywhere as the domain model is persistent ignorant. To keep things simple, we will be persisting it in-memory. </p>
+
+<p>As we did during the <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">recommendation step</a> we will be using a dictionary to store the cart with Asp.Net’s <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid%28v=vs.110%29.aspx">anonymousId</a> as the key. </p>
+
+<p>Create a source file <code>CartStorage</code> in the <strong>DataAccess</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">CartStorage</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">inMemoryStorage</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">new</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="n">Cart</span><span class="o">&gt;</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">create</span> <span class="n">anonymousId</span> <span class="n">cart</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="n">cart</span><span class="o">)</span>
+</span><span class="line">    <span class="n">cart</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">update</span> <span class="n">anonymousId</span> <span class="n">cart</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">Remove</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
+</span><span class="line">    <span class="n">create</span> <span class="n">anonymousId</span> <span class="n">cart</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">get</span> <span class="n">anonymousId</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">inMemoryStorage</span><span class="o">.[</span><span class="n">anonymousId</span><span class="o">]</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The code is very straight forward to understand. It contains typical CRUD operations of a shopping cart using an in-memory dictionary object.</p>
+
+<h3 id="shopping-cart-api">Shopping Cart Api</h3>
+
+<p>It’s time to code the api for the shopping cart. Let’s add a source file <code>ShoppingCartController</code> in the <strong>Web</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">RoutePrefix</span><span class="o">(</span><span class="s">&quot;api/cart&quot;</span><span class="o">)&gt;]</span>
+</span><span class="line"><span class="k">type</span> <span class="nc">ShoppingCartController</span>
+</span><span class="line">  <span class="o">(</span>
+</span><span class="line">    <span class="n">cart</span> <span class="o">:</span> <span class="n">Cart</span><span class="o">,</span>
+</span><span class="line">    <span class="n">updateCart</span> <span class="o">:</span> <span class="n">Cart</span> <span class="o">-&gt;</span> <span class="n">Cart</span>
+</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">ApiController</span> <span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)&gt;]</span>
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Get</span><span class="bp">()</span> <span class="o">=</span> <span class="n">cart</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">HttpPost</span><span class="o">&gt;]</span>
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;add&quot;</span><span class="o">)&gt;]</span>
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">AddItem</span><span class="o">([&lt;</span><span class="n">FromBody</span><span class="o">&gt;]</span><span class="n">productId</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">addItem</span> <span class="n">cart</span> <span class="n">productId</span> <span class="o">|&gt;</span> <span class="n">updateCart</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>ShoppingCartController</code> has two dependencies.<br />
+  1. <code>Cart</code> - Cart associated with the current session<br />
+  2. <code>updateCart</code> - a function to update the cart</p>
+
+<p>To keep it simple, I haven’t added error handling or validation here. The action method <code>Get</code> returns the cart and the action method <code>AddItem</code> adds the item to the cart and then update the cart in the storage.</p>
+
+<h3 id="wiring-things-up">Wiring things up</h3>
+
+<p>Now we have all the pieces to add shopping cart to our application and the final step is tying them together. As we did it in other steps we need to do it in the composition root. Open <code>Infrastructure</code> in the <strong>Web</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span>
+</span><span class="line">  <span class="o">(</span>
+</span><span class="line">    <span class="c1">// ... Exisitng Code ...</span>
+</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">interface</span> <span class="n">IHttpControllerActivator</span> <span class="k">with</span>
+</span><span class="line">    <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Create</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">controllerDescriptor</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">      <span class="c1">// ... Exisiting Code ...</span>
+</span><span class="line">      <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">ShoppingCartController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">        <span class="k">let</span> <span class="nv">anonymousID</span> <span class="o">=</span> <span class="nn">HttpContext</span><span class="p">.</span><span class="nn">Current</span><span class="p">.</span><span class="nn">Request</span><span class="p">.</span><span class="n">AnonymousID</span>
+</span><span class="line">        <span class="k">let</span> <span class="nv">shoppingCart</span> <span class="o">=</span>
+</span><span class="line">          <span class="k">match</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">get</span> <span class="n">anonymousID</span> <span class="k">with</span>
+</span><span class="line">          <span class="o">|</span> <span class="n">Some</span> <span class="n">cart</span> <span class="o">-&gt;</span> <span class="n">cart</span>
+</span><span class="line">          <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">create</span> <span class="n">anonymousID</span> <span class="nn">ShoppingCart</span><span class="p">.</span><span class="n">Empty</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">let</span> <span class="nv">shoppingCartController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ShoppingCartController</span><span class="o">(</span><span class="n">shoppingCart</span><span class="o">,</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">update</span> <span class="n">anonymousID</span><span class="o">)</span>
+</span><span class="line">        <span class="n">shoppingCartController</span> <span class="o">:&gt;</span> <span class="n">IHttpController</span>
+</span><span class="line">      <span class="c1">// ... Existing Code ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here before the creating an instance of <code>ShoppingCartController</code> we retrieve the anonymous id from the incoming request and get the cart associated with the anonymous id from the storage. In case if the cart is not available, we are creating one. For the <code>update</code> function, we pass the partially applied <code>update</code> function of <code>CartStorage</code>.</p>
+
+<p>That’s it!!</p>
+
+<h3 id="the-front-end-code">The front-end code</h3>
+
+<p>In the front end, we just call the <code>ShoppingCartController</code> action methods using plain jQuery ajax methods and update the UI. Since it is out of the scope of this blog post I haven’t covered it here and you can find <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Scripts/site.js">the code here</a>.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>In this blog post we have seen how to implement shopping cart in a web application written in fsharp. I leave some exercises for you to extend it to use some other storage and also to add validation and error handling. You can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/8">github phonecat repository</a>.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

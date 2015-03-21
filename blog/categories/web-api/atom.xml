@@ -4,7 +4,7 @@
   <title><![CDATA[Category: web-api | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/web-api/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-03-07T18:01:07+05:30</updated>
+  <updated>2015-03-21T14:24:30+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,150 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Step-8 Adding Shopping Cart]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/"/>
+    <updated>2015-03-20T11:49:35+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 8 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">last blog post</a> we have seen how to do validation and error handling in fsharp and in this blog post we are going to add shopping cart feature to the phone-cat application that we are developing in this blog series. To keep this blog post simple, we are going to see only adding an item to shopping cart. Remvoing an item from shopping cart is a straightforward implementation and I leave it to you as an exercise</p>
+
+<p><img src="/images/fsharp_phonecat/step_8/cart_intro.png"></p>
+
+<h3 id="the-shopping-cart-domain">The Shopping Cart Domain</h3>
+
+<p>Let’s start with defining the domain model for handling shopping cart. Create a source file <code>ShoppingCart</code> in the <strong>Domain</strong> project and add the following code</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module ShoppingCart =    
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  type ProductId = string
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  type Cart =
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    | Empty
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    | Active of ProductId List
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let addItem cart productId =
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    match cart with
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    | Empty -&gt; Active [productId]
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    | Active items -&gt; Active (productId :: items)
+</pre></div>
+</div>
+</div>
+
+<p>The <code>ProductId</code> is an alias of <code>string</code> type represents the id of the phone.</p>
+
+<p>The <code>Cart</code> is a <code>Sum</code> type represents the two possible states of Shopping Cart. The <code>Cart</code> would be either empty or contain product ids that has been added to the cart.</p>
+
+<p>We have added a function which adds a product id to the cart. It just checks the state of the cart and based on the state it either creates the cart with <code>Active</code> state or appends the product id to the existing list.</p>
+
+<p>Thanks to the strong fsharp type system, we have modeled the domain with less lines of code.</p>
+
+<h3 id="persisting-shopping-cart">Persisting Shopping Cart</h3>
+
+<p>Now we have the domain logic to represent the shopping cart and adding items to it. The next step is persisting the cart. We can persist it anywhere as the domain model is persistent ignorant. To keep things simple, we will be persisting it in-memory. </p>
+
+<p>As we did during the <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">recommendation step</a> we will be using a dictionary to store the cart with Asp.Net’s <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid%28v=vs.110%29.aspx">anonymousId</a> as the key. </p>
+
+<p>Create a source file <code>CartStorage</code> in the <strong>DataAccess</strong> project and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module CartStorage =  
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let private inMemoryStorage = 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    new Dictionary&lt;string, Cart&gt;()
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let create anonymousId cart = 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    inMemoryStorage.Add(anonymousId, cart)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    cart
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let update anonymousId cart =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    inMemoryStorage.Remove(anonymousId) |&gt; ignore
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    create anonymousId cart
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let get anonymousId =
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    match inMemoryStorage.ContainsKey(anonymousId) with
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    | true -&gt; Some inMemoryStorage.[anonymousId] 
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    | _ -&gt; None
+</pre></div>
+</div>
+</div>
+
+<p>The code is very straight forward to understand. It contains typical CRUD operations of a shopping cart using an in-memory dictionary object.</p>
+
+<h3 id="shopping-cart-api">Shopping Cart Api</h3>
+
+<p>It’s time to code the api for the shopping cart. Let’s add a source file <code>ShoppingCartController</code> in the <strong>Web</strong> project and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;RoutePrefix(&quot;api/cart&quot;)&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>type ShoppingCartController 
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  (
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    cart : Cart,
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    updateCart : Cart -&gt; Cart
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  ) =
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  inherit ApiController () 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  [&lt;Route(&quot;&quot;)&gt;]
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  member this.Get() = cart
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  [&lt;HttpPost&gt;]
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  [&lt;Route(&quot;add&quot;)&gt;]
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  member this.AddItem([&lt;FromBody&gt;]productId : string) = 
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    addItem cart productId |&gt; updateCart
+</pre></div>
+</div>
+</div>
+
+<p>The <code>ShoppingCartController</code> has two dependencies.<br />
+  1. <code>Cart</code> - Cart associated with the current session<br />
+  2. <code>updateCart</code> - a function to update the cart</p>
+
+<p>To keep it simple, I haven’t added error handling or validation here. The action method <code>Get</code> returns the cart and the action method <code>AddItem</code> adds the item to the cart and then update the cart in the storage.</p>
+
+<h3 id="wiring-things-up">Wiring things up</h3>
+
+<p>Now we have all the pieces to add shopping cart to our application and the final step is tying them together. As we did it in other steps we need to do it in the composition root. Open <code>Infrastructure</code> in the <strong>Web</strong> project and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type CompositionRoot 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  (
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    // ... Exisitng Code ...
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  ) = 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  interface IHttpControllerActivator with           
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    member this.Create(request, controllerDescriptor, controllerType) =
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      // ... Exisiting Code ...
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      else if controllerType = typeof&lt;ShoppingCartController&gt; then                  
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        let anonymousID = HttpContext.Current.Request.AnonymousID
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        let shoppingCart = 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>          match CartStorage.get anonymousID with
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>          | Some cart -&gt; cart
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>          | None -&gt; CartStorage.create anonymousID ShoppingCart.Empty
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>                                                                                  
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>        let shoppingCartController = new ShoppingCartController(shoppingCart, CartStorage.update anonymousID)
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>        shoppingCartController :&gt; IHttpController
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>      // ... Existing Code ...
+</pre></div>
+</div>
+</div>
+
+<p>Here before the creating an instance of <code>ShoppingCartController</code> we retrieve the anonymous id from the incoming request and get the cart associated with the anonymous id from the storage. In case if the cart is not available, we are creating one. For the <code>update</code> function, we pass the partially applied <code>update</code> function of <code>CartStorage</code>.</p>
+
+<p>That’s it!!</p>
+
+<h3 id="the-front-end-code">The front-end code</h3>
+
+<p>In the front end, we just call the <code>ShoppingCartController</code> action methods using plain jQuery ajax methods and update the UI. Since it is out of the scope of this blog post I haven’t covered it here and you can find <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Scripts/site.js">the code here</a>.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>In this blog post we have seen how to implement shopping cart in a web application written in fsharp. I leave some exercises for you to extend it to use some other storage and also to add validation and error handling. You can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/8">github phonecat repository</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Step-2 Fsharp-PhoneCat Views using Razor]]></title>
