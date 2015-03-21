@@ -25,3 +25,4 @@ As it is my maiden attempt to create a relatively large web application in fshar
 * **Step 5** - [Advanced Search DSL using FSParsec]({% post_url 2015-01-18-step-5-advanced-search-dsl-using-fparsec %})
 * **Step 6** - [Authentication using Owin and Asp.Net Identity]({% post_url 2015-02-04-step-6-authentication-using-owin-middleware-and-asp-dot-net-identity %})
 * **Step 7** - [Validation and Error handling using ROP]({% post_url 2015-03-02-step-7-validation-and-error-handling-using-rop %})
+* **Step 8** - [Adding Shopping Cart]({% post_url 2015-03-20-step-8-adding-shopping-cart%})

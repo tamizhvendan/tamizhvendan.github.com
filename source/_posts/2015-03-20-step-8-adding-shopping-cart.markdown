@@ -10,7 +10,7 @@ categories:
 
 > This is step 8 of my blog series on [Web Application Development in Fsharp using ASP.NET MVC]({% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %})
 
-In the [last blog post]({% post_url 2015-03-02-step-7-validation-and-error-handling-using-rop %}) we have seen how to do validation and error handling in fsharp and in this blog post we are going to add shopping cart to the phone-cat application that we are developing in this blog series. To keep this blog post simple we are going to see only adding an item to shopping cart. Remvoing an item from shopping cart is a straight forward implementation and I leave it to you as an exercise
+In the [last blog post]({% post_url 2015-03-02-step-7-validation-and-error-handling-using-rop %}) we have seen how to do validation and error handling in fsharp and in this blog post we are going to add shopping cart feature to the phone-cat application that we are developing in this blog series. To keep this blog post simple, we are going to see only adding an item to shopping cart. Remvoing an item from shopping cart is a straightforward implementation and I leave it to you as an exercise
 
 {% img /images/fsharp_phonecat/step_8/cart_intro.png %}
 
@@ -35,7 +35,7 @@ module ShoppingCart =
 
 The ```ProductId``` is an alias of ```string``` type represents the id of the phone.
 
-The ```Cart``` is a ```Sum``` type represents the two possible state of Shopping Cart. The ```Cart``` would be either empty or contain product ids that has been added to the cart.
+The ```Cart``` is a ```Sum``` type represents the two possible states of Shopping Cart. The ```Cart``` would be either empty or contain product ids that has been added to the cart.
 
 We have added a function which adds a product id to the cart. It just checks the state of the cart and based on the state it either creates the cart with ```Active``` state or appends the product id to the existing list.
 
@@ -43,7 +43,7 @@ Thanks to the strong fsharp type system, we have modeled the domain with less li
 
 ### Persisting Shopping Cart
 
-Now we have the domain logic to represent the shopping cart and adding item to it. The next step is persisting the cart. We can persist it any where as the domain model is persistant ignorant. To keep things simple we will be persiting it in-memory. 
+Now we have the domain logic to represent the shopping cart and adding items to it. The next step is persisting the cart. We can persist it anywhere as the domain model is persistent ignorant. To keep things simple, we will be persisting it in-memory. 
 
 As we did during the [recommendation step]({% post_url 2015-01-02-step-3-phonecat-recommendation-system-using-f-number-agents %}) we will be using a dictionary to store the cart with Asp.Net's [anonymousId](http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid%28v=vs.110%29.aspx) as the key. 
 
@@ -69,7 +69,7 @@ module CartStorage =
     | _ -> None
 ```
 
-The code is very straight forward to understand. It contains typcial CRUD operations of shopping cart using an in-memory dictionary object.
+The code is very straight forward to understand. It contains typical CRUD operations of a shopping cart using an in-memory dictionary object.
 
 ### Shopping Cart Api
 
@@ -124,14 +124,14 @@ type CompositionRoot
       // ... Existing Code ...
 ```
 
-Here before the creating an instance of ```ShoppingCartController``` we retreive the anonymous id from the incoming request and get the cart associated with the anonymous id from the storage. In case if the cart is not available we are creating one. For the ```update``` function we pass the partially applied ```update``` function of ```CartStorage```.
+Here before the creating an instance of ```ShoppingCartController``` we retrieve the anonymous id from the incoming request and get the cart associated with the anonymous id from the storage. In case if the cart is not available, we are creating one. For the ```update``` function, we pass the partially applied ```update``` function of ```CartStorage```.
 
-That's it !!
+That's it!!
 
 ### The front-end code
 
-In the front end we just call the ```ShoppingCartController``` action methods using plain jQuery ajax methods and update the UI. Since it is out of the scope of this blog post I haven't covered it here and you can find [the code here](https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Scripts/site.js).
+In the front end, we just call the ```ShoppingCartController``` action methods using plain jQuery ajax methods and update the UI. Since it is out of the scope of this blog post I haven't covered it here and you can find [the code here](https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Scripts/site.js).
 
 ### Summary
 
-In this blog post we have seen how to implement shopping cart in a web application written in fsharp. I leave some exercises to you to extend it to use some other storage and also to add validation and error handling. You can find the source code in the [github phonecat repository](https://github.com/tamizhvendan/fsharp-phonecat/tree/8).
+In this blog post we have seen how to implement shopping cart in a web application written in fsharp. I leave some exercises for you to extend it to use some other storage and also to add validation and error handling. You can find the source code in the [github phonecat repository](https://github.com/tamizhvendan/fsharp-phonecat/tree/8).
