@@ -4,7 +4,7 @@
   <title><![CDATA[Category: asp.net mvc | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/asp-dot-net-mvc/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-03-21T14:24:30+05:30</updated>
+  <updated>2015-03-28T15:54:30+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,212 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Step-9 Adding Checkout]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/"/>
+    <updated>2015-03-28T13:07:20+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 9 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2015/03/20/step-8-adding-shopping-cart/">last blog post</a> we have added the shopping cart feature to our phonecat application and in this blog post we are going to implement the checkout feature.</p>
+
+<p>Implementing the checkout feature involves two steps.<br />
+  1. Adding a View Cart Page<br />
+  2. Processing the Checkout and creating an order</p>
+
+<h3 id="adding-a-view-cart-page">Adding a View Cart Page</h3>
+
+<p><img class="border" src="/images/fsharp_phonecat/step_9/view-cart.png"></p>
+
+<p>As we have done in the previous posts, let’s begin by extending our shopping cart domain. The first step is to add a function to retrieve the items in the shopping cart. </p>
+
+<p>Open <code>ShoppingCart</code> module in the <strong>Domain</strong> project and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getItems cart =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  match cart with
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  | Empty -&gt; Seq.empty
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  | Active items -&gt; items |&gt; List.toSeq
+</pre></div>
+</div>
+</div>
+
+<p>The above function retrieves the phone ids present in the cart. In order to show a detailed checkout page, we need to get the associated phone details of these phone ids. Right now we don’t have this capability in our app so let’s add them.</p>
+
+<p>Open <code>Phones</code> module in the <strong>Domain</strong> project and add the below functions</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let contains x = Seq.exists ((=) x)
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let getPhonesByIds (phones : seq&lt;Phone&gt;) phoneIds =  
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  phones |&gt; Seq.filter (fun p -&gt; contains p.Id phoneIds)
+</pre></div>
+</div>
+</div>
+
+<p>The <code>contains</code> function is a utility function which checks whether the given element is present in a <code>seq</code> or not and the <code>getPhonesByIds</code> function filters phones in the system by the incoming phone ids and returns the requested ones.</p>
+
+<p>Now we have all the bare bones and the next step is defining a controller to serve the View Cart Page.</p>
+
+<p>Add a new Source file <code>CheckoutController</code> in the <strong>Web</strong> project under <em>Controllers</em> directory and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type CheckoutController
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  (
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>      getPhones : seq&lt;string&gt; -&gt; seq&lt;Phone&gt;,
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      cart : Cart
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  ) = 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  inherit Controller ()
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  member this.ViewCart () =
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    cart
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    |&gt; getItems 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    |&gt; getPhones
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    |&gt; this.View
+</pre></div>
+</div>
+</div>
+
+<p>The <code>ViewCart</code> action method uses the two functions that we have defined before and renders the <code>ViewCart</code> view. Add a new razor view with the name <code>ViewCart</code> in the <em>Views\Checkout</em> Directory and update it <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/9/Web/Views/Checkout/ViewCart.cshtml#L1-L30">as described here</a>. </p>
+
+<p>The final step in rendering this view is gluing the components together in the <code>CheckoutController</code> controller instance creation. </p>
+
+<p>To get the cart associated with the given session id we have added <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Infrastructure.fs#L41-L45">a piece of logic</a> in the last step which checks the presence of <code>Cart</code> for the given anonymous id in the <code>CartStorage</code> and creates the cart if it doesn’t contain. Since we need the same logic here, let’s move this logic to a function <code>getOrCreate</code> in the <code>CartStorage</code> module and reuse it in both the places</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getOrCreate anonymousId =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  match get anonymousId with
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  | Some cart -&gt; cart
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  | None -&gt; create anonymousId ShoppingCart.Empty
+</pre></div>
+</div>
+</div>
+<p>Then open <code>MvcInfrastructure</code> module in the <strong>Web</strong> project and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type CompositionRoot(phones : seq&lt;PhoneTypeProvider.Root&gt;) =          
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  inherit DefaultControllerFactory() with
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    override this.GetControllerInstance(requestContext, controllerType) = 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    // ... existing code ...
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    else if controllerType = typeof&lt;CheckoutController&gt; then
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      let anonymousID = requestContext.HttpContext.Request.AnonymousID
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      let shoppingCart = CartStorage.getOrCreate anonymousID
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      let getPhonesByIds = phones |&gt; Seq.map TypeProviders.ToPhone |&gt; Phones.getPhonesByIds
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      let checkoutController = new CheckoutController(getPhonesByIds, shoppingCart)
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      checkoutController :&gt; IController
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    // ... existing code ...
+</pre></div>
+</div>
+</div>
+
+<p>The composition of <code>CheckoutController</code> is similar to that of other controllers in the application. We get the cart associated with the given anonymous id and then create a partial applied function of <code>Phones.getPhonesByIds</code> by passing the first argument (phones in the app) alone.</p>
+
+<p>That’s it. The Cart View is up and running!</p>
+
+<h3 id="processing-the-checkout">Processing the Checkout</h3>
+
+<p>As mentioned in the beginning, the next step after displaying the shopping cart page is processing the checkout and creating an order. </p>
+
+<p>Let’s begin by defining the domain for Orders.</p>
+
+<p>Create a source file with the name <code>Orders</code> in the <strong>Domain</strong> project and add the following types</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Orders =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  type OrderRequest = {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    UserId : string
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    ProductIds : ProductId seq
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  }
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  type OrderConfirmed = {
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    OrderId : string
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    UserId : string
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    ProductIds : ProductId seq
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  }
+</pre></div>
+</div>
+</div>
+
+<p>The <code>OrderRequest</code> type represents the order being placed by the user and the <code>OrderConfirmed</code> type represents the successful order creation.</p>
+
+<p>To Keep things simple, we are just going to see the order confirmation and we are intentionally leaving out error handling and validation. We can easily <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">add them as we did</a>  it in the user registration step and I leave it you as an exercise.</p>
+
+<p>The next step is storing the incoming order. </p>
+
+<p>Create a source file with the name <code>OrderStorage</code> in the <strong>DataAccess</strong> project and add the following function</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>module OrderStorage =  
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let placeOrder (orderRequest : OrderRequest) =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    let orderId = Guid.NewGuid().ToString()
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    {OrderId = orderId; UserId = orderRequest.UserId; ProductIds = orderRequest.ProductIds}
+</pre></div>
+</div>
+</div>
+
+<p>Here we are just faked the implementation of order storage by generating a new <code>Guid</code> and returning it as Order Id</p>
+
+<p>Now it’s time for adding a <code>OrderController</code> in the <strong>Web</strong> project to handle the checkout and creating the order using the components defined above.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type OrderController
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  (
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    cart : Cart,
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    placeOrder : OrderRequest -&gt; OrderConfirmed,
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    updateCart : Cart -&gt; Cart
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  ) =
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  inherit Controller ()
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  [&lt;Authorize&gt;]
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  member this.Checkout () =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    let identity = base.User.Identity :?&gt; ClaimsIdentity
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    let userId = identity.FindFirst(ClaimTypes.Name).Value
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    let orderConfirmed = placeOrder { UserId = userId; ProductIds = getItems cart}
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    updateCart Cart.Empty |&gt; ignore
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    this.View(orderConfirmed);
+</pre></div>
+</div>
+</div>
+
+<p>The checkout method is straightforward. We get the <code>UserId</code> from the <code>User.Identity</code> property and place the order using it. Upon successful order confirmation, we are clearing the shopping cart and rendering the <code>Checkout</code> view.</p>
+
+<p><img class="border" src="/images/fsharp_phonecat/step_9/order-confirmation.png"></p>
+
+<p>The important thing to notice here the <code>Authorize</code> attribute. Just like any other e-commerce portal, we are not allowing anonymous check out here. The presence of <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.authorizeattribute%28v=vs.118%29.aspx">this authorize attribute</a> ensures that only logged in users are checking out and in case if they are not logged in it would redirect the user to the login page.</p>
+
+<p>The last step is updating the composition root to create the <code>OrderController</code> instance.</p>
+
+<p>Open <code>MvcInfrasturcture</code> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type CompositionRoot(phones : seq&lt;PhoneTypeProvider.Root&gt;) =          
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  inherit DefaultControllerFactory() with
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    override this.GetControllerInstance(requestContext, controllerType) = 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    // ... existing code ...
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    else if controllerType = typeof&lt;OrderController&gt; then
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      let anonymousID = requestContext.HttpContext.Request.AnonymousID
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      let shoppingCart = CartStorage.getOrCreate anonymousID
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      let updateCart = CartStorage.update anonymousID
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      let orderController = new OrderController(shoppingCart, OrderStorage.placeOrder, updateCart)
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      orderController :&gt; IController
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    // ... existing code ...
+</pre></div>
+</div>
+</div>
+
+<p>We are done!</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>We have come a long way from just setting up the visual studio project to a complete prototype of an e-commerce site and I hope you would have enjoyed this series of blog post. In the next blog post we are going to refactor the <code>CompositionRoot</code>which is getting clumsy with a series of <code>if..else if..</code> expressions using Active Patterns and I will be wrapping this series by an another post which will be reflecting back on what I have learned by writing this blog series.</p>
+
+<p>You can find the source code of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/9">fsharp-phonecat github repository</a></p>
+
+<p>Thanks for reading!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Step-3 PhoneCat Recommendation System using F# Agents, SignalR and Rx]]></title>
@@ -1400,33 +1606,6 @@ type BundleConfig() =<br />
 <p><img class="center" src="/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800"></p>
 
 <p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">next-post</a> we will be wiring up the backend. Stay tuned !</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Web Application Development in Fsharp using ASP.NET MVC]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/"/>
-    <updated>2014-12-10T17:07:48+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc</id>
-    <content type="html"><![CDATA[<h3 id="introduction">Introduction</h3>
-
-<p>Fsharp is my new favorite language in recent times and I’ve been learning it for the last six months. I always believe the best way to learn a language / technology / framework is to create something using it and also learning from the mistakes while creating it. So, here is my attempt to create a sample web application in fsharp using ASP.NET MVC framework. In this series of blog posts I’m going to share my experience on creating “phone-cat” web application inspired from the <a href="https://github.com/angular/angular-phonecat">angular-phonecat</a>. </p>
-
-<p>As it is my maiden attempt to create a relatively large web application in fsharp, if you find something that can be improved, feel free to share <em>I’m willing to learn from you.</em></p>
-
-<h3 id="blog-series-links">Blog Series Links</h3>
-
-<ul>
-  <li><strong>Step 0</strong> - <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
-  <li><strong>Step 1</strong> - <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Creating Web Api endpoints for fsharp-phonecat using Web Api 2</a></li>
-  <li><strong>Step 2</strong> - <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Creating ASP.NET MVC Razor Views for fsharp-phonecat</a></li>
-  <li><strong>Step 3</strong> - <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">PhoneCat Recommendation System using F# Agents, SignalR and Rx</a></li>
-  <li><strong>Step 4</strong> - <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">Build Automation using Fake</a></li>
-  <li><strong>Step 5</strong> - <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">Advanced Search DSL using FSParsec</a></li>
-  <li><strong>Step 6</strong> - <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Authentication using Owin and Asp.Net Identity</a></li>
-  <li><strong>Step 7</strong> - <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">Validation and Error handling using ROP</a></li>
-  <li><strong>Step 8</strong> - <a href="/blog/2015/03/20/step-8-adding-shopping-cart/">Adding Shopping Cart</a></li>
-</ul>
 ]]></content>
   </entry>
   

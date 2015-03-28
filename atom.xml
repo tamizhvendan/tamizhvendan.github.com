@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-03-21T14:24:30+05:30</updated>
+  <updated>2015-03-28T15:54:30+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,260 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Step-9 Adding Checkout]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/"/>
+    <updated>2015-03-28T13:07:20+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 9 of my blog series on <a href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/">last blog post</a> we have added the shopping cart feature to our phonecat application and in this blog post we are going to implement the checkout feature.</p>
+
+<p>Implementing the checkout feature involves two steps.<br />
+  1. Adding a View Cart Page<br />
+  2. Processing the Checkout and creating an order</p>
+
+<h3 id="adding-a-view-cart-page">Adding a View Cart Page</h3>
+
+<p><img class="border" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_9/view-cart.png" /></p>
+
+<p>As we have done in the previous posts, let’s begin by extending our shopping cart domain. The first step is to add a function to retrieve the items in the shopping cart. </p>
+
+<p>Open <code>ShoppingCart</code> module in the <strong>Domain</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getItems</span> <span class="n">cart</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">cart</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Empty</span> <span class="o">-&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">empty</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Active</span> <span class="n">items</span> <span class="o">-&gt;</span> <span class="n">items</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">toSeq</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The above function retrieves the phone ids present in the cart. In order to show a detailed checkout page, we need to get the associated phone details of these phone ids. Right now we don’t have this capability in our app so let’s add them.</p>
+
+<p>Open <code>Phones</code> module in the <strong>Domain</strong> project and add the below functions</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">contains</span> <span class="n">x</span> <span class="o">=</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">exists</span> <span class="o">((=)</span> <span class="n">x</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getPhonesByIds</span> <span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;)</span> <span class="n">phoneIds</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">filter</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">contains</span> <span class="n">p</span><span class="o">.</span><span class="n">Id</span> <span class="n">phoneIds</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>contains</code> function is a utility function which checks whether the given element is present in a <code>seq</code> or not and the <code>getPhonesByIds</code> function filters phones in the system by the incoming phone ids and returns the requested ones.</p>
+
+<p>Now we have all the bare bones and the next step is defining a controller to serve the View Cart Page.</p>
+
+<p>Add a new Source file <code>CheckoutController</code> in the <strong>Web</strong> project under <em>Controllers</em> directory and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CheckoutController</span>
+</span><span class="line">  <span class="o">(</span>
+</span><span class="line">      <span class="n">getPhones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;,</span>
+</span><span class="line">      <span class="n">cart</span> <span class="o">:</span> <span class="n">Cart</span>
+</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">Controller</span> <span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">ViewCart</span> <span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">cart</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">getItems</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">getPhones</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">this</span><span class="o">.</span><span class="n">View</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>ViewCart</code> action method uses the two functions that we have defined before and renders the <code>ViewCart</code> view. Add a new razor view with the name <code>ViewCart</code> in the <em>Views\Checkout</em> Directory and update it <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/9/Web/Views/Checkout/ViewCart.cshtml#L1-L30">as described here</a>. </p>
+
+<p>The final step in rendering this view is gluing the components together in the <code>CheckoutController</code> controller instance creation. </p>
+
+<p>To get the cart associated with the given session id we have added <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Infrastructure.fs#L41-L45">a piece of logic</a> in the last step which checks the presence of <code>Cart</code> for the given anonymous id in the <code>CartStorage</code> and creates the cart if it doesn’t contain. Since we need the same logic here, let’s move this logic to a function <code>getOrCreate</code> in the <code>CartStorage</code> module and reuse it in both the places</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getOrCreate</span> <span class="n">anonymousId</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">get</span> <span class="n">anonymousId</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">cart</span> <span class="o">-&gt;</span> <span class="n">cart</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">create</span> <span class="n">anonymousId</span> <span class="nn">ShoppingCart</span><span class="p">.</span><span class="n">Empty</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Then open <code>MvcInfrastructure</code> module in the <strong>Web</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">DefaultControllerFactory</span><span class="bp">()</span> <span class="k">with</span>
+</span><span class="line">    <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetControllerInstance</span><span class="o">(</span><span class="n">requestContext</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="c1">// ... existing code ...</span>
+</span><span class="line">    <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">CheckoutController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">anonymousID</span> <span class="o">=</span> <span class="n">requestContext</span><span class="o">.</span><span class="n">HttpContext</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">AnonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">shoppingCart</span> <span class="o">=</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">getOrCreate</span> <span class="n">anonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">getPhonesByIds</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToPhone</span> <span class="o">|&gt;</span> <span class="nn">Phones</span><span class="p">.</span><span class="n">getPhonesByIds</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">checkoutController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CheckoutController</span><span class="o">(</span><span class="n">getPhonesByIds</span><span class="o">,</span> <span class="n">shoppingCart</span><span class="o">)</span>
+</span><span class="line">      <span class="n">checkoutController</span> <span class="o">:&gt;</span> <span class="n">IController</span>
+</span><span class="line">    <span class="c1">// ... existing code ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The composition of <code>CheckoutController</code> is similar to that of other controllers in the application. We get the cart associated with the given anonymous id and then create a partial applied function of <code>Phones.getPhonesByIds</code> by passing the first argument (phones in the app) alone.</p>
+
+<p>That’s it. The Cart View is up and running!</p>
+
+<h3 id="processing-the-checkout">Processing the Checkout</h3>
+
+<p>As mentioned in the beginning, the next step after displaying the shopping cart page is processing the checkout and creating an order. </p>
+
+<p>Let’s begin by defining the domain for Orders.</p>
+
+<p>Create a source file with the name <code>Orders</code> in the <strong>Domain</strong> project and add the following types</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Orders</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">type</span> <span class="nc">OrderRequest</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">UserId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">ProductIds</span> <span class="o">:</span> <span class="n">ProductId</span> <span class="n">seq</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="k">type</span> <span class="nc">OrderConfirmed</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">OrderId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">UserId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">ProductIds</span> <span class="o">:</span> <span class="n">ProductId</span> <span class="n">seq</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>OrderRequest</code> type represents the order being placed by the user and the <code>OrderConfirmed</code> type represents the successful order creation.</p>
+
+<p>To Keep things simple, we are just going to see the order confirmation and we are intentionally leaving out error handling and validation. We can easily <a href="http://blog.tamizhvendan.in/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">add them as we did</a>  it in the user registration step and I leave it you as an exercise.</p>
+
+<p>The next step is storing the incoming order. </p>
+
+<p>Create a source file with the name <code>OrderStorage</code> in the <strong>DataAccess</strong> project and add the following function</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">OrderStorage</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">placeOrder</span> <span class="o">(</span><span class="n">orderRequest</span> <span class="o">:</span> <span class="n">OrderRequest</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">orderId</span> <span class="o">=</span> <span class="nn">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="bp">()</span><span class="o">.</span><span class="n">ToString</span><span class="bp">()</span>
+</span><span class="line">    <span class="o">{</span><span class="n">OrderId</span> <span class="o">=</span> <span class="n">orderId</span><span class="o">;</span> <span class="n">UserId</span> <span class="o">=</span> <span class="n">orderRequest</span><span class="o">.</span><span class="n">UserId</span><span class="o">;</span> <span class="n">ProductIds</span> <span class="o">=</span> <span class="n">orderRequest</span><span class="o">.</span><span class="n">ProductIds</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here we are just faked the implementation of order storage by generating a new <code>Guid</code> and returning it as Order Id</p>
+
+<p>Now it’s time for adding a <code>OrderController</code> in the <strong>Web</strong> project to handle the checkout and creating the order using the components defined above.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">OrderController</span>
+</span><span class="line">  <span class="o">(</span>
+</span><span class="line">    <span class="n">cart</span> <span class="o">:</span> <span class="n">Cart</span><span class="o">,</span>
+</span><span class="line">    <span class="n">placeOrder</span> <span class="o">:</span> <span class="n">OrderRequest</span> <span class="o">-&gt;</span> <span class="n">OrderConfirmed</span><span class="o">,</span>
+</span><span class="line">    <span class="n">updateCart</span> <span class="o">:</span> <span class="n">Cart</span> <span class="o">-&gt;</span> <span class="n">Cart</span>
+</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">Controller</span> <span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">Authorize</span><span class="o">&gt;]</span>
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Checkout</span> <span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">identity</span> <span class="o">=</span> <span class="k">base</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">Identity</span> <span class="o">:?&gt;</span> <span class="n">ClaimsIdentity</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">userId</span> <span class="o">=</span> <span class="n">identity</span><span class="o">.</span><span class="n">FindFirst</span><span class="o">(</span><span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Name</span><span class="o">).</span><span class="n">Value</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">orderConfirmed</span> <span class="o">=</span> <span class="n">placeOrder</span> <span class="o">{</span> <span class="n">UserId</span> <span class="o">=</span> <span class="n">userId</span><span class="o">;</span> <span class="n">ProductIds</span> <span class="o">=</span> <span class="n">getItems</span> <span class="n">cart</span><span class="o">}</span>
+</span><span class="line">    <span class="n">updateCart</span> <span class="nn">Cart</span><span class="p">.</span><span class="n">Empty</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="o">(</span><span class="n">orderConfirmed</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The checkout method is straightforward. We get the <code>UserId</code> from the <code>User.Identity</code> property and place the order using it. Upon successful order confirmation, we are clearing the shopping cart and rendering the <code>Checkout</code> view.</p>
+
+<p><img class="border" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_9/order-confirmation.png" /></p>
+
+<p>The important thing to notice here the <code>Authorize</code> attribute. Just like any other e-commerce portal, we are not allowing anonymous check out here. The presence of <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.authorizeattribute%28v=vs.118%29.aspx">this authorize attribute</a> ensures that only logged in users are checking out and in case if they are not logged in it would redirect the user to the login page.</p>
+
+<p>The last step is updating the composition root to create the <code>OrderController</code> instance.</p>
+
+<p>Open <code>MvcInfrasturcture</code> and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">DefaultControllerFactory</span><span class="bp">()</span> <span class="k">with</span>
+</span><span class="line">    <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetControllerInstance</span><span class="o">(</span><span class="n">requestContext</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="c1">// ... existing code ...</span>
+</span><span class="line">    <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">OrderController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">anonymousID</span> <span class="o">=</span> <span class="n">requestContext</span><span class="o">.</span><span class="n">HttpContext</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">AnonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">shoppingCart</span> <span class="o">=</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">getOrCreate</span> <span class="n">anonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">updateCart</span> <span class="o">=</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">update</span> <span class="n">anonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">orderController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrderController</span><span class="o">(</span><span class="n">shoppingCart</span><span class="o">,</span> <span class="nn">OrderStorage</span><span class="p">.</span><span class="n">placeOrder</span><span class="o">,</span> <span class="n">updateCart</span><span class="o">)</span>
+</span><span class="line">      <span class="n">orderController</span> <span class="o">:&gt;</span> <span class="n">IController</span>
+</span><span class="line">    <span class="c1">// ... existing code ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We are done!</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>We have come a long way from just setting up the visual studio project to a complete prototype of an e-commerce site and I hope you would have enjoyed this series of blog post. In the next blog post we are going to refactor the <code>CompositionRoot</code>which is getting clumsy with a series of <code>if..else if..</code> expressions using Active Patterns and I will be wrapping this series by an another post which will be reflecting back on what I have learned by writing this blog series.</p>
+
+<p>You can find the source code of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/9">fsharp-phonecat github repository</a></p>
+
+<p>Thanks for reading!</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Step-8 Adding Shopping Cart]]></title>
@@ -4019,6 +4273,7 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
   <li><strong>Step 6</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Authentication using Owin and Asp.Net Identity</a></li>
   <li><strong>Step 7</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">Validation and Error handling using ROP</a></li>
   <li><strong>Step 8</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/">Adding Shopping Cart</a></li>
+  <li><strong>Step 9</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/">Adding Checkout</a></li>
 </ul>
 ]]></content>
   </entry>
@@ -4726,96 +4981,6 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
     <id>http://blog.tamizhvendan.in/blog/2011/12/29/2012-year-of-aspirations</id>
     <content type="html"><![CDATA[<div class='post'>
 <div dir="ltr" style="text-align: left;" trbidi="on"><div align="justify"><br /></div><div align="justify">2011 has been a magnificent year for me both professionally and personally. The most significant thing about the year 2011 was the time that I have spent with my mentor, team mate and a good friend <a href="http://www.linkedin.com/pub/jijesh-mohan/a/488/545">Jijesh Mohan</a>. I have started the year with full of ambitions but with the uncertainty of how to achieve them. Though I have worked really hard to achieve those ambitions, I failed plenty of times while trying to reach the next level and the reason is absence of direction. Jijesh shared his experience with me and helped a lot in understanding various aspects of programming, software development and much more. Hearty thanks Jijesh <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="http://lh4.ggpht.com/-n3NYjmGhjro/TvyccIdnG0I/AAAAAAAAANY/-8YxbNYlPjU/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" /> . The difference you made in my life as a programmer can not be expressed just by words.&nbsp; <br /><br /></div><div align="justify">It was a tough decision to make, but I have decided to leave Cognizant to explore different real time problems which are totally outside my comfort zone. I would like to thank my cherished manager&nbsp; <a href="http://www.linkedin.com/pub/ramakrishnan-venkatasubramanian/8/85/6a0">Ramakrishnan</a>, and beloved leads <a href="http://in.linkedin.com/pub/vijay-krishnan-ramaswamy/43/738/766">Vijay</a> and <a href="http://www.facebook.com/profile.php?id=100003088519900">Karthik</a>. Thank you all three for the inspiration, responsibilities and freedom you offered me to explore, learn, apply and adopt new technologies on various assignments. The trust you had in me helped a lot to shape up my professional career. I will surely miss you.<br /><br /></div><div align="justify"><strong>What’s Next ?</strong></div><div align="justify"><br />I will be joining <a href="http://www.advisory.com/">Advisory Board</a> in the first week on February 2012. I am very excited about it as it is a position that enable me to solve complex problems which involves huge volumes of data.&nbsp; <br /><br /></div><div align="justify"><strong>Goals </strong></div><div align="justify"><br />The one thing which keep me passionate and crazy about Computer Science is <strong>It is a path with no destination</strong>. One good lesson which I have learned last year is having goals like WaterFall model will not keep you valuable in the market. Like the requirements, the technologies are also volatile so the right way I believe is <strong>being Agile </strong>and the bottom line is set big goals, but make constant corrections along the way. My focus for the year 2012 would be</div><ul><li> <div align="justify">Javascript, HTML5, interactive Web Applications</div></li><li> <div align="justify">Functional Programming</div></li><li> <div align="justify">Working with huge volume of data</div></li><li> <div align="justify">Agile Methodologies</div></li><li> <div align="justify">Open Source Contributions</div></li><li> <div align="justify">Knowledge sharing through blogs and webinars</div></li></ul><div align="justify">Wish you all a very happy and prosperous new year.</div></div></div>]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Going Declarative in C#]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2011/11/22/going-declarative-in-c/"/>
-    <updated>2011-11-22T00:00:00+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2011/11/22/going-declarative-in-c</id>
-    <content type="html"><![CDATA[<div class='post'>
-
-    <p>
-        <a href="http://en.wikipedia.org/wiki/Declarative_programming">Declarative programming</a> is a simpler, more concise way to describe the 
-            behavior of a software program than <a href="http://en.wikipedia.org/wiki/Imperative_programming">imperative programming</a>. 
-            I am an admirer of declarative aspects of programming ever since I have started writing SQL queries. We always do our best to write code 
-            that is easier to read and maintain. Declarative style is one of the proven ways to write clean code. 
-            <a href="http://msdn.microsoft.com/en-us/library/bb308959.aspx">LINQ</a> is an excellent example of declarative style programming that 
-            enables the developers to simply state what they want to do. When I was learning <a href="http://learnyouahaskell.com/higher-order-functions">higher order functions in Haskell</a>, I have found the interrelationship between the higher order functions and the LINQ. 
-            It really made me to think in a different way to solve a problem. 
-            Through this blog post I would like to share my experiments on <a href="http://en.wikipedia.org/wiki/Higher-order_function">higher order functions</a> in C#.
-    </p>
-
-    <p>Let me start with a very simple requirement. </p>
-    <blockquote>Write a program to print the even numbers present in the given n numbers</blockquote>
-    <p>The code implementation fairly straight forward as below</p>
-    <div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://2.bp.blogspot.com/-F8d-q0yfDxQ/TsutZtHjXFI/AAAAAAAAAMM/VZOQO-TrRkM/s1600/PrintEvenNumbers.PNG" />
-    </div>
-
-    <p>Nothing fancy about this trivial thing. Let me add some more twist to the code by adding two more requirements.</p>
-    <blockquote>Modify the program implemented above to print odd numbers and multiples of four present in the given n numbers</blockquote>
-
-    <p>To be honest, If I have encountered this requirements before I have learnt Higher Order Functions my implementation would be as follows.</p>
-    <br />
-    <div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://2.bp.blogspot.com/-6Yj8HNUD34s/Tsutfjqe-AI/AAAAAAAAAMU/Oq7SKgTBOyA/s1600/TwoMoreReq.PNG"/>
-    </div>
-    
-    <p>If you look at the above implementation with a critical eye, you can find a potential candidate of duplication. 
-        Let me explain the common pattern that is being used in the implemented PrintXXXX functions. 
-        For each number in the numbers enumerable we are doing the following</p>
-    <ul>
-        <li>Deciding whether the number should be printed or not <em>(Deciding)</em></li>  
-        <li>Printing the number if it is passes the above decision <em>(Doing)</em></li>  
-    </ul>    
-<br />
-    <div class="separator" style="clear: both; text-align: center;">
-        <img src="http://1.bp.blogspot.com/-9xr-Hu8TT7U/TsutkGNc9SI/AAAAAAAAAMc/_JeMMy5u1RY/s1600/Duplication.PNG">
-    </div>
-<p>All the three functions iterate over the numbers enumerable and print the numbers. The only thing which actually differentiates the functions is deciding which numbers to be printed.</p>
-<p>Now the question is how can we eliminate this duplication????</p>
-<p>It’s where higher order functions come into picture. If we move the deciding part of the function away from its implementation then we can easily achieve it.&nbsp;&nbsp; Here we go! The brand new implementation of Print would be </p>
-
-<br /><div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://2.bp.blogspot.com/-9RF4Km0s1NA/TsutoVD_WkI/AAAAAAAAAMk/GWASEODqJTk/s1600/HigherOrderPrint.PNG"/>
-</div>
-
-
-<p>In the new implementation we have just isolated the deciding part of the function from its implementation and parameterize it as function delegate that takes an integer as its input and return a Boolean value.&nbsp; In the client code (Main function) we are actually just calling the print function and declaratively telling it to print only those numbers which satisfies the given condition. As we separated the deciding part from the actual implementation, we can easily accommodate any future requirements like “<i style="mso-bidi-font-style: normal;">Printing multiples of five, printing only single digit numbers</i>” by declarative calling the Print function like as below</p>
-<br /><div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://4.bp.blogspot.com/-iunnD2jPXv8/TsutsrFa_4I/AAAAAAAAAMs/oE81RX5J8gY/s1600/AccomodatedRequirement.PNG" />
-</div>
-
-<p>Cool.. Isn’t it ? Let me complicate the things little more. What would you do if you want to call this Print method across different classes?. A notorious option would be creating a <a href="http://en.wikipedia.org/wiki/Utility_class">Utility class</a> with the Print method and calling it from the other classes. We can also solve these using <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">Extension methods</a> which results a clean readable code like as below</p>
-<br /><div class="separator" style="clear: both; text-align: center;">
-    <img border="0" src="http://4.bp.blogspot.com/-DZVepYydQ84/TsutwLqz__I/AAAAAAAAAM0/eNlsA0F2jzI/s1600/ExtensionMethod.PNG" />
-</div>
-
-<p>So far, so good. We have started with a single function and then we added two more, then eliminated the duplication using Higher Order functions and 
-    finally we have made the code readable by using extension method. </p>
-<p>Okay. Now “<i>I want to print the strings which starts with ‘s’ in the given n strings </i>”. Pardon me for complicating things, I will stop by this one.</p>
-<p>It is almost logically similar to what we have done so far. Instead of numbers here it is string. How can we put it into action?. 
-    Thanks to <a href="http://msdn.microsoft.com/en-us/library/512aeb7t%28v=vs.80%29.aspx">Generics</a>. We can easily achieve this by modifying the extension method to support generic type as below</p>
-    <br />
-<div class="separator" style="clear: both; text-align: center;">
-   <img border="0" src="http://3.bp.blogspot.com/-Cwp_3vrURcU/Tsut-VkAqjI/AAAAAAAAAM8/UrutESWMdw4/s1600/GenericExtensionMethod.PNG" />
-</div>
-
-
-<div>That’s it. Now you are free to play with all sort of logic you want. You can play with different set of conditions to print the elements or even you can also use different collection of your custom classes. And all can be done declaratively!!</div>
-<div>Now its time to reveal to the interrelationship exists between the LINQ and the higher order functions. All the LINQ methods are actually using these Print extension methods kind of extension methods under the hood and makes the life of developer easily but letting them to work declaratively. </div>
-<div><a href="http://msdn.microsoft.com/en-us/library/system.threading.tasks.parallel.aspx">Parallel Class</a> a new addition in C# 4.0, also uses higher order functions and enables the developer to say “Hey CLR, I wanna run these methods parallel”. </div>
-<br /><div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://3.bp.blogspot.com/-oghYOKAdsl4/TsuuMGSPzJI/AAAAAAAAANE/YVpPV4cfTOU/s1600/Parallel+Invoke.PNG" />
-</div>
-
-<p>Awesome! No new thread creation and no verbose. </p>
-<h4>Summary</h4>
-<p>Declarative Programming is powerful tool. It creates more readable, cleaner code and also reduces the possibility of logical mistakes in 
-    multiple similar algorithms. That means fewer mistakes now and in the future.</p>
-</div>
-]]></content>
   </entry>
   
 </feed>

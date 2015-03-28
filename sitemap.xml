@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/</loc>
+    <lastmod>2015-03-28T13:07:20+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/</loc>
     <lastmod>2015-03-20T11:49:35+05:30</lastmod>
     <priority>0.8</priority>
@@ -233,28 +239,28 @@
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/archives/</loc>
-    <lastmod>2015-03-21T14:24:30+05:30</lastmod>
+    <lastmod>2015-03-28T15:54:30+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/</loc>
-    <lastmod>2015-03-21T14:24:30+05:30</lastmod>
+    <lastmod>2015-03-28T15:54:30+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/categories/</loc>
-    <lastmod>2015-03-21T14:24:30+05:30</lastmod>
+    <lastmod>2015-03-28T15:54:30+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/open-source-contributions/</loc>
-    <lastmod>2015-03-21T14:24:30+05:30</lastmod>
+    <lastmod>2015-03-28T15:54:30+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

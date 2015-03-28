@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Aug 4th, 2011 data access, entity framework Comments EF Code First 4.1 in Console Application Whenever I learn any new things in .Net or &hellip;">
+	<meta name="description" content="Aug 13th, 2011 asp.net mvc, entity framework, unit testing Comments Test Driving Model Validation in ASP.NET MVC3 - Part 1 Entity Framework 4.1(EF4. &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -99,7 +99,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 144.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 104.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 112.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 145.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.5%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -112,6 +112,157 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-13T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 13<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/" itemprop="url">Test Driving Model Validation in ASP.NET MVC3 - Part 1</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>
+            Entity Framework 4.1(EF4.1) provides in-built support for defining the validation
+             constraints in model through Data Annotation attributes and Fluent API. It’s
+             one of the cool features provided by EF4.1 that enables the developers to define
+             validation rules of the model in an easy and more maintainable way. In addition
+             to that MVC3 framework makes use of these validation model and supports both
+             client and server side validation without writing any code!
+        </p>
+
+        <p>
+            I’m in the early days of practicing Test Driven Development (TDD). Fortunately I
+             have got an opportunity to implement TDD in my current assignment. I feel I am
+             much oriented and focused towards the solution while using TDD. Also it makes
+             me to critique my design and the way I do the coding. I would like to be a
+             better programmer and looking forward to improve myself and hence TDD suits me
+             more. Learning TDD and practicing it is totally different! Yes, in theory it
+             is very easy to read and understand TDD. But when you practice it, you will
+             encounter many more interesting things about TDD and in fact it’s where you can
+             actually learn TDD.
+        </p>
+
+        <p>
+            Okay, how to do TDD with Controller&#8217;s responsibility in the context of Model validation in MVC3. Well, it is easy but
+                we should understand and find out what exactly we want to test and the way to test them. Many articles and blog posts suggest doing it through the controller.
+                Is it really a good approach to test the model validation through controller?&nbsp;&nbsp; Kindly think of it for a moment. 
+                I feel it is not a right way to deal this stuff.&nbsp;
+        </p>
+
+        <p>
+            Let me explain it through a small example. Consider an Employee model which has two properties Name and Age&nbsp;and an EmployeeController responsible for doing
+            CRUD on Employee Model. What is the responsibility of EmployeeController when creating a new Employee data? It should check whether the posted employee model is 
+            valid or not, if it is valid add to the database else return the view with the validation errors. MVC3 framework makes life easy by automatically validating the 
+            Posted model and set the <b>IsValid</b> Property of the ModelState and also add validation errors to the model. Hence controller&#8217;s job is very easy as follows
+        </p>
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img border="0" src="http://2.bp.blogspot.com/-gMWdWyjaBxQ/TkYnWEIpWQI/AAAAAAAAAKI/mvc7iTeatok/s1600/Employee.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+            <br />
+            <img src="http://1.bp.blogspot.com/-DSw1qdzt9ZA/TkYYuJLxKGI/AAAAAAAAAJw/5k1AerK1wiE/s1600/EmpControllerResponsibility.png" />
+        </div>
+        <h4>Corresponding TestCases</h4>
+
+        <ul>
+            <li>When creating a new employee, if the passed employee data is valid, it should be added to the database</li>
+            <li>When creating a new employee, if the passed employee data is InValid, it should not add to the database and show the view with validation errors.</li>
+        </ul>
+        <br />
+        <p>The first unit test will be as following:</p>
+
+        <<div style="clear: both; text-align: center;">
+            <img src="http://3.bp.blogspot.com/-XEBOUhl7_WM/TkYgBqYX9VI/AAAAAAAAAJ0/wqKLvm_NGnw/s1600/EmpControllerUnitTest1.png" />
+        </div>
+
+        <p>
+            This unit test makes use of the following fake Database implementation.
+        </p>
+
+        <div style="clear: both; text-align: center;">
+            <img src="http://4.bp.blogspot.com/-c1GRZq3f1Ms/TkYiTwN9z4I/AAAAAAAAAJ4/lma-KtsMK6Q/s1600/fakeDatabase.png" />
+        </div>
+        <p>
+            To keep this blog post simple, I am not showcasing the TDD steps which I have done here and the EmployeeController Code would be as follows.
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img src="http://1.bp.blogspot.com/-QRcFWLWNsmg/TkYkHGAoWnI/AAAAAAAAAJ8/FEit5wZZWs0/s1600/EmpController.png" />
+        </div>
+        
+        <p>
+            Employee Controller makes use of an InMemory Database (Simplest option!!) &nbsp;which implements the IRepository interface.&nbsp;
+        </p>
+        
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://1.bp.blogspot.com/-xy_kB-hQk9o/TkYlRVdooZI/AAAAAAAAAKA/nnxYCWTdTLg/s1600/IRepository.png" />
+        </div>
+
+        <div style="clear: both; text-align: center;">
+                <img border="0" src="http://2.bp.blogspot.com/-yU6djR74NeA/TkYlXKnjBOI/AAAAAAAAAKE/eXcZL2_7qew/s1600/InMemoryDb.png" />
+        </div>
+        
+        <p>
+            I have done all the wire ups to make the first unit test pass. (Pardon me! For the sake of simplicity of this blog post I&#8217;ve violated TDD rules. 
+            Hope you can infer the TDD steps from the coding samples). Its time to &nbsp;move to the next unit test and here comes a bottleneck. &nbsp; &nbsp;
+        </p>
+
+        <p>
+            You may wonder what it is that. There comes a feature of ASP.NET MVC 3 framework. During HTTP post action the framework validates the employee model 
+            and sets the EmployeeController&#8217;s Property <em>ModelState.IsValid</em> to true or false. <b>It occurs only during HTTP post. </b>
+            In our unit test code we are actually calling the action methods of the controller and not making any HTTP post. 
+            So, the ModalState is always true whenever we call the action methods of a controller from a unit testing code.&nbsp;
+        </p>
+
+        <p>
+            In our second test case, we need to setup a controller in such a way that its ModelState property is InValid. 
+            We can do this by adding a ModelError to the ModelState property of the EmployeeController. In fact it is what MVC3 framework is doing under the 
+            hood when making HTTP post.&nbsp;
+        </p>
+
+        <div style="clear: both; text-align: center;">
+                <img src="http://4.bp.blogspot.com/-iVcBB1yZRLI/TkYrDW5JloI/AAAAAAAAAKM/li_PACoQS1E/s1600/EmpControllerUnitTest2.png" />
+        </div>
+        
+        <p>
+            Now we Test drived the controller&#8217;s responsibility in the context of model validation. 
+            In my <a href="/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/">next blog post</a> &nbsp;
+            I&#8217;d showcase how to test drive the model validation itself.
+        </p>
+
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -389,77 +540,6 @@ namespace UsingAjaxForms.Controllers
         You can download the source code of this blog post from <a href="http://www.box.net/shared/kvktovzz5fiihtxemvr0">here</a></p>
 </div>
 	
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-27T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jul 27<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/07/27/journey-towards-software-craftsmanship/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/07/27/journey-towards-software-craftsmanship/" itemprop="url">A Journey Towards Software Craftsmanship</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>Programming has been my passion right from the day I have seen computer. After nearly 3.7 years of experience (2 years of freelancing and 1.7 years of Industry), I found that there are lot of areas in programming where I need to improve myself especially in the art of software craftsmanship. Programming is really an art!!</p>
-        <p>Fine, I have the passion and wish to move to the next level but the key is get started and focusing my efforts on a right path. After some extensive internet searches and fruitful discussions with my colleagues, I have drawn a road map. I feel it is worth sharing through this blog as it might help someone who aspires to reach the next level in programming. </p>
-        <p>We can’t become Einstein in single night. We can’t become Sachin just by scoring a match winning century in a single match either. Likewise we can’t become a Master in Software Craftsmanship by just creating a single Killer Application. It takes a lot of efforts, passion, endurance persistence, temperament and a well-defined path to reach the top. </p>
-        <p>As a programmer/developer we all know very well about the benefits of Code Reuse. Have you ever thought of <i>Experience Reuse!! </i>Just think about it for some minutes. Obviously there is no replacement/substitute for Experience but what’s wrong in learning from others experience. It requires both hard work and smart work to make it to the next level. Here I am mentioning about smart work. Why are we doing the same mistakes which some people did already in their lives? <span style="mso-spacerun: yes;">&nbsp;</span>Why don’t we just learn it from them and get rid of those recurring mistakes. Come on, we are programmers, be smarter. Let’s learn from the some of the masters in the field and do some new mistakes.</p>
-        <p>Before start mentioning about those masters, I would like to thank my colleague “Jijesh Mohan” who has helped a lot and inspired me to start the journey (Now I hope, you will know what is mean by Experience Reuse). Here is the list of Masters.</p>
-    </div>
-    <ul>
-        <li><a href="http://blog.objectmentor.com/">Robert C Martin</a></li>
-        <li><a href="http://pragdave.pragprog.com/">Dave Thomas</a></li>
-        <li><a href="http://martinfowler.com/">Martin Fowler</a></li>
-        <li><a href="http://en.wikipedia.org/wiki/Ward_Cunningham">Ward Cunningham</a></li>
-        <li><a href="http://en.wikipedia.org/wiki/Kent_Beck">Kent Beck</a></li>
-        <li><a href="http://en.wikipedia.org/wiki/Grady_Booch">Grady Booch</a></li>
-        <li><a href="http://www.joelonsoftware.com/">Joel Spolsky</a></li>
-        <li><a href="http://www.catb.org/~esr/">Eric S Raymond</a></li>
-    </ul>
-    <p>One great thing about all these excellent folks is they share their knowledge, either through Books or through their blogs. We are very fortunate. Now it’s our turn to learn from their wisdom and move forward.</p>
-    <blockquote><p>The man who does not read good books has no advantage over the man who can&#8217;t read them.</p><footer><strong>Mark Twain</strong></footer></blockquote><div>I have found the following magnificent books in the quest</div>
-    <ul>
-        <li>Pragmatic Programmer – Andrew Hunt, Dave Thomas</li>
-        <ul>
-            <li>Must Read for every programmer. In my perspective it is the Bible of Programming</li>
-        </ul>
-        <li>Clean Code – Robert C Martin</li>
-        <li>Refactoring – Martin Fowler</li>
-        <li>Art of Unix Programming – Eric S Raymond</li>
-    </ul>
-    <p>I’ve read the Pragmatic Programmer and all others are in my “To-Read” list. I am really searching for words in dictionary to describe about “Pragmatic Programmer”. It is a “Gem”.</p>
-    <p>When it comes to blogs, we have “Google Reader”. Just subscribe to the blog posts of these eminent people through Google Reader and learn the art of programming.</p>
-    <p>The stage has been setup. No one can ride bicycle by reading a book on “How to Ride Bicycle”. What books and blog posts would offer us is knowledge. In addition to knowledge to move further we need another thing called “Practice”. Yes get your hands dirty. Experiment, Research, Critique, Analyse, involve in healthy debates with your colleagues on various aspects of software craftsmanship, work and feel passionate about your work.</p>
-    <p>I have pledged myself to follow the best practices in all my development works and no compromise on the quality of the code I write. In nutshell, I am going to care about my craft, think about my work and strive for excellence.</p>
-    <p>I am in the very early stage of becoming a better programmer and looking forward to listen to your suggestions and inputs on this. When we grow older, we will be stronger. With all blessings and hope, the journey begins!</p>
-</div>
-
 		
 		
 	</div>

@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Apr 24th, 2011 c#, programming Comments Dynamic Polymorphism - a Real Time Example In this blog post we are going to see, how to achieve dynamic &hellip;">
+	<meta name="description" content="Jun 24th, 2011 asp.net mvc Comments ASP.NET MVC 3 Ajax - Part I In this blog series ASP.NET MVC3 Ajax we are going to explore about implementing &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -99,7 +99,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 104.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 104.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 116.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 112.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 104.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 104.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 120.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 104.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 104.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 144.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 104.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 108.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 108.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 104.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 104.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 124.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 104.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 104.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 104.0%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 120.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 112.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 145.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.5%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -112,6 +112,177 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-24T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jun 24<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/" itemprop="url">ASP.NET MVC 3 Ajax - Part I</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+
+        <p>
+            In this blog series ASP.NET MVC3 Ajax we are going to explore about implementing Ajax features in ASP.NET MVC3 Web application and 
+	this blog post will cover the basics of ASP.NET MVC3 Ajax.
+        </p>
+
+        <p>
+            MVC3 makes use of <a href="http://en.wikipedia.org/wiki/Unobtrusive_JavaScript">Unobtrusive javascript</a> which results a clear and 
+        clean separation between the functionality and the View/Presention of the webpage. 
+        We can introduce Ajax features to the MVC3 application using two ways.
+        </p>
+
+        <ol>
+
+            <li>
+                <h5>Ajax Helper Methods</h5>
+                - Enable us to achieve Ajax without writing no/less javascript
+            </li>
+
+            <li>
+                <h5>jQuery Ajax</h5>
+                - We need to write the code using javascript and jQuery ajax
+
+            </li>
+
+        </ol>
+        <p>
+            Ajax Helper Methods are very simple and intuitive to get start with. 
+        So, I&#8217;ll be covering the Ajax Helper Methods and will cover the jQuery Ajax in the future posts of this blog series.
+        </p>
+
+        <h4>Ajax Helper Methods</h4>
+        <p>
+            It enables us to implement ajax feature without writing much code. 
+    <i>Ajax.ActionLink()</i> is one of the fundamental Ajax helper method that returns a anchor element (&lt;a&gt;&lt;/a&gt;) with the URL 
+        of the action method; When the action link is clicked, the action method in the specified URL is invoked asynchronously and 
+        result is sent back to the client. Let us see it in detail by using sample demo application.
+        </p>
+
+        <ul>
+            <li>Create a new ASP.NET MVC3 Project &#8220;AjaxGettingStarted&#8221; </li>
+            <li>Select &#8221;<b>Empty</b>&#8221; template and &#8221;<b>Razor</b>&#8221; as view engine and click &#8221;<b>Ok</b>&#8221;</li>
+            <li>ASP.NET MVC3 project template shipped with the <b>scripts folder </b>which contains the all the jQuery library files 
+                that are required for doing Ajax and other client side functionalities. 
+                To implement ajax we should use the references of &#8220;jQuery&#8221; and &#8220;jQuery.unobtrusive-ajax&#8221; minified js files in our view
+                    <div style="text-align: center">
+                        <img src="http://4.bp.blogspot.com/-cYTipiOz2uQ/TgR_YKzsliI/AAAAAAAAAHU/R8X1FQYpAfM/s1600/2.+Scripts+Folder.PNG" />
+                    </div>
+            </li>
+            <li>Create a Controller with the name <em>HomeController</em> by right clicking the &#8220;Controllers&#8221; folder and 
+                select &#8220;Add&#8221; -&gt; &#8220;Controller&#8221;</li>
+            <li>The HomeController.cs file will be created under controllers folder with the following code.
+                <div><script src='https://gist.github.com/c087dba84453acbd23b1.js?file=HomeController.cs'></script>
+<noscript><pre><code>public class HomeController : Controller    
+{        
+	public ActionResult Index()
+	{             
+		return View();
+	}
+}</code></pre></noscript></div>
+
+            </li>
+            <li>Then right click inside the Index() Action Method and select &#8220;Add View&#8221;. Leave the default setting and click &#8220;Add&#8221;.</li>
+            <li>This would create the view &#8220;Index.cshtml&#8221; under the folder &#8220;Views/Home&#8221;.</li>
+            <li>Add the following action method in HomeController.cs file
+                <div><script src='https://gist.github.com/c087dba84453acbd23b1.js?file=HomeController_GreetMe.cs'></script>
+<noscript><pre><code>public string GreetMe()
+{
+    return &quot;Hello ASP.NET MVC3 Ajax!!&quot;;
+}</code></pre></noscript></div>
+
+                This action method will be called asynchronously called using Ajax.ActionLink helper method. 
+                This just written a string which will be displayed in the view via Ajax. </li>
+        </ul>
+        <ul>
+            <li>Add the script reference to the &#8220;jQuery&#8221; and &#8220;jQuery.unobtrusive-ajax&#8221; minified js files in Index.cshtml file.
+            <div><script src='https://gist.github.com/c087dba84453acbd23b1.js?file=Index.cshtml'></script>
+<noscript><pre><code>&lt;script src=&quot;@Url.Content(&quot;~/Scripts/jquery-1.5.1.min.js&quot;)&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;@Url.Content(&quot;~/Scripts/jquery.unobtrusive-ajax.js&quot;)&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></pre></noscript></div>
+
+            </li>
+            <li>
+                <p>Now all the setup in place to implement the basic Ajax functionality using Ajax.ActionLink Helper method. Before seeing this method in action let me explain bit more about this method. There are 12 overloads for this method amoung which the simplest one is </p>
+                <em>Ajax.ActionLink(string linkText, string actionName, AjaxOptions ajaxOptions)</em>
+                <p>The first parameter is the Link text which will be displayed in the view, the second parameter is the name of the action method which should be invoked while clicking the action link and the third parameter is AjaxOptions which defines how the Ajax request/response will take place and used to tell MVC exactly what you want your Ajax call to do.</p>
+            </li>
+        </ul>
+        <ul>
+            <li>AjaxOptions class will have the following properties
+                <ol>
+                    <li>Confirm - Gets or sets the message to display in a confirmation window before a request is submitted.</li>
+                    <li>HttpMethod - Gets or sets the HTTP request method (&#8220;Get&#8221; or &#8220;Post&#8221;).</li>
+                    <li>InsertionMode - Gets or sets the mode that specifies how to insert the response into the target DOM element</li>
+                    <li>LoadingElementId - Gets or sets the id attribute of an HTML element that is displayed while the Ajax function is loading.</li>
+                    <li>OnBegin - Gets or sets the name of the JavaScript function to call immediately before the page is updated. </li>
+                    <li>OnComplete - Gets or sets the JavaScript function to call when response data has been instantiated but before the page is updated. </li>
+                    <li>OnError - Gets or sets the JavaScript function to call if the page update fails.</li>
+                    <li>OnSuccess - Gets or sets the JavaScript function to call after the page is successfully updated.</li>
+                    <li>UpdateTargetId - Gets or sets the ID of the DOM element to update by using the response from the server.</li>
+                    <li>URL - Gets or sets the URL to make the request to.</li>
+                </ol>
+            </li>
+        </ul>
+        <ul>
+            <li>In our sample demo application we are just going to have a link called &#8220;Greet Me&#8221;. 
+                Upon clicking on that click we are going make Ajax request to GreetMe action method and 
+                populate a div tag with the value returned by the action method</li>
+            <li>Add the following code in the index.cshtml file. which implements the above step.
+	            <div><script src='https://gist.github.com/c087dba84453acbd23b1.js?file=Index_ActionLink.cshtml'></script>
+<noscript><pre><code>@Ajax.ActionLink(&quot;Greet Me&quot;, &quot;GreetMe&quot;, 
+	new AjaxOptions() {
+		UpdateTargetId=&quot;divGreetings&quot;, 
+		HttpMethod=&quot;GET&quot;                	
+	}
+)</code></pre></noscript></div>
+
+	            This ActionLink method call just creates an Ajax action link with the text &#8220;Greet Me&#8221;, 
+                upon clicking the link it invoke the &#8220;GreetMe&#8221; action method name which we already defined 
+                in the HomeController with the ajax option &#8220;HttpGetRequest&#8221; and update the Dom element with id &#8220;divGreetings&#8221; 
+                with the results that we are getting from the GreetMe action method, which is a simple string &#8220;Hello ASP.NET MVC3 Ajax!!&#8221;</li>
+        </ul>
+        <div style="text-align:center">
+
+            <img src="http://3.bp.blogspot.com/-X90DCHXAEQQ/TgWJkXaXijI/AAAAAAAAAHY/pKzrPDNWNF4/s1600/3-output.PNG"/>
+            
+        </div>
+        <strong>Summary</strong>
+            <p>In this blog post we have implemented a basic ajax feature using Ajax.ActionLink helper method. 
+                In the <a href="/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/">next blog post </a> 
+                of the series we would see how to add some add interactive animation during the ajax request.</p>
+
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -377,89 +548,6 @@ namespace HrdConsoleApp
         <p>
             In this blog series (Part 1 and Part 2) we have seen how to create the data access layer using Entity Framework 4.0 as class library and how to consume it in an application. With the introduction of Entity Framework developing the code for data access layer is no longer a tidy and time consuming job!!
         </p>
-    </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-25T00:00:00+05:30" data-updated="true" itemprop="datePublished">Mar 25<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/data-access/'>data access</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/03/25/entity-framework-40-class-library-part/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/03/25/entity-framework-40-class-library-part/" itemprop="url">Entity Framework 4.0 - Class Library - Part 1</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>In this blog post we are going to explore how to create the data access layer as a class library using Entity Framework 4.0. By defining the data access layer as class library, you can reuse it across many applications just by adding areference to the class library. In my next blog post, we&#8217;ll explore how to consume the library in an application. </p>
-        <p>Entity Framework 4.0 enables the developer to concentrate on the business logic and business objects without bothering how it has been manipulated at the database level. You can find a very good tutorial onEntity Framework <a href="http://www.dotnetcurry.com/ShowArticle.aspx?ID=599">here</a> to get started.This blog post uses a sample database named &#8220;HRD&#8221; which has two tables, Employee and Department. </p>
-
-        <h4>Step 1: Create a Class Library</h4>
-
-        <p>Create a new class library project with the name &#8220;HRD.DataAccess&#8221; and click &#8220;Ok&#8221;. After creating a new project delete the &#8220;Class1.cs&#8221; which is created by default.</p>
-        <a href="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s1600/1.Class-Library-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
-            <img alt="" border="0" id="Img1" src="http://4.bp.blogspot.com/-XMny1Q1pWmY/TYyhEuzjS9I/AAAAAAAAAEo/nkXolA-lVW4/s400/1.Class-Library-Creation.PNG" /></a>
-
-        <h4>Step 2: Create the Entity class using the entity framework</h4>
-
-        <p>Right click on the project name &#8220;HRD.DataAccess&#8221; and select &#8220;Add -&gt; New item&#8221;.Select &#8220;Data&#8221; under installed templates and then select &#8220;ADO.NET Data Entity Model&#8221;. Type the name as &#8220;HrdModel.edmx&#8221; and click &#8220;Add&#8221;. </p>
-        <a href="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s1600/2.%2BEdmx-File-Creation.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588018736147760674" src="http://2.bp.blogspot.com/-41YJhQQtdnI/TYyhbxZQhiI/AAAAAAAAAEw/_fsYr5hRBxg/s400/2.%2BEdmx-File-Creation.PNG" />
-        </a>
-
-        <p>In the Entity Data Model Wizard select &#8220;Generate from database&#8221; and click &#8220;Next&#8221;</p>
-        <a href="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s1600/3.%2BEntity%2BData%2BModel%2BWizard.PNG" onblur="function anonymous() { try {parent.deselectBloggerImageGracefully();} catch(e) {} }">
-            <img alt="" border="0" id="Img2" src="http://1.bp.blogspot.com/-3qYGN6L6-w0/TYyhjWJFO4I/AAAAAAAAAE4/UKHqzYE3ZAc/s400/3.%2BEntity%2BData%2BModel%2BWizard.PNG" /></a>
-
-        <p>In the next step select the database name &#8220;PCName\sqlexpress.HRD.dbo&#8221; and select &#8220;Next&#8221;</p>
-        <a href="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s1600/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019738534634002" src="http://1.bp.blogspot.com/-4IToYmLAwxs/TYyiWHk6YhI/AAAAAAAAAFY/H9DSizx7ah8/s400/4.%2BEntity%2BData%2BModel%2BWizard-DatabaseSelection.PNG" /></a>
-
-        <p>In the next step select the tables names &#8220;Department&#8221; &amp; &#8220;Employee&#8221; and click &#8220;Finish&#8221;</p>
-        <a href="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s1600/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019795895543346" src="http://4.bp.blogspot.com/-P0ACj8TAGs8/TYyiZdQ0ZjI/AAAAAAAAAFg/PxaLeJ3UAHM/s400/5.%2BEntity%2BData%2BModel%2BWizard-TableSelection.PNG" /></a>
-
-        <p>Now we have created the entity model which represent the Object/Relation mapping</p>
-        <a href="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s1600/6.%2BEDMX%2BSuccessful%2BCreation.PNG">
-            <img alt="" border="0" id="BLOGGER_PHOTO_ID_5588019838615201234" src="http://4.bp.blogspot.com/-_yfxEzDJo8A/TYyib8Z-pdI/AAAAAAAAAFo/C5m-5SqD4Io/s400/6.%2BEDMX%2BSuccessful%2BCreation.PNG" style="cursor: pointer; height: 289px; width: 400px;" /></a>
-
-        <h4>Step 3: Building the class library</h4>
-        <ol>
-            <li>Select &#8220;Build-&gt;Configuration Manager&#8221;</li>
-            <li>Change the Configuration of the Project &#8220;HRD.DataAccess&#8221; to &#8220;Release&#8221;. By default it is &#8220;Debug&#8221;</li>
-            <li>Click &#8220;Close&#8221;</li>
-            <li>Select &#8220;Build-&gt;Build HRD.DataAccess&#8221;</li>
-        </ol>
-        That&#8217;s it!!. Now we have the DataAccess Library ready!! We can reuse it across different .Net Applications 
-	
-        <h4>Summary</h4>
-        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="/blog/2011/04/01/entity-framework-40-as-class-library/">next blog</a>, we&#8217;d be exploring on how to consume the data access library in an application. </p>
     </div>
 </div>
 

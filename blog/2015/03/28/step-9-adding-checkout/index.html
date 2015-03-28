@@ -1,0 +1,441 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Step-9 Adding Checkout - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Step-9 Adding Checkout This is step 9 of my blog series on Web Application Development in Fsharp using ASP.NET MVC In the last blog post we have &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<link href="/stylesheets/font-awesome.min.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 145.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.5%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Step-9 Adding Checkout</h1>
+	<div class="entry-content" itemprop="articleBody"><blockquote>
+  <p>This is step 9 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2015/03/20/step-8-adding-shopping-cart/">last blog post</a> we have added the shopping cart feature to our phonecat application and in this blog post we are going to implement the checkout feature.</p>
+
+<p>Implementing the checkout feature involves two steps.<br />
+  1. Adding a View Cart Page<br />
+  2. Processing the Checkout and creating an order</p>
+
+<h3 id="adding-a-view-cart-page">Adding a View Cart Page</h3>
+
+<p><img class="border" src="/images/fsharp_phonecat/step_9/view-cart.png" /></p>
+
+<p>As we have done in the previous posts, let’s begin by extending our shopping cart domain. The first step is to add a function to retrieve the items in the shopping cart. </p>
+
+<p>Open <code>ShoppingCart</code> module in the <strong>Domain</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getItems</span> <span class="n">cart</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">cart</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Empty</span> <span class="o">-&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">empty</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Active</span> <span class="n">items</span> <span class="o">-&gt;</span> <span class="n">items</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">toSeq</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The above function retrieves the phone ids present in the cart. In order to show a detailed checkout page, we need to get the associated phone details of these phone ids. Right now we don’t have this capability in our app so let’s add them.</p>
+
+<p>Open <code>Phones</code> module in the <strong>Domain</strong> project and add the below functions</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">contains</span> <span class="n">x</span> <span class="o">=</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">exists</span> <span class="o">((=)</span> <span class="n">x</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getPhonesByIds</span> <span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;)</span> <span class="n">phoneIds</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">filter</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">contains</span> <span class="n">p</span><span class="o">.</span><span class="n">Id</span> <span class="n">phoneIds</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>contains</code> function is a utility function which checks whether the given element is present in a <code>seq</code> or not and the <code>getPhonesByIds</code> function filters phones in the system by the incoming phone ids and returns the requested ones.</p>
+
+<p>Now we have all the bare bones and the next step is defining a controller to serve the View Cart Page.</p>
+
+<p>Add a new Source file <code>CheckoutController</code> in the <strong>Web</strong> project under <em>Controllers</em> directory and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CheckoutController</span>
+</span><span class="line">  <span class="o">(</span>
+</span><span class="line">      <span class="n">getPhones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;,</span>
+</span><span class="line">      <span class="n">cart</span> <span class="o">:</span> <span class="n">Cart</span>
+</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">Controller</span> <span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">ViewCart</span> <span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">cart</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">getItems</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">getPhones</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">this</span><span class="o">.</span><span class="n">View</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>ViewCart</code> action method uses the two functions that we have defined before and renders the <code>ViewCart</code> view. Add a new razor view with the name <code>ViewCart</code> in the <em>Views\Checkout</em> Directory and update it <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/9/Web/Views/Checkout/ViewCart.cshtml#L1-L30">as described here</a>. </p>
+
+<p>The final step in rendering this view is gluing the components together in the <code>CheckoutController</code> controller instance creation. </p>
+
+<p>To get the cart associated with the given session id we have added <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Infrastructure.fs#L41-L45">a piece of logic</a> in the last step which checks the presence of <code>Cart</code> for the given anonymous id in the <code>CartStorage</code> and creates the cart if it doesn’t contain. Since we need the same logic here, let’s move this logic to a function <code>getOrCreate</code> in the <code>CartStorage</code> module and reuse it in both the places</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getOrCreate</span> <span class="n">anonymousId</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">get</span> <span class="n">anonymousId</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">cart</span> <span class="o">-&gt;</span> <span class="n">cart</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">create</span> <span class="n">anonymousId</span> <span class="nn">ShoppingCart</span><span class="p">.</span><span class="n">Empty</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Then open <code>MvcInfrastructure</code> module in the <strong>Web</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">DefaultControllerFactory</span><span class="bp">()</span> <span class="k">with</span>
+</span><span class="line">    <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetControllerInstance</span><span class="o">(</span><span class="n">requestContext</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="c1">// ... existing code ...</span>
+</span><span class="line">    <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">CheckoutController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">anonymousID</span> <span class="o">=</span> <span class="n">requestContext</span><span class="o">.</span><span class="n">HttpContext</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">AnonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">shoppingCart</span> <span class="o">=</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">getOrCreate</span> <span class="n">anonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">getPhonesByIds</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToPhone</span> <span class="o">|&gt;</span> <span class="nn">Phones</span><span class="p">.</span><span class="n">getPhonesByIds</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">checkoutController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CheckoutController</span><span class="o">(</span><span class="n">getPhonesByIds</span><span class="o">,</span> <span class="n">shoppingCart</span><span class="o">)</span>
+</span><span class="line">      <span class="n">checkoutController</span> <span class="o">:&gt;</span> <span class="n">IController</span>
+</span><span class="line">    <span class="c1">// ... existing code ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The composition of <code>CheckoutController</code> is similar to that of other controllers in the application. We get the cart associated with the given anonymous id and then create a partial applied function of <code>Phones.getPhonesByIds</code> by passing the first argument (phones in the app) alone.</p>
+
+<p>That’s it. The Cart View is up and running!</p>
+
+<h3 id="processing-the-checkout">Processing the Checkout</h3>
+
+<p>As mentioned in the beginning, the next step after displaying the shopping cart page is processing the checkout and creating an order. </p>
+
+<p>Let’s begin by defining the domain for Orders.</p>
+
+<p>Create a source file with the name <code>Orders</code> in the <strong>Domain</strong> project and add the following types</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Orders</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">type</span> <span class="nc">OrderRequest</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">UserId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">ProductIds</span> <span class="o">:</span> <span class="n">ProductId</span> <span class="n">seq</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="k">type</span> <span class="nc">OrderConfirmed</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">OrderId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">UserId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">ProductIds</span> <span class="o">:</span> <span class="n">ProductId</span> <span class="n">seq</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>OrderRequest</code> type represents the order being placed by the user and the <code>OrderConfirmed</code> type represents the successful order creation.</p>
+
+<p>To Keep things simple, we are just going to see the order confirmation and we are intentionally leaving out error handling and validation. We can easily <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">add them as we did</a>  it in the user registration step and I leave it you as an exercise.</p>
+
+<p>The next step is storing the incoming order. </p>
+
+<p>Create a source file with the name <code>OrderStorage</code> in the <strong>DataAccess</strong> project and add the following function</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">OrderStorage</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">placeOrder</span> <span class="o">(</span><span class="n">orderRequest</span> <span class="o">:</span> <span class="n">OrderRequest</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">orderId</span> <span class="o">=</span> <span class="nn">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="bp">()</span><span class="o">.</span><span class="n">ToString</span><span class="bp">()</span>
+</span><span class="line">    <span class="o">{</span><span class="n">OrderId</span> <span class="o">=</span> <span class="n">orderId</span><span class="o">;</span> <span class="n">UserId</span> <span class="o">=</span> <span class="n">orderRequest</span><span class="o">.</span><span class="n">UserId</span><span class="o">;</span> <span class="n">ProductIds</span> <span class="o">=</span> <span class="n">orderRequest</span><span class="o">.</span><span class="n">ProductIds</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here we are just faked the implementation of order storage by generating a new <code>Guid</code> and returning it as Order Id</p>
+
+<p>Now it’s time for adding a <code>OrderController</code> in the <strong>Web</strong> project to handle the checkout and creating the order using the components defined above.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">OrderController</span>
+</span><span class="line">  <span class="o">(</span>
+</span><span class="line">    <span class="n">cart</span> <span class="o">:</span> <span class="n">Cart</span><span class="o">,</span>
+</span><span class="line">    <span class="n">placeOrder</span> <span class="o">:</span> <span class="n">OrderRequest</span> <span class="o">-&gt;</span> <span class="n">OrderConfirmed</span><span class="o">,</span>
+</span><span class="line">    <span class="n">updateCart</span> <span class="o">:</span> <span class="n">Cart</span> <span class="o">-&gt;</span> <span class="n">Cart</span>
+</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">Controller</span> <span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">Authorize</span><span class="o">&gt;]</span>
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Checkout</span> <span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">identity</span> <span class="o">=</span> <span class="k">base</span><span class="o">.</span><span class="n">User</span><span class="o">.</span><span class="n">Identity</span> <span class="o">:?&gt;</span> <span class="n">ClaimsIdentity</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">userId</span> <span class="o">=</span> <span class="n">identity</span><span class="o">.</span><span class="n">FindFirst</span><span class="o">(</span><span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Name</span><span class="o">).</span><span class="n">Value</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">orderConfirmed</span> <span class="o">=</span> <span class="n">placeOrder</span> <span class="o">{</span> <span class="n">UserId</span> <span class="o">=</span> <span class="n">userId</span><span class="o">;</span> <span class="n">ProductIds</span> <span class="o">=</span> <span class="n">getItems</span> <span class="n">cart</span><span class="o">}</span>
+</span><span class="line">    <span class="n">updateCart</span> <span class="nn">Cart</span><span class="p">.</span><span class="n">Empty</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="o">(</span><span class="n">orderConfirmed</span><span class="o">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The checkout method is straightforward. We get the <code>UserId</code> from the <code>User.Identity</code> property and place the order using it. Upon successful order confirmation, we are clearing the shopping cart and rendering the <code>Checkout</code> view.</p>
+
+<p><img class="border" src="/images/fsharp_phonecat/step_9/order-confirmation.png" /></p>
+
+<p>The important thing to notice here the <code>Authorize</code> attribute. Just like any other e-commerce portal, we are not allowing anonymous check out here. The presence of <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.authorizeattribute%28v=vs.118%29.aspx">this authorize attribute</a> ensures that only logged in users are checking out and in case if they are not logged in it would redirect the user to the login page.</p>
+
+<p>The last step is updating the composition root to create the <code>OrderController</code> instance.</p>
+
+<p>Open <code>MvcInfrasturcture</code> and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">DefaultControllerFactory</span><span class="bp">()</span> <span class="k">with</span>
+</span><span class="line">    <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetControllerInstance</span><span class="o">(</span><span class="n">requestContext</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="c1">// ... existing code ...</span>
+</span><span class="line">    <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">OrderController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">anonymousID</span> <span class="o">=</span> <span class="n">requestContext</span><span class="o">.</span><span class="n">HttpContext</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">AnonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">shoppingCart</span> <span class="o">=</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">getOrCreate</span> <span class="n">anonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">updateCart</span> <span class="o">=</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">update</span> <span class="n">anonymousID</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">orderController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OrderController</span><span class="o">(</span><span class="n">shoppingCart</span><span class="o">,</span> <span class="nn">OrderStorage</span><span class="p">.</span><span class="n">placeOrder</span><span class="o">,</span> <span class="n">updateCart</span><span class="o">)</span>
+</span><span class="line">      <span class="n">orderController</span> <span class="o">:&gt;</span> <span class="n">IController</span>
+</span><span class="line">    <span class="c1">// ... existing code ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We are done!</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>We have come a long way from just setting up the visual studio project to a complete prototype of an e-commerce site and I hope you would have enjoyed this series of blog post. In the next blog post we are going to refactor the <code>CompositionRoot</code>which is getting clumsy with a series of <code>if..else if..</code> expressions using Active Patterns and I will be wrapping this series by an another post which will be reflecting back on what I have learned by writing this blog series.</p>
+
+<p>You can find the source code of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/9">fsharp-phonecat github repository</a></p>
+
+<p>Thanks for reading!</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>
