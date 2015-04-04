@@ -5,11 +5,11 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>If your fsharp code compiles it usually works - P3 Programmer</title>
+	<title>Step-10 Refactoring Composition Root - P3 Programmer</title>
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="If Your Fsharp Code Compiles It Usually Works When I first started learning fsharp, one of the astounding fact that hit my mind was &#8220;If the &hellip;">
+	<meta name="description" content="Step-10 Refactoring Composition Root This is step 10 of my blog series on Web Application Development in Fsharp using ASP.NET MVC   In the fsharp- &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@
 
 	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
 	
-	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/">
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root/">
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link href="/favicon.png" rel="shortcut icon">
   <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
@@ -168,111 +168,140 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-	<h1 class="title" itemprop="name">If Your Fsharp Code Compiles It Usually Works</h1>
-	<div class="entry-content" itemprop="articleBody"><div class="post">
+	<h1 class="title" itemprop="name">Step-10 Refactoring Composition Root</h1>
+	<div class="entry-content" itemprop="articleBody"><blockquote>
+  <p>This is step 10 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
 
-  <p>
-    When I first started learning fsharp, one of the astounding fact that hit my mind was <em>&#8220;If the code compiles it usually works!&#8221;</em> For a guy who is coming from c# and java Programming background it was bit weird! After delving deep into f# I have found it very useful and inspired by its awesomeness. In this blog-post I&#8217;ll be covering some of my experiences that I come across while learning this great feature!  
-  </p>
+<p> </p>
 
-  <h3>Fever Diagnosis Program</h3>
-  <p>
-    Let us consider a simple fever diagnosis program. If your temperature is greater than 37.5 Celsius or 99.0 Fahrenheit then you are suffering from fever else you are all right.  
-  </p>
+<p>In the fsharp-phonecat application that we are creating as part of this series, to <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/9/Web/MvcInfrastructure.fs#L14-L48">create the controller instances</a>, we are using <a href="http://blog.ploeh.dk/2014/06/10/pure-di/">Pure DI</a>. Though this <a href="http://blog.ploeh.dk/2011/07/28/CompositionRoot/">composition root</a> solves the problem of <a href="http://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/">dependency injection</a>, the quality of the code is not up to the mark. </p>
 
-  <h3>Defining Temperature Types</h3>
-  <p>One of the cool feature that I like about f# is its less verbosity. You can do lot of magic things with less lines of code! Consider our fever diagnosis program, A temperature can be either in Celsius or in Fahrenheit. Here is the equivalent type defined in f#</p>
+<p>In this blog post we are going to refactor this and make it shorter and more F# idiomatic.</p>
 
-    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Temperature.fs'></script>
-<noscript><pre><code>type Temperature = 
-  | Celsius of double
-  | Fahrenheit of double</code></pre></noscript></div>
+<h3 id="the-current-state-of-getcontrollerinstance-method">The current state of GetControllerInstance method</h3>
 
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/if_else_tangle.png" /></p>
 
-  <p>Just 3 lines of code!</p>
-  <p>The type Temperature has been defined as a <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Discriminated_Unions">discriminated union.</a> In brief, Discriminated union represent data that can take on one of a few different types of results.</p> <p>Also in this 3 lines we have described the strongly typed alias for temperature in both Celsius and in Fahrenheit. With this code in place if you want to describe a temperature in Celsius or in Fahrenheit all you need to use the following syntax</p>
+<p> 
+ </p>
 
-    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Declaration.fs'></script>
-<noscript><pre><code>let tempInCelsius = Celsius 10.8
-let tempInFahernheit = Fahrenheit 10.6</code></pre></noscript></div>
+<p>It’s if full of <strong>if..else if.. else if.. else</strong> and the method is too long</p>
 
+<p>As depicted in the above screenshot, the <code>GetControllerInstance</code> method does the following three things for all the controller types in the application</p>
 
-  <p>By defining strongly typed cases like this we can make our code cleaner and preventing ourselves from various logic errors that we usually do when we interpret the values of these types. Though we can achieve the same in c# by the following code, it is very elegant to do in f# </p>
+<ul>
+  <li>Checks the incoming controller type</li>
+  <li>Creates the requested controller instance</li>
+  <li>Returns the created controller instance</li>
+</ul>
 
-    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Temperature.cs'></script>
-<noscript><pre><code>public abstract class Temperature 
-{
-  public double Value { get; private set; }
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_creation.png" /></p>
 
-  protected Temperature(double value) 
-  {
-    Value = value;
-  }
-}
+<p>This can be refactored to a function</p>
 
-public class Celsius : Temperature
-{
-  public Celsius (double value) : base(value)
-  {
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_function.png" /></p>
 
-  }
-}
+<p>The function takes a type and returns an <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option type</a> of <code>IController</code></p>
 
-public class Fahrenheit : Temperature
-{
-  public Fahrenheit (double value) : base(value)
-  {
-    
-  }
-} 
+<p>Let’s do the same for an another controller creation which is little complex than this.</p>
 
-public class Program 
-{
-  public static void Main() 
-  {
-    Temperature tempInCelsius = new Celsius(10.8);
-    Temperature tempInFahernheit = new Fahrenheit(10.6);
-  }  
-}</code></pre></noscript></div>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/phone_controller_function.png" /></p>
 
+<p>Here in this case to create an instance of <code>PhoneController</code> we need two additional parameters, Phones sequence and anonymous id of the session.</p>
 
-<p>34 lines of code to achieve the same!!</p>
+<p>With these functions in place, the <code>GetControllerInstance</code> method would look like as below</p>
 
-<h3>Let&#8217;s diagnosis fever</h3>
-<p>With the types for the two representation of temperature in place, our next step is to check the values and find out whether the concerned person is having fever or not. You can do this in f# by using <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Pattern_Matching_Basics">pattern matching</a></p>
-<div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=HasFever.fs'></script>
-<noscript><pre><code>let hasFever temperature =
-  match temperature with 
-  | Celsius value -&gt; (value &gt; 37.5)
-  | Fahrenheit value -&gt; (value &gt; 99.0)</code></pre></noscript></div>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/match_with_some_and_none.png" /></p>
 
+<p>Though the functions that have created has reduced the size of the method, it has introduced an another problem (<a href="http://raynos.github.io/presentation/shower/controlflow.htm?full#PyramidOfDoom">Pyramid Of Doom</a>) as indicated by the arrow in the screenshot. </p>
 
-<p>f# automatically takes care of decomposing our data into appropriate data structure and all we need to concentrate on our business logic. For a beginner the syntax might look intimidating at first sight but if we use it quite some time you will fell in love with f#</p> 
+<p>We can get rid of this using a bind function as we did in <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">validation step using rop</a>.</p>
 
-<h4>How can I call this function?</h4>
-<div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=CallingHasFever.fs'></script>
-<noscript><pre><code>hasFever (Celsius 10.5)
-hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
+<p>The downside of the <a href="http://fsharpforfunandprofit.com/posts/computation-expressions-bind/">bind function</a> is it’s not generic and we can’t reuse the existing bind function that we have created for doing validation.</p>
 
+<p>So, going with this approach would lead to adding more code which is not in alignment with the objective of this refactoring.</p>
 
-<p>Based on the type we are passing in the hasFever function, the corresponding pattern will be matched then the value is decomposed and verified with their respective numbers. Code is prettier, isn&#8217;t it ?</p>
+<p>What can we do ??</p>
 
-<h3>What&#8217;s the big deal in it?</h3>
-<p>You might think apart from reducing the lines of code what else f# adds ?. Great! I was exactly like you when I first come across it. Later I&#8217;ve found out it how it can help us to save some hairs ;-) </p>
+<p> 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ </p>
 
-<p>Let us assume that we forget to handle Fahrenheit in hasFever function</p>
-    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=CompilerError.fs'></script>
-<noscript><pre><code>let hasFever temperature =
-  match temperature with 
-  | Celsius value -&gt; (value &gt; 37.5)</code></pre></noscript></div>
+<p>The answer is <strong><a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns">Active Patterns</a></strong></p>
 
-<p>Typically in C# if we missed to handle one of the cases like this we won&#8217;t be getting any compiler error and It&#8217;d crash the application in the runtime. But in f#, the above code would result in following compiler error</p>
-<pre>warning FS0025: Incomplete pattern matches on this expression, For example, the value 'Fahrenheit (_)' may indicate a case not covered by the pattern(s)</pre>
-<p>So, if you make any logical error like this is your f# code, compiler will show compile time errors and prevents you from building buggy code!</p>
+<blockquote>
+  <p>Active Patterns allow programmers to wrap arbitrary values in a union-like data structure for easy pattern matching. For example, its possible wrap objects with an active pattern, so that you can use objects in pattern matching as easily as any other union type -    <em>F# Programming WikiBook</em></p>
+</blockquote>
 
-<h3>Summary</h3>
-<p>If you follow the idioms of f#, it will let you write a better code and even if do some logical error the compiler will come as a rescue!. You can check the source code live in <a href="http://www.tryfsharp.org/create/tamizhvendan/fever_diagnosis.fsx">tryfsharp</a> </p>
-</div></div>
+<p>We are going to use <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns#Partial_Active_Patterns">Partial Active Patterns</a> to refactor the composition root.</p>
+
+<h3 id="creating-partial-active-patterns">Creating Partial Active Patterns</h3>
+
+<p>Let’s start by creating a partial active pattern for <code>HomeController</code></p>
+
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_active_pattern.png" /></p>
+
+<p>As described in the screenshot, it’s very similar to the <code>createHomeController</code> function and the only difference is the addition of the <em>Banana Clips</em> (yellow ellipses). The <code>_</code> symbol makes the active pattern partial.  </p>
+
+<p>The partial active patterns always returns an <code>Option</code> type. </p>
+
+<p>Partial active patterns support defining pattern with multiple parameters. So we can change the <code>createPhoneController</code> function as below</p>
+
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/phone_controller_active_pattern.png" /></p>
+
+<p>Great! We are almost done with the refactoring. The pending step is leveraging these partial active patterns in the <code>GetControllerInstance</code> method.</p>
+
+<p>It’s where the <strong>beauty of pattern matching</strong> reveals!</p>
+
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_pattern_matching.png" /></p>
+
+<p>What’s happening here? </p>
+
+<ul>
+  <li>Based on the Active Pattern Name (<code>HomeController</code>), the control goes to the corresponding active pattern</li>
+  <li>The value we are matching (<code>controllerType</code>) passed as argument.</li>
+  <li>The value returned by the active pattern (instance of <code>HomeController</code>) is assigned to the <code>homeController</code> literal in the match expression</li>
+  <li>If none of the pattern has met the matching criteria, it executes the default match (raising the exception)</li>
+</ul>
+
+<p>It does the same thing for the Active Patterns with multiple parameters</p>
+
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/phone_controller_pattern_matching.png" /></p>
+
+<p>The only thing to note here is, the value against which we are matching is always passed as a last argument.</p>
+
+<p>That’s it!!</p>
+
+<p>After completing the creation of partial active patterns for all the other controller types in the application, the <code>GetControllerInstance</code> would be shorter like this</p>
+
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/composition_root_final.png" /></p>
+
+<p> 
+ 
+ 
+ 
+ 
+ 
+ 
+ </p>
+
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/awesomeness.gif" /></p>
+
+<h3 id="summary">Summary</h3>
+
+<p>Moving from C# to F#, it’s not just change in syntax! It’s much more than that. The perfect analogy for this refactoring is the classic proverb <em>When in Rome, do as the Romans do</em>. You can find the complete source code of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/10">phonecat github repository</a></p>
+
+</div>
 
 </article>
 
@@ -314,8 +343,8 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/';
-        var disqus_url = 'http://blog.tamizhvendan.in/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/';
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root/';
         var disqus_script = 'embed.js';
       
     (function () {

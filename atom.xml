@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-04-02T18:28:21+05:30</updated>
+  <updated>2015-04-04T22:50:36+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,146 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Step-10 Refactoring Composition Root]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root/"/>
+    <updated>2015-04-02T17:07:23+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is step 10 of my blog series on <a href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p> </p>
+
+<p>In the fsharp-phonecat application that we are creating as part of this series, to <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/9/Web/MvcInfrastructure.fs#L14-L48">create the controller instances</a>, we are using <a href="http://blog.ploeh.dk/2014/06/10/pure-di/">Pure DI</a>. Though this <a href="http://blog.ploeh.dk/2011/07/28/CompositionRoot/">composition root</a> solves the problem of <a href="http://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/">dependency injection</a>, the quality of the code is not up to the mark. </p>
+
+<p>In this blog post we are going to refactor this and make it shorter and more F# idiomatic.</p>
+
+<h3 id="the-current-state-of-getcontrollerinstance-method">The current state of GetControllerInstance method</h3>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/if_else_tangle.png" /></p>
+
+<p> 
+ </p>
+
+<p>It’s if full of <strong>if..else if.. else if.. else</strong> and the method is too long</p>
+
+<p>As depicted in the above screenshot, the <code>GetControllerInstance</code> method does the following three things for all the controller types in the application</p>
+
+<ul>
+  <li>Checks the incoming controller type</li>
+  <li>Creates the requested controller instance</li>
+  <li>Returns the created controller instance</li>
+</ul>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/home_controller_creation.png" /></p>
+
+<p>This can be refactored to a function</p>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/home_controller_function.png" /></p>
+
+<p>The function takes a type and returns an <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option type</a> of <code>IController</code></p>
+
+<p>Let’s do the same for an another controller creation which is little complex than this.</p>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/phone_controller_function.png" /></p>
+
+<p>Here in this case to create an instance of <code>PhoneController</code> we need two additional parameters, Phones sequence and anonymous id of the session.</p>
+
+<p>With these functions in place, the <code>GetControllerInstance</code> method would look like as below</p>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/match_with_some_and_none.png" /></p>
+
+<p>Though the functions that have created has reduced the size of the method, it has introduced an another problem (<a href="http://raynos.github.io/presentation/shower/controlflow.htm?full#PyramidOfDoom">Pyramid Of Doom</a>) as indicated by the arrow in the screenshot. </p>
+
+<p>We can get rid of this using a bind function as we did in <a href="http://blog.tamizhvendan.in/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">validation step using rop</a>.</p>
+
+<p>The downside of the <a href="http://fsharpforfunandprofit.com/posts/computation-expressions-bind/">bind function</a> is it’s not generic and we can’t reuse the existing bind function that we have created for doing validation.</p>
+
+<p>So, going with this approach would lead to adding more code which is not in alignment with the objective of this refactoring.</p>
+
+<p>What can we do ??</p>
+
+<p> 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ </p>
+
+<p>The answer is <strong><a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns">Active Patterns</a></strong></p>
+
+<blockquote>
+  <p>Active Patterns allow programmers to wrap arbitrary values in a union-like data structure for easy pattern matching. For example, its possible wrap objects with an active pattern, so that you can use objects in pattern matching as easily as any other union type -    <em>F# Programming WikiBook</em></p>
+</blockquote>
+
+<p>We are going to use <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns#Partial_Active_Patterns">Partial Active Patterns</a> to refactor the composition root.</p>
+
+<h3 id="creating-partial-active-patterns">Creating Partial Active Patterns</h3>
+
+<p>Let’s start by creating a partial active pattern for <code>HomeController</code></p>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/home_controller_active_pattern.png" /></p>
+
+<p>As described in the screenshot, it’s very similar to the <code>createHomeController</code> function and the only difference is the addition of the <em>Banana Clips</em> (yellow ellipses). The <code>_</code> symbol makes the active pattern partial.  </p>
+
+<p>The partial active patterns always returns an <code>Option</code> type. </p>
+
+<p>Partial active patterns support defining pattern with multiple parameters. So we can change the <code>createPhoneController</code> function as below</p>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/phone_controller_active_pattern.png" /></p>
+
+<p>Great! We are almost done with the refactoring. The pending step is leveraging these partial active patterns in the <code>GetControllerInstance</code> method.</p>
+
+<p>It’s where the <strong>beauty of pattern matching</strong> reveals!</p>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/home_controller_pattern_matching.png" /></p>
+
+<p>What’s happening here? </p>
+
+<ul>
+  <li>Based on the Active Pattern Name (<code>HomeController</code>), the control goes to the corresponding active pattern</li>
+  <li>The value we are matching (<code>controllerType</code>) passed as argument.</li>
+  <li>The value returned by the active pattern (instance of <code>HomeController</code>) is assigned to the <code>homeController</code> literal in the match expression</li>
+  <li>If none of the pattern has met the matching criteria, it executes the default match (raising the exception)</li>
+</ul>
+
+<p>It does the same thing for the Active Patterns with multiple parameters</p>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/phone_controller_pattern_matching.png" /></p>
+
+<p>The only thing to note here is, the value against which we are matching is always passed as a last argument.</p>
+
+<p>That’s it!!</p>
+
+<p>After completing the creation of partial active patterns for all the other controller types in the application, the <code>GetControllerInstance</code> would be shorter like this</p>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/composition_root_final.png" /></p>
+
+<p> 
+ 
+ 
+ 
+ 
+ 
+ 
+ </p>
+
+<p><img class="border center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_10/awesomeness.gif" /></p>
+
+<h3 id="summary">Summary</h3>
+
+<p>Moving from C# to F#, it’s not just change in syntax! It’s much more than that. The perfect analogy for this refactoring is the classic proverb <em>When in Rome, do as the Romans do</em>. You can find the complete source code of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/10">phonecat github repository</a></p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Step-9 Adding Checkout]]></title>
@@ -4274,6 +4414,7 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
   <li><strong>Step 7</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">Validation and Error handling using ROP</a></li>
   <li><strong>Step 8</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/">Adding Shopping Cart</a></li>
   <li><strong>Step 9</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/">Adding Checkout</a></li>
+  <li><strong>Step 10</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root/">Refactoring Composition Root</a></li>
 </ul>
 ]]></content>
   </entry>
@@ -4972,15 +5113,6 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
             unit testing with the custom model binder itself.</p>
 </div>
 ]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[2012 – A year of aspirations]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2011/12/29/2012-year-of-aspirations/"/>
-    <updated>2011-12-29T00:00:00+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2011/12/29/2012-year-of-aspirations</id>
-    <content type="html"><![CDATA[<div class='post'>
-<div dir="ltr" style="text-align: left;" trbidi="on"><div align="justify"><br /></div><div align="justify">2011 has been a magnificent year for me both professionally and personally. The most significant thing about the year 2011 was the time that I have spent with my mentor, team mate and a good friend <a href="http://www.linkedin.com/pub/jijesh-mohan/a/488/545">Jijesh Mohan</a>. I have started the year with full of ambitions but with the uncertainty of how to achieve them. Though I have worked really hard to achieve those ambitions, I failed plenty of times while trying to reach the next level and the reason is absence of direction. Jijesh shared his experience with me and helped a lot in understanding various aspects of programming, software development and much more. Hearty thanks Jijesh <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="http://lh4.ggpht.com/-n3NYjmGhjro/TvyccIdnG0I/AAAAAAAAANY/-8YxbNYlPjU/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" /> . The difference you made in my life as a programmer can not be expressed just by words.&nbsp; <br /><br /></div><div align="justify">It was a tough decision to make, but I have decided to leave Cognizant to explore different real time problems which are totally outside my comfort zone. I would like to thank my cherished manager&nbsp; <a href="http://www.linkedin.com/pub/ramakrishnan-venkatasubramanian/8/85/6a0">Ramakrishnan</a>, and beloved leads <a href="http://in.linkedin.com/pub/vijay-krishnan-ramaswamy/43/738/766">Vijay</a> and <a href="http://www.facebook.com/profile.php?id=100003088519900">Karthik</a>. Thank you all three for the inspiration, responsibilities and freedom you offered me to explore, learn, apply and adopt new technologies on various assignments. The trust you had in me helped a lot to shape up my professional career. I will surely miss you.<br /><br /></div><div align="justify"><strong>What’s Next ?</strong></div><div align="justify"><br />I will be joining <a href="http://www.advisory.com/">Advisory Board</a> in the first week on February 2012. I am very excited about it as it is a position that enable me to solve complex problems which involves huge volumes of data.&nbsp; <br /><br /></div><div align="justify"><strong>Goals </strong></div><div align="justify"><br />The one thing which keep me passionate and crazy about Computer Science is <strong>It is a path with no destination</strong>. One good lesson which I have learned last year is having goals like WaterFall model will not keep you valuable in the market. Like the requirements, the technologies are also volatile so the right way I believe is <strong>being Agile </strong>and the bottom line is set big goals, but make constant corrections along the way. My focus for the year 2012 would be</div><ul><li> <div align="justify">Javascript, HTML5, interactive Web Applications</div></li><li> <div align="justify">Functional Programming</div></li><li> <div align="justify">Working with huge volume of data</div></li><li> <div align="justify">Agile Methodologies</div></li><li> <div align="justify">Open Source Contributions</div></li><li> <div align="justify">Knowledge sharing through blogs and webinars</div></li></ul><div align="justify">Wish you all a very happy and prosperous new year.</div></div></div>]]></content>
   </entry>
   
 </feed>
