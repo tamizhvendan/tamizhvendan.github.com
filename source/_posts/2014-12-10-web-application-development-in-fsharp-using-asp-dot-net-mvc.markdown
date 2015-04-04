@@ -27,3 +27,4 @@ As it is my maiden attempt to create a relatively large web application in fshar
 * **Step 7** - [Validation and Error handling using ROP]({% post_url 2015-03-02-step-7-validation-and-error-handling-using-rop %})
 * **Step 8** - [Adding Shopping Cart]({% post_url 2015-03-20-step-8-adding-shopping-cart %})
 * **Step 9** - [Adding Checkout]({% post_url 2015-03-28-step-9-adding-checkout %})
+* **Step 10** - [Refactoring Composition Root]({% post_url 2015-04-02-step-10-refactoring-composition-root %})
