@@ -45,3 +45,19 @@ One downside of this is the integration points may not look like idiomatic fshar
 
 As F# is a [CLI Language](http://en.wikipedia.org/wiki/List_of_CLI_languages#CLI_languages) it can be added to your existing C# solution. All you need to do just create a new F# project in the solution and this project can work seamlessly with the other projects in the solution. 
 
+In the sample application, we have a [created a parser]({% post_url 2015-01-18-step-5-advanced-search-dsl-using-fparsec %}) for a search criteria DSL using [FParsec](http://www.quanttec.com/fparsec/). Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. 
+
+In the [step-5]({% post_url 2015-01-06-step-4-build-automation-using-fake %}) we have automated build process using [FAKE](http://fsharp.github.io/FAKE/) which is far far better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!
+
+
+## Less is beautiful
+
+Another cool aspect of F# is you will be writing less lines of code to achieve complex things. It took only [35 lines of code](https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Domain/SearchParser.fs#L10-L44) to create a parser for a DSL. 
+
+[Railway Oriented Programming](http://fsharpforfunandprofit.com/rop/) by [Scott Wlaschin](https://twitter.com/ScottWlaschin) is an absolute gem. If you would like to know what F# brings to your plate, I strongly suggest you to listen his talk on [Functional Design Patterns](http://fsharpforfunandprofit.com/fppatterns/). The way you see programming will never be the same after you have seen this presentation. 
+
+
+
+
+
+
