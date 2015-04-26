@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Apr 1st, 2011 data access, entity framework Comments Entity Framework 4.0 as Class Library - Part 2 As the continuation of my previous blog post, In &hellip;">
+	<meta name="description" content="Apr 24th, 2011 c#, programming Comments Dynamic Polymorphism - a Real Time Example In this blog post we are going to see, how to achieve dynamic &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -156,7 +156,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 148.75%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.5%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 152.5%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 126.25%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +169,184 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-24T00:00:00+05:30" data-updated="true" itemprop="datePublished">Apr 24<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/categories/programming/'>programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/04/24/dynamic-polymorphism-real-time-example/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/04/24/dynamic-polymorphism-real-time-example/" itemprop="url">Dynamic Polymorphism - a Real Time Example</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>
+            In this blog post we are going to see, how to achieve dynamic polymorphism in c# using interfaces through a 
+            small game simulator called &#8220;War&#8221;.
+        </p>
+
+        <div style="text-align: center">
+            <img src="http://3.bp.blogspot.com/-F-5wRIWJiKE/TbOvdE6MOnI/AAAAAAAAAGM/r1vs5p8LzUE/s1600/WarForm.png" />
+        </div>
+
+
+        <p>The simulator is simple and straight forward to play. The user just need to select a weapon and click on &#8220;Attack&#8221;.</p>
+
+        <p>
+            Let me explain some theoretical background about &#8220;Dynamic Polymorphism&#8221; before dive into implementing the Game simulator. 
+            To put in a simple terms, Dynamic Polymorphism means changing the behavior at run time. 
+            Let us see an example of what does it mean. If a dog smells a cat, it will bark and if it smells a food, it will salivate. 
+            Here, the smelling sense of the dog is same. But depending on what does it smell, it change its behavior. 
+            Hope now you are aware of what is mean by dynamic polymorphism. 
+            Just stop reading and think what is the dynamic polymorphic behavior here in the &#8220;War&#8221; simulator.
+        </p>
+
+        <p>
+            Yes, you are absolutely correct!! The Attacking behavior is the dynamic polymorphic behavior. 
+            The behavior of attack button will vary with respect to the weapon the user has chosen.
+        </p>
+
+        <p>Fine.. Lets dive into the code!!</p>
+
+        <h4>Step1: Design the Main Form</h4>
+
+        <ol>
+            <li>Create a new Windows Forms Application and name it as &#8220;War&#8221;</li>
+            <li>Rename the &#8220;Form1.cs&#8221; file to &#8220;MainForm.cs&#8221; and Click &#8220;Yes&#8221; to let the Visual Studio to do the renaming for you.</li>
+            <li>Add a groupbox control and change its &#8220;Text&#8221; Property to &#8220;Weapon&#8221;</li>
+            <li>Add three radio button controls inside the groupbox and change their &#8220;Text&#8221; Property to Sword, Gun and bomb respectively.</li>
+            <li>Add a button control and change its &#8220;Text&#8221; property to &#8220;Attack!!&#8221;.</li>
+            <li>Rename the &#8220;Name &#8221; property of all the controls added to some meaningful names like rboSword for Sword Radiobutton</li>
+            <li>The Final Finished will look like the screenshot in the beginning of this blog.&nbsp;&nbsp; </li>
+        </ol>
+
+        <h4>Step 2: Create an Interface called IWeapon</h4>
+
+        <ol>
+            <li>Right click on the Project name &#8220;War&#8221; in the solution explorer and add a new interface file called &#8220;IWeapon.cs&#8221;</li>
+            <li>This interface IWeapon will have a public method called &#8220;Attack&#8221; which defines a contract so that all the Weapon we are going to create should implement this IWeapon interface and provide the implementation code for the Attack() method</li>
+        </ol>
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=IWeapon.cs'></script>
+<noscript><pre><code>public interface IWeapon 
+{ 
+    void Attack(); 
+}</code></pre></noscript></div>
+
+
+
+        <h4>Step3: Create the concrete Weapon Classes&nbsp;</h4>
+        <ol>
+            <li>Add three class files to the &#8220;War&#8221; Project with the names &#8220;Sword.cs&#8221;, &#8220;&#8221;Gun.cs&#8221;, &#8220;Bomb.cs&#8221;</li>
+            <li>These classes represents the actual weapons and that we are going use in our simulator. Each of these classes will implement the IWeapon interface and provide the implementation code for the &#8220;Attack()&#8221; method.</li>
+            <li>Modify the class files as follows</li>
+        </ol>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Sword.cs'></script>
+<noscript><pre><code>public class Sword : IWeapon    
+{       
+    public void Attack() 
+    {            
+        System.Windows.Forms.MessageBox.Show(&quot;Sword!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Gun.cs'></script>
+<noscript><pre><code>public class Gun : IWeapon    
+{       
+    public void Attack() 
+    {            
+        System.Windows.Forms.MessageBox.Show(&quot;Gun!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Bomb.cs'></script>
+<noscript><pre><code>public class Bomb : IWeapon    
+{       
+    public void Attack() 
+    {
+        System.Windows.Forms.MessageBox.Show(&quot;Bomb!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <p>The Attack() method will show a message box with a text saying the weapon name being used.</p>
+
+        <h4>Step 4: Program the &#8220;War&#8221; Simulator Main Form</h4>
+        <p>Now the stage is set for the real show. Let us wire the code of MainForm.cs and make the &#8220;War&#8221; simulator.</p>
+        <ol>
+            <li>Add a private instance variable of type IWeapon in the MainForm class and initialize with the sword class. 
+                This will hold the reference of current weapon being used Note: Sword is the default weapon.
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=MainForm.cs'></script>
+<noscript><pre><code>public partial class MainForm : Form
+{
+	private IWeapon weapon = new Sword();	
+}</code></pre></noscript></div>
+
+            </li>
+            <li>Now we are going to add event handlers for the weapons radio buttons. 
+                They will change the reference stored in the instance variable &#8220;weapon&#8221; to the respective Weapons class. 
+                Add the checked change event for all the radio button and their event handlers will look like as follows.
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=ChangeWeaponHandler.cs'></script>
+<noscript><pre><code>private void rboSword_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Sword();
+}
+private void rboGun_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Gun();
+}
+private void rboBomb_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Bomb();
+}</code></pre></noscript></div>
+
+            </li>
+            <li>Add the Click event handler for the &#8220;Attack&#8221; button. 
+                This event handler will simply call the Attack() method of the instance variable &#8220;weapon&#8221;
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=AttackHandler.cs'></script>
+<noscript><pre><code>private void btnAttack_Click(object sender, EventArgs e)
+{
+	weapon.Attack();
+}</code></pre></noscript></div>
+
+            </li>
+        </ol>
+
+        <b>Summary</b>
+        <p>In this blog we have seen a basic real time example on implementing dynamic polymorphism. You can download the source code of this sample from <a href="http://www.box.net/shared/y12zyr2d66">here</a>.</p>
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -339,107 +517,6 @@ namespace HrdConsoleApp
 	
         <h4>Summary</h4>
         <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="/blog/2011/04/01/entity-framework-40-as-class-library/">next blog</a>, we&#8217;d be exploring on how to consume the data access library in an application. </p>
-    </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-02-23T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 23<sup>rd</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net/'>asp.net</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/02/23/ajax-update-master-page-from-content/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/02/23/ajax-update-master-page-from-content/" itemprop="url">Ajax Update Master Page From Content Page</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>
-            In this blog post we are going to see how can we update the master page from content page using ajax updatepanel in <a href="http://www.amazon.com/Beginning-ASP-NET-VB-Wrox-Programmer/dp/0470502215?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">ASP.NET</a>.
-            The sample website we are going to build will have a content page which allows to change the header of the website(which is present in master page) via Ajax.
-        </p>
-        <img src="http://codeasp.net/Assets/Uploaded-CMS-Files/c15554a1-7e4e-498b-9c5e-a1365cf4643aAjaxifyMasterPage1.PNG" width="358px" /><img src="http://codeasp.net/Assets/Uploaded-CMS-Files/8feb0ea9-adf4-4bc6-99ae-4c9b28ed1cc1AjaxifyMasterPage2.PNG" />
-        <p>The tasks involved in creating this website are as follows: </p>
-
-        <ul>
-            <li>Create an updatepanel in masterpage which holds the website header.</li>
-            <li>Create a method in MasterPage codebehind which changes the website header.</li>
-            <li>Create the content page with master page reference and an update panel which holds controls to triggers the header change.</li>
-            <li>Call the MasterPage method from content page.</li>
-        </ul>
-        <h3>1. Create an updatepanel in masterpage which holds the website header.</h3>
-        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.aspx'></script>
-<noscript><pre><code>&lt;div class=&quot;title&quot;&gt;
-    &lt;h1&gt;
-        &lt;asp:UpdatePanel ID=&quot;UpdatePanelWebsiteHeader&quot; runat=&quot;server&quot;ChildrenAsTriggers=&quot;false&quot; UpdateMode=&quot;Conditional&quot;&gt;
-            &lt;ContentTemplate&gt;
-                &lt;asp:Label ID=&quot;lblWebsiteHeader&quot; runat=&quot;server&quot; Text=&quot;Label&quot;&gt;My ASP.NET Application&lt;/asp:Label&gt;
-            &lt;/ContentTemplate&gt;
-        &lt;/asp:UpdatePanel&gt;                    
-    &lt;/h1&gt;
-&lt;/div&gt;</code></pre></noscript></div>
-	
-            <p>Make Sure the two properties of UpdatePanel <strong>&#8220;ChildrenAsTriggers&#8221;</strong> is set to false and <strong>&#8220;UpdateMode&#8221;</strong> is set to conditional, to prevent the unneccessary updation of updatepanel from its child controls.</p>
-
-        <h3>2. Create a method in MasterPage codebehind which changes the website header.</h3>
-        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.cs'></script>
-<noscript><pre><code>public void ChangeWebsiteHeader(string newHeader)
-{
-    lblWebsiteHeader.Text = newHeader;
-    //Calling the Update method of UpdatePanel will trigger the Updatepanel
-    UpdatePanelWebsiteHeader.Update();
-}</code></pre></noscript></div>
-
-
-            <h3>3. Create the content page with master page reference and an update panel which holds controls to triggers the header change.</h3>
-        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=masterPage.aspx'></script>
-<noscript><pre><code>&lt;%@ Page Title=&quot;Home Page&quot; Language=&quot;C#&quot; MasterPageFile=&quot;~/Site.master&quot; AutoEventWireup=&quot;true&quot;CodeFile=&quot;Default.aspx.cs&quot; Inherits=&quot;_Default&quot; %&gt;
-&lt;%@ MasterType VirtualPath=&quot;~/Site.master&quot; %&gt;</code></pre></noscript></div>
-
-            <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=changeHandler.cs'></script>
-<noscript><pre><code>protected void btnChangeHeader_Click(object sender, EventArgs e)
-{   
-    Master.ChangeWebsiteHeader(Server.HtmlEncode(txtHeader.Text));
-}</code></pre></noscript></div>
-
-
-            <h3>4. Call the MasterPage method from content page.</h3>
-        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=contentTemplate.aspx'></script>
-<noscript><pre><code>&lt;asp:UpdatePanel ID=&quot;UpdatePanelChangeHeader&quot; runat=&quot;server&quot; UpdateMode=&quot;Conditional&quot;&gt;
-    &lt;ContentTemplate&gt;
-        &lt;p&gt;Enter the Website Header: &lt;asp:TextBox ID=&quot;txtHeader&quot; runat=&quot;server&quot; /&gt; &lt;/p&gt;
-        &lt;asp:Button ID=&quot;btnChangeHeader&quot; runat=&quot;server&quot; Text=&quot;Change Header&quot; onclick=&quot;btnChangeHeader_Click&quot; /&gt;
-    &lt;/ContentTemplate&gt;
-&lt;/asp:UpdatePanel&gt;</code></pre></noscript></div>
-
-
-            <h3>Summary:</h3>
-        <p>In this blog we have seen how can we update the master page from the content page using ajax update panel. You can download the source code from <a href="http://www.box.net/shared/gpa9dlo668">here</a></p>
     </div>
 </div>
 

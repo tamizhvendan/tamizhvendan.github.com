@@ -4,7 +4,7 @@
   <title><![CDATA[Category: functional-programming | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/functional-programming/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-04-04T22:50:36+05:30</updated>
+  <updated>2015-04-26T15:42:12+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,63 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[My Takeaways]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways/"/>
+    <updated>2015-04-25T15:09:02+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is the concluding part of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">like this</a> before, so during this course, I was about to give up but the statement </p>
+
+<p style="text-align:center"> <strong> Finish what you started </strong> </p>
+
+<p>kept me going. Thank you John, I have learned a great lesson in my life from you.</p>
+
+<p>Back to the business, In this blog post I am going to share my key takeaways on developing a complete web application in fsharp using ASP.NET MVC</p>
+
+<h2 id="enterprise-application-development-in-fsharp">Enterprise application development in fsharp</h2>
+
+<p>As a learner of F#, I have spent lots of time in listening to <a href="https://vimeo.com/channels/c4fsharp">the great talks</a> by the vibrant <a href="http://c4fsharp.net/">fsharp community</a>. Though those talks are great, I was intrigued, how these individual pieces would work together in creating a complete enterprise application. Is it really possible? </p>
+
+<p>Developing this complete <a href="https://github.com/tamizhvendan/fsharp-phonecat">fsharp-phonecat</a> application answered my questions and I am sure it answered yours too. It may appear hard because of less sources and functional paradigm, but once you figured it out, it would be a cakewalk.</p>
+
+<p>The bottom line is <strong>we can create a complete enterprise application in fsharp</strong>. As a matter of fact, there is a book written on this subject, <a href="http://www.amazon.com/gp/product/1617291323/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=1617291323&amp;linkCode=as2&amp;tag=bor0b-20&amp;linkId=SYG2CSFARCGD5KUL">F# Deep Dives</a></p>
+
+<p>If you are not convinced yet, read <a href="http://fsharp.org/testimonials/">these testimonials</a> from the commercial users of F#. </p>
+
+<h2 id="leveraging-the-existing-net-ecosystem">Leveraging the existing .NET ecosystem</h2>
+
+<p>In my perspective F# is a <em>pragmatic functional programming language</em>. In addition to lot of elegant features of the language, it works seamlessly with the existing .NET libraries. This one characteristic I would say is a blessing. You can say, ‘This feature is really cool’, but at the end of the day it should help you to get the job done. F# is not only cool, It can help you too!</p>
+
+<p>In the sample application we have leveraged the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web Api 2</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor Views</a>, <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code <i class='emoji smile'></i>)</p>
+
+<h2 id="using-f-in-your-existing-c-codebase">Using F# in your existing C# Codebase</h2>
+
+<p>As F# is a <a href="http://en.wikipedia.org/wiki/List_of_CLI_languages#CLI_languages">CLI Language</a> it can be added to your existing C# solution. All you need to do just create a new F# project in the solution and this project can work seamlessly with the other projects in the solution. </p>
+
+<p>In the sample application, we have a <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
+
+<p>In the <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
+
+<h2 id="less-is-beautiful">Less is beautiful</h2>
+
+<p>Another cool aspect of F# is you will be writing less lines of code to achieve complex things. It took only <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Domain/SearchParser.fs#L10-L44">35 lines of code</a> to create a parser for a DSL. </p>
+
+<p><a href="http://fsharpforfunandprofit.com/rop/">Railway Oriented Programming</a> by <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a> is an absolute gem. If you would like to know what F# brings to your plate, I strongly suggest you to listen his talk on <a href="http://fsharpforfunandprofit.com/fppatterns/">Functional Design Patterns</a>. The way you see programming will never be the same after you have seen this presentation. </p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In nutshell, F# is just an awesome programming language to create applications. I hope you would have enjoyed this series. If you have any suggestions, kindly leave a comment.</p>
+
+<p>I would like to conclude this post with the below formula</p>
+
+<p style="text-align:center"> <strong> Python + .NET = F# </strong> </p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Step-3 PhoneCat Recommendation System using F# Agents, SignalR and Rx]]></title>
@@ -1400,35 +1457,6 @@ type BundleConfig() =<br />
 <p><img class="center" src="/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800"></p>
 
 <p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">next-post</a> we will be wiring up the backend. Stay tuned !</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Web Application Development in Fsharp using ASP.NET MVC]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/"/>
-    <updated>2014-12-10T17:07:48+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc</id>
-    <content type="html"><![CDATA[<h3 id="introduction">Introduction</h3>
-
-<p>Fsharp is my new favorite language in recent times and I’ve been learning it for the last six months. I always believe the best way to learn a language / technology / framework is to create something using it and also learning from the mistakes while creating it. So, here is my attempt to create a sample web application in fsharp using ASP.NET MVC framework. In this series of blog posts I’m going to share my experience on creating “phone-cat” web application inspired from the <a href="https://github.com/angular/angular-phonecat">angular-phonecat</a>. </p>
-
-<p>As it is my maiden attempt to create a relatively large web application in fsharp, if you find something that can be improved, feel free to share <em>I’m willing to learn from you.</em></p>
-
-<h3 id="blog-series-links">Blog Series Links</h3>
-
-<ul>
-  <li><strong>Step 0</strong> - <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
-  <li><strong>Step 1</strong> - <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Creating Web Api endpoints for fsharp-phonecat using Web Api 2</a></li>
-  <li><strong>Step 2</strong> - <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Creating ASP.NET MVC Razor Views for fsharp-phonecat</a></li>
-  <li><strong>Step 3</strong> - <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">PhoneCat Recommendation System using F# Agents, SignalR and Rx</a></li>
-  <li><strong>Step 4</strong> - <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">Build Automation using Fake</a></li>
-  <li><strong>Step 5</strong> - <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">Advanced Search DSL using FSParsec</a></li>
-  <li><strong>Step 6</strong> - <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Authentication using Owin and Asp.Net Identity</a></li>
-  <li><strong>Step 7</strong> - <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">Validation and Error handling using ROP</a></li>
-  <li><strong>Step 8</strong> - <a href="/blog/2015/03/20/step-8-adding-shopping-cart/">Adding Shopping Cart</a></li>
-  <li><strong>Step 9</strong> - <a href="/blog/2015/03/28/step-9-adding-checkout/">Adding Checkout</a></li>
-  <li><strong>Step 10</strong> - <a href="/blog/2015/04/02/step-10-refactoring-composition-root/">Refactoring Composition Root</a></li>
-</ul>
 ]]></content>
   </entry>
   

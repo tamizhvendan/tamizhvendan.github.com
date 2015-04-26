@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-04-04T22:50:36+05:30</updated>
+  <updated>2015-04-26T15:42:12+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,63 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[My Takeaways]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways/"/>
+    <updated>2015-04-25T15:09:02+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways</id>
+    <content type="html"><![CDATA[<blockquote>
+  <p>This is the concluding part of my blog series on <a href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">like this</a> before, so during this course, I was about to give up but the statement </p>
+
+<p style="text-align:center"> <strong> Finish what you started </strong> </p>
+
+<p>kept me going. Thank you John, I have learned a great lesson in my life from you.</p>
+
+<p>Back to the business, In this blog post I am going to share my key takeaways on developing a complete web application in fsharp using ASP.NET MVC</p>
+
+<h2 id="enterprise-application-development-in-fsharp">Enterprise application development in fsharp</h2>
+
+<p>As a learner of F#, I have spent lots of time in listening to <a href="https://vimeo.com/channels/c4fsharp">the great talks</a> by the vibrant <a href="http://c4fsharp.net/">fsharp community</a>. Though those talks are great, I was intrigued, how these individual pieces would work together in creating a complete enterprise application. Is it really possible? </p>
+
+<p>Developing this complete <a href="https://github.com/tamizhvendan/fsharp-phonecat">fsharp-phonecat</a> application answered my questions and I am sure it answered yours too. It may appear hard because of less sources and functional paradigm, but once you figured it out, it would be a cakewalk.</p>
+
+<p>The bottom line is <strong>we can create a complete enterprise application in fsharp</strong>. As a matter of fact, there is a book written on this subject, <a href="http://www.amazon.com/gp/product/1617291323/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=1617291323&amp;linkCode=as2&amp;tag=bor0b-20&amp;linkId=SYG2CSFARCGD5KUL">F# Deep Dives</a></p>
+
+<p>If you are not convinced yet, read <a href="http://fsharp.org/testimonials/">these testimonials</a> from the commercial users of F#. </p>
+
+<h2 id="leveraging-the-existing-net-ecosystem">Leveraging the existing .NET ecosystem</h2>
+
+<p>In my perspective F# is a <em>pragmatic functional programming language</em>. In addition to lot of elegant features of the language, it works seamlessly with the existing .NET libraries. This one characteristic I would say is a blessing. You can say, ‘This feature is really cool’, but at the end of the day it should help you to get the job done. F# is not only cool, It can help you too!</p>
+
+<p>In the sample application we have leveraged the <a href="http://blog.tamizhvendan.in/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web Api 2</a>, <a href="http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor Views</a>, <a href="http://blog.tamizhvendan.in/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code <i class="emoji smile"></i>)</p>
+
+<h2 id="using-f-in-your-existing-c-codebase">Using F# in your existing C# Codebase</h2>
+
+<p>As F# is a <a href="http://en.wikipedia.org/wiki/List_of_CLI_languages#CLI_languages">CLI Language</a> it can be added to your existing C# solution. All you need to do just create a new F# project in the solution and this project can work seamlessly with the other projects in the solution. </p>
+
+<p>In the sample application, we have a <a href="http://blog.tamizhvendan.in/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
+
+<p>In the <a href="http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake/">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
+
+<h2 id="less-is-beautiful">Less is beautiful</h2>
+
+<p>Another cool aspect of F# is you will be writing less lines of code to achieve complex things. It took only <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Domain/SearchParser.fs#L10-L44">35 lines of code</a> to create a parser for a DSL. </p>
+
+<p><a href="http://fsharpforfunandprofit.com/rop/">Railway Oriented Programming</a> by <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a> is an absolute gem. If you would like to know what F# brings to your plate, I strongly suggest you to listen his talk on <a href="http://fsharpforfunandprofit.com/fppatterns/">Functional Design Patterns</a>. The way you see programming will never be the same after you have seen this presentation. </p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In nutshell, F# is just an awesome programming language to create applications. I hope you would have enjoyed this series. If you have any suggestions, kindly leave a comment.</p>
+
+<p>I would like to conclude this post with the below formula</p>
+
+<p style="text-align:center"> <strong> Python + .NET = F# </strong> </p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Step-10 Refactoring Composition Root]]></title>
@@ -4415,6 +4472,7 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
   <li><strong>Step 8</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/">Adding Shopping Cart</a></li>
   <li><strong>Step 9</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/">Adding Checkout</a></li>
   <li><strong>Step 10</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root/">Refactoring Composition Root</a></li>
+  <li><strong>Conclusion</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways/">My Takeaways</a></li>
 </ul>
 ]]></content>
   </entry>
@@ -5032,85 +5090,6 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
     <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
     <br /><img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_ModelBinders/UnitTest.png">      
 
-</div>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Unit Testing with Sessions in ASP.NET MVC3]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/"/>
-    <updated>2012-02-02T00:00:00+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet</id>
-    <content type="html"><![CDATA[<div class='post'>
-    <h3>Introduction</h3>
-        
-        <p>While talking to my friend regarding his project, he told me about how he is doing unit testing which involves sessions in ASP.NET MVC3. 
-            His team is actually using a “HttpSimulator” which simulates the web request and then the do unit test by verifying the session by interacting 
-            with the simulator. When digging further I have come to know that this way of unit testing session objects are influenced 
-            from the “ASP.NET Webforms”. It reminds me the talk of <a href="http://www.infoq.com/presentations/Functional-Thinking">Neil Ford on 
-                Function Thinking</a>. In that video he talks about an analogy called “Axe and Chain Saw” to explain our way of thinking as
-        </p>
-        <blockquote>When we give a chain saw to people who were cutting trees by axe, they would tend to use chain saw in the same way as the use Axe. 
-            Which is obviously inefficient. So we should understand at the capabilities of the tool in our hand before we using it</blockquote>
-       
-        <p>ASP.NET MVC3 is far better than Web Forms when it comes to unit testing. We don’t need to use a simulator to test against our sessions. 
-            There is a better way to do this MVC3 and in this blog post we are going to explore it.<p/>
-       
-        <h4>Time for Code</h4>       
-        <p>Shopping Cart is the first thing that strikes our mind when we want to quote an example for using Http session. 
-        So, I am going to show an app called “MyShop” a mini shopping site through which I am going to explain the concepts involved. 
-        The application flow would be as follows</p>
-        
-            <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/Cart.png">
-            <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/Cart2.png">       
-        
-
-        <h4>Models</h4>
-        
-        <p>The models are simple, straight forward and self explanatory.</p>
-    <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/model.png">  
-    <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/CartCsharp.png">    
-        <p>I’ve tried my level best to keep the model as simple as possible. 
-        So, Cart in MyShop will have only two public methods. One to add a product to the Cart’s Line and another one to retrieve all the 
-        products inside the Cart’s line.</p>
-        
-        <h4>The CartController Version 1.0</h4>
-        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/CartController.png"> 
-        <p>In this CartController version 1.0 we have two public methods Index and AddToCart which are dependent on HttpSession object. 
-            This dependency inside the methods is actually preventing us from unit testing the CartController in simple way and we have no 
-            choice other than implementing a “Http Simulator” to unit test these two methods. As I said before there is better to do is! Here we go!!</p>
-        
-        <h4>The CartController Version 2.0</h4>
-        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/CartController2.png"> 
-    <p>No more Sessions!!.. Yeah.. We have got rid of the dependency on the session object by adding a new parameter called cart. Now you can use easily unit test the CartController as follows</p>
-        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/UnitTest.png"> 
-        <p>Okay we made it easy for unit testing by moving the dependency out of the method and introduced the cart as the parameter. But how does my MVC3 framework will know the cart parameter should come from session object ?… Good Catch!! and here comes the magic called custom ModelBinder</p>
-       
-        <h4>ModelBinder – A brief background</h4>
-        <p>Model binding is an exciting feature in MVC3 framework which automatically creates the C# objects directly from Http request and 
-            pass it to the Action methods in controller as parameter values. It uses a default model binder which looks at the form values, 
-            query string values that are submitted with the Http Request and create the model object.</p>
-        <h4>CartModelBinder</h4>
-        
-        <p>In our case, we need to have a object of Cart which is populated from the Session object and not from the HttpRequest. 
-            The default model binder used by MVC3 has no idea about session object. So, Its our responsibility to tell to the MVC3 framework
-        </p>
-        
-        <p>“<em>Hey! If there is any parameter of type Cart in controller action method, then use my own custom model binder called CartModelBinder to create the object</em>”</p>
-        <p>There are two steps to do the above said operation</p>
-        <p>1. Creating the custom model binder by inheriting the IModelBinder interface</p>
-        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/CartModelBinder.png"> 
-        <p>2. Registering our custom model binder in the Global.asax.cs file</p>
-        <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_With_Session/AppStart.png"> 
-        <p>
-        That’s all.. MVC3 takes care of rest</p>
-        
-        <h4>Summary</h4>
-        <p>In this blog post we have explored how we can get rid of “Http Simulator” to unit test the controllers which involves Session objects using 
-            custom model binder. You can download the working example of “MyShop” showcased in this blog post 
-            from <a href="http://www.box.com/s/b9lf2heukyivh68921jj">here</a>. 
-            Refer <a href="http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
-            unit testing with the custom model binder itself.</p>
 </div>
 ]]></content>
   </entry>
