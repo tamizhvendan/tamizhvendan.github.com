@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number/</loc>
+    <lastmod>2015-04-30T11:19:53+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways/</loc>
     <lastmod>2015-04-25T15:09:02+05:30</lastmod>
     <priority>0.8</priority>
@@ -251,28 +257,28 @@
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/archives/</loc>
-    <lastmod>2015-04-26T15:42:12+05:30</lastmod>
+    <lastmod>2015-04-30T15:01:09+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/</loc>
-    <lastmod>2015-04-26T15:42:12+05:30</lastmod>
+    <lastmod>2015-04-30T15:01:09+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/categories/</loc>
-    <lastmod>2015-04-26T15:42:12+05:30</lastmod>
+    <lastmod>2015-04-30T15:01:09+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/open-source-contributions/</loc>
-    <lastmod>2015-04-26T15:42:12+05:30</lastmod>
+    <lastmod>2015-04-30T15:01:09+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

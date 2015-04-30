@@ -1,0 +1,309 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Some tips for Using C# Libraries in F# - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Some Tips for Using C# Libraries in F# In my last blog post on what I’ve learned while developing a complete web application in fsharp, I’ve &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+  <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">	
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+  p, li, #tag-cloud {
+    font-family: "Archer A","Archer B","georgia","serif";
+    line-height: 1.4em;
+    font-size: 1.354rem;
+    font-weight: 500;
+    color: #222222;
+    margin: 0;
+    font-style: normal;
+  }  
+  h1, h2, h3 {
+    font-family: 'Archer A','Archer B',georgia,serif;
+    font-weight: 800 !important;
+    font-style: normal;
+    font-size: 2.6154rem !important;
+    padding: 1.6154rem 0;
+    color: #286c8d;
+  }
+  h1 {
+    font-size: 2.6154rem !important;    
+  }
+  h2 {
+    font-size: 1.8rem !important;
+  }
+  h3 {
+    font-size: 1.6154rem !important;
+  }
+  h4 {
+    font-size: 1.5rem !important;
+  }
+  div.mid-col {
+    background-color: #f8f8f8;
+  }
+  pre code {
+    font-family: Consolas,Menlo,Monaco,"Andale Mono","lucida console","Courier New",monospace;
+    font-size: 1em;
+    line-height: 1.8;
+    display: block;
+    background: #fff;
+    color: #000;
+    border: solid 1px #eee;
+    box-shadow: 1px 1px 2px #aaa;
+    margin: 10px 0 8px 0;
+    overflow-x: auto;
+    word-wrap: break-word;
+  }
+  td.gutter {
+    display: none;
+  }
+  td.code {
+    padding-left: 0px;
+  }
+  a:hover {
+    color: #428bca !important;    
+  }
+  </style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 156.25%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 126.25%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Some Tips for Using C# Libraries in F#</h1>
+	<div class="entry-content" itemprop="articleBody"><p>In my <a href="/blog/2015/04/25/my-takeaways/">last blog post</a> on what I’ve learned while developing a complete web application in fsharp, I’ve mentioned that we can leverage all the libraries that were written for csharp in fsharp. </p>
+
+<p>Fsharp is a hybrid programming language which supports both functional programming and object oriented programming. Though you can write an application completely in a functional way, when you need to integrate with other .NET languages, you may need to use some OO features.</p>
+
+<p>As both the languages has its own design and principles (immutable types, not allowing null, etc.,), the integration of these is not straightforward in certain scenarios. In this blog post you are going to learn how to handle these tricky scenarios. </p>
+
+<h2 id="allownullliteral-attribute">AllowNullLiteral Attribute</h2>
+
+<p>When you <a href="http://fsharpforfunandprofit.com/posts/classes/">create a class in F#</a>, by default, we can’t explicitly assign a null value to an instance of the class unlike C#. You will get a compiler error when you do it. It’s a great feature and it helps in getting rid of Null Reference exceptions. </p>
+
+<p><img class="center" src="/images/fs_cs_interop/NullError.png" /></p>
+
+<p>But in certain cases, we may need to assign a null value to a class. For example, let us take the <a href="https://msdn.microsoft.com/en-us/library/dn497475(v=vs.108).aspx">Find method</a> in the Asp.Net identity framework. It returns a user with the specified username and password or null if there is a no match. </p>
+
+<p>When you try to use this in a fsharp code, you will be getting a compiler error</p>
+
+<p><img class="center" src="/images/fs_cs_interop/UserNullError.png" /></p>
+
+<p>It’s where <a href="https://msdn.microsoft.com/en-us/library/ee353608.aspx?f=255&amp;MSPPError=-2147217396">AllowNullLiteral attribute</a> comes into the picture. If you want to make a class type to allow null literal as one of its value, you need to decorate that class with the AllowNullLiteral attribute.</p>
+
+<p><img class="center" src="/images/fs_cs_interop/AllowNullAttr.png" /></p>
+
+<h2 id="climutable-attribute">CLIMutable Attribute</h2>
+
+<p>When a fsharp Record type is compiled, it has been translated to a Common Language Infrastructure (CLI) representation of a typical <a href="http://blog.pluralsight.com/domain-driven-design-in-csharp-implementing-immutable-value-objects">value object declaration</a> in C#.</p>
+
+<p><img class="center border" src="/images/fs_cs_interop/Record_Type_Compilation.png" /></p>
+
+<p>The important thing to notice here is there is no default constructor! </p>
+
+<p>Certain libraries and frameworks requires a class to contain default constructor. For example, the <a href="http://www.asp.net/web-api/overview/formats-and-model-binding/parameter-binding-in-aspnet-web-api">model binding</a> feature in Asp.Net framework expects the class with a default constructor to bind the incoming request to a parameter in the action method. You will get a run-time error if the class doesn’t contain default constructor.</p>
+
+<p>So, if we need to have a default constructor for a fsharp record type when it get compiled, we need to decorate the record type with the <a href="https://msdn.microsoft.com/en-us/library/hh289724.aspx">CLIMutable attribute</a></p>
+
+<p>The Ppesence of this attribute enables the compiler to generate the default constructor and the property setters when the code gets compiled to IL</p>
+
+<p><img class="center border" src="/images/fs_cs_interop/Record_Type_Attr_Compilation.png" /></p>
+
+<h2 id="using-dynamic-types">Using Dynamic Types</h2>
+
+<p>In C#, we can create a <a href="https://msdn.microsoft.com/en-IN/library/dd264736.aspx">dynamic type</a> which bypasses static type checking and helps to hold the data together without declaring any types. </p>
+
+<p>The <a href="http://stackoverflow.com/questions/14896013/how-viewbag-in-asp-net-mvc-works">ViewBag feature</a> in Asp.Net MVC is a one of the best examples of using dynamic types. It allows you to put any arbitary data in it and use them in the razor views.</p>
+
+<p>There is no straightforward way to access the dynamic types in fsharp.</p>
+
+<p><img class="center border" src="/images/fs_cs_interop/ViewBagError.png" /></p>
+
+<p>If we would like to access dynamic types in fsharp we need to use the <a href="https://www.nuget.org/packages/ImpromptuInterface.FSharp/">ImpromptuInterface.FSharp</a> nuget package.</p>
+
+<p>This package defines the <code>?</code> operator, which provides the implementation for accessing dynamic types.</p>
+
+<p><img class="center border" src="/images/fs_cs_interop/Dynamic_Operator.png" /></p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post we have seen three tips which can help us while using C# libraries in F#. If you know any other interoperability tips, kindly leave a comment below. </p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

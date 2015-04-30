@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-04-26T15:42:12+05:30</updated>
+  <updated>2015-04-30T15:01:09+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,71 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Some tips for Using C# Libraries in F#]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number/"/>
+    <updated>2015-04-30T11:19:53+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number</id>
+    <content type="html"><![CDATA[<p>In my <a href="http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways/">last blog post</a> on what I’ve learned while developing a complete web application in fsharp, I’ve mentioned that we can leverage all the libraries that were written for csharp in fsharp. </p>
+
+<p>Fsharp is a hybrid programming language which supports both functional programming and object oriented programming. Though you can write an application completely in a functional way, when you need to integrate with other .NET languages, you may need to use some OO features.</p>
+
+<p>As both the languages has its own design and principles (immutable types, not allowing null, etc.,), the integration of these is not straightforward in certain scenarios. In this blog post you are going to learn how to handle these tricky scenarios. </p>
+
+<h2 id="allownullliteral-attribute">AllowNullLiteral Attribute</h2>
+
+<p>When you <a href="http://fsharpforfunandprofit.com/posts/classes/">create a class in F#</a>, by default, we can’t explicitly assign a null value to an instance of the class unlike C#. You will get a compiler error when you do it. It’s a great feature and it helps in getting rid of Null Reference exceptions. </p>
+
+<p><img class="center" src="http://blog.tamizhvendan.in/images/fs_cs_interop/NullError.png" /></p>
+
+<p>But in certain cases, we may need to assign a null value to a class. For example, let us take the <a href="https://msdn.microsoft.com/en-us/library/dn497475(v=vs.108).aspx">Find method</a> in the Asp.Net identity framework. It returns a user with the specified username and password or null if there is a no match. </p>
+
+<p>When you try to use this in a fsharp code, you will be getting a compiler error</p>
+
+<p><img class="center" src="http://blog.tamizhvendan.in/images/fs_cs_interop/UserNullError.png" /></p>
+
+<p>It’s where <a href="https://msdn.microsoft.com/en-us/library/ee353608.aspx?f=255&amp;MSPPError=-2147217396">AllowNullLiteral attribute</a> comes into the picture. If you want to make a class type to allow null literal as one of its value, you need to decorate that class with the AllowNullLiteral attribute.</p>
+
+<p><img class="center" src="http://blog.tamizhvendan.in/images/fs_cs_interop/AllowNullAttr.png" /></p>
+
+<h2 id="climutable-attribute">CLIMutable Attribute</h2>
+
+<p>When a fsharp Record type is compiled, it has been translated to a Common Language Infrastructure (CLI) representation of a typical <a href="http://blog.pluralsight.com/domain-driven-design-in-csharp-implementing-immutable-value-objects">value object declaration</a> in C#.</p>
+
+<p><img class="center border" src="http://blog.tamizhvendan.in/images/fs_cs_interop/Record_Type_Compilation.png" /></p>
+
+<p>The important thing to notice here is there is no default constructor! </p>
+
+<p>Certain libraries and frameworks requires a class to contain default constructor. For example, the <a href="http://www.asp.net/web-api/overview/formats-and-model-binding/parameter-binding-in-aspnet-web-api">model binding</a> feature in Asp.Net framework expects the class with a default constructor to bind the incoming request to a parameter in the action method. You will get a run-time error if the class doesn’t contain default constructor.</p>
+
+<p>So, if we need to have a default constructor for a fsharp record type when it get compiled, we need to decorate the record type with the <a href="https://msdn.microsoft.com/en-us/library/hh289724.aspx">CLIMutable attribute</a></p>
+
+<p>The Ppesence of this attribute enables the compiler to generate the default constructor and the property setters when the code gets compiled to IL</p>
+
+<p><img class="center border" src="http://blog.tamizhvendan.in/images/fs_cs_interop/Record_Type_Attr_Compilation.png" /></p>
+
+<h2 id="using-dynamic-types">Using Dynamic Types</h2>
+
+<p>In C#, we can create a <a href="https://msdn.microsoft.com/en-IN/library/dd264736.aspx">dynamic type</a> which bypasses static type checking and helps to hold the data together without declaring any types. </p>
+
+<p>The <a href="http://stackoverflow.com/questions/14896013/how-viewbag-in-asp-net-mvc-works">ViewBag feature</a> in Asp.Net MVC is a one of the best examples of using dynamic types. It allows you to put any arbitary data in it and use them in the razor views.</p>
+
+<p>There is no straightforward way to access the dynamic types in fsharp.</p>
+
+<p><img class="center border" src="http://blog.tamizhvendan.in/images/fs_cs_interop/ViewBagError.png" /></p>
+
+<p>If we would like to access dynamic types in fsharp we need to use the <a href="https://www.nuget.org/packages/ImpromptuInterface.FSharp/">ImpromptuInterface.FSharp</a> nuget package.</p>
+
+<p>This package defines the <code>?</code> operator, which provides the implementation for accessing dynamic types.</p>
+
+<p><img class="center border" src="http://blog.tamizhvendan.in/images/fs_cs_interop/Dynamic_Operator.png" /></p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post we have seen three tips which can help us while using C# libraries in F#. If you know any other interoperability tips, kindly leave a comment below. </p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[My Takeaways]]></title>
@@ -5051,45 +5116,6 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
         An hour spent upfront would save a day in future.
     </p>
     <p>“Beauty is in the eye of the beholder”, If you have a better idea to do the same, kindly leave a comment, I am open to learn from you.</p>
-</div>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Unit Testing Custom Model Binders in MVC3]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in/"/>
-    <updated>2012-02-11T00:00:00+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in</id>
-    <content type="html"><![CDATA[<div class='post'>
-    <p>
-        In <a href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
-        with Sessions in MVC3 using Custom model binders. In this blog post we are going to see how to do unit test the model binder itself.
-    </p>
-    <p>
-        One remarkable thing which everybody hails in MVC3 is its extensibility and its testability. You can extend/customize the components in the 
-        framework and also you can unit test them with ease.
-    </p>
-    <p>
-        Before getting into unit testing the custom model binder, Lets have a closer look at 
-            the <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.imodelbinder.bindmodel.aspx">BindModel</a> method
-    </p>
-    <br />
-    <img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_ModelBinders/BindModel.png">
-       
-        <p>
-            In the BindModel method we are making use of Session property in the HttpContext object which is in turn a property of 
-            the <a href="http://msdn.microsoft.com/en-us/library/dd492673.aspx">ControllerContext</a> object that is passed to the BindModel method as 
-            a parameter by the MVC3 framework. In order to unit test this method we need to have to control over the HttpContext property of 
-            the ControllerContext and the Session property of the HttpContext.
-    </p>
-
-    <p>How to get control over those properties ? Thanks to <a href="http://msdn.microsoft.com/en-us/library/dd460098.aspx">a constructor of ControllerContext</a></p>
-    <br /><img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_ModelBinders/ControllerContext.png">        
-        <p>ControllerContext uses the constructor dependency injection to get rid of the direct dependency on <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontextbase.aspx">HttpContextBase</a> and we are going to exploit this to do unit testing. Using a mocking framework we can easily create a mock of HttpContetBase and drive the unit test.</p>
-    <p>The Session property of the HttpContextBase is of type <a href="http://msdn.microsoft.com/en-us/library/system.web.httpsessionstatebase.aspx">HttpSessionStateBase</a> which can also be mocked.</p>
-    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
-    <br /><img class="center" src="http://blog.tamizhvendan.in/images/UnitTesting_ModelBinders/UnitTest.png">      
-
 </div>
 ]]></content>
   </entry>
