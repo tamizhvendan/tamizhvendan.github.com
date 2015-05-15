@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Feb 7th, 2011 javascript, jquery Comments Creating a Webpage Like iGoogle Using jQuery Would you like to create a webpage like iGoogle?? This blog &hellip;">
+	<meta name="description" content="Feb 10th, 2011 jquery Comments DropDownList Manipulation Using jQuery In this blog post we are going to see how can we manipulate a dropdownlist &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -156,7 +156,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 156.25%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 126.25%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 126.25%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +169,125 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-10T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 10<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/jquery/'>jquery</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/02/10/in-this-blog-we-are-going-to-see-how/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/02/10/in-this-blog-we-are-going-to-see-how/" itemprop="url">DropDownList Manipulation Using jQuery</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>
+            In this blog post we are going to see how can we manipulate a dropdownlist using <a href="http://www.amazon.com/jQuery-Action-Second-Bear-Bibeault/dp/1935182323?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">jQuery</a><img alt="" border="0" height="1px" src="http://www.assoc-amazon.com/e/ir?t=bor0b-20&amp;l=btl&amp;camp=213689&amp;creative=392969&amp;o=1&amp;a=1935182323" style="border-bottom: medium none; border-left: medium none; border-right: medium none; border-top: medium none; margin: 0px; padding-bottom: 0px! important; padding-left: 0px! important; padding-right: 0px! important; padding-top: 0px! important;" width="1px" />. Here is the brief overview what we are exactly going to do.<br />
+        </p>
+        <ol>
+            <li>Dynamically populating the dropdownlist</li>
+            <li>Handling the item change event of a dropdownlist</li>
+            <li>Getting the value and the text of the dropdownlist selected item</li>
+            <li>Programmatically setting the item of the dropdownlist</li>
+        </ol>
+
+        <h3>1. Dynamically populating the dropdownlist</h3>
+
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=documentInit.js'></script>
+<noscript><pre><code>$(document).ready(function () {
+    
+    function loadDropDownList(collection) {
+        $.each(collection, function (index, value) {
+            var listItem = $(&quot;&lt;option&gt;&lt;/option&gt;&quot;).val(index).html(value);
+            $(&quot;#countries&quot;).append(listItem);
+        });
+    }
+
+    var myCollection = {'IN': 'India','AUS': 'Australia','ENG': 'England'};
+    loadDropDownList(myCollection);
+})</code></pre></noscript></div>
+
+	
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=layout.html'></script>
+<noscript><pre><code>Countries: &lt;select id=&quot;countries&quot;&gt;&lt;/select&gt;</code></pre></noscript></div>
+
+	
+        <p>
+            The function loadDropDownList will take a collection (a key-value pair array) and populate the dropdownlist “countries”. “$.each” is a jQuery function which iterates the array item by item and calls the “function(index,value)” for each item where index would be the item’s key and value would be the item’s value. Then the list item html markup is created for the list item and appended to the dropdownlist
+        </p>
+
+        <h3>2. Handling the item change event of a dropdownlist</h3>
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=handleChange.js'></script>
+<noscript><pre><code>$(document).ready(function () {
+    $(&quot;#countries&quot;).change(function () {
+        // Place your code here
+    });
+});</code></pre></noscript></div>
+
+        <p>
+            The jQuery API offers lot of useful functions to operate with the html form elements. One of such function is “change()” which will called whenever the item value is get changed.
+        </p>
+        <h3>3. Getting the value and the text of the dropdownlist selected item</h3>
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=listChange.js'></script>
+<noscript><pre><code>$(document).ready(function () {
+    $(&quot;#countries&quot;).change(function () {
+    	var selectedValue = $(&quot;#countries&quot;).val();
+        $(&quot;#countryValue&quot;).text(selectedValue);
+        $(&quot;#countryText&quot;).text($(&quot;#countries &gt; option[value='&quot; + selectedValue + &quot;']&quot;).html());
+    });
+});</code></pre></noscript></div>
+
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=newLayout.html'></script>
+<noscript><pre><code>Selected Country’s Text: &lt;span id=&quot;countryText&quot;&gt;&lt;/span&gt; &lt;br /&gt;
+Selected Country’s Value:  &lt;span id=&quot;countryValue&quot;&gt;&lt;/span&gt;&lt;br /&gt;</code></pre></noscript></div>
+
+        <p>The jQuery code mentioned above will set the two span labels “countryValue” and “countryText” with the value and text of the selected item in the “countries” dropdownlist, when we select an item in the “countries” dropdownlist. The jQuery function “val()” enable us to find out the value of a form element, in our case we have utilized it to get the value of the “countries” dropdownlist. To get the selected item’s text we have to use the child and attribute selector together as a selector. “#countries &gt; option[value=&#8217;IN&#8217;]” – will selects all option child elements(with appropriate value) of item with the id “countries”. “html()” retrieves the html of the selected element. “text(value)” will set the text of the selector.</p>
+        <h3>4. Programmatically setting the item of the dropdownlist</h3>
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=btnClick.js'></script>
+<noscript><pre><code>$(&quot;#btnIn&quot;).click(function () {
+    $(&quot;#countries&quot;).val('IN');
+});
+
+$(&quot;#btnEng&quot;).click(function () {
+    $(&quot;#countries&quot;).val('ENG');
+});
+
+$(&quot;#btnAus&quot;).click(function () {
+    $(&quot;#countries&quot;).val('AUS');
+});</code></pre></noscript></div>
+
+
+        <h2>Demo</h2>
+        <iframe width="100%" height="300" src="http://jsfiddle.net/uE78v/2/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -613,75 +732,13 @@ namespace VehicleRegNo
 
 </article>
 
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-01-05T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jan 5<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/others/'>others</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/01/05/thank-god/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/01/05/thank-god/" itemprop="url">Thank God !!</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>I do google whenever had difficulties while coding (Typical style of Programming
-        isn’t it ???)</p>
-        <p>During those never ending google searches I usually land up in the blog posts which
-        salvage my difficulties.</p>
-        
-        <p>I wonder what would be the life of programmers if there is no such blogs exists!!</p>
-        
-        <p>Fine.. I don’t wanna write an essay describing my first blog. In simple words, I
-        just wanted to put all my knowledge gained under single roof and share with the
-        developers across the globe.</p>
-        <p>So, Here We Go !!</p>
-        <div><script src='https://gist.github.com/b9256c6eef44561dc8b5.js'></script>
-<noscript><pre><code>namespace Earth.Developers
-{
-    class Tamizhvendan
-    {
-        public static void Main(string[] args)
-        {
-            System.Console.WriteLine(&quot;Hearty Thanks to all blog writers &quot; + 
-                                        &quot;across the globe who inspired me to write this blog !!&quot;);
-        }
-    }
-}</code></pre></noscript></div>
-
-    </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
 </div>
 <nav id="pagenavi">
     
         <a href="13" class="prev">Prev</a>
     
+    
+        <a href="15" class="next">Next</a>
     
     <div class="center"><a href="/blog/archives">Blog Archives</a></div>
 </nav></div>

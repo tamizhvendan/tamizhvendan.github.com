@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-04-30T15:01:09+05:30</updated>
+  <updated>2015-05-15T17:09:01+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,146 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Grouping data into buckets using fsharp]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/05/09/grouping-data-into-buckets-using-fsharp/"/>
+    <updated>2015-05-09T16:19:06+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/05/09/grouping-data-into-buckets-using-fsharp</id>
+    <content type="html"><![CDATA[<p>Last week I came across an interesting data grouping problem, which groups the data into different buckets based on the given filters as shown in the image below</p>
+
+<p><img class="center" src="http://blog.tamizhvendan.in/images/fs_data_grouping/bucket_function.png" /></p>
+
+<p>In this blog post I am going to share how can we solve this problem very expressively using fsharp.</p>
+
+<h2 id="parsing-filters-and-translate-to-an-abstract-syntax-tree-ast">Parsing filters and translate to an Abstract Syntax Tree (AST)</h2>
+
+<p>The first step to solve this problem is parsing the filters and translate to an AST. The strong type system in fsharp makes this step pretty easy.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Filter</span> <span class="o">=</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">GreaterThan</span> <span class="k">of</span> <span class="n">int</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Between</span> <span class="k">of</span> <span class="n">int</span> <span class="o">*</span> <span class="n">int</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">LessThan</span> <span class="k">of</span> <span class="n">int</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>Filter</code> type represents the AST of the raw string filter. There are <strong>n</strong> number of ways to transform this incoming string filter to its strongly typed counterpart.</p>
+
+<p>The most idiomatic way of achieving it in fsharp is through <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns#Partial_Active_Patterns">Partial Active Patterns</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">Regex</span><span class="o">|_|)</span> <span class="n">pattern</span> <span class="n">input</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">m</span> <span class="o">=</span> <span class="nn">Regex</span><span class="p">.</span><span class="n">Match</span><span class="o">(</span><span class="n">input</span><span class="o">,</span> <span class="n">pattern</span><span class="o">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">Success</span> <span class="k">then</span> <span class="n">Some</span><span class="o">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tail</span> <span class="o">[</span> <span class="k">for</span> <span class="n">g</span> <span class="k">in</span> <span class="n">m</span><span class="o">.</span><span class="n">Groups</span> <span class="o">-&gt;</span> <span class="n">g</span><span class="o">.</span><span class="n">Value</span> <span class="o">])</span>
+</span><span class="line">  <span class="k">else</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>You can easily understand this partial active pattern by thinking it as a function with the following signature</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="kt">list</span> <span class="n">option</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>i.e Takes an input, matches it against a pattern. If it matched, then returns the list of matched strings wrapped with the <code>Some</code> type else returns the <code>None</code> type.</p>
+
+<p>Now you may think why we need to write this straight-forward function as a partial active pattern with some weird symbols <code>(|_|)</code> ?</p>
+
+<p>We can certainly do that, but we can’t do <a href="http://fsharpforfunandprofit.com/posts/match-expression/">pattern matching</a> against a function. </p>
+
+<p>The best way to understand this by seeing it in action</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// string -&gt; Filter</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">createFilter</span> <span class="n">filterString</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">filterString</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Regex</span> <span class="s">&quot;^&gt;(</span><span class="err">\</span><span class="s">d+)$&quot;</span> <span class="o">[</span><span class="n">min</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">GreaterThan</span><span class="o">(</span><span class="n">int</span> <span class="n">min</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Regex</span> <span class="s">&quot;^(</span><span class="err">\</span><span class="s">d+)-(</span><span class="err">\</span><span class="s">d+)$&quot;</span> <span class="o">[</span><span class="n">min</span><span class="o">;</span><span class="n">max</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">Between</span><span class="o">(</span><span class="n">int</span> <span class="n">min</span><span class="o">,</span><span class="n">int</span> <span class="n">max</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Regex</span> <span class="s">&quot;^&lt;(</span><span class="err">\</span><span class="s">d+)$&quot;</span> <span class="o">[</span><span class="n">max</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">LessThan</span><span class="o">(</span><span class="n">int</span> <span class="n">max</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s">&quot;Invalid Filter&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The above function transforms the raw string filter into its equivalent fsharp type that we have defined before. The pattern matching makes our job very easier by declaratively saying if it matches this, then do this.</p>
+
+<p>One another important benefit that we are getting here, the return value (list of matched strings) is available as a last parameter in the pattern matching. It’s just coming for free. </p>
+
+<p>I’d like to give you an exercise to appreciate this excellent feature in fsharp. Try to implement the above using a function instead of a partial active patterns. </p>
+
+<p>Great! We are done with the first step. Let’s move to the next one.</p>
+
+<h2 id="grouping-the-data-using-the-filter">Grouping the data using the filter</h2>
+
+<p>To do the actual grouping we need to have a function that filters the data based on the given filter. Let me call it as a predicate.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Filter -&gt; int -&gt; bool</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">createPredicate</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">GreaterThan</span> <span class="n">min</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">min</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Between</span> <span class="o">(</span><span class="n">min</span><span class="o">,</span> <span class="n">max</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">min</span> <span class="o">&amp;&amp;</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">max</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">LessThan</span> <span class="n">max</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">max</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>createPredicate</code> function takes a filter and returns the predicate function <code>int -&gt; bool</code></p>
+
+<p>With the functions <code>createFilter</code> and <code>createPredicate</code> in place, we can combine them and create a new function that takes a raw filter string and translate that to a predicate. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// string -&gt; int -&gt; bool</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">createRule</span> <span class="o">=</span> <span class="n">createFilter</span> <span class="o">&gt;&gt;</span> <span class="n">createPredicate</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Let me create a new record type <code>BucketRule</code> which holds this string and the predicate</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">BucketRule</span> <span class="o">=</span> <span class="o">{</span> <span class="n">Label</span> <span class="o">:</span> <span class="kt">string</span><span class="o">;</span> <span class="n">Rule</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">createBucketRule</span> <span class="n">filterString</span> <span class="o">=</span>
+</span><span class="line">  <span class="o">{</span> <span class="n">Label</span> <span class="o">=</span> <span class="n">filterString</span><span class="o">;</span> <span class="n">Rule</span> <span class="o">=</span> <span class="n">createRule</span> <span class="n">filterString</span> <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now we have all required functions and it’s time to do the data grouping</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">createBucket</span> <span class="n">numbers</span> <span class="n">bucketRule</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">bucketContent</span> <span class="o">=</span> <span class="n">numbers</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="n">bucketRule</span><span class="o">.</span><span class="n">Rule</span>
+</span><span class="line">  <span class="o">(</span><span class="n">bucketRule</span><span class="o">.</span><span class="n">Label</span><span class="o">,</span> <span class="n">bucketContent</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">bucketify</span> <span class="n">numbers</span> <span class="n">filterStrings</span>  <span class="o">=</span>
+</span><span class="line">  <span class="n">filterStrings</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">createBucketRule</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="n">createBucket</span> <span class="n">numbers</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="summary">Summary</h2>
+
+<p>Though the problem that we have seen is so trivial, the great features in fsharp make it very pleasant to write expressive code. The code snippet is available in <a href="http://fssnip.net/qZ">fssnipnet</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Some tips for Using C# Libraries in F#]]></title>
@@ -4999,125 +5139,6 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
         binding problems. In my next blog post I would share my experiences in how to unit test this custom model binders. 
     You can download the source code that I have used in this blog post from <a href="http://www.box.com/s/16dbb662bb2f94babe27">here</a></p>
 </div>]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/"/>
-    <updated>2012-03-04T00:00:00+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2012/03/04/unit-testing-html-helpers-in-aspnet</id>
-    <content type="html"><![CDATA[<div class='post'>
-    <p>Would you like if your unit test have an assertion like this ?</p>
-    <div style="text-align: center;clear:both">
-        <img src="http://lh5.ggpht.com/-Z7XXVGQ3sX4/T1J73ct1gqI/AAAAAAAAASQ/qw-uSNrLoOE/image_thumb3.png?imgmax=800">
-    </div>
-    <p>
-        IMHO having a unit test assertion like this with a long magical string value would become a maintenance problem with additional logic being added.
-        It breaks with even minor changes like “adding an extra whitespace” though it is logically correct(Browsers ignores the whitespaces while rendering html)!.
-        It is harder to debug to!!
-    </p>
-    <p>
-        How can we get rid of this long string assertion ? Is there any better way to do assertion against this long magical string ejected from a
-        <a href="http://stephenwalther.com/blog/archive/2009/03/03/chapter-6-understanding-html-helpers.aspx">HtmlHelper</a> ? One thing which strikes on my mind when I come
-        across this problem is why don’t we parse the string as an xml and assert against the xml element instead. It might appear like laborious at the first sight,
-        but by making use of <a href="http://msdn.microsoft.com/en-us/library/system.xml.linq.xelement.aspx">XElement</a> and
-        <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a> we can easily do that.
-    </p>
-
-    <p>In the blog post we are going to see how can we implement this in a more cleaner way. </p>
-
-    <p>Okay.. Enough texts.. Its time to see some code!!</p>
-
-    <p>
-        The first step is to convert the “html string” returned by the html helper to XElement. Generally most of the helpers returns
-        <a href="http://stackoverflow.com/questions/2293357/what-is-an-mvchtmlstring-and-when-should-i-use-it">MvcHtmlString</a>, So, we can easily achieve this
-        by writing an extension method called “ToXElement” on MvcHtmlString.
-    </p>
-
-    <div style="text-align: center;clear:both">
-        <img src="http://lh4.ggpht.com/-cwtnsV7pl2c/T1J763QmH1I/AAAAAAAAASg/6QKxAEGZ5uM/image_thumb%25255B2%25255D.png?imgmax=800">
-    </div>
-
-    <p>That’s it! All set to redefine the way custom html helpers are being tested. </p>
-
-    <p>Fine, Let us see it in action. We will start with a handy HtmlHelper method called “Button” which would render a “Html button tag” and here is the test to assert it.</p>
-
-    <div style="text-align: center;clear:both">
-        <img src="http://lh4.ggpht.com/-Zl-hH4zYH1A/T1J7_Y9Qr3I/AAAAAAAAASw/PyWZZJMadV0/image_thumb%25255B10%25255D.png?imgmax=800">
-    </div>
-    <p>
-        The first test uses the ToXElement extension method and assert against the XElement’s properties whereas the second test uses the
-        “magical string with tags added” to do the assertion. Now you may feel what’s wrong with this guy the second test look clean to me,
-        why he is making fuss about it. Yes you are correct, the second one looks clean. But it appears to be clean as the requirement in hand is very simple.
-    </p>
-    <p>IMHO the custom html helpers that we are building in our real world application won’t be as simple as having a button tag with just plain caption in it. </p>
-    <p>Fine, lets see the real world. Voice from your team lead <em></em></p>
-    <p>
-        <em>
-            Hey! the Button HtmlHelper you designed has did a tremendous job. Can you make a small change on it so that it would
-            <strong>generate a button with a class attribute having the value ‘appbutton’ by default</strong>.
-            We need it because it make the button styling consistent with rest of our application ”
-        </em>
-    </p>
-
-    <p>Let us implement the feature by starting with the test for it</p>
-    <p>
-        <a href="http://lh4.ggpht.com/-HScL-9YaD1s/T1J8Awk2YbI/AAAAAAAAAS4/Q3E6JlpRItM/s1600-h/image%25255B23%25255D.png">
-            <img src="http://lh5.ggpht.com/-MyHzxXBfdCM/T1J8DL_KgbI/AAAAAAAAATA/Vvt1j4k-KYo/image_thumb%25255B14%25255D.png?imgmax=800">
-        </a>
-    </p>
-    <p>
-        Now tell me is the second test clean ? I don’t think so. The generate html string is bit long now also having double quotes inside double quotes makes it hard to read.
-        At the same time the first test remains robust and clean.
-    </p>
-
-    <p>
-        Still not convinced, okay just go up and see the very first test that we have wrote to test the button caption.
-        Do you think the <strong>hard way test</strong> with the “<strong>long magical string</strong>” still pass ??
-    </p>
-
-    <p style="text-align: center; color: #ff0000; font-weight: bold">It would fail</p>
-
-    <p>Why ?? Here is the error message </p>
-    <p>
-        <a href="http://lh5.ggpht.com/-K6RjhSEMhLA/T1J8EpZAZ-I/AAAAAAAAATI/TUutsjz0XdE/s1600-h/image%25255B28%25255D.png">
-            <img src="http://lh4.ggpht.com/-SpmB-mDwffk/T1J8HO3Np4I/AAAAAAAAATQ/oKxboMdbr6I/image_thumb%25255B17%25255D.png?imgmax=800">
-        </a>
-    </p>
-    <p>Now what would you do, if you decided to persist with the “long magical string”, then your action would be editing the test as below</p>
-    <div style="text-align: center;clear:both">
-        <img src="http://lh6.ggpht.com/-RJKnvJ5K8dI/T1J8LTJG_iI/AAAAAAAAATg/TAKyOA5Ej9w/image_thumb%25255B21%25255D.png?imgmax=800">
-    </div>
-    <p>Nice job. Now tell me what is the difference between this one and the below one</p>
-    <div style="text-align: center;clear:both">
-        <a href="http://lh6.ggpht.com/-ps4dX_FO-B0/T1J8MhVBtwI/AAAAAAAAATo/u003U24qiBo/s1600-h/image%25255B42%25255D.png">
-            <img src="http://lh3.ggpht.com/-i5zAV0v0JfY/T1J8O7pNIiI/AAAAAAAAATw/Fuo_4WMsFzk/image_thumb%25255B27%25255D.png?imgmax=800">
-        </a>
-    </div>
-    <p>
-        Apart from the test method name everything is same. Is the test clean ? Is the test clearly saying what it is trying to assert ?
-        What would happen if we got the requirement to add one more attribute or even more? Think !!
-    </p>
-
-    <p>But at the same time the tests which written using XElement assertion would remain healthy and their test method name mean what it is testing </p>
-    <p>
-        <a href="http://lh6.ggpht.com/-t5GRHpUvWSI/T1J8Qh6dvqI/AAAAAAAAAT4/WaaIvzaEKCY/s1600-h/image%25255B47%25255D.png">
-            <img src="http://lh3.ggpht.com/-fQ_eFoBZqnE/T1J8TPZgtFI/AAAAAAAAAUA/1wGDDsT5J8Y/image_thumb%25255B30%25255D.png?imgmax=800">
-        </a>
-    </p>
-    <p>I leave it you to decide which one is cleaner. </p>
-    <h4>Summary</h4>
-    <p>Here is the implementation of “Button HtmlHelper” that we unit tested so far</p>
-    <div style="text-align: center;clear:both">
-        <img src="http://lh4.ggpht.com/-lg0jE79JCVI/T1J8Y3QGqOI/AAAAAAAAAUQ/gif78dMv6XI/image_thumb%25255B33%25255D.png?imgmax=800">
-    </div>
-    <p>
-        My humble request to the readers of this blog post, please take care of your “Unit tests” and give some more importance to it.
-        An hour spent upfront would save a day in future.
-    </p>
-    <p>“Beauty is in the eye of the beholder”, If you have a better idea to do the same, kindly leave a comment, I am open to learn from you.</p>
-</div>
-]]></content>
   </entry>
   
 </feed>

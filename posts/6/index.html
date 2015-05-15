@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Aug 8th, 2013 fsharp Comments If Your Fsharp Code Compiles It Usually Works When I first started learning fsharp, one of the astounding fact that &hellip;">
+	<meta name="description" content="Sep 26th, 2014 functional-programming Comments Verbs - Buried Abstraction in OO World In Object Oriented Programming, the problem domain is being &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -156,7 +156,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 156.25%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 126.25%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 126.25%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +169,205 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-09-26T12:44:00+05:30" data-updated="true" itemprop="datePublished">Sep 26<sup>th</sup>, 2014</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/functional-programming/'>functional-programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2014/09/26/verbs-buried-abstraction-in-oo-world/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2014/09/26/verbs-buried-abstraction-in-oo-world/" itemprop="url">Verbs - Buried Abstraction in OO World</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>In Object Oriented Programming, the problem domain is being modeled as objects(nouns) which collaborate with one another in the form of messages(verbs). We are actually creating abstractions and through which we are solving the problems in an organized and cleaner way. But this way of creating abstractions does not scale in all the scenarios.</p>
+
+<p>Let me share it through an example </p>
+
+<p>Lets rewind the time machine to travel back to 2006 (.NET 2.0) which doesn’t have <code>LINQ</code> support. You are asked to solve the following problem statement</p>
+
+<blockquote>
+  <p>You are working on a Student Management Application. Each student is having a name and an age. You are asked to create module to sort the Students based on their name</p>
+</blockquote>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Student.cs"></script>
+<noscript><pre><code>public class Student
+{
+  public int Age { get; set; }
+  public string Name { get; set; }
+}</code></pre></noscript></div>
+
+<p>To sort based on Name we need to write a comparer which compares two student names and return some integer</p>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=StudentNameComparer.cs"></script>
+<noscript><pre><code>public class StudentNameComparer : IComparer&lt;Student&gt;
+{
+  public int Compare(Student x, Student y)
+  {
+    return string.Compare(x.Name, y.Name, StringComparison.CurrentCulture);
+  }
+}</code></pre></noscript></div>
+
+<p>Then in the main program we will be doing the sorting using <code>Array.Sort</code> method</p>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Program.cs"></script>
+<noscript><pre><code>class Program
+{
+  static void Main(string[] args)
+  {
+    List&lt;Student&gt; students = new List&lt;Student&gt;();
+
+    // Populate Students List here	
+
+    Student[] studentsSortedByName = students.ToArray();       
+
+    Array.Sort(studentsSortedByName, new StudentNameComparer());
+  }
+}</code></pre></noscript></div>
+
+<p>Hmmm. You might think what is a big deal in it ? But there is! Let me complicate the scenario by adding a new requirement</p>
+
+<blockquote>
+  <p>You also asked to do sorting based on Age!</p>
+</blockquote>
+
+<p>How do you do it ?</p>
+
+<p>Well! Just create yet another Comparer which compares the age</p>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=StudentAgeComparer.cs"></script>
+<noscript><pre><code>public class StudentAgeComparer : IComparer&lt;Student&gt;
+{
+  public int Compare(Student x, Student y)
+  {
+    if (x.Age == y.Age)
+    {
+      return 0;
+    }
+    if (x.Age &lt; y.Age)
+    {
+      return -1;
+    }
+      return 1;
+  }
+}</code></pre></noscript></div>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Program1.cs"></script>
+<noscript><pre><code>class Program1
+{
+  static void Main(string[] args)
+  {
+    List&lt;Student&gt; students = new List&lt;Student&gt;();
+	
+    // Populate Students List here	
+
+    Student[] studentsSortedByAge = students.ToArray();       
+
+    Array.Sort(studentsSortedByAge, new StudentAgeComparer());
+  }
+}</code></pre></noscript></div>
+
+<p>So much of code to do the trivial thing, isn’t it ?</p>
+
+<p>Let us dig deep to figure out what is wrong here. First let us start with the comparers <code>StudentAgeComparer</code> and <code>StudentNameComparer</code>. These comparers (nouns) actually escorting the method <code>Compare</code> (verb) and not doing anything productive apart from this. In OO world a verb should always be associated with a noun and because of this way of abstraction, we are adding an unnecessary complexity to the code. </p>
+
+<p>Just think of yet another scenario where want to sort the student by rank, customer by name, product by name. We need to write so much comparers!</p>
+
+<h3 id="verbs-to-the-rescue">Verbs to the rescue</h3>
+
+<p>Let us see the student sorting scenario from a different perspective. In this new pair of (functional)eyes we see the same scenario as</p>
+
+<ul>
+  <li><strong>Order</strong> <em>Student</em> by <strong>Name</strong>  </li>
+  <li><strong>Order</strong> <em>Student</em> by <strong>Age</strong>  </li>
+  <li><strong>Order</strong> <em>Customer</em> by <strong>Name</strong>  </li>
+  <li><strong>Order</strong> <em>Product</em> by <strong>Name</strong>  </li>
+</ul>
+
+<p>i.e the verb <strong>Order</strong> is common across all the scenario. </p>
+
+<p>The only thing which is changing is <em>what we are ordering</em> and <em>by which property</em>. Let us model things based on this verb abstraction.</p>
+
+<p>PseudoCode</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">OrderBy&lt;Student&gt;(s -&gt; s.Name)
+</span><span class="line">OrderBy&lt;Student&gt;(s -&gt; s.Age)
+</span><span class="line">OrderBy&lt;Customer&gt;(c -&gt; c.Name)
+</span><span class="line">OrderBy&lt;Product&gt;(p -&gt; p.Name)</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here OrderBy is a function which models the verb (Order). Two things to note</p>
+
+<ul>
+  <li>OrderBy is generic and it can act on any types of objects (Student, Customer, Product,…)</li>
+  <li>OrderBy doesn’t know which property to choose so, we need to tell explicitly.</li>
+</ul>
+
+<p>So, what we gained because of this ?</p>
+
+<p>Let us go back to the initial requirement</p>
+
+<blockquote>
+  <p>You are working on a Student Management Application. Each student is having a name and an age. You are asked to create module to sort the Students based on their name and age</p>
+</blockquote>
+
+<p>Now change the time machine to land in 2014. We have <code>LINQ</code> support in <code>C#</code> now which supports verbs (functions) as first class citizens</p>
+
+<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Program2.cs"></script>
+<noscript><pre><code>class Program2
+{
+  static void Main(string[] args)
+  {
+    List&lt;Student&gt; students = new List&lt;Student&gt;();
+
+    // Populate Students List here	
+
+    var studentsSortedByName = Enumerable.OrderBy(students, s =&gt; s.Name);
+    var studentsSortedByAge = Enumerable.OrderBy(students, s =&gt; s.Age);
+  }
+}</code></pre></noscript></div>
+
+<p>Just two lines instead of two comparers. All we did is just changed the way we create abstractions. Let me explain it using some visuals.</p>
+
+<p><img class="center" src="/images/VerbsInOoWorld/Students_Sorted_By_Name.png" title="" /></p>
+
+<p>OrderBy is an abstraction which does only one thing, that is order the objects in an ascending order and does it to the perfection. But to use this abstraction we need to provide two inputs, the objects and a function which provides the propery by which the objects to be sorted </p>
+
+<p>Does it closely resemble what we have seen earlier in the pseudocode ? Since it is generic, we can also use it for all other objects (Product, Customer, etc.,) too !</p>
+
+<p><img class="center" src="/images/VerbsInOoWorld/Students_Sorted_By_Age.png" title="" /></p>
+
+<h4 id="summary">Summary</h4>
+
+<p>Verbs(functions) are not silver bullets and they are not the replacement of Nouns(objects). But by choosing our abstraction wisely we can achieve great things with lesser lines of code and in turn release the code with lesser bugs <i class="emoji smile"></i> </p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -376,50 +575,6 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
             <img src="http://lh3.ggpht.com/-KoM6ka9qFxc/T8kHkUP0AGI/AAAAAAAAAbI/ZuGQ-d8KKS8/image_thumb%25255B19%25255D.png?imgmax=800" />
         </a></div><strong><br /></strong><br /><strong>Summary</strong><br /><br />The objective behind this blog post is just to share the knowledge that I’ve gained in my recent exploration and its just a proof of concept of how to leverage node.js in an MVC3 application. The bottom-line is “Identify and pick the right tool to do the right job”. If you want to play with the source code, don’t forget to clone <a href="https://github.com/tamizhvendan/a-hybrid-app">the repository </a>
     </div>
-</div>
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-05-19T00:00:00+05:30" data-updated="true" itemprop="datePublished">May 19<sup>th</sup>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/node-dot-js/'>node.js</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2012/05/19/jade-visualizer-using-nodejs-and/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/05/19/jade-visualizer-using-nodejs-and/" itemprop="url">Jade Visualizer Using Node.js and Socket.io</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <p><strong>Hurrah! Finally I made it</strong></p> <blockquote> 
-    <p><em>“None of my inventions came by accident. I see a worthwhile need to be met and I make trial after trial until it comes. 
-        What it boils down to is one per cent inspiration and ninety-nine per cent perspiration”&nbsp; - Thomas Alva Edison</em></p></blockquote> 
-    <p>Today I’m very glad and excited to announce my little contribution to the open source community called 
-    <a href="http://jade-visualizer.herokuapp.com/">“Jade-Visualizer”</a> a web-based visualizer/translator which targets the beginners 
-    of <a href="http://jade-lang.com/">Jade</a> (A widely used <a href="http://nodejs.org">Node.js</a> view engine) to learn it effectively. </p> 
-    <p>Its the inspiration from good bloggers, kindled me to <a href="/blog/2011/01/05/thank-god/">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133"></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122"></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96"></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li></ul> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li></ul> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800"></p>
 </div>
 		
 		

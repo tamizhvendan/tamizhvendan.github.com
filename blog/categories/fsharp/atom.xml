@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fsharp | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-04-30T15:01:09+05:30</updated>
+  <updated>2015-05-15T17:54:33+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -14,11 +14,137 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Grouping data into buckets using fsharp]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/05/09/grouping-data-into-buckets-using-fsharp/"/>
+    <updated>2015-05-09T16:19:06+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/05/09/grouping-data-into-buckets-using-fsharp</id>
+    <content type="html"><![CDATA[<p>Last week I came across an interesting data grouping problem, which groups the data into different buckets based on the given filters as shown in the image below</p>
+
+<p>{% img center /images/fs_data_grouping/bucket_function.png %}</p>
+
+<p>In this blog post I am going to share how can we solve this problem very expressively using fsharp.</p>
+
+<h2 id="parsing-filters-and-translate-to-an-abstract-syntax-tree-ast">Parsing filters and translate to an Abstract Syntax Tree (AST)</h2>
+
+<p>The first step to solve this problem is parsing the filters and translate to an AST. The strong type system in fsharp makes this step pretty easy.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type Filter = 
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  | GreaterThan of int 
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  | Between of int * int 
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  | LessThan of int
+</pre></div>
+</div>
+</div>
+
+<p>The <code>Filter</code> type represents the AST of the raw string filter. There are <strong>n</strong> number of ways to transform this incoming string filter to its strongly typed counterpart.</p>
+
+<p>The most idiomatic way of achieving it in fsharp is through <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns#Partial_Active_Patterns">Partial Active Patterns</a></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let (|Regex|_|) pattern input =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let m = Regex.Match(input, pattern)
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  if m.Success then Some(List.tail [ for g in m.Groups -&gt; g.Value ])
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  else None
+</pre></div>
+</div>
+</div>
+
+<p>You can easily understand this partial active pattern by thinking it as a function with the following signature</p>
+
+<pre><code>string -&gt; string -&gt; string list option
+</code></pre>
+
+<p>i.e Takes an input, matches it against a pattern. If it matched, then returns the list of matched strings wrapped with the <code>Some</code> type else returns the <code>None</code> type.</p>
+
+<p>Now you may think why we need to write this straight-forward function as a partial active pattern with some weird symbols <code>(|_|)</code> ?</p>
+
+<p>We can certainly do that, but we can’t do <a href="http://fsharpforfunandprofit.com/posts/match-expression/">pattern matching</a> against a function. </p>
+
+<p>The best way to understand this by seeing it in action</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// string -&gt; Filter
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let createFilter filterString =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  match filterString with    
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  | Regex &quot;^&gt;(\d+)$&quot; [min] -&gt; GreaterThan(int min)
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  | Regex &quot;^(\d+)-(\d+)$&quot; [min;max] -&gt; Between(int min,int max)
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  | Regex &quot;^&lt;(\d+)$&quot; [max] -&gt; LessThan(int max)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  | _ -&gt; failwith &quot;Invalid Filter&quot;
+</pre></div>
+</div>
+</div>
+
+<p>The above function transforms the raw string filter into its equivalent fsharp type that we have defined before. The pattern matching makes our job very easier by declaratively saying if it matches this, then do this.</p>
+
+<p>One another important benefit that we are getting here, the return value (list of matched strings) is available as a last parameter in the pattern matching. It’s just coming for free. </p>
+
+<p>I’d like to give you an exercise to appreciate this excellent feature in fsharp. Try to implement the above using a function instead of a partial active patterns. </p>
+
+<p>Great! We are done with the first step. Let’s move to the next one.</p>
+
+<h2 id="grouping-the-data-using-the-filter">Grouping the data using the filter</h2>
+
+<p>To do the actual grouping we need to have a function that filters the data based on the given filter. Let me call it as a predicate.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// Filter -&gt; int -&gt; bool
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let createPredicate = function
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  | GreaterThan min -&gt; fun n -&gt; n &gt; min
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  | Between (min, max) -&gt; fun n -&gt; n &gt;= min &amp;&amp; n &lt;= max
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  | LessThan max -&gt; fun n -&gt; n &lt; max
+</pre></div>
+</div>
+</div>
+
+<p>The <code>createPredicate</code> function takes a filter and returns the predicate function <code>int -&gt; bool</code></p>
+
+<p>With the functions <code>createFilter</code> and <code>createPredicate</code> in place, we can combine them and create a new function that takes a raw filter string and translate that to a predicate. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// string -&gt; int -&gt; bool
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let createRule = createFilter &gt;&gt; createPredicate
+</pre></div>
+</div>
+</div>
+<p>Let me create a new record type <code>BucketRule</code> which holds this string and the predicate</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type BucketRule = { Label : string; Rule : int -&gt; bool}
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let createBucketRule filterString =
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  { Label = filterString; Rule = createRule filterString }
+</pre></div>
+</div>
+</div>
+
+<p>Now we have all required functions and it’s time to do the data grouping</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let createBucket numbers bucketRule =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let bucketContent = numbers |&gt; List.filter bucketRule.Rule
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  (bucketRule.Label, bucketContent)
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>         
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>let createBuckets numbers filterStrings  =
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  filterStrings 
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  |&gt; List.map createBucketRule
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  |&gt; List.map (createBucket numbers)
+</pre></div>
+</div>
+</div>
+
+<h2 id="summary">Summary</h2>
+
+<p>Though the problem that we have seen is so trivial, the great features in fsharp make it very pleasant to write expressive code to solve it. The complete code snippet is available in <a href="http://fssnip.net/qZ">fssnipnet</a>.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Some tips for Using C# Libraries in F#]]></title>
     <link href="http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number/"/>
     <updated>2015-04-30T11:19:53+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number</id>
-    <content type="html"><![CDATA[<p>In my <a href="/blog/2015/04/25/my-takeaways/">last blog post</a> on what I’ve learned while developing a complete web application in fsharp, I’ve mentioned that we can leverage all the libraries that were written for csharp in fsharp. </p>
+    <content type="html"><![CDATA[<p>In my <a href="{% post_url 2015-04-25-my-takeaways %}">last blog post</a> on what I’ve learned while developing a complete web application in fsharp, I’ve mentioned that we can leverage all the libraries that were written for csharp in fsharp. </p>
 
 <p>Fsharp is a hybrid programming language which supports both functional programming and object oriented programming. Though you can write an application completely in a functional way, when you need to integrate with other .NET languages, you may need to use some OO features.</p>
 
@@ -28,23 +154,23 @@
 
 <p>When you <a href="http://fsharpforfunandprofit.com/posts/classes/">create a class in F#</a>, by default, we can’t explicitly assign a null value to an instance of the class unlike C#. You will get a compiler error when you do it. It’s a great feature and it helps in getting rid of Null Reference exceptions. </p>
 
-<p><img class="center" src="/images/fs_cs_interop/NullError.png"></p>
+<p>{% img center /images/fs_cs_interop/NullError.png %}</p>
 
 <p>But in certain cases, we may need to assign a null value to a class. For example, let us take the <a href="https://msdn.microsoft.com/en-us/library/dn497475(v=vs.108).aspx">Find method</a> in the Asp.Net identity framework. It returns a user with the specified username and password or null if there is a no match. </p>
 
 <p>When you try to use this in a fsharp code, you will be getting a compiler error</p>
 
-<p><img class="center" src="/images/fs_cs_interop/UserNullError.png"></p>
+<p>{% img center /images/fs_cs_interop/UserNullError.png %}</p>
 
 <p>It’s where <a href="https://msdn.microsoft.com/en-us/library/ee353608.aspx?f=255&amp;MSPPError=-2147217396">AllowNullLiteral attribute</a> comes into the picture. If you want to make a class type to allow null literal as one of its value, you need to decorate that class with the AllowNullLiteral attribute.</p>
 
-<p><img class="center" src="/images/fs_cs_interop/AllowNullAttr.png"></p>
+<p>{% img center /images/fs_cs_interop/AllowNullAttr.png %}</p>
 
 <h2 id="climutable-attribute">CLIMutable Attribute</h2>
 
 <p>When a fsharp Record type is compiled, it has been translated to a Common Language Infrastructure (CLI) representation of a typical <a href="http://blog.pluralsight.com/domain-driven-design-in-csharp-implementing-immutable-value-objects">value object declaration</a> in C#.</p>
 
-<p><img class="center border" src="/images/fs_cs_interop/Record_Type_Compilation.png"></p>
+<p>{% img center border /images/fs_cs_interop/Record_Type_Compilation.png %}</p>
 
 <p>The important thing to notice here is there is no default constructor! </p>
 
@@ -54,7 +180,7 @@
 
 <p>The Ppesence of this attribute enables the compiler to generate the default constructor and the property setters when the code gets compiled to IL</p>
 
-<p><img class="center border" src="/images/fs_cs_interop/Record_Type_Attr_Compilation.png"></p>
+<p>{% img center border /images/fs_cs_interop/Record_Type_Attr_Compilation.png %}</p>
 
 <h2 id="using-dynamic-types">Using Dynamic Types</h2>
 
@@ -64,13 +190,13 @@
 
 <p>There is no straightforward way to access the dynamic types in fsharp.</p>
 
-<p><img class="center border" src="/images/fs_cs_interop/ViewBagError.png"></p>
+<p>{% img center border /images/fs_cs_interop/ViewBagError.png %}</p>
 
 <p>If we would like to access dynamic types in fsharp we need to use the <a href="https://www.nuget.org/packages/ImpromptuInterface.FSharp/">ImpromptuInterface.FSharp</a> nuget package.</p>
 
 <p>This package defines the <code>?</code> operator, which provides the implementation for accessing dynamic types.</p>
 
-<p><img class="center border" src="/images/fs_cs_interop/Dynamic_Operator.png"></p>
+<p>{% img center border /images/fs_cs_interop/Dynamic_Operator.png %}</p>
 
 <h2 id="summary">Summary</h2>
 
@@ -84,10 +210,10 @@
     <updated>2015-04-25T15:09:02+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is the concluding part of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is the concluding part of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">like this</a> before, so during this course, I was about to give up but the statement </p>
+<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">like this</a> before, so during this course, I was about to give up but the statement </p>
 
 <p style="text-align:center"> <strong> Finish what you started </strong> </p>
 
@@ -109,15 +235,15 @@
 
 <p>In my perspective F# is a <em>pragmatic functional programming language</em>. In addition to lot of elegant features of the language, it works seamlessly with the existing .NET libraries. This one characteristic I would say is a blessing. You can say, ‘This feature is really cool’, but at the end of the day it should help you to get the job done. F# is not only cool, It can help you too!</p>
 
-<p>In the sample application we have leveraged the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web Api 2</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor Views</a>, <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code <i class='emoji smile'></i>)</p>
+<p>In the sample application we have leveraged the <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">Web Api 2</a>, <a href="{% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}">Razor Views</a>, <a href="{% post_url 2015-02-04-step-6-authentication-using-owin-middleware-and-asp-dot-net-identity %}">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code {% emoji smile %})</p>
 
 <h2 id="using-f-in-your-existing-c-codebase">Using F# in your existing C# Codebase</h2>
 
 <p>As F# is a <a href="http://en.wikipedia.org/wiki/List_of_CLI_languages#CLI_languages">CLI Language</a> it can be added to your existing C# solution. All you need to do just create a new F# project in the solution and this project can work seamlessly with the other projects in the solution. </p>
 
-<p>In the sample application, we have a <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
+<p>In the sample application, we have a <a href="{% post_url 2015-01-18-step-5-advanced-search-dsl-using-fparsec %}">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
 
-<p>In the <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
+<p>In the <a href="{% post_url 2015-01-06-step-4-build-automation-using-fake %}">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
 
 <h2 id="less-is-beautiful">Less is beautiful</h2>
 
@@ -141,7 +267,7 @@
     <updated>2015-04-02T17:07:23+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 10 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 10 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
 <p> </p>
@@ -152,7 +278,7 @@
 
 <h3 id="the-current-state-of-getcontrollerinstance-method">The current state of GetControllerInstance method</h3>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/if_else_tangle.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/if_else_tangle.png %}</p>
 
 <p> 
  </p>
@@ -167,27 +293,27 @@
   <li>Returns the created controller instance</li>
 </ul>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_creation.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/home_controller_creation.png %}</p>
 
 <p>This can be refactored to a function</p>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_function.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/home_controller_function.png %}</p>
 
 <p>The function takes a type and returns an <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option type</a> of <code>IController</code></p>
 
 <p>Let’s do the same for an another controller creation which is little complex than this.</p>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/phone_controller_function.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/phone_controller_function.png %}</p>
 
 <p>Here in this case to create an instance of <code>PhoneController</code> we need two additional parameters, Phones sequence and anonymous id of the session.</p>
 
 <p>With these functions in place, the <code>GetControllerInstance</code> method would look like as below</p>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/match_with_some_and_none.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/match_with_some_and_none.png %}</p>
 
 <p>Though the functions that have created has reduced the size of the method, it has introduced an another problem (<a href="http://raynos.github.io/presentation/shower/controlflow.htm?full#PyramidOfDoom">Pyramid Of Doom</a>) as indicated by the arrow in the screenshot. </p>
 
-<p>We can get rid of this using a bind function as we did in <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">validation step using rop</a>.</p>
+<p>We can get rid of this using a bind function as we did in <a href="{% post_url 2015-03-02-step-7-validation-and-error-handling-using-rop%}">validation step using rop</a>.</p>
 
 <p>The downside of the <a href="http://fsharpforfunandprofit.com/posts/computation-expressions-bind/">bind function</a> is it’s not generic and we can’t reuse the existing bind function that we have created for doing validation.</p>
 
@@ -220,7 +346,7 @@
 
 <p>Let’s start by creating a partial active pattern for <code>HomeController</code></p>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_active_pattern.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/home_controller_active_pattern.png %}</p>
 
 <p>As described in the screenshot, it’s very similar to the <code>createHomeController</code> function and the only difference is the addition of the <em>Banana Clips</em> (yellow ellipses). The <code>_</code> symbol makes the active pattern partial.  </p>
 
@@ -228,13 +354,13 @@
 
 <p>Partial active patterns support defining pattern with multiple parameters. So we can change the <code>createPhoneController</code> function as below</p>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/phone_controller_active_pattern.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/phone_controller_active_pattern.png %}</p>
 
 <p>Great! We are almost done with the refactoring. The pending step is leveraging these partial active patterns in the <code>GetControllerInstance</code> method.</p>
 
 <p>It’s where the <strong>beauty of pattern matching</strong> reveals!</p>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_pattern_matching.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/home_controller_pattern_matching.png %}</p>
 
 <p>What’s happening here? </p>
 
@@ -247,7 +373,7 @@
 
 <p>It does the same thing for the Active Patterns with multiple parameters</p>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/phone_controller_pattern_matching.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/phone_controller_pattern_matching.png %}</p>
 
 <p>The only thing to note here is, the value against which we are matching is always passed as a last argument.</p>
 
@@ -255,7 +381,7 @@
 
 <p>After completing the creation of partial active patterns for all the other controller types in the application, the <code>GetControllerInstance</code> would be shorter like this</p>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/composition_root_final.png"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/composition_root_final.png %}</p>
 
 <p> 
  
@@ -266,7 +392,7 @@
  
  </p>
 
-<p><img class="border center" src="/images/fsharp_phonecat/step_10/awesomeness.gif"></p>
+<p>{% img border center /images/fsharp_phonecat/step_10/awesomeness.gif %}</p>
 
 <h3 id="summary">Summary</h3>
 
@@ -281,10 +407,10 @@
     <updated>2015-03-28T13:07:20+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 9 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 9 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="/blog/2015/03/20/step-8-adding-shopping-cart/">last blog post</a> we have added the shopping cart feature to our phonecat application and in this blog post we are going to implement the checkout feature.</p>
+<p>In the <a href="{% post_url 2015-03-20-step-8-adding-shopping-cart%}">last blog post</a> we have added the shopping cart feature to our phonecat application and in this blog post we are going to implement the checkout feature.</p>
 
 <p>Implementing the checkout feature involves two steps.<br />
   1. Adding a View Cart Page<br />
@@ -292,7 +418,7 @@
 
 <h3 id="adding-a-view-cart-page">Adding a View Cart Page</h3>
 
-<p><img class="border" src="/images/fsharp_phonecat/step_9/view-cart.png"></p>
+<p>{% img border /images/fsharp_phonecat/step_9/view-cart.png %}</p>
 
 <p>As we have done in the previous posts, let’s begin by extending our shopping cart domain. The first step is to add a function to retrieve the items in the shopping cart. </p>
 
@@ -404,7 +530,7 @@
 
 <p>The <code>OrderRequest</code> type represents the order being placed by the user and the <code>OrderConfirmed</code> type represents the successful order creation.</p>
 
-<p>To Keep things simple, we are just going to see the order confirmation and we are intentionally leaving out error handling and validation. We can easily <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">add them as we did</a>  it in the user registration step and I leave it you as an exercise.</p>
+<p>To Keep things simple, we are just going to see the order confirmation and we are intentionally leaving out error handling and validation. We can easily <a href="{% post_url 2015-03-02-step-7-validation-and-error-handling-using-rop %}">add them as we did</a>  it in the user registration step and I leave it you as an exercise.</p>
 
 <p>The next step is storing the incoming order. </p>
 
@@ -445,7 +571,7 @@
 
 <p>The checkout method is straightforward. We get the <code>UserId</code> from the <code>User.Identity</code> property and place the order using it. Upon successful order confirmation, we are clearing the shopping cart and rendering the <code>Checkout</code> view.</p>
 
-<p><img class="border" src="/images/fsharp_phonecat/step_9/order-confirmation.png"></p>
+<p>{% img border /images/fsharp_phonecat/step_9/order-confirmation.png %}</p>
 
 <p>The important thing to notice here the <code>Authorize</code> attribute. Just like any other e-commerce portal, we are not allowing anonymous check out here. The presence of <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.authorizeattribute%28v=vs.118%29.aspx">this authorize attribute</a> ensures that only logged in users are checking out and in case if they are not logged in it would redirect the user to the login page.</p>
 
@@ -478,150 +604,6 @@
 <p>You can find the source code of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/9">fsharp-phonecat github repository</a></p>
 
 <p>Thanks for reading!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Step-8 Adding Shopping Cart]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/"/>
-    <updated>2015-03-20T11:49:35+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart</id>
-    <content type="html"><![CDATA[<blockquote>
-  <p>This is step 8 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In the <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">last blog post</a> we have seen how to do validation and error handling in fsharp and in this blog post we are going to add shopping cart feature to the phone-cat application that we are developing in this blog series. To keep this blog post simple, we are going to see only adding an item to shopping cart. Remvoing an item from shopping cart is a straightforward implementation and I leave it to you as an exercise</p>
-
-<p><img src="/images/fsharp_phonecat/step_8/cart_intro.png"></p>
-
-<h3 id="the-shopping-cart-domain">The Shopping Cart Domain</h3>
-
-<p>Let’s start with defining the domain model for handling shopping cart. Create a source file <code>ShoppingCart</code> in the <strong>Domain</strong> project and add the following code</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module ShoppingCart =    
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  type ProductId = string
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  type Cart =
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    | Empty
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    | Active of ProductId List
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let addItem cart productId =
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    match cart with
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    | Empty -&gt; Active [productId]
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    | Active items -&gt; Active (productId :: items)
-</pre></div>
-</div>
-</div>
-
-<p>The <code>ProductId</code> is an alias of <code>string</code> type represents the id of the phone.</p>
-
-<p>The <code>Cart</code> is a <code>Sum</code> type represents the two possible states of Shopping Cart. The <code>Cart</code> would be either empty or contain product ids that has been added to the cart.</p>
-
-<p>We have added a function which adds a product id to the cart. It just checks the state of the cart and based on the state it either creates the cart with <code>Active</code> state or appends the product id to the existing list.</p>
-
-<p>Thanks to the strong fsharp type system, we have modeled the domain with less lines of code.</p>
-
-<h3 id="persisting-shopping-cart">Persisting Shopping Cart</h3>
-
-<p>Now we have the domain logic to represent the shopping cart and adding items to it. The next step is persisting the cart. We can persist it anywhere as the domain model is persistent ignorant. To keep things simple, we will be persisting it in-memory. </p>
-
-<p>As we did during the <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">recommendation step</a> we will be using a dictionary to store the cart with Asp.Net’s <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid%28v=vs.110%29.aspx">anonymousId</a> as the key. </p>
-
-<p>Create a source file <code>CartStorage</code> in the <strong>DataAccess</strong> project and update it as below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module CartStorage =  
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let private inMemoryStorage = 
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    new Dictionary&lt;string, Cart&gt;()
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let create anonymousId cart = 
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    inMemoryStorage.Add(anonymousId, cart)
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    cart
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let update anonymousId cart =
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    inMemoryStorage.Remove(anonymousId) |&gt; ignore
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    create anonymousId cart
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let get anonymousId =
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    match inMemoryStorage.ContainsKey(anonymousId) with
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    | true -&gt; Some inMemoryStorage.[anonymousId] 
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    | _ -&gt; None
-</pre></div>
-</div>
-</div>
-
-<p>The code is very straight forward to understand. It contains typical CRUD operations of a shopping cart using an in-memory dictionary object.</p>
-
-<h3 id="shopping-cart-api">Shopping Cart Api</h3>
-
-<p>It’s time to code the api for the shopping cart. Let’s add a source file <code>ShoppingCartController</code> in the <strong>Web</strong> project and update it as below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;RoutePrefix(&quot;api/cart&quot;)&gt;]
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>type ShoppingCartController 
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  (
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    cart : Cart,
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    updateCart : Cart -&gt; Cart
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  ) =
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  inherit ApiController () 
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  [&lt;Route(&quot;&quot;)&gt;]
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  member this.Get() = cart
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  [&lt;HttpPost&gt;]
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  [&lt;Route(&quot;add&quot;)&gt;]
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  member this.AddItem([&lt;FromBody&gt;]productId : string) = 
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    addItem cart productId |&gt; updateCart
-</pre></div>
-</div>
-</div>
-
-<p>The <code>ShoppingCartController</code> has two dependencies.<br />
-  1. <code>Cart</code> - Cart associated with the current session<br />
-  2. <code>updateCart</code> - a function to update the cart</p>
-
-<p>To keep it simple, I haven’t added error handling or validation here. The action method <code>Get</code> returns the cart and the action method <code>AddItem</code> adds the item to the cart and then update the cart in the storage.</p>
-
-<h3 id="wiring-things-up">Wiring things up</h3>
-
-<p>Now we have all the pieces to add shopping cart to our application and the final step is tying them together. As we did it in other steps we need to do it in the composition root. Open <code>Infrastructure</code> in the <strong>Web</strong> project and update it as below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type CompositionRoot 
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  (
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    // ... Exisitng Code ...
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  ) = 
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  interface IHttpControllerActivator with           
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    member this.Create(request, controllerDescriptor, controllerType) =
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      // ... Exisiting Code ...
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      else if controllerType = typeof&lt;ShoppingCartController&gt; then                  
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        let anonymousID = HttpContext.Current.Request.AnonymousID
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        let shoppingCart = 
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>          match CartStorage.get anonymousID with
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>          | Some cart -&gt; cart
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>          | None -&gt; CartStorage.create anonymousID ShoppingCart.Empty
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>                                                                                  
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>        let shoppingCartController = new ShoppingCartController(shoppingCart, CartStorage.update anonymousID)
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>        shoppingCartController :&gt; IHttpController
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>      // ... Existing Code ...
-</pre></div>
-</div>
-</div>
-
-<p>Here before the creating an instance of <code>ShoppingCartController</code> we retrieve the anonymous id from the incoming request and get the cart associated with the anonymous id from the storage. In case if the cart is not available, we are creating one. For the <code>update</code> function, we pass the partially applied <code>update</code> function of <code>CartStorage</code>.</p>
-
-<p>That’s it!!</p>
-
-<h3 id="the-front-end-code">The front-end code</h3>
-
-<p>In the front end, we just call the <code>ShoppingCartController</code> action methods using plain jQuery ajax methods and update the UI. Since it is out of the scope of this blog post I haven’t covered it here and you can find <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Scripts/site.js">the code here</a>.</p>
-
-<h3 id="summary">Summary</h3>
-
-<p>In this blog post we have seen how to implement shopping cart in a web application written in fsharp. I leave some exercises for you to extend it to use some other storage and also to add validation and error handling. You can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/8">github phonecat repository</a>.</p>
 ]]></content>
   </entry>
   
