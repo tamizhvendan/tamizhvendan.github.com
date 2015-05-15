@@ -7,7 +7,7 @@ categories:
   - fsharp
 ---
 
-Last week I come across an interesting data grouping problem, which groups the data into different buckets based on given filters as shown in the image below
+Last week I came across an interesting data grouping problem, which groups the data into different buckets based on the given filters as shown in the image below
 
 {% img center /images/fs_data_grouping/bucket_function.png %}
 
@@ -24,9 +24,7 @@ type Filter =
   | LessThan of int
 ```
 
-Now we have a type (aka AST) to represent the filter, now we need to parse the incoming raw filter which is in ```string``` format to this type.
-
-There are **n** number of ways to achieve this.
+The ```Filter``` type represents the AST of the raw string filter. There are **n** number of ways to transform this incoming string filter to its strongly typed counterpart.
 
 The most idiomatic way of achieving it in fsharp is through [Partial Active Patterns](http://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns#Partial_Active_Patterns)
 
@@ -43,11 +41,11 @@ You can easily understand this partial active pattern by thinking it as a functi
 string -> string -> string list option
 ```
 
-i.e Takes a input, matches it against a pattern. If it matched, then returns the list of matched strings wrapped with the ```Some``` type else returns the ```None``` type.
+i.e Takes an input, matches it against a pattern. If it matched, then returns the list of matched strings wrapped with the ```Some``` type else returns the ```None``` type.
 
-Now you may think why we need to write this straight forward function as a partial active pattern with some weird symbols ```(|_|)``` ?
+Now you may think why we need to write this straight-forward function as a partial active pattern with some weird symbols ```(|_|)``` ?
 
-We can certainly do that but we can't do [pattern matching](http://fsharpforfunandprofit.com/posts/match-expression/) against a function. 
+We can certainly do that, but we can't do [pattern matching](http://fsharpforfunandprofit.com/posts/match-expression/) against a function. 
 
 The best way to understand this by seeing it in action
 
@@ -63,7 +61,7 @@ let createFilter filterString =
 
 The above function transforms the raw string filter into its equivalent fsharp type that we have defined before. The pattern matching makes our job very easier by declaratively saying if it matches this, then do this.
 
-One another important benefit that we are getting here, the return value (list of matched strings) is available as a last parameter in the pattern matching. It's just comes for free. 
+One another important benefit that we are getting here, the return value (list of matched strings) is available as a last parameter in the pattern matching. It's just coming for free. 
 
 I'd like to give you an exercise to appreciate this excellent feature in fsharp. Try to implement the above using a function instead of a partial active patterns. 
 
@@ -105,7 +103,7 @@ let createBucket numbers bucketRule =
   let bucketContent = numbers |> List.filter bucketRule.Rule
   (bucketRule.Label, bucketContent)
          
-let bucketify numbers filterStrings  =
+let createBuckets numbers filterStrings  =
   filterStrings 
   |> List.map createBucketRule
   |> List.map (createBucket numbers)
@@ -113,4 +111,4 @@ let bucketify numbers filterStrings  =
 
 ## Summary
 
-Though the problem that we have seen is so trivial, some of the cool features in fsharp make it very pleasant to solve the problem. The code snippet is available in [fssnipnet](http://fssnip.net/qZ).
+Though the problem that we have seen is so trivial, the great features in fsharp make it very pleasant to write expressive code to solve it. The complete code snippet is available in [fssnipnet](http://fssnip.net/qZ).
