@@ -552,7 +552,7 @@ In the amazing presentation on [Functional Programming Design Patterns](https://
 
 I wondered how this can be applied in real-time. By creating a rest API using suave I've understood this. 
 
-> Just create functions and combine it to a build bigger system. 
+> Just create functions and combine it to build a bigger system. 
 
 What a nice way to develop a system! 
 
