@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Mar 2nd, 2015 fsharp, rop Comments Step-7 Validation and Error Handling Using ROP This is step 7 of my blog series on Web Application Development in &hellip;">
+	<meta name="description" content="Mar 20th, 2015 fsharp, web-api Comments Step-8 Adding Shopping Cart This is step 8 of my blog series on Web Application Development in Fsharp using &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -156,7 +156,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 126.25%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.52941176470588%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 156.47058823529412%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.52941176470588%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 114.11764705882354%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 114.11764705882354%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 110.58823529411765%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.52941176470588%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.52941176470588%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 117.64705882352942%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.52941176470588%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.52941176470588%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.70588235294117%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.52941176470588%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 110.58823529411765%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.05882352941177%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.05882352941177%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.52941176470588%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.52941176470588%'>owin</a> <a href='/blog/categories/programming' style='font-size: 121.17647058823529%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.52941176470588%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.52941176470588%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.52941176470588%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 103.52941176470588%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 117.64705882352942%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 110.58823529411765%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +169,227 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-20T11:49:35+05:30" data-updated="true" itemprop="datePublished">Mar 20<sup>th</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/web-api/'>web-api</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/03/20/step-8-adding-shopping-cart/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/03/20/step-8-adding-shopping-cart/" itemprop="url">Step-8 Adding Shopping Cart</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote>
+  <p>This is step 8 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">last blog post</a> we have seen how to do validation and error handling in fsharp and in this blog post we are going to add shopping cart feature to the phone-cat application that we are developing in this blog series. To keep this blog post simple, we are going to see only adding an item to shopping cart. Remvoing an item from shopping cart is a straightforward implementation and I leave it to you as an exercise</p>
+
+<p><img src="/images/fsharp_phonecat/step_8/cart_intro.png" /></p>
+
+<h3 id="the-shopping-cart-domain">The Shopping Cart Domain</h3>
+
+<p>Let’s start with defining the domain model for handling shopping cart. Create a source file <code>ShoppingCart</code> in the <strong>Domain</strong> project and add the following code</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">ShoppingCart</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">type</span> <span class="nc">ProductId</span> <span class="o">=</span> <span class="kt">string</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">type</span> <span class="nc">Cart</span> <span class="o">=</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Empty</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Active</span> <span class="k">of</span> <span class="n">ProductId</span> <span class="n">List</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">addItem</span> <span class="n">cart</span> <span class="n">productId</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">cart</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Empty</span> <span class="o">-&gt;</span> <span class="n">Active</span> <span class="o">[</span><span class="n">productId</span><span class="o">]</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Active</span> <span class="n">items</span> <span class="o">-&gt;</span> <span class="n">Active</span> <span class="o">(</span><span class="n">productId</span> <span class="o">::</span> <span class="n">items</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>ProductId</code> is an alias of <code>string</code> type represents the id of the phone.</p>
+
+<p>The <code>Cart</code> is a <code>Sum</code> type represents the two possible states of Shopping Cart. The <code>Cart</code> would be either empty or contain product ids that has been added to the cart.</p>
+
+<p>We have added a function which adds a product id to the cart. It just checks the state of the cart and based on the state it either creates the cart with <code>Active</code> state or appends the product id to the existing list.</p>
+
+<p>Thanks to the strong fsharp type system, we have modeled the domain with less lines of code.</p>
+
+<h3 id="persisting-shopping-cart">Persisting Shopping Cart</h3>
+
+<p>Now we have the domain logic to represent the shopping cart and adding items to it. The next step is persisting the cart. We can persist it anywhere as the domain model is persistent ignorant. To keep things simple, we will be persisting it in-memory. </p>
+
+<p>As we did during the <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">recommendation step</a> we will be using a dictionary to store the cart with Asp.Net’s <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid%28v=vs.110%29.aspx">anonymousId</a> as the key. </p>
+
+<p>Create a source file <code>CartStorage</code> in the <strong>DataAccess</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">CartStorage</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">inMemoryStorage</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">new</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="n">Cart</span><span class="o">&gt;</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">create</span> <span class="n">anonymousId</span> <span class="n">cart</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="n">cart</span><span class="o">)</span>
+</span><span class="line">    <span class="n">cart</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">update</span> <span class="n">anonymousId</span> <span class="n">cart</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">Remove</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
+</span><span class="line">    <span class="n">create</span> <span class="n">anonymousId</span> <span class="n">cart</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">get</span> <span class="n">anonymousId</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">inMemoryStorage</span><span class="o">.[</span><span class="n">anonymousId</span><span class="o">]</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The code is very straight forward to understand. It contains typical CRUD operations of a shopping cart using an in-memory dictionary object.</p>
+
+<h3 id="shopping-cart-api">Shopping Cart Api</h3>
+
+<p>It’s time to code the api for the shopping cart. Let’s add a source file <code>ShoppingCartController</code> in the <strong>Web</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">RoutePrefix</span><span class="o">(</span><span class="s">&quot;api/cart&quot;</span><span class="o">)&gt;]</span>
+</span><span class="line"><span class="k">type</span> <span class="nc">ShoppingCartController</span>
+</span><span class="line">  <span class="o">(</span>
+</span><span class="line">    <span class="n">cart</span> <span class="o">:</span> <span class="n">Cart</span><span class="o">,</span>
+</span><span class="line">    <span class="n">updateCart</span> <span class="o">:</span> <span class="n">Cart</span> <span class="o">-&gt;</span> <span class="n">Cart</span>
+</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">ApiController</span> <span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)&gt;]</span>
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Get</span><span class="bp">()</span> <span class="o">=</span> <span class="n">cart</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">HttpPost</span><span class="o">&gt;]</span>
+</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;add&quot;</span><span class="o">)&gt;]</span>
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">AddItem</span><span class="o">([&lt;</span><span class="n">FromBody</span><span class="o">&gt;]</span><span class="n">productId</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">addItem</span> <span class="n">cart</span> <span class="n">productId</span> <span class="o">|&gt;</span> <span class="n">updateCart</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>ShoppingCartController</code> has two dependencies.<br />
+  1. <code>Cart</code> - Cart associated with the current session<br />
+  2. <code>updateCart</code> - a function to update the cart</p>
+
+<p>To keep it simple, I haven’t added error handling or validation here. The action method <code>Get</code> returns the cart and the action method <code>AddItem</code> adds the item to the cart and then update the cart in the storage.</p>
+
+<h3 id="wiring-things-up">Wiring things up</h3>
+
+<p>Now we have all the pieces to add shopping cart to our application and the final step is tying them together. As we did it in other steps we need to do it in the composition root. Open <code>Infrastructure</code> in the <strong>Web</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span>
+</span><span class="line">  <span class="o">(</span>
+</span><span class="line">    <span class="c1">// ... Exisitng Code ...</span>
+</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">interface</span> <span class="n">IHttpControllerActivator</span> <span class="k">with</span>
+</span><span class="line">    <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Create</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">controllerDescriptor</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">      <span class="c1">// ... Exisiting Code ...</span>
+</span><span class="line">      <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">ShoppingCartController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">        <span class="k">let</span> <span class="nv">anonymousID</span> <span class="o">=</span> <span class="nn">HttpContext</span><span class="p">.</span><span class="nn">Current</span><span class="p">.</span><span class="nn">Request</span><span class="p">.</span><span class="n">AnonymousID</span>
+</span><span class="line">        <span class="k">let</span> <span class="nv">shoppingCart</span> <span class="o">=</span>
+</span><span class="line">          <span class="k">match</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">get</span> <span class="n">anonymousID</span> <span class="k">with</span>
+</span><span class="line">          <span class="o">|</span> <span class="n">Some</span> <span class="n">cart</span> <span class="o">-&gt;</span> <span class="n">cart</span>
+</span><span class="line">          <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">create</span> <span class="n">anonymousID</span> <span class="nn">ShoppingCart</span><span class="p">.</span><span class="n">Empty</span>
+</span><span class="line">
+</span><span class="line">        <span class="k">let</span> <span class="nv">shoppingCartController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ShoppingCartController</span><span class="o">(</span><span class="n">shoppingCart</span><span class="o">,</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">update</span> <span class="n">anonymousID</span><span class="o">)</span>
+</span><span class="line">        <span class="n">shoppingCartController</span> <span class="o">:&gt;</span> <span class="n">IHttpController</span>
+</span><span class="line">      <span class="c1">// ... Existing Code ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here before the creating an instance of <code>ShoppingCartController</code> we retrieve the anonymous id from the incoming request and get the cart associated with the anonymous id from the storage. In case if the cart is not available, we are creating one. For the <code>update</code> function, we pass the partially applied <code>update</code> function of <code>CartStorage</code>.</p>
+
+<p>That’s it!!</p>
+
+<h3 id="the-front-end-code">The front-end code</h3>
+
+<p>In the front end, we just call the <code>ShoppingCartController</code> action methods using plain jQuery ajax methods and update the UI. Since it is out of the scope of this blog post I haven’t covered it here and you can find <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Scripts/site.js">the code here</a>.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>In this blog post we have seen how to implement shopping cart in a web application written in fsharp. I leave some exercises for you to extend it to use some other storage and also to add validation and error handling. You can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/8">github phonecat repository</a>.</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1318,545 +1539,6 @@
 <h3 id="summary">Summary</h3>
 
 <p>The interoperability offered by F# to integrate with the existing C# libraries is very seamless and I hope you have got it too! You can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/6">github</a> as usual. In the next blog post We will see how to add validations in the User Registration. Stay tuned!</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-01-18T19:52:26+05:30" data-updated="true" itemprop="datePublished">Jan 18<sup>th</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/dsl/'>dsl</a>, <a class='category' href='/blog/categories/fparsec/'>fparsec</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/" itemprop="url">Step-5 Advanced Search DSL Using FParsec</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<blockquote>
-  <p>This is step 5 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In this blog post we are going create an advanced Search <a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> for searching Phones in the PhoneCat application that we are building in this blog series, using a F# parser combinator library called <a href="http://www.quanttec.com/fparsec/">FParsec</a>. </p>
-
-<p><img src="/images/fsharp_phonecat/step_5/search_results.png" /></p>
-
-<p>As you seen in the screenshot above the DSL that we are going to build will enable us to search phones using three search filters (parameters) <strong>weight</strong>, <strong>screen</strong> and <strong>ram</strong>. The values (value filters) of these search filters can be defined in three ways as <strong>&gt;</strong>(greater than), <strong>-</strong>(range) and <strong>{value}</strong>(actual value itself i.e <em>=</em>). Each of these values should be accompanied with their unit of measures <strong>g</strong>, <strong>inch</strong> and <strong>MB</strong> respectively. For simplicity, I’ve expressed these units in singulars. The <strong>:</strong> symbol is used to separate Search Filter and Value Filter. Multiple filters can be used by seperating thing using the <strong>;</strong> symbol. </p>
-
-<p>The <a href="http://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree (AST)</a> of this external DSL is</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">SearchFilter</span> <span class="o">=</span>
-</span><span class="line"><span class="o">|</span> <span class="n">Ram</span> <span class="k">of</span> <span class="o">(</span><span class="kt">float</span> <span class="o">-&gt;</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">MB</span><span class="o">&gt;)</span>
-</span><span class="line"><span class="o">|</span> <span class="n">Weight</span> <span class="k">of</span> <span class="o">(</span><span class="kt">float</span> <span class="o">-&gt;</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">g</span><span class="o">&gt;)</span>
-</span><span class="line"><span class="o">|</span> <span class="n">Screen</span> <span class="k">of</span> <span class="o">(</span><span class="kt">float</span> <span class="o">-&gt;</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">inch</span><span class="o">&gt;)</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">ValueFilter</span> <span class="o">=</span>
-</span><span class="line"><span class="o">|</span> <span class="n">Value</span> <span class="k">of</span> <span class="kt">float</span>
-</span><span class="line"><span class="o">|</span> <span class="n">GreaterThan</span> <span class="k">of</span> <span class="kt">float</span>
-</span><span class="line"><span class="o">|</span> <span class="n">Range</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">*</span> <span class="kt">float</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">filters</span> <span class="o">:</span> <span class="o">(</span><span class="n">SearchFilter</span> <span class="o">*</span> <span class="n">ValueFilter</span><span class="o">)</span> <span class="kt">list</span> <span class="o">=</span> <span class="c1">// ... </span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>FParsec does both <a href="http://en.wikipedia.org/wiki/Lexical_analysis">lexical analysis</a> (converting raw character sequence into meaningful tokens) and <a href="http://en.wikipedia.org/wiki/Parsing">parsing</a> (converting tokens to an AST like the one above). FParsec has been built using pure functions from the ground up and it enable us to create complex parser by combining small parsers (aka <a href="http://programmers.stackexchange.com/questions/117522/what-are-combinators-and-how-are-they-applied-to-programming-projects-practica">combinators</a>). </p>
-
-<h3 id="fpasec-101">FPasec 101</h3>
-
-<p>Lets quickly walk through the basics of FParsec.</p>
-
-<p>In Fparsec all the parsers are of type <code>Parser&lt;'Result,'UserState&gt;</code> . The <code>'Result</code> represents the type of the parser result and the <code>'UserState</code> represents the internal state of the parser. </p>
-
-<p>FParsec offers lot of in-built parser functions which takes F# primitive types and return a parser type for it. </p>
-
-<h4 id="pchar">pchar</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">psearchValueSeperator</span> <span class="o">=</span> <span class="n">pchar</span> <span class="sc">&#39;:&#39;</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">pmultiFiltersSeperator</span> <span class="o">=</span> <span class="n">pchar</span> <span class="sc">&#39;;&#39;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>pchar</code> function takes a character and returns a parser (i.e of type <code>Parser&lt;char, 'UserState&gt;</code>) which parses only the given character. </p>
-
-<p>FParsec uses a convention of prefix <strong>p</strong> to define all its parser function and we are also going to use the same to define our custom parser functions.</p>
-
-<h3 id="pstring">pstring</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">pram</span> <span class="o">=</span> <span class="n">pstring</span> <span class="s">&quot;ram&quot;</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">pweight</span> <span class="o">=</span> <span class="n">pstring</span> <span class="s">&quot;weight&quot;</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">pscreen</span> <span class="o">=</span> <span class="n">pstring</span> <span class="s">&quot;ram&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Like <code>pchar</code> function, the <code>pstring</code> takes a string as its input and return a parser (<code>Parser&lt;string, 'UserState&gt;</code>) that parses only the given string. This parser is case-sensitive. If you want to have a parser which is case-insensitive you can use <code>pstringCI</code></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">pmb</span> <span class="o">=</span> <span class="n">pstringCI</span> <span class="s">&quot;MB&quot;</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">pg</span> <span class="o">=</span> <span class="n">pstringCI</span> <span class="s">&quot;g&quot;</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">pinch</span> <span class="o">=</span> <span class="n">pstringCI</span> <span class="s">&quot;inch&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="pfloat">pfloat</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">pvalue</span> <span class="o">=</span> <span class="n">pfloat</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>I hope by this time you would have been familiar with the FParsec functions. Yes, you are right <code>pfloat</code> parses a floating point and returns the parser for the same. But unlike <code>pchar</code> and <code>pstrig</code> it doesn’t take any input and it can parse any floating point numbers and return the same when we execute the parser. </p>
-
-<h3 id="section">|»</h3>
-
-<p>So far we have seen parsers for the F# primitive types. What about our custom types ? FParsec has an answer for that too using the function (aka operator) <code>|&gt;&gt;</code>. </p>
-
-<p>The signature of <code>|&gt;&gt;</code> function is</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="text"><span class="line">Parser&lt;&#39;a, &#39;u&gt; -&gt; (a&#39; -&gt; &#39;b) -&gt; Parser&lt;&#39;b, &#39;u&gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>i.e this function takes two inputs, a parser of type <code>'a</code> and a function that transform the type <code>'a</code> to <code>'b</code> and return a parser of type <code>'b</code></p>
-
-<p>If you remember the AST that we have defined in the beginning of the post, the search filter has been defined as a discriminated union of type <code>SearchFilter</code>. Each fields <code>Ram</code>, <code>Screen</code>, <code>Weight</code> are being represented in the DSL by their string counterparts <em>“ram”</em>, <em>“screen”</em>, <em>“weight”</em> respectively. We can leverage this <code>|&gt;&gt;</code> function to take care of this data type transformation</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">toLowerCase</span> <span class="o">(</span><span class="n">str</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">ToLowerInvariant</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">toSearchFilter</span> <span class="n">str</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">match</span> <span class="n">toLowerCase</span> <span class="n">str</span> <span class="k">with</span>
-</span><span class="line">  <span class="o">|</span> <span class="s">&quot;ram&quot;</span> <span class="o">-&gt;</span> <span class="n">Ram</span> <span class="o">((*)</span> <span class="mi">1</span><span class="o">.&lt;</span><span class="n">MB</span><span class="o">&gt;)</span>
-</span><span class="line">  <span class="o">|</span> <span class="s">&quot;weight&quot;</span> <span class="o">-&gt;</span> <span class="n">Weight</span> <span class="o">((*)</span> <span class="mi">1</span><span class="o">.&lt;</span><span class="n">g</span><span class="o">&gt;)</span>
-</span><span class="line">  <span class="o">|</span> <span class="s">&quot;screen&quot;</span> <span class="o">-&gt;</span> <span class="n">Screen</span> <span class="o">((*)</span> <span class="mi">1</span><span class="o">.&lt;</span><span class="n">inch</span><span class="o">&gt;)</span>
-</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s">&quot;Invalid search filter&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">psearchFilter</span> <span class="n">str</span> <span class="o">=</span> <span class="n">pstring</span> <span class="n">str</span> <span class="o">|&gt;&gt;</span> <span class="n">toSearchFilter</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">pram</span> <span class="o">=</span> <span class="n">psearchFilter</span> <span class="s">&quot;ram&quot;</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">pweight</span> <span class="o">=</span> <span class="n">psearchFilter</span> <span class="s">&quot;weight&quot;</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">pscreen</span> <span class="o">=</span> <span class="n">psearchFilter</span> <span class="s">&quot;screen&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>If you see the type of <code>pram</code> it is Parser&lt;SearchFilter, ‘u&gt; i.e Parser for our custom type. The <code>psearchFilter</code> is an utility function which helps in avoiding the code duplication across multiple search filter parser creation.</p>
-
-<h3 id="section-1">».</h3>
-
-<p>I love this function and it represents the beauty of functional programming. This function has the signature</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="text"><span class="line">Parser&lt;&#39;a, &#39;u&gt; -&gt; Parser&lt;&#39;c, &#39;u&gt; -&gt; Parser&lt;&#39;c, &#39;u&gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>It takes two parsers of same or different types and returns a parser that parses the input using the given two parsers by applying them sequentially and returns a parser with the input type of second parser (The <strong>.</strong> symbol represents which parser to pick)</p>
-
-<p>Lets see this action to understand it more</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="text"><span class="line">let pgreaterThan = pchar &#39;&gt;&#39; &gt;&gt;. pfloat |&gt;&gt; GreaterThan
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>We have created parser here for greater than. It parses the string <strong>“&gt;80.2”</strong> (i.e <code>pchar</code> parses the <strong>&gt;</strong> symbol and <code>pfloat</code> parses the number <strong>80.2</strong>. Since we have created it using <code>&gt;&gt;.</code> function, both <code>pchar</code> and <code>pfloat</code> are applied in sequence and it returns a parser of float type) and retrieve the floating number <strong>80.2</strong> when the parser is executed. Then we have applied the <code>|&gt;&gt;</code> function which translate it our custom type <code>GreaterThan</code> that we defined in the AST.</p>
-
-<p>The <code>&gt;&gt;.</code> is much like functional composition done by the <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Higher_Order_Functions#The_Composition_Function_.28.3C.3C_operator.29">» function (aka operator)</a> but instead of acting at the function level it acts at the parser level.</p>
-
-<h3 id="section-2">.»</h3>
-
-<p>It is similar to the <code>&gt;&gt;.</code> function but instead of returning a parser with the input type of second parser it returns a parser with the input type of the first parser.</p>
-
-<p>It has the signature</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="text"><span class="line">Parser&lt;&#39;a, &#39;u&gt; -&gt; Parser&lt;&#39;c, &#39;u&gt; -&gt; Parser&lt;&#39;a, &#39;u&gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-3">.».</h3>
-
-<p>It is a combination of <code>.&gt;&gt;</code> and <code>&gt;&gt;.</code> i.e Instead of dropping the output of either of the given parsers, it returns a parser which parses the input and returns a parser with the result type as tuple representing the inputs of both of the given parsers.</p>
-
-<p>It has the signature</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="text"><span class="line">Parser&lt;&#39;a, &#39;u&gt; -&gt; Parser&lt;&#39;c, &#39;u&gt; -&gt; Parser&lt;(&#39;a * &#39;c), &#39;u&gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Lets see both <code>.&gt;&gt;</code> and <code>.&gt;&gt;.</code> in action</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">prange</span> <span class="o">=</span> <span class="n">pfloat</span> <span class="o">.&gt;&gt;</span> <span class="o">(</span><span class="n">pchar</span> <span class="sc">&#39;-&#39;</span><span class="o">)</span> <span class="o">.&gt;&gt;.</span> <span class="n">pfloat</span> <span class="o">|&gt;&gt;</span> <span class="n">Range</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>prange</code> parser parses the string “100-200” and returns <code>Range (100, 200)</code>.</p>
-
-<p>The <code>.&gt;&gt;</code> function here dropped the symbol <strong>-</strong> here (output of <code>pchar</code> parser) and the function <code>.&gt;&gt;.</code> picked the output of these parsers and returned a tuple representing the given range.</p>
-
-<p>Now you got why I said I love this function! These tiny functions allow us to create parsers by combining them. If you understand how these tiny functions work and trust me you can create complex parsers even a <a href="http://trelford.com/blog/post/parsecsharp.aspx">C# compiler</a></p>
-
-<h3 id="attempt">attempt</h3>
-
-<p>This function takes parser <code>p</code> and execute it against the input. If it result in <strong>fatal error</strong>, it <a href="http://en.wikipedia.org/wiki/Backtracking">backtracks</a> the parser state to its original state as if that the given input is not being consumed. </p>
-
-<h3 id="choice">choice</h3>
-
-<p>This function takes multiple parsers say <code>p1</code>, <code>p2</code> … <code>pn</code> and execute it against the input in the following order.</p>
-
-<p>Run the parser <code>p1</code> against the input. If the parsing succeed skip the rest of the parsers and return the parser else if it resulted an <strong>non-fatal error</strong>, backtrack the parser state to its original state and try the same with the next parser <code>p2</code>. This continues all the way down to <code>pn</code>.</p>
-
-<p>What is the difference between <a href="http://www.quanttec.com/fparsec/reference/primitives.html#members.Error">Non-Fatal Error</a> and a <a href="http://www.quanttec.com/fparsec/reference/primitives.html#members.FatalError">Fatal Error</a> ?</p>
-
-<p>Well, its closely associated with the internal implementation of FParsec. FParsec implements backtracking with only a “one token look-ahead”. i.e if the parser consumed one input token from the stream, it modifies the internal state and if it fails after that it would result in Fatal Error. Not-Fatal Error occurs when parer error happened without consuming the input. </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">pgreaterThan</span> <span class="o">=</span> <span class="n">pchar</span> <span class="sc">&#39;&gt;&#39;</span> <span class="o">&gt;&gt;.</span> <span class="n">pfloat</span> <span class="o">|&gt;&gt;</span> <span class="n">GreaterThan</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">prange</span> <span class="o">=</span> <span class="n">pfloat</span> <span class="o">.&gt;&gt;</span> <span class="o">(</span><span class="n">pchar</span> <span class="sc">&#39;-&#39;</span><span class="o">)</span> <span class="o">.&gt;&gt;.</span> <span class="n">pfloat</span> <span class="o">|&gt;&gt;</span> <span class="n">Range</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">pvalue</span> <span class="o">=</span> <span class="n">pfloat</span> <span class="o">|&gt;&gt;</span> <span class="n">Value</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">pvalueFilters</span> <span class="o">=</span> <span class="n">choice</span> <span class="o">[</span><span class="n">pgreaterThan</span><span class="o">;</span> <span class="o">(</span><span class="n">attempt</span> <span class="n">prange</span><span class="o">);</span> <span class="n">pvalue</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>If you seen the AST of the DSL that we are going to implement, the value filters can be any one of greaterThan or range or value. Using <code>choice</code> we have implemented this “either or” parser and also we have leveraged the <code>attempt</code> function to get rid of parser fatal error.</p>
-
-<p>Both <code>prange</code> and <code>value</code>, shares the same first token i.e for “100-200MB” &amp; “100MB”, the first token ‘1’ is same. So while parsing the string “100MB” it starts by consuming the first token ‘1’ from the input sequence. FParsec assumes its a range filter and changes its internal state. By the time it reaches the token ‘M’ in “100MB”, it would result in a fatal error saying <em>Expecting: ‘-‘</em>. As we have used <code>attempt</code> here, it backtracks the parser state back to the token ‘1’ of “100MB” and start parsing using <code>pvalue</code> parser. Its hard to get it first time (I’ve spent close to an hour to figure it out) and I recommend you to spend some quality time in understanding the <a href="http://www.quanttec.com/fparsec/users-guide/parsing-alternatives.html">documentation</a> if you want really want to crack it!</p>
-
-<h3 id="sepby">sepBy</h3>
-
-<p><a href="http://www.quanttec.com/fparsec/reference/primitives.html#members.sepBy">sepBy</a> takes an element parser <code>p1</code> and a separator parser as its input and returns a parser for a list of elements separated by the separators.</p>
-
-<p>It has the signature</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="text"><span class="line">Parser&lt;&#39;a,&#39;u&gt; -&gt; Parser&lt;&#39;b,&#39;u&gt; -&gt; Parser&lt;&#39;a list, &#39;u&gt;
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>We will be using this function to parse multiple search filters separated by <strong>;</strong></p>
-
-<h3 id="run">run</h3>
-
-<p>The <a href="http://www.quanttec.com/fparsec/reference/charparsers.html#members.run">run function</a> takes a parser and a string as its input and it executes the given parser against the string input and returns a <a href="http://www.quanttec.com/fparsec/reference/charparsers.html#members.ParserResult">ParserResult</a> representing the result.</p>
-
-<h2 id="implementing-the-parser">Implementing the Parser</h2>
-
-<p>We have seen a brief overview of some of the basic building blocks of FParsec. It’s time to pull all these things together and create the complete parser which parses the Search DSL.</p>
-
-<p>Create a source file in the <strong>Domain</strong> project and name it as <code>Search</code>. Then add the AST that we have discussed as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Search</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">SearchFilter</span> <span class="o">=</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Ram</span> <span class="k">of</span> <span class="o">(</span><span class="kt">float</span> <span class="o">-&gt;</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">MB</span><span class="o">&gt;)</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Weight</span> <span class="k">of</span> <span class="o">(</span><span class="kt">float</span> <span class="o">-&gt;</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">g</span><span class="o">&gt;)</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Screen</span> <span class="k">of</span> <span class="o">(</span><span class="kt">float</span> <span class="o">-&gt;</span> <span class="kt">float</span><span class="o">&lt;</span><span class="n">inch</span><span class="o">&gt;)</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">ValueFilter</span> <span class="o">=</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Value</span> <span class="k">of</span> <span class="kt">float</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">GreaterThan</span> <span class="k">of</span> <span class="kt">float</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Range</span> <span class="k">of</span> <span class="kt">float</span> <span class="o">*</span> <span class="kt">float</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The next step is to install the <a href="https://www.nuget.org/packages/FParsec">FParsec Nuget Package</a> in the <strong>Domain</strong> project. After installing it create a source file with the name <code>SearchParser</code> and add a function to parse the filter string as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-<span class="line-number">35</span>
-<span class="line-number">36</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">SearchParser</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">parseFilter</span> <span class="n">filterStr</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">toLowerCase</span> <span class="o">(</span><span class="n">str</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span> <span class="n">str</span><span class="o">.</span><span class="n">ToLowerInvariant</span><span class="bp">()</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">toSearchFilter</span> <span class="o">=</span> <span class="k">function</span>
-</span><span class="line">      <span class="o">|</span> <span class="s">&quot;ram&quot;</span> <span class="o">-&gt;</span> <span class="n">Ram</span> <span class="o">((*)</span> <span class="mi">1</span><span class="o">.&lt;</span><span class="n">MB</span><span class="o">&gt;)</span>
-</span><span class="line">      <span class="o">|</span> <span class="s">&quot;weight&quot;</span> <span class="o">-&gt;</span> <span class="n">Weight</span> <span class="o">((*)</span> <span class="mi">1</span><span class="o">.&lt;</span><span class="n">g</span><span class="o">&gt;)</span>
-</span><span class="line">      <span class="o">|</span> <span class="s">&quot;screen&quot;</span> <span class="o">-&gt;</span> <span class="n">Screen</span> <span class="o">((*)</span> <span class="mi">1</span><span class="o">.&lt;</span><span class="n">inch</span><span class="o">&gt;)</span>
-</span><span class="line">      <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s">&quot;Invalid search filter&quot;</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">let</span> <span class="nv">psearchFilter</span> <span class="n">str</span> <span class="o">=</span> <span class="n">pstringCI</span> <span class="n">str</span> <span class="o">|&gt;&gt;</span> <span class="o">(</span><span class="n">toLowerCase</span> <span class="o">&gt;&gt;</span> <span class="n">toSearchFilter</span><span class="o">)</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">psearchValueSeperator</span> <span class="o">=</span> <span class="n">pchar</span> <span class="sc">&#39;:&#39;</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pmultiFiltersSeperator</span> <span class="o">=</span> <span class="n">pchar</span> <span class="sc">&#39;;&#39;</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pgreaterThan</span> <span class="o">=</span> <span class="n">pchar</span> <span class="sc">&#39;&gt;&#39;</span> <span class="o">&gt;&gt;.</span> <span class="n">pfloat</span> <span class="o">|&gt;&gt;</span> <span class="n">GreaterThan</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">prange</span> <span class="o">=</span> <span class="n">pfloat</span> <span class="o">.&gt;&gt;</span> <span class="o">(</span><span class="n">pchar</span> <span class="sc">&#39;-&#39;</span><span class="o">)</span> <span class="o">.&gt;&gt;.</span> <span class="n">pfloat</span> <span class="o">|&gt;&gt;</span> <span class="n">Range</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pvalue</span> <span class="o">=</span> <span class="n">pfloat</span> <span class="o">|&gt;&gt;</span> <span class="n">Value</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pvalueFilters</span> <span class="o">=</span> <span class="n">choice</span> <span class="o">[</span><span class="n">pgreaterThan</span><span class="o">;</span> <span class="o">(</span><span class="n">attempt</span> <span class="n">prange</span><span class="o">);</span> <span class="n">pvalue</span><span class="o">]</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">createCompleteFilter</span> <span class="n">psearchfilter</span> <span class="n">puom</span>  <span class="o">=</span>
-</span><span class="line">      <span class="n">psearchfilter</span> <span class="o">.&gt;&gt;</span> <span class="n">psearchValueSeperator</span> <span class="o">.&gt;&gt;.</span> <span class="n">pvalueFilters</span> <span class="o">.&gt;&gt;</span> <span class="n">puom</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">let</span> <span class="nv">pmb</span> <span class="o">=</span> <span class="n">pstringCI</span> <span class="s">&quot;MB&quot;</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pg</span> <span class="o">=</span> <span class="n">pstringCI</span> <span class="s">&quot;g&quot;</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pinch</span> <span class="o">=</span> <span class="n">pstringCI</span> <span class="s">&quot;inch&quot;</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pram</span> <span class="o">=</span> <span class="n">psearchFilter</span> <span class="s">&quot;ram&quot;</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pweight</span> <span class="o">=</span> <span class="n">psearchFilter</span> <span class="s">&quot;weight&quot;</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pscreen</span> <span class="o">=</span> <span class="n">psearchFilter</span> <span class="s">&quot;screen&quot;</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">let</span> <span class="nv">pramFilter</span> <span class="o">=</span> <span class="n">createCompleteFilter</span> <span class="n">pram</span> <span class="n">pmb</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pweightFilter</span> <span class="o">=</span> <span class="n">createCompleteFilter</span> <span class="n">pweight</span> <span class="n">pg</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pscreenFilter</span> <span class="o">=</span> <span class="n">createCompleteFilter</span> <span class="n">pscreen</span> <span class="n">pinch</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pfilter</span> <span class="o">=</span> <span class="n">choice</span> <span class="o">[</span><span class="n">pramFilter</span><span class="o">;</span><span class="n">pweightFilter</span><span class="o">;</span><span class="n">pscreenFilter</span><span class="o">]</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">let</span> <span class="nv">parser</span> <span class="o">=</span> <span class="n">sepBy</span> <span class="n">pfilter</span> <span class="n">pmultiFiltersSeperator</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">match</span> <span class="n">run</span> <span class="n">parser</span> <span class="n">filterStr</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Success</span><span class="o">(</span><span class="n">filters</span><span class="o">,</span> <span class="o">_,</span> <span class="o">_)</span> <span class="o">-&gt;</span> <span class="n">Choice1Of2</span><span class="o">(</span><span class="n">filters</span><span class="o">)</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Failure</span><span class="o">(</span><span class="n">err</span><span class="o">,_,_)</span> <span class="o">-&gt;</span> <span class="n">Choice2Of2</span><span class="o">(</span><span class="n">err</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>parseFilter</code> function takes the search filter query from the front end, parses it using the custom parsers that we have built and return the <a href="http://msdn.microsoft.com/en-us/library/ee353439.aspx">Choice type</a>.</p>
-
-<p>The <code>Choice1Of2</code> will contain a list of tuples (SearchFilter * ValueFilter) that represents the strongly typed AST of the given input query.</p>
-
-<p>The <code>Choice2of2</code> will contain the error message in case if there is any parser error happened while parsing the input query.</p>
-
-<h2 id="implementing-phone-search-backend">Implementing Phone Search backend</h2>
-
-<p>With the parser in place, the next step is to building the backend logic of filtering the phones using the filters returned by the parsers</p>
-
-<p>Open the module <code>Search</code> in the <strong>Domain</strong> project and add the following <code>searchPhones</code> function</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">searchPhones</span> <span class="n">phones</span> <span class="n">filters</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">hasMetValueFilter</span> <span class="n">toUom</span> <span class="n">valueFilter</span> <span class="n">property</span>  <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">valueFilter</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Value</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">property</span> <span class="o">=</span> <span class="n">toUom</span> <span class="n">x</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">GreaterThan</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">property</span> <span class="o">&gt;</span> <span class="n">toUom</span> <span class="n">x</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Range</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">property</span> <span class="o">&gt;=</span> <span class="n">toUom</span> <span class="n">x</span> <span class="o">&amp;&amp;</span> <span class="n">property</span> <span class="o">&lt;=</span> <span class="n">toUom</span> <span class="n">y</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">hasMetSearchFilter</span> <span class="n">filter</span> <span class="n">phone</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">valueFilter</span> <span class="o">=</span> <span class="o">(</span><span class="n">snd</span> <span class="n">filter</span><span class="o">)</span>
-</span><span class="line">    <span class="k">match</span> <span class="o">(</span><span class="n">fst</span> <span class="n">filter</span><span class="o">)</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Ram</span> <span class="n">toMB</span> <span class="o">-&gt;</span> <span class="n">hasMetValueFilter</span> <span class="n">toMB</span> <span class="n">valueFilter</span> <span class="n">phone</span><span class="o">.</span><span class="n">Storage</span><span class="o">.</span><span class="n">Ram</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Weight</span> <span class="n">toG</span> <span class="o">-&gt;</span> <span class="n">hasMetValueFilter</span> <span class="n">toG</span> <span class="n">valueFilter</span> <span class="n">phone</span><span class="o">.</span><span class="n">Weight</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Screen</span> <span class="n">toInch</span><span class="o">-&gt;</span> <span class="n">hasMetValueFilter</span> <span class="n">toInch</span> <span class="n">valueFilter</span> <span class="n">phone</span><span class="o">.</span><span class="n">Display</span><span class="o">.</span><span class="n">ScreenSize</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">filterPhones</span> <span class="n">phones&#39;</span> <span class="n">filter</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">phones&#39;</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">filter</span> <span class="o">(</span><span class="n">hasMetSearchFilter</span> <span class="n">filter</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">rec</span> <span class="n">searchPhones&#39;</span> <span class="n">phones&#39;</span> <span class="n">filters&#39;</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">filters&#39;</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="bp">[]</span> <span class="o">-&gt;</span> <span class="n">phones&#39;</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">x</span> <span class="o">::</span> <span class="n">xs</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">searchPhones&#39;</span> <span class="o">(</span><span class="n">filterPhones</span> <span class="n">phones&#39;</span> <span class="n">x</span><span class="o">)</span> <span class="n">xs</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">searchPhones&#39;</span> <span class="n">phones</span> <span class="n">filters</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>The function <code>searchPhones</code> recursively applies the filters one by one over the list of phones and filter the phones based on the filter criteria.</p>
-
-<h2 id="exposing-the-phone-search-as-web-api">Exposing the phone search as web-api</h2>
-
-<p>Open the <code>PhonesController</code> that we have added in the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">step-1</a> and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Error</span> <span class="o">=</span> <span class="o">{</span> <span class="n">message</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">RoutePrefix</span><span class="o">(</span><span class="s">&quot;api/phones&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line"><span class="k">type</span> <span class="nc">PhonesController</span>
-</span><span class="line">    <span class="o">(</span>
-</span><span class="line">        <span class="n">getTopSellingPhones</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;,</span>
-</span><span class="line">        <span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;,</span>
-</span><span class="line">        <span class="n">catalogPhones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">Catalog</span><span class="p">.</span><span class="n">Phone</span><span class="o">&gt;</span>
-</span><span class="line">    <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">inherit</span> <span class="n">ApiController</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">    <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;topselling&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line">    <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetTopSelling</span> <span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">      <span class="n">getTopSellingPhones</span> <span class="mi">3</span> <span class="n">phones</span>
-</span><span class="line">
-</span><span class="line">    <span class="o">[&lt;</span><span class="n">HttpGet</span><span class="o">&gt;]</span>
-</span><span class="line">    <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;search&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line">    <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">SearchPhones</span> <span class="o">(</span><span class="n">q</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">parserResult</span> <span class="o">=</span> <span class="nn">SearchParser</span><span class="p">.</span><span class="n">parseFilter</span> <span class="n">q</span>
-</span><span class="line">      <span class="k">match</span> <span class="n">parserResult</span> <span class="k">with</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">Choice1Of2</span> <span class="n">filters</span> <span class="o">-&gt;</span>
-</span><span class="line">        <span class="k">let</span> <span class="nv">filteredPhones</span> <span class="o">=</span> <span class="nn">Search</span><span class="p">.</span><span class="n">searchPhones</span> <span class="n">catalogPhones</span> <span class="n">filters</span>
-</span><span class="line">        <span class="k">base</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">CreateResponse</span><span class="o">(</span><span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">OK</span><span class="o">,</span> <span class="n">filteredPhones</span><span class="o">)</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">Choice2Of2</span> <span class="n">errMsg</span> <span class="o">-&gt;</span>
-</span><span class="line">        <span class="k">base</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">CreateResponse</span><span class="o">(</span><span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">OK</span><span class="o">,</span> <span class="o">{</span> <span class="n">message</span> <span class="o">=</span> <span class="n">errMsg</span> <span class="o">})</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The action method <code>SearchPhones</code> gets the input query <code>q</code> from the user and give it to the parser using the <code>parseFilter</code> function. If the parsing is successful, then we will be calling the <code>searchPhones</code> function with the filters returned by the parser. If the parsing failed, we will be returning the error response with the error message from the parser.</p>
-
-<p>We have added a new dependency <code>catalogPhones</code> in the <code>PhonesController</code> constructor which represents all the available phones in the catalog. We need to inject it while creating the controller. Open the <code>Infrastructure</code> module and update the <code>PhonesController</code> creation as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Create</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">controllerDescriptor</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">phones</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToPhone</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">phoneIndexes</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">phoneIndexes</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToPhoneIndex</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">catalogPhones</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToCatalogPhone</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// ...</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">PhonesController</span><span class="o">&gt;</span> <span class="k">then</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">getTopSellingPhones</span> <span class="o">=</span> <span class="nn">Phones</span><span class="p">.</span><span class="n">getTopSellingPhones</span> <span class="o">(</span><span class="nn">InMemoryInventory</span><span class="p">.</span><span class="n">getPhonesSold</span><span class="bp">()</span><span class="o">)</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">phonesController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PhonesController</span><span class="o">(</span><span class="n">getTopSellingPhones</span><span class="o">,</span> <span class="n">phones&#39;</span><span class="o">,</span> <span class="n">catalogPhones</span><span class="o">)</span>
-</span><span class="line">      <span class="n">phonesController</span> <span class="o">:&gt;</span> <span class="n">IHttpController</span>
-</span><span class="line">  <span class="c1">// ...</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="creating-phone-search-view">Creating Phone Search View</h2>
-
-<p>The final step of the creating a view for the Phone Search which enable the user to search the phones using the DSL that we have created so far.</p>
-
-<p>It is straight forward razor view creation as we have seen in <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. Add an action method <code>Search</code> in the <code>PhoneController</code> as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// ...</span>
-</span><span class="line"><span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Search</span> <span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">  <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="bp">()</span>
-</span><span class="line"><span class="c1">// ...</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Create a razor view <strong>Search.cshtml</strong> in the <em>Views/Phone</em> directory and add the code as <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Web/Views/Phone/Show.cshtml">defined here</a>.</p>
-
-<p>The javascript side has been taken care by knockout.js and you can find the script that takes care of calling the api and rendering the filtered phones <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Web/Scripts/search.js">here</a>. </p>
-
-<h2 id="summary">Summary</h2>
-
-<p>Its a little longer post than I expected and I am glad that you have read it this far. I’d like give credit to this <a href="http://blog.fogcreek.com/fparsec/">blog post</a> by <a href="http://haolian.org/">Hao Lian</a> which I’ve used as a reference to come up with this implementation. As usual you can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/5">phonecat github repository</a>.</p>
 
 		
 		

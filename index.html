@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="May 9th, 2015 fsharp Comments Grouping Data Into Buckets Using Fsharp Last week I came across an interesting data grouping problem, which groups the &hellip;">
+	<meta name="description" content="Jun 11th, 2015 fsharp, suave Comments Building REST Api in Fsharp Using Suave In the last one month lot of great things happening in fsharp world &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -156,7 +156,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.75%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 160.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.75%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 111.25%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.75%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.75%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 118.75%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.75%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.75%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 126.25%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.75%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.25%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.5%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.5%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.75%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.75%'>owin</a> <a href='/blog/categories/programming' style='font-size: 122.5%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.75%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.75%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.75%'>signalr</a> <a href='/blog/categories/unit-testing' style='font-size: 118.75%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 111.25%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.52941176470588%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 156.47058823529412%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.52941176470588%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 114.11764705882354%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 114.11764705882354%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 110.58823529411765%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.52941176470588%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.52941176470588%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 117.64705882352942%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.52941176470588%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.52941176470588%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 124.70588235294117%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.52941176470588%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 110.58823529411765%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 107.05882352941177%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 107.05882352941177%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.52941176470588%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.52941176470588%'>owin</a> <a href='/blog/categories/programming' style='font-size: 121.17647058823529%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.52941176470588%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.52941176470588%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.52941176470588%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 103.52941176470588%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 117.64705882352942%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 110.58823529411765%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +169,861 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-06-11T10:48:20+05:30" data-updated="true" itemprop="datePublished">Jun 11<sup>th</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/suave/'>suave</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/" itemprop="url">Building REST Api in Fsharp Using Suave</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>In the last one month lot of great things happening in fsharp world around <a href="suave.io">suave</a>, a simple web development fsharp library. Scott Hanselman <a href="http://www.hanselman.com/blog/RunningSuaveioAndFWithFAKEInAzureWebAppsWithGitAndTheDeployButton.aspx">blogged</a> about it, <a href="https://twitter.com/tomaspetricek">Tomas Petricek</a> kick-started an awesome <a href="https://skillsmatter.com/skillscasts/6381-suave-hands-on-with-tomas-petricek">hands on session</a> and followed up with a <a href="http://channel9.msdn.com/Blogs/Seth-Juarez/Deploying-an-F-Web-Application-with-Suave">great talk</a> on Channel 9. Last but not the least, <a href="https://twitter.com/theimowski">Tomasz Heimowski</a> authored a clear and crisp <a href="http://theimowski.gitbooks.io/suave-music-store/content/">book on Suave</a></p>
+
+<p>I got super excited after learning suave from these resources and started playing with it. One of the great things about the fsharp community is, if you want to improve any existing library all you need is just send a pull request with the feature you would like to have. Yes, it’s as simple as that! It <a href="https://github.com/SuaveIO/suave/pull/259">worked</a> for me and I am sure for you too, if you wish.</p>
+
+<p>In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the <a href="http://docs.strongloop.com/display/public/LB/Use+API+Explorer">StrongLoop</a>, a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post. </p>
+
+<p>Let’s get started</p>
+
+<h2 id="setting-up-the-project">Setting up the project</h2>
+
+<p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below. </p>
+
+<p><img class="center" src="/images/sauve_rest_api/proj_structure.png" /></p>
+
+<p>After creating, install the following nuget packages</p>
+
+<ul>
+  <li><a href="https://www.nuget.org/packages/suave">Suave</a></li>
+  <li><a href="">Newtonsoft.Json</a></li>
+</ul>
+
+<h2 id="webpart">WebPart</h2>
+
+<p>The basic building block of Suave is <a href="http://theimowski.gitbooks.io/suave-music-store/content/webpart.html">WebPart</a>. It is an alias of function type <code>HttpContext -&gt; Async&lt;HttpContext option&gt;</code>. This simple function type actually model whole set of Request and Response model of Http protocol. From the Tomasz Heimowski’s book here is the definition of the <code>WebPart</code></p>
+
+<blockquote>
+  <p>Based on the http context, we give you a promise (async) of optional resulting http context, where the resulting context is likely to have its response set with regards to the logic of the WebPart itself</p>
+</blockquote>
+
+<p>A <code>WebPart</code> represents a http request and response. Since it is a function, we can combine multiple <code>WebPart</code>s together and build a complex web application which handles multiple requests and responses. This is the beauty of functional programming. You just think in terms of one function at a time and make it work. Once you are done, all you need to do is just gluing them together. Solving problems using this functional abstraction will make things much easier and help you to write less code compare to its Object Oriented version.</p>
+
+<p>The <code>OK</code> webpart is a very simple one in Suave which takes a <code>string</code> and returns a http response with the status code <code>200</code> and the given string. Add the following code in the <code>App.fs</code> and run the console app.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">Suave.Web</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Successful</span>
+</span><span class="line">
+</span><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Hello, Suave!&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>The is the simplest Suave application that greets all visitors with the string “Hello, Suave!”. The <code>startWebServer</code> is a blocking function that takes a configuration (port number, ssl, etc.,) and starts a http web server in the port 8083 upon calling.</p>
+
+<p><img class="center border" src="/images/sauve_rest_api/hello_suave.png" /></p>
+
+<p>The Rest Api that we are going to design here is a <code>WebPart</code> which will be replacing this <code>OK</code> webpart.</p>
+
+<h2 id="http-get">HTTP GET</h2>
+
+<p>Let’s begin by defining a record type representing a <em>restful</em> resource. Open <code>Restful.fs</code> and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">SuaveRestApi</span><span class="p">.</span><span class="n">Rest</span>
+</span><span class="line"><span class="o">[&lt;</span><span class="n">AutoOpen</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">module</span> <span class="nn">RestFul</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">type</span> <span class="nc">RestResource</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">GetAll</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">seq</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This <code>RestResource</code> is a container representing all the operations on a restful  resource. This record type abstracts the actual resource from the rest api web part. This enables the reuse of rest api web part across multiple resources.</p>
+
+<p>Let’s create a function in <code>RestFul.fs</code> which takes a resource name and this <code>RestResource</code> and returns a web part representing the restful api.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// string -&gt; RestResource&lt;&#39;a&gt; -&gt; WebPart</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// TODO</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We are going to use the following building blocks of the suave library to implement the <code>rest</code> function.</p>
+
+<ul>
+  <li>
+    <p>The <code>path</code> is a function of type: <code>string -&gt; WebPart</code>. It means that if we give it a string it will return <code>WebPart</code>. Under the hood, the function looks at the incoming request and returns <code>Some</code> if the paths match, and <code>None</code> otherwise. </p>
+  </li>
+  <li>
+    <p>The <code>GET</code> is a static inbuilt <code>WebPart</code> which matches the HTTP GET requests.</p>
+  </li>
+  <li>
+    <p>The <code>&gt;&gt;=</code> operator composes two WebParts into one by first evaluating the <code>WebPart</code> on the left, and applying the WebPart on the right only if the first one returned <code>Some</code>.</p>
+  </li>
+</ul>
+
+<p>To return a json response we need to change the mimetype to “application/json” of the response. There is an <a href="https://github.com/SuaveIO/suave/blob/master/src/Suave/Json.fs">inbuilt function</a> in suave but that uses .Net’s <code>DataContractJsonSerializer</code>. I feel it’s not ideal to use as we need to write decorator attribute <code>DataMember</code> to serialize the types.</p>
+
+<p>As <a href="http://james.newtonking.com/archive/2014/04/30/json-net-6-0-release-3-serialize-all-the-f">Newtonsoft.Json</a> provides serialization support for fsharp types without any need of decorating attributes, we will be using them there.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// &#39;a -&gt; WebPart</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">JSON</span> <span class="n">v</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">jsonSerializerSettings</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JsonSerializerSettings</span><span class="bp">()</span>
+</span><span class="line">  <span class="n">jsonSerializerSettings</span><span class="o">.</span><span class="n">ContractResolver</span> <span class="o">&lt;-</span> <span class="k">new</span> <span class="n">CamelCasePropertyNamesContractResolver</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">jsonSerializerSettings</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="n">OK</span>
+</span><span class="line">  <span class="o">&gt;&gt;=</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>As the signature indicates <code>JSON</code> function takes a generic type, serialize it using <em>Newtonsoft.Json</em> and return the json response. <code>Writers.setMimeType</code> takes a mime type and a web part returns the web part with the given mime type.</p>
+
+<p>Now we have everything to implement the HTTP GET request</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The one cavet here is the path resoultion of Suave library. Based on the webpart given, the <code>startWebServer</code> function configures it’s internal routing table during the application startup and it is static after the application has been started. So, the <code>getAll</code> webpart will be created only during application startup. To avoid this we need to wrap the <code>getAll</code> webpart with a <code>warbler</code> function which ensures that it is called everytime when the incoming request matches the resource path.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">warbler</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now we have the middleware to create a web part. Let’s create other things and glue them together.</p>
+
+<p>Open <code>Db.fs</code> file and add the following code</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">SuaveRestApi</span><span class="p">.</span><span class="n">Db</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Collections.Generic</span>
+</span><span class="line"><span class="k">type</span> <span class="nc">Person</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Id</span> <span class="o">:</span> <span class="n">int</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Age</span> <span class="o">:</span> <span class="n">int</span>
+</span><span class="line">  <span class="n">Email</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line"><span class="k">module</span> <span class="nn">Db</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">peopleStorage</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="n">int</span><span class="o">,</span> <span class="n">Person</span><span class="o">&gt;</span><span class="bp">()</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">getPeople</span> <span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">peopleStorage</span><span class="o">.</span><span class="n">Values</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Since it’s sample app, I am just using a in-memory dictionary to store the details of people. You can easily replace this with any datasource. The <code>Person</code> type represents the <code>People</code> resource of the rest api.</p>
+
+<p>The next step is wiring the Restful web part with the application. Open <code>App.fs</code> and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">SuaveRestApi.Rest</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">SuaveRestApi.Db</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Web</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Successful</span>
+</span><span class="line">
+</span><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">personWebPart</span> <span class="o">=</span> <span class="n">rest</span> <span class="s">&quot;people&quot;</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">GetAll</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPeople</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">personWebPart</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That’s it! Now we have the HTTP GET Request up and running</p>
+
+<p><img class="center border" src="/images/sauve_rest_api/http_get.png" /></p>
+
+<p>Since we are having no people in our in-memory db, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
+
+<h2 id="http-post">HTTP POST</h2>
+
+<p>HTTP POST uses the same workflow as HTTP GET. To implement this we are going to use the following features in Suave.</p>
+
+<ul>
+  <li>
+    <p>The <code>choose</code> function takes a list of WebParts, and chooses the first one that applies (i.e which returns <code>Some</code>), or if none WebPart applies, then choose will  return <code>None</code></p>
+  </li>
+  <li>
+    <p>The <code>request</code> function takes a function of type <code>HttpRequest -&gt; WebPart</code> and returns the <code>WebPart</code>. We will use this <code>HttpRequest</code> to get the POST content.</p>
+  </li>
+  <li>
+    <p>The <code>POST</code> is a static in-built <code>WebPart</code> which matches the HTTP POST requests.</p>
+  </li>
+</ul>
+
+<p>The first step in implementing POST request is updating the <code>RestResource</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">RestResource</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">seq</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then add the following utility functions in <code>Restful.fs</code> to get the resource from the HttpRequest</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">fromJson</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="n">json</span> <span class="o">=</span>
+</span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">DeserializeObject</span><span class="o">(</span><span class="n">json</span><span class="o">,</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;)</span> <span class="o">:?&gt;</span> <span class="k">&#39;</span><span class="n">a</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getResourceFromReq</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">(</span><span class="n">req</span> <span class="o">:</span> <span class="n">HttpRequest</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">getString</span> <span class="n">rawForm</span> <span class="o">=</span>
+</span><span class="line">    <span class="nn">System</span><span class="p">.</span><span class="nn">Text</span><span class="p">.</span><span class="nn">Encoding</span><span class="p">.</span><span class="nn">UTF8</span><span class="p">.</span><span class="n">GetString</span><span class="o">(</span><span class="n">rawForm</span><span class="o">)</span>
+</span><span class="line">  <span class="n">req</span><span class="o">.</span><span class="n">rawForm</span> <span class="o">|&gt;</span> <span class="n">getString</span> <span class="o">|&gt;</span> <span class="n">fromJson</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>rawForm</code> field in the <code>HttpRequest</code> has the POST content as a byte array, we are just deserializing to a fsharp type.</p>
+
+<p>The next step is updating the <code>rest</code> function to support POST</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">warbler</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span><span class="line">    <span class="n">POST</span> <span class="o">&gt;&gt;=</span> <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Thanks to the awesome function composition feature, we have combined all these tiny functions and implemented a new request and response.  </p>
+
+<p>Then update <code>Db.fs</code> and <code>App.fs</code> respectively as follows</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Db</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">createPerson</span> <span class="n">person</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">id</span> <span class="o">=</span> <span class="n">peopleStorage</span><span class="o">.</span><span class="n">Values</span><span class="o">.</span><span class="n">Count</span> <span class="o">+</span> <span class="mi">1</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">newPerson</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">Id</span> <span class="o">=</span> <span class="n">id</span>
+</span><span class="line">        <span class="n">Name</span> <span class="o">=</span> <span class="n">person</span><span class="o">.</span><span class="n">Name</span>
+</span><span class="line">        <span class="n">Age</span> <span class="o">=</span> <span class="n">person</span><span class="o">.</span><span class="n">Age</span>
+</span><span class="line">        <span class="n">Email</span> <span class="o">=</span> <span class="n">person</span><span class="o">.</span><span class="n">Email</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">    <span class="n">peopleStorage</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">id</span><span class="o">,</span> <span class="n">newPerson</span><span class="o">)</span>
+</span><span class="line">    <span class="n">newPerson</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">personWebPart</span> <span class="o">=</span> <span class="n">rest</span> <span class="s">&quot;people&quot;</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPeople</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">createPerson</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The HTTP POST function in action</p>
+
+<p><img class="center border" src="/images/sauve_rest_api/http_post.png" /></p>
+
+<h2 id="http-put">HTTP PUT</h2>
+
+<p>As we did for GET &amp; POST we will be starting by updating the <code>RestResource</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">RestResource</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">seq</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span>
+</span><span class="line">  <span class="n">Update</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">option</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>We have added a bit of error handling here. This <code>Update</code> function tries to update a resource and returns the updated resource, if the resource exists. If it didn’t it returns <code>None</code></p>
+
+<p>To support HTTP PUT we will be using the following from suave library</p>
+
+<ul>
+  <li>
+    <p>The <code>BAD_REQUEST</code> function takes a string and returns a WebPart representing http status code 400 response with given string as it response.</p>
+  </li>
+  <li>
+    <p>The <code>PUT</code> is a static in-built <code>WebPart</code> which matches the HTTP PUT requests.</p>
+  </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">badRequest</span> <span class="o">=</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Resource not found&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">warbler</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">handleResource</span> <span class="n">requestError</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span> <span class="o">|&gt;</span> <span class="n">JSON</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">requestError</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">    <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
+</span><span class="line">    <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Then update <code>Db.fs</code> and <code>App.fs</code> as usual</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Db</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">updatePersonById</span> <span class="n">personId</span> <span class="n">personToBeUpdated</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">peopleStorage</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">personId</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">updatedPerson</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">        <span class="n">Id</span> <span class="o">=</span> <span class="n">personId</span>
+</span><span class="line">        <span class="n">Name</span> <span class="o">=</span> <span class="n">personToBeUpdated</span><span class="o">.</span><span class="n">Name</span>
+</span><span class="line">        <span class="n">Age</span> <span class="o">=</span> <span class="n">personToBeUpdated</span><span class="o">.</span><span class="n">Age</span>
+</span><span class="line">        <span class="n">Email</span> <span class="o">=</span> <span class="n">personToBeUpdated</span><span class="o">.</span><span class="n">Email</span>
+</span><span class="line">      <span class="o">}</span>
+</span><span class="line">      <span class="n">peopleStorage</span><span class="o">.[</span><span class="n">personId</span><span class="o">]</span> <span class="o">&lt;-</span> <span class="n">updatedPerson</span>
+</span><span class="line">      <span class="n">Some</span> <span class="n">updatedPerson</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">None</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">updatePerson</span> <span class="n">personToBeUpdated</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">updatePersonById</span> <span class="n">personToBeUpdated</span><span class="o">.</span><span class="n">Id</span> <span class="n">personToBeUpdated</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>We have created one more function here <code>updatePersonById</code> which will be used later.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">personWebPart</span> <span class="o">=</span> <span class="n">rest</span> <span class="s">&quot;people&quot;</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPeople</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">createPerson</span>
+</span><span class="line">  <span class="n">Update</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">updatePerson</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>Updating an existing resource</strong></p>
+
+<p><img class="center border" src="/images/sauve_rest_api/http_put.png" /></p>
+
+<p><strong>Updating a non-existing resource</strong></p>
+
+<p><img class="center border" src="/images/sauve_rest_api/http_put_error.png" /></p>
+
+<h2 id="http-delete">HTTP DELETE</h2>
+
+<p>Let’s begin by updating the <code>RestResource</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">RestResource</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">seq</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span>
+</span><span class="line">  <span class="n">Update</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">option</span>
+</span><span class="line">  <span class="n">Delete</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>HTTP DELETE is little different from the other implemented requests as we will be retrieving the id of the resource to be deleted from the URL.</p>
+
+<p>For example, <strong>DELTE /people/1</strong> will delete a person with the id 1.  </p>
+
+<p>To retrieve the id from the url we will be using the <code>pathScan</code> function in Suave. This function similar to <code>printf</code> which takes a <a href="">PrintfFormat</a> and a function which takes the output of the printfformat and returns the WebPart. You can get more details about it from the <a href="http://theimowski.gitbooks.io/suave-music-store/content/url_parameters.html">suave-music-store book</a>.</p>
+
+<p>In addition to this, we will be using the following from suave</p>
+
+<ul>
+  <li>The <code>NO_CONTENT</code> is a static <code>WebPart</code> represents the HTTP Response with the status code 204</li>
+  <li>The <code>DELETE</code> matches the HTTP request of type DELETE</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">resourceIdPath</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">new</span> <span class="n">PrintfFormat</span><span class="o">&lt;(</span><span class="n">int</span> <span class="o">-&gt;</span> <span class="kt">string</span><span class="o">),</span><span class="kt">unit</span><span class="o">,</span><span class="kt">string</span><span class="o">,</span><span class="kt">string</span><span class="o">,</span><span class="n">int</span><span class="o">&gt;(</span><span class="n">resourcePath</span> <span class="o">+</span> <span class="s">&quot;/%d&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">badRequest</span> <span class="o">=</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Resource not found&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">warbler</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">handleResource</span> <span class="n">requestError</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span> <span class="o">|&gt;</span> <span class="n">JSON</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">requestError</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">deleteResourceById</span> <span class="n">id</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">resource</span><span class="o">.</span><span class="n">Delete</span> <span class="n">id</span>
+</span><span class="line">    <span class="n">NO_CONTENT</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
+</span><span class="line">    <span class="o">]</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>One thing to notice here is we have wrapped the existing <code>choose</code> function with an another <code>choose</code> function. It may be little complex to understand but if you understand what each things mean, it is easier. Here the inner <code>choose</code> function represents the handler functions for GET, POST &amp; PUT requests having the url “/{resourceName}” and the <code>DELETE</code> webpart represents the HTTP DELETE handler for the url “/{resourceName}/{resourceId}”.</p>
+
+<p>The outer <code>choose</code> function choose one of these based on the incoming request.</p>
+
+<p><strong>Db.fs</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">deletePerson</span> <span class="n">personId</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">peopleStorage</span><span class="o">.</span><span class="n">Remove</span><span class="o">(</span><span class="n">personId</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>App.fs</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">personWebPart</span> <span class="o">=</span> <span class="n">rest</span> <span class="s">&quot;people&quot;</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPeople</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">createPerson</span>
+</span><span class="line">  <span class="n">Update</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">updatePerson</span>
+</span><span class="line">  <span class="n">Delete</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">deletePerson</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p><img class="center border" src="/images/sauve_rest_api/http_delete.png" /></p>
+
+<h2 id="http-get--http-put-by-id">HTTP GET &amp; HTTP PUT by id</h2>
+
+<p>I hope by this time you know how to wire things up in Suave to create an api. Let’s add features for getting and updating resource by id.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">RestResource</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">seq</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span>
+</span><span class="line">  <span class="n">Update</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">option</span>
+</span><span class="line">  <span class="n">Delete</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+</span><span class="line">  <span class="n">GetById</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">option</span>
+</span><span class="line">  <span class="n">UpdateById</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">option</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">// .. Existing code ...</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">getResourceById</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">resource</span><span class="o">.</span><span class="n">GetById</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="o">(</span><span class="n">NOT_FOUND</span> <span class="s">&quot;Resource not found&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">updateResourceById</span> <span class="n">id</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="o">(</span><span class="n">resource</span><span class="o">.</span><span class="n">UpdateById</span> <span class="n">id</span><span class="o">)</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
+</span><span class="line">    <span class="o">]</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
+</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>Db.fs</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getPerson</span> <span class="n">id</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">if</span> <span class="n">peopleStorage</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">id</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">    <span class="n">Some</span> <span class="n">peopleStorage</span><span class="o">.[</span><span class="n">id</span><span class="o">]</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>App.fs</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">personWebPart</span> <span class="o">=</span> <span class="n">rest</span> <span class="s">&quot;people&quot;</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPeople</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">createPerson</span>
+</span><span class="line">  <span class="n">Update</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">updatePerson</span>
+</span><span class="line">  <span class="n">Delete</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">deletePerson</span>
+</span><span class="line">  <span class="n">GetById</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPerson</span>
+</span><span class="line">  <span class="n">UpdateById</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">updatePersonById</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><img class="center border" src="/images/sauve_rest_api/http_get_id.png" />
+<img class="center border" src="/images/sauve_rest_api/http_put_id.png" /></p>
+
+<h2 id="http-head">HTTP HEAD</h2>
+
+<p>Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">RestResource</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">:</span> <span class="kt">unit</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">seq</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span>
+</span><span class="line">  <span class="n">Update</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">option</span>
+</span><span class="line">  <span class="n">Delete</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="kt">unit</span>
+</span><span class="line">  <span class="n">GetById</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">option</span>
+</span><span class="line">  <span class="n">UpdateById</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">option</span>
+</span><span class="line">  <span class="n">IsExists</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="kt">bool</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">// .. Existing code ...</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">isResourceExists</span> <span class="n">id</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">resource</span><span class="o">.</span><span class="n">IsExists</span> <span class="n">id</span> <span class="k">then</span> <span class="n">OK</span> <span class="s">&quot;&quot;</span> <span class="k">else</span> <span class="n">NOT_FOUND</span> <span class="s">&quot;&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
+</span><span class="line">    <span class="o">]</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
+</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
+</span><span class="line">    <span class="n">HEAD</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">isResourceExists</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p><strong>Db.fs</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">isPersonExists</span> <span class="o">=</span> <span class="n">peopleStorage</span><span class="o">.</span><span class="n">ContainsKey</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>App.fs</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">personWebPart</span> <span class="o">=</span> <span class="n">rest</span> <span class="s">&quot;people&quot;</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">GetAll</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPeople</span>
+</span><span class="line">  <span class="n">GetById</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPerson</span>
+</span><span class="line">  <span class="n">Create</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">createPerson</span>
+</span><span class="line">  <span class="n">Update</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">updatePerson</span>
+</span><span class="line">  <span class="n">UpdateById</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">updatePersonById</span>
+</span><span class="line">  <span class="n">Delete</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">deletePerson</span>
+</span><span class="line">  <span class="n">IsExists</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">isPersonExists</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p><img class="center border" src="/images/sauve_rest_api/head.png" /></p>
+
+<p>That’s all.. We have successfully implemented a REST api using Suave</p>
+
+<h2 id="extending-with-a-new-resource">Extending with a new Resource</h2>
+
+<p>The beautiful aspect of this functional REST api design we can easily extend it to support other resources. </p>
+
+<p>Here is the rest api implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">personWebPart</span> <span class="o">=</span> <span class="n">rest</span> <span class="s">&quot;people&quot;</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">GetAll</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPeople</span>
+</span><span class="line">    <span class="n">GetById</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">getPerson</span>
+</span><span class="line">    <span class="n">Create</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">createPerson</span>
+</span><span class="line">    <span class="n">Update</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">updatePerson</span>
+</span><span class="line">    <span class="n">UpdateById</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">updatePersonById</span>
+</span><span class="line">    <span class="n">Delete</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">deletePerson</span>
+</span><span class="line">    <span class="n">IsExists</span> <span class="o">=</span> <span class="nn">Db</span><span class="p">.</span><span class="n">isPersonExists</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">albumWebPart</span> <span class="o">=</span> <span class="n">rest</span> <span class="s">&quot;albums&quot;</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">GetAll</span> <span class="o">=</span> <span class="nn">MusicStoreDb</span><span class="p">.</span><span class="n">getAlbums</span>
+</span><span class="line">    <span class="n">GetById</span> <span class="o">=</span> <span class="nn">MusicStoreDb</span><span class="p">.</span><span class="n">getAlbumById</span>
+</span><span class="line">    <span class="n">Create</span> <span class="o">=</span> <span class="nn">MusicStoreDb</span><span class="p">.</span><span class="n">createAlbum</span>
+</span><span class="line">    <span class="n">Update</span> <span class="o">=</span> <span class="nn">MusicStoreDb</span><span class="p">.</span><span class="n">updateAlbum</span>
+</span><span class="line">    <span class="n">UpdateById</span> <span class="o">=</span> <span class="nn">MusicStoreDb</span><span class="p">.</span><span class="n">updateAlbumById</span>
+</span><span class="line">    <span class="n">Delete</span> <span class="o">=</span> <span class="nn">MusicStoreDb</span><span class="p">.</span><span class="n">deleteAlbum</span>
+</span><span class="line">    <span class="n">IsExists</span> <span class="o">=</span> <span class="nn">MusicStoreDb</span><span class="p">.</span><span class="n">isAlbumExists</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="o">(</span><span class="n">choose</span> <span class="o">[</span><span class="n">personWebPart</span><span class="o">;</span><span class="n">albumWebPart</span><span class="o">])</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><img class="center border" src="/images/sauve_rest_api/get_album_id.png" /></p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In the amazing presentation on <a href="https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin">Functional Programming Design Patterns</a>, Scott Wlaschin had this slide</p>
+
+<p><img class="center border" src="/images/sauve_rest_api/fp_design_patterns_slide.png" /></p>
+
+<p>I wondered how this can be applied in real-time. By creating a rest api using suave I’ve understood this. </p>
+
+<blockquote>
+  <p>Just create functions and combine it to build bigger system. </p>
+</blockquote>
+
+<p>What a cleaner way to design a system! </p>
+
+<p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my github repository</a>.</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -322,7 +1177,7 @@
 </span><span class="line">  <span class="k">let</span> <span class="nv">bucketContent</span> <span class="o">=</span> <span class="n">numbers</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="n">bucketRule</span><span class="o">.</span><span class="n">Rule</span>
 </span><span class="line">  <span class="o">(</span><span class="n">bucketRule</span><span class="o">.</span><span class="n">Label</span><span class="o">,</span> <span class="n">bucketContent</span><span class="o">)</span>
 </span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">bucketify</span> <span class="n">numbers</span> <span class="n">filterStrings</span>  <span class="o">=</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">createBuckets</span> <span class="n">numbers</span> <span class="n">filterStrings</span>  <span class="o">=</span>
 </span><span class="line">  <span class="n">filterStrings</span>
 </span><span class="line">  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">createBucketRule</span>
 </span><span class="line">  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="n">createBucket</span> <span class="n">numbers</span><span class="o">)</span>
@@ -330,7 +1185,7 @@
 
 <h2 id="summary">Summary</h2>
 
-<p>Though the problem that we have seen is so trivial, the great features in fsharp make it very pleasant to write expressive code. The code snippet is available in <a href="http://fssnip.net/qZ">fssnipnet</a>.</p>
+<p>Though the problem that we have seen is so trivial, the great features in fsharp make it very pleasant to write expressive code to solve it. The complete code snippet is available in <a href="http://fssnip.net/qZ">fssnipnet</a>.</p>
 
 		
 		
@@ -424,91 +1279,6 @@
 <h2 id="summary">Summary</h2>
 
 <p>In this blog post we have seen three tips which can help us while using C# libraries in F#. If you know any other interoperability tips, kindly leave a comment below. </p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-04-25T15:09:02+05:30" data-updated="true" itemprop="datePublished">Apr 25<sup>th</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/functional-programming/'>functional-programming</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/04/25/my-takeaways/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/04/25/my-takeaways/" itemprop="url">My Takeaways</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<blockquote>
-  <p>This is the concluding part of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">like this</a> before, so during this course, I was about to give up but the statement </p>
-
-<p style="text-align:center"> <strong> Finish what you started </strong> </p>
-
-<p>kept me going. Thank you John, I have learned a great lesson in my life from you.</p>
-
-<p>Back to the business, In this blog post I am going to share my key takeaways on developing a complete web application in fsharp using ASP.NET MVC</p>
-
-<h2 id="enterprise-application-development-in-fsharp">Enterprise application development in fsharp</h2>
-
-<p>As a learner of F#, I have spent lots of time in listening to <a href="https://vimeo.com/channels/c4fsharp">the great talks</a> by the vibrant <a href="http://c4fsharp.net/">fsharp community</a>. Though those talks are great, I was intrigued, how these individual pieces would work together in creating a complete enterprise application. Is it really possible? </p>
-
-<p>Developing this complete <a href="https://github.com/tamizhvendan/fsharp-phonecat">fsharp-phonecat</a> application answered my questions and I am sure it answered yours too. It may appear hard because of less sources and functional paradigm, but once you figured it out, it would be a cakewalk.</p>
-
-<p>The bottom line is <strong>we can create a complete enterprise application in fsharp</strong>. As a matter of fact, there is a book written on this subject, <a href="http://www.amazon.com/gp/product/1617291323/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=1617291323&amp;linkCode=as2&amp;tag=bor0b-20&amp;linkId=SYG2CSFARCGD5KUL">F# Deep Dives</a></p>
-
-<p>If you are not convinced yet, read <a href="http://fsharp.org/testimonials/">these testimonials</a> from the commercial users of F#. </p>
-
-<h2 id="leveraging-the-existing-net-ecosystem">Leveraging the existing .NET ecosystem</h2>
-
-<p>In my perspective F# is a <em>pragmatic functional programming language</em>. In addition to lot of elegant features of the language, it works seamlessly with the existing .NET libraries. This one characteristic I would say is a blessing. You can say, ‘This feature is really cool’, but at the end of the day it should help you to get the job done. F# is not only cool, It can help you too!</p>
-
-<p>In the sample application we have leveraged the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web Api 2</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor Views</a>, <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code <i class="emoji smile"></i>)</p>
-
-<h2 id="using-f-in-your-existing-c-codebase">Using F# in your existing C# Codebase</h2>
-
-<p>As F# is a <a href="http://en.wikipedia.org/wiki/List_of_CLI_languages#CLI_languages">CLI Language</a> it can be added to your existing C# solution. All you need to do just create a new F# project in the solution and this project can work seamlessly with the other projects in the solution. </p>
-
-<p>In the sample application, we have a <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
-
-<p>In the <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
-
-<h2 id="less-is-beautiful">Less is beautiful</h2>
-
-<p>Another cool aspect of F# is you will be writing less lines of code to achieve complex things. It took only <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Domain/SearchParser.fs#L10-L44">35 lines of code</a> to create a parser for a DSL. </p>
-
-<p><a href="http://fsharpforfunandprofit.com/rop/">Railway Oriented Programming</a> by <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a> is an absolute gem. If you would like to know what F# brings to your plate, I strongly suggest you to listen his talk on <a href="http://fsharpforfunandprofit.com/fppatterns/">Functional Design Patterns</a>. The way you see programming will never be the same after you have seen this presentation. </p>
-
-<h2 id="summary">Summary</h2>
-
-<p>In nutshell, F# is just an awesome programming language to create applications. I hope you would have enjoyed this series. If you have any suggestions, kindly leave a comment.</p>
-
-<p>I would like to conclude this post with the below formula</p>
-
-<p style="text-align:center"> <strong> Python + .NET = F# </strong> </p>
 
 		
 		

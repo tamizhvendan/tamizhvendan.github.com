@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: suave | P3 Programmer]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/suave/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2015-06-12T09:55:27+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Building REST Api in fsharp using Suave]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/"/>
+    <updated>2015-06-11T10:48:20+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/06/11/building-rest-api-in-fsharp-using-suave</id>
+    <content type="html"><![CDATA[<p>In the last one month lot of great things happening in fsharp world around <a href="suave.io">suave</a>, a simple web development fsharp library. Scott Hanselman <a href="http://www.hanselman.com/blog/RunningSuaveioAndFWithFAKEInAzureWebAppsWithGitAndTheDeployButton.aspx">blogged</a> about it, <a href="https://twitter.com/tomaspetricek">Tomas Petricek</a> kick-started an awesome <a href="https://skillsmatter.com/skillscasts/6381-suave-hands-on-with-tomas-petricek">hands on session</a> and followed up with a <a href="http://channel9.msdn.com/Blogs/Seth-Juarez/Deploying-an-F-Web-Application-with-Suave">great talk</a> on Channel 9. Last but not the least, <a href="https://twitter.com/theimowski">Tomasz Heimowski</a> authored a clear and crisp <a href="http://theimowski.gitbooks.io/suave-music-store/content/">book on Suave</a></p>
+
+<p>I got super excited after learning suave from these resources and started playing with it. One of the great things about the fsharp community is, if you want to improve any existing library all you need is just send a pull request with the feature you would like to have. Yes, it’s as simple as that! It <a href="https://github.com/SuaveIO/suave/pull/259">worked</a> for me and I am sure for you too, if you wish.</p>
+
+<p>In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the <a href="http://docs.strongloop.com/display/public/LB/Use+API+Explorer">StrongLoop</a>, a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post. </p>
+
+<p>Let’s get started</p>
+
+<h2 id="setting-up-the-project">Setting up the project</h2>
+
+<p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below. </p>
+
+<p>{% img center /images/sauve_rest_api/proj_structure.png %}</p>
+
+<p>After creating, install the following nuget packages</p>
+
+<ul>
+  <li><a href="https://www.nuget.org/packages/suave">Suave</a></li>
+  <li><a href="">Newtonsoft.Json</a></li>
+</ul>
+
+<h2 id="webpart">WebPart</h2>
+
+<p>The basic building block of Suave is <a href="http://theimowski.gitbooks.io/suave-music-store/content/webpart.html">WebPart</a>. It is an alias of function type <code>HttpContext -&gt; Async&lt;HttpContext option&gt;</code>. This simple function type actually model whole set of Request and Response model of Http protocol. From the Tomasz Heimowski’s book here is the definition of the <code>WebPart</code></p>
+
+<blockquote>
+  <p>Based on the http context, we give you a promise (async) of optional resulting http context, where the resulting context is likely to have its response set with regards to the logic of the WebPart itself</p>
+</blockquote>
+
+<p>A <code>WebPart</code> represents a http request and response. Since it is a function, we can combine multiple <code>WebPart</code>s together and build a complex web application which handles multiple requests and responses. This is the beauty of functional programming. You just think in terms of one function at a time and make it work. Once you are done, all you need to do is just gluing them together. Solving problems using this functional abstraction will make things much easier and help you to write less code compare to its Object Oriented version.</p>
+
+<p>The <code>OK</code> webpart is a very simple one in Suave which takes a <code>string</code> and returns a http response with the status code <code>200</code> and the given string. Add the following code in the <code>App.fs</code> and run the console app.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>open Suave.Web
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>open Suave.Http.Successful
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>[&lt;EntryPoint&gt;]
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>let main argv = 
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  startWebServer defaultConfig (OK &quot;Hello, Suave!&quot;) 
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  0
+</pre></div>
+</div>
+</div>
+<p>The is the simplest Suave application that greets all visitors with the string “Hello, Suave!”. The <code>startWebServer</code> is a blocking function that takes a configuration (port number, ssl, etc.,) and starts a http web server in the port 8083 upon calling.</p>
+
+<p>{% img center border /images/sauve_rest_api/hello_suave.png %}</p>
+
+<p>The Rest Api that we are going to design here is a <code>WebPart</code> which will be replacing this <code>OK</code> webpart.</p>
+
+<h2 id="http-get">HTTP GET</h2>
+
+<p>Let’s begin by defining a record type representing a <em>restful</em> resource. Open <code>Restful.fs</code> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>namespace SuaveRestApi.Rest
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>[&lt;AutoOpen&gt;]
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>module RestFul =  
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  type RestResource&lt;'a&gt; = {
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    GetAll : unit -&gt; 'a seq        
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  }
+</pre></div>
+</div>
+</div>
+
+<p>This <code>RestResource</code> is a container representing all the operations on a restful  resource. This record type abstracts the actual resource from the rest api web part. This enables the reuse of rest api web part across multiple resources.</p>
+
+<p>Let’s create a function in <code>RestFul.fs</code> which takes a resource name and this <code>RestResource</code> and returns a web part representing the restful api.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// string -&gt; RestResource&lt;'a&gt; -&gt; WebPart
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let rest resourceName resource =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  // TODO
+</pre></div>
+</div>
+</div>
+
+<p>We are going to use the following building blocks of the suave library to implement the <code>rest</code> function.</p>
+
+<ul>
+  <li>
+    <p>The <code>path</code> is a function of type: <code>string -&gt; WebPart</code>. It means that if we give it a string it will return <code>WebPart</code>. Under the hood, the function looks at the incoming request and returns <code>Some</code> if the paths match, and <code>None</code> otherwise. </p>
+  </li>
+  <li>
+    <p>The <code>GET</code> is a static inbuilt <code>WebPart</code> which matches the HTTP GET requests.</p>
+  </li>
+  <li>
+    <p>The <code>&gt;&gt;=</code> operator composes two WebParts into one by first evaluating the <code>WebPart</code> on the left, and applying the WebPart on the right only if the first one returned <code>Some</code>.</p>
+  </li>
+</ul>
+
+<p>To return a json response we need to change the mime type to “application/json” of the response. There is an <a href="https://github.com/SuaveIO/suave/blob/master/src/Suave/Json.fs">inbuilt function</a> in suave to do this but it is using .Net’s <code>DataContractJsonSerializer</code>. I feel it’s not ideal to use as we need to write decorator attribute <code>DataMember</code> to serialize the types.</p>
+
+<p>As <a href="http://james.newtonking.com/archive/2014/04/30/json-net-6-0-release-3-serialize-all-the-f">Newtonsoft.Json</a> provides serialization support for fsharp types without any need of decorating attributes, we will be using them there.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// 'a -&gt; WebPart
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let JSON v =     
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let jsonSerializerSettings = new JsonSerializerSettings()
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  jsonSerializerSettings.ContractResolver &lt;- new CamelCasePropertyNamesContractResolver()
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  JsonConvert.SerializeObject(v, jsonSerializerSettings)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  |&gt; OK 
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  &gt;&gt;= Writers.setMimeType &quot;application/json; charset=utf-8&quot;
+</pre></div>
+</div>
+</div>
+<p>As the signature indicates <code>JSON</code> function takes a generic type, serialize it using <em>Newtonsoft.Json</em> and return the json response. <code>Writers.setMimeType</code> takes a mime type and a web part returns the web part with the given mime type.</p>
+
+<p>Now we have everything to implement the HTTP GET request</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let rest resourceName resource =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let gellAll = resource.GetAll () |&gt; JSON
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;&gt;= GET &gt;&gt;= getAll
+</pre></div>
+</div>
+</div>
+
+<p>The one caveat here is the path resolution of Suave library. Based on the webpart given, the <code>startWebServer</code> function configures it’s internal routing table during the application startup and it is static after the application has been started. So, the <code>getAll</code> webpart will be created only during application startup. To avoid this, we need to wrap the <code>getAll</code> webpart with a <code>warbler</code> function which ensures that it is called only when the incoming request matches the given resource path.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let rest resourceName resource =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;&gt;= GET &gt;&gt;= getAll
+</pre></div>
+</div>
+</div>
+
+<p>Now we have the middleware to create a web part. Let’s create other things and glue them together.</p>
+
+<p>Open <code>Db.fs</code> file and add the following code</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace SuaveRestApi.Db
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open System.Collections.Generic
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>type Person = {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Id : int
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Name : string
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  Age : int
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  Email : string
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>}
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>module Db =        
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let private peopleStorage = new Dictionary&lt;int, Person&gt;()
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  let getPeople () = 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    peopleStorage.Values |&gt; Seq.map (fun p -&gt; p)
+</pre></div>
+</div>
+</div>
+
+<p>Since it’s a sample application, I am just using an in memory dictionary to store the details of people. You can easily replace this with any data source. The <code>Person</code> type represents the <code>People</code> resource of the rest api.</p>
+
+<p>The next step is wiring the Restful web part with the application. Open <code>App.fs</code> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>open SuaveRestApi.Rest
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open SuaveRestApi.Db
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Suave.Web
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.Http.Successful
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>[&lt;EntryPoint&gt;]
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let main argv = 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let personWebPart = rest &quot;people&quot; {
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    GetAll = Db.getPeople
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  }
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  startWebServer defaultConfig personWebPart
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  0
+</pre></div>
+</div>
+</div>
+
+<p>That’s it! Now we have the HTTP GET Request up and running</p>
+
+<p>{% img center border /images/sauve_rest_api/http_get.png %}</p>
+
+<p>Since we are having no people in our in-memory db, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
+
+<h2 id="http-post">HTTP POST</h2>
+
+<p>HTTP POST uses the same workflow as HTTP GET. To implement this we are going to use the following features in Suave.</p>
+
+<ul>
+  <li>
+    <p>The <code>choose</code> function takes a list of WebParts, and chooses the first one that applies (i.e which returns <code>Some</code>), or if none WebPart applies, then choose will  return <code>None</code></p>
+  </li>
+  <li>
+    <p>The <code>request</code> function takes a function of type <code>HttpRequest -&gt; WebPart</code> and returns the <code>WebPart</code>. We will use this <code>HttpRequest</code> to get the POST content.</p>
+  </li>
+  <li>
+    <p>The <code>POST</code> is a static in-built <code>WebPart</code> which matches the HTTP POST requests.</p>
+  </li>
+</ul>
+
+<p>The first step in implementing POST request is updating the <code>RestResource</code>.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a        
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Then add the following utility functions in <code>Restful.fs</code> to get the resource from the HttpRequest</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let fromJson&lt;'a&gt; json =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  JsonConvert.DeserializeObject(json, typeof&lt;'a&gt;) :?&gt; 'a    
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>let getResourceFromReq&lt;'a&gt; (req : HttpRequest) = 
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  let getString rawForm = 
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    System.Text.Encoding.UTF8.GetString(rawForm)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  req.rawForm |&gt; getString |&gt; fromJson&lt;'a&gt;
+</pre></div>
+</div>
+</div>
+
+<p>The <code>rawForm</code> field in the <code>HttpRequest</code> has the POST content as a byte array, we are just deserializing to a fsharp type.</p>
+
+<p>The next step is updating the <code>rest</code> function to support POST</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let rest resourceName resource =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;&gt;= choose [
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    GET &gt;&gt;= getAll
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    POST &gt;&gt;= request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  ]
+</pre></div>
+</div>
+</div>
+<p>Thanks to the awesome function composition feature, we have combined all these tiny functions and implemented a new request and response.  </p>
+
+<p>Then update <code>Db.fs</code> and <code>App.fs</code> respectively as follows</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Db = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let createPerson person =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let id = peopleStorage.Values.Count + 1
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    let newPerson = {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        Id = id
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>        Name = person.Name
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        Age = person.Age
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        Email = person.Email
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    }
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    peopleStorage.Add(id, newPerson)
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    newPerson
+</pre></div>
+</div>
+</div>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create = Db.createPerson
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>The HTTP POST function in action</p>
+
+<p>{% img center border /images/sauve_rest_api/http_post.png %}</p>
+
+<h2 id="http-put">HTTP PUT</h2>
+
+<p>As we did for GET &amp; POST we will be starting by updating the <code>RestResource</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option       
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>}
+</pre></div>
+</div>
+</div>
+<p>We have added a bit of error handling here. This <code>Update</code> function tries to update a resource and returns the updated resource, if the resource exists. If it didn’t it returns <code>None</code></p>
+
+<p>To support HTTP PUT we will be using the following from suave library</p>
+
+<ul>
+  <li>
+    <p>The <code>BAD_REQUEST</code> function takes a string and returns a WebPart representing http status code 400 response with given string as it response.</p>
+  </li>
+  <li>
+    <p>The <code>PUT</code> is a static in-built <code>WebPart</code> which matches the HTTP PUT requests.</p>
+  </li>
+</ul>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let rest resourceName resource =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let badRequest = BAD_REQUEST &quot;Resource not found&quot;
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let handleResource requestError = function
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    | Some r -&gt; r |&gt; JSON
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    | _ -&gt; requestError
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  path resourcePath &gt;&gt;= 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    choose [
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      GET &gt;&gt;= getAll
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      POST &gt;&gt;= 
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      PUT &gt;&gt;= 
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    ]
+</pre></div>
+</div>
+</div>
+<p>Then update <code>Db.fs</code> and <code>App.fs</code> as usual</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Db =   
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let updatePersonById personId personToBeUpdated =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    if peopleStorage.ContainsKey(personId) then
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      let updatedPerson = {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        Id = personId
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>        Name = personToBeUpdated.Name
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        Age = personToBeUpdated.Age
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        Email = personToBeUpdated.Email
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      }
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      peopleStorage.[personId] &lt;- updatedPerson            
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      Some updatedPerson
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    else 
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      None
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let updatePerson personToBeUpdated =
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    updatePersonById personToBeUpdated.Id personToBeUpdated
+</pre></div>
+</div>
+</div>
+<p>We have created one more function here <code>updatePersonById</code> which will be used later.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create = Db.createPerson
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update = Db.updatePerson
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p><strong>Updating an existing resource</strong></p>
+
+<p>{% img center border /images/sauve_rest_api/http_put.png %}</p>
+
+<p><strong>Updating a non-existing resource</strong></p>
+
+<p>{% img center border /images/sauve_rest_api/http_put_error.png %}</p>
+
+<h2 id="http-delete">HTTP DELETE</h2>
+
+<p>Let’s begin by updating the <code>RestResource</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit    
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>}
+</pre></div>
+</div>
+</div>
+<p>HTTP DELETE is little different from the other implemented requests as we will be retrieving the id of the resource to be deleted from the URL.</p>
+
+<p>For example, <strong>DELTE /people/1</strong> will delete a person with the id 1.  </p>
+
+<p>To retrieve the id from the url we will be using the <code>pathScan</code> function in Suave. This function similar to <code>printf</code> which takes a <a href="">PrintfFormat</a> and a function which takes the output of the printfformat and returns the WebPart. You can get more details about it from the <a href="http://theimowski.gitbooks.io/suave-music-store/content/url_parameters.html">suave-music-store book</a>.</p>
+
+<p>In addition to this, we will be using the following from suave</p>
+
+<ul>
+  <li>The <code>NO_CONTENT</code> is a static <code>WebPart</code> represents the HTTP Response with the status code 204</li>
+  <li>The <code>DELETE</code> matches the HTTP request of type DELETE</li>
+</ul>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let rest resourceName resource =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let resourcePath = &quot;/&quot; + resourceName
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let resourceIdPath = 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    new PrintfFormat&lt;(int -&gt; string),unit,string,string,int&gt;(resourcePath + &quot;/%d&quot;)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  let badRequest = BAD_REQUEST &quot;Resource not found&quot;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let handleResource requestError = function
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    | Some r -&gt; r |&gt; JSON
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    | _ -&gt; requestError
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  let deleteResourceById id =
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    resource.Delete id
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    NO_CONTENT
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  choose [
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    path resourcePath &gt;&gt;= choose [
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      GET &gt;&gt;= getAll
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      POST &gt;&gt;= 
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      PUT &gt;&gt;= 
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    ]
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    DELETE &gt;&gt;= pathScan resourceIdPath deleteResourceById
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>  ]
+</pre></div>
+</div>
+</div>
+
+<p>One thing to notice here is we have wrapped the existing <code>choose</code> function with an another <code>choose</code> function. It may be little complex to understand but if you understand what each things mean, it is easier. Here the inner <code>choose</code> function represents the handler functions for GET, POST &amp; PUT requests having the url “/{resourceName}” and the <code>DELETE</code> webpart represents the HTTP DELETE handler for the url “/{resourceName}/{resourceId}”.</p>
+
+<p>The outer <code>choose</code> function choose one of these based on the incoming request.</p>
+
+<p><strong>Db.fs</strong></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let deletePerson personId = 
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  peopleStorage.Remove(personId) |&gt; ignore
+</pre></div>
+</div>
+</div>
+
+<p><strong>App.fs</strong></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create = Db.createPerson
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update = Db.updatePerson
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete = Db.deletePerson
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>}
+</pre></div>
+</div>
+</div>
+<p>{% img center border /images/sauve_rest_api/http_delete.png %}</p>
+
+<h2 id="http-get--http-put-by-id">HTTP GET &amp; HTTP PUT by id</h2>
+
+<p>I hope by this time you know how to wire things up in Suave to create an api. Let’s add features for getting and updating resource by id.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit 
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  GetById : int -&gt; 'a option
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  UpdateById : int -&gt; 'a -&gt; 'a option   
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>}
+</pre></div>
+</div>
+</div>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let rest resourceName resource =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  // .. Existing code ...
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let getResourceById = 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    resource.GetById &gt;&gt; handleResource (NOT_FOUND &quot;Resource not found&quot;)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let updateResourceById id =
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    request (getResourceFromReq &gt;&gt; (resource.UpdateById id) &gt;&gt; handleResource badRequest)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  choose [
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    path resourcePath &gt;&gt;= choose [
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      GET &gt;&gt;= getAll
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      POST &gt;&gt;= 
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      PUT &gt;&gt;= 
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    ]
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    DELETE &gt;&gt;= pathScan resourceIdPath deleteResourceById
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    GET &gt;&gt;= pathScan resourceIdPath getResourceById
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    PUT &gt;&gt;= pathScan resourceIdPath updateResourceById
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  ]
+</pre></div>
+</div>
+</div>
+
+<p><strong>Db.fs</strong></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getPerson id =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  if peopleStorage.ContainsKey(id) then
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    Some peopleStorage.[id]
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  else
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    None
+</pre></div>
+</div>
+</div>
+
+<p><strong>App.fs</strong></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create = Db.createPerson
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update = Db.updatePerson
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete = Db.deletePerson
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  GetById = Db.getPerson
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  UpdateById = Db.updatePersonById
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>{% img center border /images/sauve_rest_api/http_get_id.png %}<br />
+{% img center border /images/sauve_rest_api/http_put_id.png %}</p>
+
+<h2 id="http-head">HTTP HEAD</h2>
+
+<p>Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  GetById : int -&gt; 'a option
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  UpdateById : int -&gt; 'a -&gt; 'a option 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  IsExists : int -&gt; bool
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>let rest resourceName resource =
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  // .. Existing code ...
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let isResourceExists id =
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    if resource.IsExists id then OK &quot;&quot; else NOT_FOUND &quot;&quot;
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  choose [
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    path resourcePath &gt;&gt;= choose [
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      GET &gt;&gt;= getAll
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      POST &gt;&gt;= 
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      PUT &gt;&gt;= 
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    ]
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    DELETE &gt;&gt;= pathScan resourceIdPath deleteResourceById
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    GET &gt;&gt;= pathScan resourceIdPath getResourceById
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>    PUT &gt;&gt;= pathScan resourceIdPath updateResourceById
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>    HEAD &gt;&gt;= pathScan resourceIdPath isResourceExists
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>  ]
+</pre></div>
+</div>
+</div>
+<p><strong>Db.fs</strong></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let isPersonExists = peopleStorage.ContainsKey
+</pre></div>
+</div>
+</div>
+
+<p><strong>App.fs</strong></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  GetById = Db.getPerson
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Create = Db.createPerson
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Update = Db.updatePerson
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  UpdateById = Db.updatePersonById
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  Delete = Db.deletePerson
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  IsExists = Db.isPersonExists
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+</pre></div>
+</div>
+</div>
+<p>{% img center border /images/sauve_rest_api/head.png %}</p>
+
+<p>That’s all.. We have successfully implemented a REST api using Suave</p>
+
+<h2 id="extending-with-a-new-resource">Extending with a new Resource</h2>
+
+<p>The beautiful aspect of this functional REST api design we can easily extend it to support other resources. </p>
+
+<p>Here is the rest api implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv =    
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let personWebPart = rest &quot;people&quot; {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    GetAll = Db.getPeople
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    GetById = Db.getPerson
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    Create = Db.createPerson
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    Update = Db.updatePerson
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    UpdateById = Db.updatePersonById
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    Delete = Db.deletePerson
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    IsExists = Db.isPersonExists
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  }
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let albumWebPart = rest &quot;albums&quot; {
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    GetAll = MusicStoreDb.getAlbums
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    GetById = MusicStoreDb.getAlbumById
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    Create = MusicStoreDb.createAlbum
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    Update = MusicStoreDb.updateAlbum
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    UpdateById = MusicStoreDb.updateAlbumById
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    Delete = MusicStoreDb.deleteAlbum
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    IsExists = MusicStoreDb.isAlbumExists
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  }
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>  startWebServer defaultConfig (choose [personWebPart;albumWebPart])
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  0 
+</pre></div>
+</div>
+</div>
+
+<p>{% img center border /images/sauve_rest_api/get_album_id.png %}</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>In the amazing presentation on <a href="https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin">Functional Programming Design Patterns</a>, Scott Wlaschin had this slide</p>
+
+<p>{% img center border /images/sauve_rest_api/fp_design_patterns_slide.png %}</p>
+
+<p>I wondered how this can be applied in real-time. By creating a rest api using suave I’ve understood this. </p>
+
+<blockquote>
+  <p>Just create functions and combine it to build bigger system. </p>
+</blockquote>
+
+<p>What a cleaner way to design a system! </p>
+
+<p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my github repository</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>
