@@ -4,7 +4,7 @@
   <title><![CDATA[Category: dsl | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/dsl/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-06-12T09:55:27+05:30</updated>
+  <updated>2015-06-12T10:12:03+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -19,12 +19,12 @@
     <updated>2015-01-18T19:52:26+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 5 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 5 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
 <p>In this blog post we are going create an advanced Search <a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> for searching Phones in the PhoneCat application that we are building in this blog series, using a F# parser combinator library called <a href="http://www.quanttec.com/fparsec/">FParsec</a>. </p>
 
-<p>{% img /images/fsharp_phonecat/step_5/search_results.png %}</p>
+<p><img src="/images/fsharp_phonecat/step_5/search_results.png"></p>
 
 <p>As you seen in the screenshot above the DSL that we are going to build will enable us to search phones using three search filters (parameters) <strong>weight</strong>, <strong>screen</strong> and <strong>ram</strong>. The values (value filters) of these search filters can be defined in three ways as <strong>&gt;</strong>(greater than), <strong>-</strong>(range) and <strong>{value}</strong>(actual value itself i.e <em>=</em>). Each of these values should be accompanied with their unit of measures <strong>g</strong>, <strong>inch</strong> and <strong>MB</strong> respectively. For simplicity, I’ve expressed these units in singulars. The <strong>:</strong> symbol is used to separate Search Filter and Value Filter. Multiple filters can be used by seperating thing using the <strong>;</strong> symbol. </p>
 
@@ -349,7 +349,7 @@
 
 <h2 id="exposing-the-phone-search-as-web-api">Exposing the phone search as web-api</h2>
 
-<p>Open the <code>PhonesController</code> that we have added in the <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">step-1</a> and update it as below</p>
+<p>Open the <code>PhonesController</code> that we have added in the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">step-1</a> and update it as below</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type Error = { message : string }
@@ -408,7 +408,7 @@
 
 <p>The final step of the creating a view for the Phone Search which enable the user to search the phones using the DSL that we have created so far.</p>
 
-<p>It is straight forward razor view creation as we have seen in <a href="{% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}">step-2</a>. Add an action method <code>Search</code> in the <code>PhoneController</code> as below</p>
+<p>It is straight forward razor view creation as we have seen in <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. Add an action method <code>Search</code> in the <code>PhoneController</code> as below</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// ...

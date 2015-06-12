@@ -4,7 +4,7 @@
   <title><![CDATA[Category: jquery | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/jquery/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-06-12T09:55:27+05:30</updated>
+  <updated>2015-06-12T10:12:03+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -32,25 +32,69 @@
 
         <h3>1. Dynamically populating the dropdownlist</h3>
 
-        {% gist 7fd57f06e15b77c58d49 documentInit.js %}
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=documentInit.js'></script>
+<noscript><pre><code>$(document).ready(function () {
+    
+    function loadDropDownList(collection) {
+        $.each(collection, function (index, value) {
+            var listItem = $(&quot;&lt;option&gt;&lt;/option&gt;&quot;).val(index).html(value);
+            $(&quot;#countries&quot;).append(listItem);
+        });
+    }
+
+    var myCollection = {'IN': 'India','AUS': 'Australia','ENG': 'England'};
+    loadDropDownList(myCollection);
+})</code></pre></noscript></div>
+
 	
-        {% gist 7fd57f06e15b77c58d49 layout.html %}
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=layout.html'></script>
+<noscript><pre><code>Countries: &lt;select id=&quot;countries&quot;&gt;&lt;/select&gt;</code></pre></noscript></div>
+
 	
         <p>
             The function loadDropDownList will take a collection (a key-value pair array) and populate the dropdownlist “countries”. “$.each” is a jQuery function which iterates the array item by item and calls the “function(index,value)” for each item where index would be the item’s key and value would be the item’s value. Then the list item html markup is created for the list item and appended to the dropdownlist
         </p>
 
         <h3>2. Handling the item change event of a dropdownlist</h3>
-        {% gist 7fd57f06e15b77c58d49 handleChange.js %}
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=handleChange.js'></script>
+<noscript><pre><code>$(document).ready(function () {
+    $(&quot;#countries&quot;).change(function () {
+        // Place your code here
+    });
+});</code></pre></noscript></div>
+
         <p>
             The jQuery API offers lot of useful functions to operate with the html form elements. One of such function is “change()” which will called whenever the item value is get changed.
         </p>
         <h3>3. Getting the value and the text of the dropdownlist selected item</h3>
-        {% gist 7fd57f06e15b77c58d49 listChange.js %}
-        {% gist 7fd57f06e15b77c58d49 newLayout.html %}
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=listChange.js'></script>
+<noscript><pre><code>$(document).ready(function () {
+    $(&quot;#countries&quot;).change(function () {
+    	var selectedValue = $(&quot;#countries&quot;).val();
+        $(&quot;#countryValue&quot;).text(selectedValue);
+        $(&quot;#countryText&quot;).text($(&quot;#countries &gt; option[value='&quot; + selectedValue + &quot;']&quot;).html());
+    });
+});</code></pre></noscript></div>
+
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=newLayout.html'></script>
+<noscript><pre><code>Selected Country’s Text: &lt;span id=&quot;countryText&quot;&gt;&lt;/span&gt; &lt;br /&gt;
+Selected Country’s Value:  &lt;span id=&quot;countryValue&quot;&gt;&lt;/span&gt;&lt;br /&gt;</code></pre></noscript></div>
+
         <p>The jQuery code mentioned above will set the two span labels “countryValue” and “countryText” with the value and text of the selected item in the “countries” dropdownlist, when we select an item in the “countries” dropdownlist. The jQuery function “val()” enable us to find out the value of a form element, in our case we have utilized it to get the value of the “countries” dropdownlist. To get the selected item’s text we have to use the child and attribute selector together as a selector. “#countries &gt; option[value='IN']” – will selects all option child elements(with appropriate value) of item with the id “countries”. “html()” retrieves the html of the selected element. “text(value)” will set the text of the selector.</p>
         <h3>4. Programmatically setting the item of the dropdownlist</h3>
-        {% gist 7fd57f06e15b77c58d49 btnClick.js %}
+        <div><script src='https://gist.github.com/7fd57f06e15b77c58d49.js?file=btnClick.js'></script>
+<noscript><pre><code>$(&quot;#btnIn&quot;).click(function () {
+    $(&quot;#countries&quot;).val('IN');
+});
+
+$(&quot;#btnEng&quot;).click(function () {
+    $(&quot;#countries&quot;).val('ENG');
+});
+
+$(&quot;#btnAus&quot;).click(function () {
+    $(&quot;#countries&quot;).val('AUS');
+});</code></pre></noscript></div>
+
 
         <h2>Demo</h2>
         <iframe width="100%" height="300" src="http://jsfiddle.net/uE78v/2/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
@@ -91,19 +135,188 @@
         <h3>Task 1: Defining the webpage layout using HTML</h3>
         <p>The HTML is very straight forward. Entire webpage contents have been placed inside a div with the id “iGoogle”. Then each column (iGoogle uses three column layout) is defined by a div element with the id representing the corresponding columns. These columns act as a placeholder for Widgets. Each widget defined as a div element which contains two div elements inside it which represents the header and the body of the Widgets<br />
         </p>
-        {% gist 8cc8e2868203484754b1 %}
+        <div><script src='https://gist.github.com/8cc8e2868203484754b1.js'></script>
+<noscript><pre><code>&lt;div id=&quot;column1&quot;&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader PurpleWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 1&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 2&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 3&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;column2&quot;&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 4&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;column3&quot;&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 5&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 6&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+
 
         <h3>Task 2: Style the webpage and widgets</h3>
         <p>Now we have the HTML Layout ready. Our next task would be applying style to the webpage and the widgets using CSS.</p>
-        {% gist e841e3643400836bd57f %}
+        <div><script src='https://gist.github.com/e841e3643400836bd57f.js'></script>
+<noscript><pre><code>/* Entire Page has been divided into 3Columns. Note: iGoogle Page has 3 columns */
+#column1, #column2, #column3
+{
+    display: inline-block;
+    float: left;
+    width: 33%;
+    height: auto;
+    text-align: center;
+    padding-bottom: 100px;
+}
+/* Css Classes for Entire Widget */
+.Widget
+{
+    margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    min-height: 200px;
+    border: 1px solid Black;
+}
+/* Css Classes for Widget Headers */
+.WidgetHeader
+{
+    height: 25px;
+    cursor: move;
+    text-align: left;
+    padding-left: 3px;
+    color: White;
+    font-weight: bold;
+}
+.GreenWidgetHeader
+{
+    background-color: Green;
+}
+.GrayWidgetHeader
+{
+    background-color: Gray;
+}
+.PurpleWidgetHeader
+{
+    background-color: Purple;
+}
+/* Css Classes for Widget Body */
+.WidgetBody
+{
+    min-height: 175px;
+    height: auto;
+    background: #F0F0F0;
+}
+/* Placeholder while dragging the widget using jQuery*/
+.ui-sortable-placeholder
+{
+    border: 1px dashed black;
+    visibility: visible !important;
+    height: 50px !important;
+}
+.ui-sortable-placeholder *
+{
+    visibility: hidden;
+}
+.footer
+{
+    clear: both;
+    display: block;
+    position: absolute;
+    color: Green;
+    bottom: 5px;
+    right: 5px;
+}</code></pre></noscript></div>
+
 
         <h3>Task 3:  Add the drag and drop functionality using jQuery</h3>
         <p>jQuery offers a rich set of functionality which can be implemented by less lines of coding. With jQuery you can “write less and do more”.  All you need to refer the jQuery API files in your javascript and make use of the functionality it provides. To implement the drag and drop functionality we need the following jQuery library files which can be downloaded from the locations mentioned in the “src” attribute</p>
-        {% gist afd522c53a67db5e497b %}
+        <div><script src='https://gist.github.com/afd522c53a67db5e497b.js'></script>
+<noscript><pre><code>&lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.core.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.widget.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.mouse.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.sortable.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></pre></noscript></div>
+
 
 	<p>Now we have the necessary jQuery libraries to implement the drag and drop functionality and all set for implementing the drag and drop support. Here is the code part which implements the drag and drop functionality.</p>
 
-        {% gist 20061eca688b51e73df8 %}
+        <div><script src='https://gist.github.com/20061eca688b51e73df8.js'></script>
+<noscript><pre><code>$(document).ready(function () {        
+    $(&quot;#column1,#column2,#column3&quot;).sortable({
+        connectWith: &quot;#column1,#column2,#column3&quot;,
+        handle: '.WidgetHeader', opacity: 0.6
+    }); 
+    
+    $(&quot;#column1,#column2,#column3&quot;).disableSelection();
+});</code></pre></noscript></div>
+
 
     <p>Yes!! That’s it!! Just three function calls and seven lines of coding!! Now you can drag and drop the widgets and play!!  </p>
 

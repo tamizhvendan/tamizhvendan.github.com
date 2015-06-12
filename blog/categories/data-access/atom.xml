@@ -4,7 +4,7 @@
   <title><![CDATA[Category: data access | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/data-access/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-06-12T09:55:27+05:30</updated>
+  <updated>2015-06-12T10:12:03+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -137,7 +137,7 @@
     <id>http://blog.tamizhvendan.in/blog/2011/04/01/entity-framework-40-as-class-library</id>
     <content type="html"><![CDATA[<div class="post">
     <div>
-        <p>As the continuation of my previous <a href="{% post_url 2011-03-25-entity-framework-40-class-library-part %}">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
+        <p>As the continuation of my previous <a href="/blog/2011/03/25/entity-framework-40-class-library-part/">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
 
         <p>Consuming the Data Access Library created using Entity Framework 4.0 involves the following two steps.</p>
         <ol>
@@ -163,7 +163,27 @@
         <img src="http://2.bp.blogspot.com/-HgFzRYacpQA/TZw6IqMd5oI/AAAAAAAAAGA/q_IiJsTNYvU/s1600/4.AppConfig.PNG" />
         <p>That's all now it is all set to access the database with only minimal amount of code.. Here we go!!</p>
         <h4>Code Please!</h4>
-        {% gist 7794bb7ac98d6de3b962 %}
+        <div><script src='https://gist.github.com/7794bb7ac98d6de3b962.js'></script>
+<noscript><pre><code>using System;
+using System.Linq;
+using HRD.DataAccess;
+namespace HrdConsoleApp
+{
+    class Program
+    { 
+        static void Main(string[] args) 
+        { 
+            var hrdEntities = new HRDEntities(); 
+            foreach (Employee employee in hrdEntities.Employees)
+            { 
+                Console.WriteLine(&quot;Name: &quot; + employee.Name); 
+                Console.WriteLine(&quot;Department: &quot; + employee.Department.Name); 
+                Console.WriteLine(&quot;########################&quot;); 
+            } 
+        } 
+    }
+}</code></pre></noscript></div>
+
 
         <h4>Output</h4>
         <img src="http://1.bp.blogspot.com/-Fooy-W2-OCQ/TZw6M7tVqTI/AAAAAAAAAGE/tJ5UYVi5LRI/s1600/6.Output.PNG" />
@@ -226,7 +246,7 @@
         That's it!!. Now we have the DataAccess Library ready!! We can reuse it across different .Net Applications 
 	
         <h4>Summary</h4>
-        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="{% post_url 2011-04-01-entity-framework-40-as-class-library %}">next blog</a>, we'd be exploring on how to consume the data access library in an application. </p>
+        <p>In this blog we have explored the way of creating the DataAccess class library using entity framework. In my <a href="/blog/2011/04/01/entity-framework-40-as-class-library/">next blog</a>, we'd be exploring on how to consume the data access library in an application. </p>
     </div>
 </div>
 ]]></content>

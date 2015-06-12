@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fsharp | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-06-12T09:55:27+05:30</updated>
+  <updated>2015-06-12T10:12:03+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -30,7 +30,7 @@
 
 <p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below. </p>
 
-<p>{% img center /images/sauve_rest_api/proj_structure.png %}</p>
+<p><img class="center" src="/images/sauve_rest_api/proj_structure.png"></p>
 
 <p>After creating, install the following nuget packages</p>
 
@@ -64,7 +64,7 @@
 </div>
 <p>The is the simplest Suave application that greets all visitors with the string “Hello, Suave!”. The <code>startWebServer</code> is a blocking function that takes a configuration (port number, ssl, etc.,) and starts a http web server in the port 8083 upon calling.</p>
 
-<p>{% img center border /images/sauve_rest_api/hello_suave.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/hello_suave.png"></p>
 
 <p>The Rest Api that we are going to design here is a <code>WebPart</code> which will be replacing this <code>OK</code> webpart.</p>
 
@@ -193,13 +193,13 @@
 
 <p>That’s it! Now we have the HTTP GET Request up and running</p>
 
-<p>{% img center border /images/sauve_rest_api/http_get.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_get.png"></p>
 
-<p>Since we are having no people in our in-memory db, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
+<p>Since we are having no people in our in-memory dictionary, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
 
 <h2 id="http-post">HTTP POST</h2>
 
-<p>HTTP POST uses the same workflow as HTTP GET. To implement this we are going to use the following features in Suave.</p>
+<p>HTTP POST uses the same workflow as HTTP GET. To implement this, we are going to use the following features in Suave.</p>
 
 <ul>
   <li>
@@ -284,7 +284,7 @@
 
 <p>The HTTP POST function in action</p>
 
-<p>{% img center border /images/sauve_rest_api/http_post.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_post.png"></p>
 
 <h2 id="http-put">HTTP PUT</h2>
 
@@ -299,13 +299,13 @@
 </pre></div>
 </div>
 </div>
-<p>We have added a bit of error handling here. This <code>Update</code> function tries to update a resource and returns the updated resource, if the resource exists. If it didn’t it returns <code>None</code></p>
+<p>We have added a bit of error handling here. This <code>Update</code> function tries to update a resource and returns the updated resource if the resource exists. If it didn’t it returns <code>None</code></p>
 
 <p>To support HTTP PUT we will be using the following from suave library</p>
 
 <ul>
   <li>
-    <p>The <code>BAD_REQUEST</code> function takes a string and returns a WebPart representing http status code 400 response with given string as it response.</p>
+    <p>The <code>BAD_REQUEST</code> function takes a string and returns a WebPart representing HTTP status code 400 response with given string as it response.</p>
   </li>
   <li>
     <p>The <code>PUT</code> is a static in-built <code>WebPart</code> which matches the HTTP PUT requests.</p>
@@ -368,11 +368,11 @@
 
 <p><strong>Updating an existing resource</strong></p>
 
-<p>{% img center border /images/sauve_rest_api/http_put.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_put.png"></p>
 
 <p><strong>Updating a non-existing resource</strong></p>
 
-<p>{% img center border /images/sauve_rest_api/http_put_error.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_put_error.png"></p>
 
 <h2 id="http-delete">HTTP DELETE</h2>
 
@@ -390,9 +390,9 @@
 </div>
 <p>HTTP DELETE is little different from the other implemented requests as we will be retrieving the id of the resource to be deleted from the URL.</p>
 
-<p>For example, <strong>DELTE /people/1</strong> will delete a person with the id 1.  </p>
+<p>For example, <strong>DELETE /people/1</strong> will delete a person with the id 1.  </p>
 
-<p>To retrieve the id from the url we will be using the <code>pathScan</code> function in Suave. This function similar to <code>printf</code> which takes a <a href="">PrintfFormat</a> and a function which takes the output of the printfformat and returns the WebPart. You can get more details about it from the <a href="http://theimowski.gitbooks.io/suave-music-store/content/url_parameters.html">suave-music-store book</a>.</p>
+<p>To retrieve the id from the url, we will be using the <code>pathScan</code> function in Suave. This function similar to <code>printf</code> which takes a <a href="">PrintfFormat</a> and a function which takes the output of the printfformat and returns the WebPart. You can get more details about it from the <a href="http://theimowski.gitbooks.io/suave-music-store/content/url_parameters.html">suave-music-store book</a>.</p>
 
 <p>In addition to this, we will be using the following from suave</p>
 
@@ -432,9 +432,9 @@
 </div>
 </div>
 
-<p>One thing to notice here is we have wrapped the existing <code>choose</code> function with an another <code>choose</code> function. It may be little complex to understand but if you understand what each things mean, it is easier. Here the inner <code>choose</code> function represents the handler functions for GET, POST &amp; PUT requests having the url “/{resourceName}” and the <code>DELETE</code> webpart represents the HTTP DELETE handler for the url “/{resourceName}/{resourceId}”.</p>
+<p>One thing to notice here is we have wrapped the existing <code>choose</code> function with an another <code>choose</code> function. It may be little complex to understand but if you understand what each thing mean, it is easier. Here the inner <code>choose</code> function represents the handler functions for GET, POST &amp; PUT requests having the url “/{resourceName}” and the <code>DELETE</code> webpart represents the HTTP DELETE handler for the url “/{resourceName}/{resourceId}”.</p>
 
-<p>The outer <code>choose</code> function choose one of these based on the incoming request.</p>
+<p>The outer <code>choose</code> function chooses one of these based on the incoming request.</p>
 
 <p><strong>Db.fs</strong></p>
 
@@ -457,11 +457,11 @@
 </pre></div>
 </div>
 </div>
-<p>{% img center border /images/sauve_rest_api/http_delete.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_delete.png"></p>
 
 <h2 id="http-get--http-put-by-id">HTTP GET &amp; HTTP PUT by id</h2>
 
-<p>I hope by this time you know how to wire things up in Suave to create an api. Let’s add features for getting and updating resource by id.</p>
+<p>I hope by this time you know how to wire things up in Suave to create an API. Let’s add features for getting and updating resource by id.</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
@@ -528,8 +528,8 @@
 </div>
 </div>
 
-<p>{% img center border /images/sauve_rest_api/http_get_id.png %}<br />
-{% img center border /images/sauve_rest_api/http_put_id.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_get_id.png"><br />
+<img class="center border" src="/images/sauve_rest_api/http_put_id.png"></p>
 
 <h2 id="http-head">HTTP HEAD</h2>
 
@@ -591,15 +591,15 @@
 </pre></div>
 </div>
 </div>
-<p>{% img center border /images/sauve_rest_api/head.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/head.png"></p>
 
-<p>That’s all.. We have successfully implemented a REST api using Suave</p>
+<p>That’s all.. We have successfully implemented a REST API using Suave</p>
 
 <h2 id="extending-with-a-new-resource">Extending with a new Resource</h2>
 
-<p>The beautiful aspect of this functional REST api design we can easily extend it to support other resources. </p>
+<p>The beautiful aspect of this functional REST API design we can easily extend it to support other resources. </p>
 
-<p>Here is the rest api implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
+<p>Here is the rest API implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
@@ -631,23 +631,23 @@
 </div>
 </div>
 
-<p>{% img center border /images/sauve_rest_api/get_album_id.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/get_album_id.png"></p>
 
 <h2 id="conclusion">Conclusion</h2>
 
 <p>In the amazing presentation on <a href="https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin">Functional Programming Design Patterns</a>, Scott Wlaschin had this slide</p>
 
-<p>{% img center border /images/sauve_rest_api/fp_design_patterns_slide.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/fp_design_patterns_slide.png"></p>
 
-<p>I wondered how this can be applied in real-time. By creating a rest api using suave I’ve understood this. </p>
+<p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this. </p>
 
 <blockquote>
-  <p>Just create functions and combine it to build bigger system. </p>
+  <p>Just create functions and combine it to a build bigger system. </p>
 </blockquote>
 
-<p>What a cleaner way to design a system! </p>
+<p>What a nice way to develop a system! </p>
 
-<p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my github repository</a>.</p>
+<p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my GitHub repository</a>.</p>
 ]]></content>
   </entry>
   
@@ -658,7 +658,7 @@
     <id>http://blog.tamizhvendan.in/blog/2015/05/09/grouping-data-into-buckets-using-fsharp</id>
     <content type="html"><![CDATA[<p>Last week I came across an interesting data grouping problem, which groups the data into different buckets based on the given filters as shown in the image below</p>
 
-<p>{% img center /images/fs_data_grouping/bucket_function.png %}</p>
+<p><img class="center" src="/images/fs_data_grouping/bucket_function.png"></p>
 
 <p>In this blog post I am going to share how can we solve this problem very expressively using fsharp.</p>
 
@@ -782,7 +782,7 @@
     <link href="http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number/"/>
     <updated>2015-04-30T11:19:53+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number</id>
-    <content type="html"><![CDATA[<p>In my <a href="{% post_url 2015-04-25-my-takeaways %}">last blog post</a> on what I’ve learned while developing a complete web application in fsharp, I’ve mentioned that we can leverage all the libraries that were written for csharp in fsharp. </p>
+    <content type="html"><![CDATA[<p>In my <a href="/blog/2015/04/25/my-takeaways/">last blog post</a> on what I’ve learned while developing a complete web application in fsharp, I’ve mentioned that we can leverage all the libraries that were written for csharp in fsharp. </p>
 
 <p>Fsharp is a hybrid programming language which supports both functional programming and object oriented programming. Though you can write an application completely in a functional way, when you need to integrate with other .NET languages, you may need to use some OO features.</p>
 
@@ -792,23 +792,23 @@
 
 <p>When you <a href="http://fsharpforfunandprofit.com/posts/classes/">create a class in F#</a>, by default, we can’t explicitly assign a null value to an instance of the class unlike C#. You will get a compiler error when you do it. It’s a great feature and it helps in getting rid of Null Reference exceptions. </p>
 
-<p>{% img center /images/fs_cs_interop/NullError.png %}</p>
+<p><img class="center" src="/images/fs_cs_interop/NullError.png"></p>
 
 <p>But in certain cases, we may need to assign a null value to a class. For example, let us take the <a href="https://msdn.microsoft.com/en-us/library/dn497475(v=vs.108).aspx">Find method</a> in the Asp.Net identity framework. It returns a user with the specified username and password or null if there is a no match. </p>
 
 <p>When you try to use this in a fsharp code, you will be getting a compiler error</p>
 
-<p>{% img center /images/fs_cs_interop/UserNullError.png %}</p>
+<p><img class="center" src="/images/fs_cs_interop/UserNullError.png"></p>
 
 <p>It’s where <a href="https://msdn.microsoft.com/en-us/library/ee353608.aspx?f=255&amp;MSPPError=-2147217396">AllowNullLiteral attribute</a> comes into the picture. If you want to make a class type to allow null literal as one of its value, you need to decorate that class with the AllowNullLiteral attribute.</p>
 
-<p>{% img center /images/fs_cs_interop/AllowNullAttr.png %}</p>
+<p><img class="center" src="/images/fs_cs_interop/AllowNullAttr.png"></p>
 
 <h2 id="climutable-attribute">CLIMutable Attribute</h2>
 
 <p>When a fsharp Record type is compiled, it has been translated to a Common Language Infrastructure (CLI) representation of a typical <a href="http://blog.pluralsight.com/domain-driven-design-in-csharp-implementing-immutable-value-objects">value object declaration</a> in C#.</p>
 
-<p>{% img center border /images/fs_cs_interop/Record_Type_Compilation.png %}</p>
+<p><img class="center border" src="/images/fs_cs_interop/Record_Type_Compilation.png"></p>
 
 <p>The important thing to notice here is there is no default constructor! </p>
 
@@ -818,7 +818,7 @@
 
 <p>The Ppesence of this attribute enables the compiler to generate the default constructor and the property setters when the code gets compiled to IL</p>
 
-<p>{% img center border /images/fs_cs_interop/Record_Type_Attr_Compilation.png %}</p>
+<p><img class="center border" src="/images/fs_cs_interop/Record_Type_Attr_Compilation.png"></p>
 
 <h2 id="using-dynamic-types">Using Dynamic Types</h2>
 
@@ -828,13 +828,13 @@
 
 <p>There is no straightforward way to access the dynamic types in fsharp.</p>
 
-<p>{% img center border /images/fs_cs_interop/ViewBagError.png %}</p>
+<p><img class="center border" src="/images/fs_cs_interop/ViewBagError.png"></p>
 
 <p>If we would like to access dynamic types in fsharp we need to use the <a href="https://www.nuget.org/packages/ImpromptuInterface.FSharp/">ImpromptuInterface.FSharp</a> nuget package.</p>
 
 <p>This package defines the <code>?</code> operator, which provides the implementation for accessing dynamic types.</p>
 
-<p>{% img center border /images/fs_cs_interop/Dynamic_Operator.png %}</p>
+<p><img class="center border" src="/images/fs_cs_interop/Dynamic_Operator.png"></p>
 
 <h2 id="summary">Summary</h2>
 
@@ -848,10 +848,10 @@
     <updated>2015-04-25T15:09:02+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is the concluding part of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is the concluding part of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">like this</a> before, so during this course, I was about to give up but the statement </p>
+<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">like this</a> before, so during this course, I was about to give up but the statement </p>
 
 <p style="text-align:center"> <strong> Finish what you started </strong> </p>
 
@@ -873,15 +873,15 @@
 
 <p>In my perspective F# is a <em>pragmatic functional programming language</em>. In addition to lot of elegant features of the language, it works seamlessly with the existing .NET libraries. This one characteristic I would say is a blessing. You can say, ‘This feature is really cool’, but at the end of the day it should help you to get the job done. F# is not only cool, It can help you too!</p>
 
-<p>In the sample application we have leveraged the <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">Web Api 2</a>, <a href="{% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}">Razor Views</a>, <a href="{% post_url 2015-02-04-step-6-authentication-using-owin-middleware-and-asp-dot-net-identity %}">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code {% emoji smile %})</p>
+<p>In the sample application we have leveraged the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web Api 2</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor Views</a>, <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code <i class='emoji smile'></i>)</p>
 
 <h2 id="using-f-in-your-existing-c-codebase">Using F# in your existing C# Codebase</h2>
 
 <p>As F# is a <a href="http://en.wikipedia.org/wiki/List_of_CLI_languages#CLI_languages">CLI Language</a> it can be added to your existing C# solution. All you need to do just create a new F# project in the solution and this project can work seamlessly with the other projects in the solution. </p>
 
-<p>In the sample application, we have a <a href="{% post_url 2015-01-18-step-5-advanced-search-dsl-using-fparsec %}">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
+<p>In the sample application, we have a <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
 
-<p>In the <a href="{% post_url 2015-01-06-step-4-build-automation-using-fake %}">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
+<p>In the <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
 
 <h2 id="less-is-beautiful">Less is beautiful</h2>
 
@@ -905,7 +905,7 @@
     <updated>2015-04-02T17:07:23+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 10 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 10 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
 <p> </p>
@@ -916,7 +916,7 @@
 
 <h3 id="the-current-state-of-getcontrollerinstance-method">The current state of GetControllerInstance method</h3>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/if_else_tangle.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/if_else_tangle.png"></p>
 
 <p> 
  </p>
@@ -931,27 +931,27 @@
   <li>Returns the created controller instance</li>
 </ul>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/home_controller_creation.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_creation.png"></p>
 
 <p>This can be refactored to a function</p>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/home_controller_function.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_function.png"></p>
 
 <p>The function takes a type and returns an <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option type</a> of <code>IController</code></p>
 
 <p>Let’s do the same for an another controller creation which is little complex than this.</p>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/phone_controller_function.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/phone_controller_function.png"></p>
 
 <p>Here in this case to create an instance of <code>PhoneController</code> we need two additional parameters, Phones sequence and anonymous id of the session.</p>
 
 <p>With these functions in place, the <code>GetControllerInstance</code> method would look like as below</p>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/match_with_some_and_none.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/match_with_some_and_none.png"></p>
 
 <p>Though the functions that have created has reduced the size of the method, it has introduced an another problem (<a href="http://raynos.github.io/presentation/shower/controlflow.htm?full#PyramidOfDoom">Pyramid Of Doom</a>) as indicated by the arrow in the screenshot. </p>
 
-<p>We can get rid of this using a bind function as we did in <a href="{% post_url 2015-03-02-step-7-validation-and-error-handling-using-rop%}">validation step using rop</a>.</p>
+<p>We can get rid of this using a bind function as we did in <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">validation step using rop</a>.</p>
 
 <p>The downside of the <a href="http://fsharpforfunandprofit.com/posts/computation-expressions-bind/">bind function</a> is it’s not generic and we can’t reuse the existing bind function that we have created for doing validation.</p>
 
@@ -984,7 +984,7 @@
 
 <p>Let’s start by creating a partial active pattern for <code>HomeController</code></p>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/home_controller_active_pattern.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_active_pattern.png"></p>
 
 <p>As described in the screenshot, it’s very similar to the <code>createHomeController</code> function and the only difference is the addition of the <em>Banana Clips</em> (yellow ellipses). The <code>_</code> symbol makes the active pattern partial.  </p>
 
@@ -992,13 +992,13 @@
 
 <p>Partial active patterns support defining pattern with multiple parameters. So we can change the <code>createPhoneController</code> function as below</p>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/phone_controller_active_pattern.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/phone_controller_active_pattern.png"></p>
 
 <p>Great! We are almost done with the refactoring. The pending step is leveraging these partial active patterns in the <code>GetControllerInstance</code> method.</p>
 
 <p>It’s where the <strong>beauty of pattern matching</strong> reveals!</p>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/home_controller_pattern_matching.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/home_controller_pattern_matching.png"></p>
 
 <p>What’s happening here? </p>
 
@@ -1011,7 +1011,7 @@
 
 <p>It does the same thing for the Active Patterns with multiple parameters</p>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/phone_controller_pattern_matching.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/phone_controller_pattern_matching.png"></p>
 
 <p>The only thing to note here is, the value against which we are matching is always passed as a last argument.</p>
 
@@ -1019,7 +1019,7 @@
 
 <p>After completing the creation of partial active patterns for all the other controller types in the application, the <code>GetControllerInstance</code> would be shorter like this</p>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/composition_root_final.png %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/composition_root_final.png"></p>
 
 <p> 
  
@@ -1030,7 +1030,7 @@
  
  </p>
 
-<p>{% img border center /images/fsharp_phonecat/step_10/awesomeness.gif %}</p>
+<p><img class="border center" src="/images/fsharp_phonecat/step_10/awesomeness.gif"></p>
 
 <h3 id="summary">Summary</h3>
 

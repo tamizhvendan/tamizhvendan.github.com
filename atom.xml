@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-06-12T01:25:01+05:30</updated>
+  <updated>2015-06-12T10:12:03+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -116,7 +116,7 @@
   </li>
 </ul>
 
-<p>To return a json response we need to change the mimetype to “application/json” of the response. There is an <a href="https://github.com/SuaveIO/suave/blob/master/src/Suave/Json.fs">inbuilt function</a> in suave but that uses .Net’s <code>DataContractJsonSerializer</code>. I feel it’s not ideal to use as we need to write decorator attribute <code>DataMember</code> to serialize the types.</p>
+<p>To return a json response we need to change the mime type to “application/json” of the response. There is an <a href="https://github.com/SuaveIO/suave/blob/master/src/Suave/Json.fs">inbuilt function</a> in suave to do this but it is using .Net’s <code>DataContractJsonSerializer</code>. I feel it’s not ideal to use as we need to write decorator attribute <code>DataMember</code> to serialize the types.</p>
 
 <p>As <a href="http://james.newtonking.com/archive/2014/04/30/json-net-6-0-release-3-serialize-all-the-f">Newtonsoft.Json</a> provides serialization support for fsharp types without any need of decorating attributes, we will be using them there.</p>
 
@@ -151,7 +151,7 @@
 </span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>The one cavet here is the path resoultion of Suave library. Based on the webpart given, the <code>startWebServer</code> function configures it’s internal routing table during the application startup and it is static after the application has been started. So, the <code>getAll</code> webpart will be created only during application startup. To avoid this we need to wrap the <code>getAll</code> webpart with a <code>warbler</code> function which ensures that it is called everytime when the incoming request matches the resource path.</p>
+<p>The one caveat here is the path resolution of Suave library. Based on the webpart given, the <code>startWebServer</code> function configures it’s internal routing table during the application startup and it is static after the application has been started. So, the <code>getAll</code> webpart will be created only during application startup. To avoid this, we need to wrap the <code>getAll</code> webpart with a <code>warbler</code> function which ensures that it is called only when the incoming request matches the given resource path.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -193,7 +193,7 @@
 </span><span class="line">    <span class="n">peopleStorage</span><span class="o">.</span><span class="n">Values</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Since it’s sample app, I am just using a in-memory dictionary to store the details of people. You can easily replace this with any datasource. The <code>Person</code> type represents the <code>People</code> resource of the rest api.</p>
+<p>Since it’s a sample application, I am just using an in memory dictionary to store the details of people. You can easily replace this with any data source. The <code>Person</code> type represents the <code>People</code> resource of the rest api.</p>
 
 <p>The next step is wiring the Restful web part with the application. Open <code>App.fs</code> and update it as below</p>
 
@@ -227,11 +227,11 @@
 
 <p><img class="center border" src="http://blog.tamizhvendan.in/images/sauve_rest_api/http_get.png" /></p>
 
-<p>Since we are having no people in our in-memory db, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
+<p>Since we are having no people in our in-memory dictionary, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
 
 <h2 id="http-post">HTTP POST</h2>
 
-<p>HTTP POST uses the same workflow as HTTP GET. To implement this we are going to use the following features in Suave.</p>
+<p>HTTP POST uses the same workflow as HTTP GET. To implement this, we are going to use the following features in Suave.</p>
 
 <ul>
   <li>
@@ -351,13 +351,13 @@
 </span><span class="line">  <span class="n">Update</span> <span class="o">:</span> <span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">a</span> <span class="n">option</span>
 </span><span class="line"><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>We have added a bit of error handling here. This <code>Update</code> function tries to update a resource and returns the updated resource, if the resource exists. If it didn’t it returns <code>None</code></p>
+<p>We have added a bit of error handling here. This <code>Update</code> function tries to update a resource and returns the updated resource if the resource exists. If it didn’t it returns <code>None</code></p>
 
 <p>To support HTTP PUT we will be using the following from suave library</p>
 
 <ul>
   <li>
-    <p>The <code>BAD_REQUEST</code> function takes a string and returns a WebPart representing http status code 400 response with given string as it response.</p>
+    <p>The <code>BAD_REQUEST</code> function takes a string and returns a WebPart representing HTTP status code 400 response with given string as it response.</p>
   </li>
   <li>
     <p>The <code>PUT</code> is a static in-built <code>WebPart</code> which matches the HTTP PUT requests.</p>
@@ -473,9 +473,9 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>HTTP DELETE is little different from the other implemented requests as we will be retrieving the id of the resource to be deleted from the URL.</p>
 
-<p>For example, <strong>DELTE /people/1</strong> will delete a person with the id 1.  </p>
+<p>For example, <strong>DELETE /people/1</strong> will delete a person with the id 1.  </p>
 
-<p>To retrieve the id from the url we will be using the <code>pathScan</code> function in Suave. This function similar to <code>printf</code> which takes a <a href="">PrintfFormat</a> and a function which takes the output of the printfformat and returns the WebPart. You can get more details about it from the <a href="http://theimowski.gitbooks.io/suave-music-store/content/url_parameters.html">suave-music-store book</a>.</p>
+<p>To retrieve the id from the url, we will be using the <code>pathScan</code> function in Suave. This function similar to <code>printf</code> which takes a <a href="">PrintfFormat</a> and a function which takes the output of the printfformat and returns the WebPart. You can get more details about it from the <a href="http://theimowski.gitbooks.io/suave-music-store/content/url_parameters.html">suave-music-store book</a>.</p>
 
 <p>In addition to this, we will be using the following from suave</p>
 
@@ -538,9 +538,9 @@
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>One thing to notice here is we have wrapped the existing <code>choose</code> function with an another <code>choose</code> function. It may be little complex to understand but if you understand what each things mean, it is easier. Here the inner <code>choose</code> function represents the handler functions for GET, POST &amp; PUT requests having the url “/{resourceName}” and the <code>DELETE</code> webpart represents the HTTP DELETE handler for the url “/{resourceName}/{resourceId}”.</p>
+<p>One thing to notice here is we have wrapped the existing <code>choose</code> function with an another <code>choose</code> function. It may be little complex to understand but if you understand what each thing mean, it is easier. Here the inner <code>choose</code> function represents the handler functions for GET, POST &amp; PUT requests having the url “/{resourceName}” and the <code>DELETE</code> webpart represents the HTTP DELETE handler for the url “/{resourceName}/{resourceId}”.</p>
 
-<p>The outer <code>choose</code> function choose one of these based on the incoming request.</p>
+<p>The outer <code>choose</code> function chooses one of these based on the incoming request.</p>
 
 <p><strong>Db.fs</strong></p>
 
@@ -569,7 +569,7 @@
 
 <h2 id="http-get--http-put-by-id">HTTP GET &amp; HTTP PUT by id</h2>
 
-<p>I hope by this time you know how to wire things up in Suave to create an api. Let’s add features for getting and updating resource by id.</p>
+<p>I hope by this time you know how to wire things up in Suave to create an API. Let’s add features for getting and updating resource by id.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -760,13 +760,13 @@
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p><img class="center border" src="http://blog.tamizhvendan.in/images/sauve_rest_api/head.png" /></p>
 
-<p>That’s all.. We have successfully implemented a REST api using Suave</p>
+<p>That’s all.. We have successfully implemented a REST API using Suave</p>
 
 <h2 id="extending-with-a-new-resource">Extending with a new Resource</h2>
 
-<p>The beautiful aspect of this functional REST api design we can easily extend it to support other resources. </p>
+<p>The beautiful aspect of this functional REST API design we can easily extend it to support other resources. </p>
 
-<p>Here is the rest api implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
+<p>Here is the rest API implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -828,15 +828,15 @@
 
 <p><img class="center border" src="http://blog.tamizhvendan.in/images/sauve_rest_api/fp_design_patterns_slide.png" /></p>
 
-<p>I wondered how this can be applied in real-time. By creating a rest api using suave I’ve understood this. </p>
+<p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this. </p>
 
 <blockquote>
-  <p>Just create functions and combine it to build bigger system. </p>
+  <p>Just create functions and combine it to a build bigger system. </p>
 </blockquote>
 
-<p>What a cleaner way to design a system! </p>
+<p>What a nice way to develop a system! </p>
 
-<p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my github repository</a>.</p>
+<p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my GitHub repository</a>.</p>
 ]]></content>
   </entry>
   

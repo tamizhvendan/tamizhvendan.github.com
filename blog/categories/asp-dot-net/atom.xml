@@ -4,7 +4,7 @@
   <title><![CDATA[Category: asp.net | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/asp-dot-net/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-06-12T09:55:27+05:30</updated>
+  <updated>2015-06-12T10:12:03+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -34,18 +34,50 @@
             <li>Call the MasterPage method from content page.</li>
         </ul>
         <h3>1. Create an updatepanel in masterpage which holds the website header.</h3>
-        {% gist 6f81102e5150de2491bb updatePanel.aspx %}	
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.aspx'></script>
+<noscript><pre><code>&lt;div class=&quot;title&quot;&gt;
+    &lt;h1&gt;
+        &lt;asp:UpdatePanel ID=&quot;UpdatePanelWebsiteHeader&quot; runat=&quot;server&quot;ChildrenAsTriggers=&quot;false&quot; UpdateMode=&quot;Conditional&quot;&gt;
+            &lt;ContentTemplate&gt;
+                &lt;asp:Label ID=&quot;lblWebsiteHeader&quot; runat=&quot;server&quot; Text=&quot;Label&quot;&gt;My ASP.NET Application&lt;/asp:Label&gt;
+            &lt;/ContentTemplate&gt;
+        &lt;/asp:UpdatePanel&gt;                    
+    &lt;/h1&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+	
             <p>Make Sure the two properties of UpdatePanel <strong>"ChildrenAsTriggers"</strong> is set to false and <strong>"UpdateMode"</strong> is set to conditional, to prevent the unneccessary updation of updatepanel from its child controls.</p>
 
         <h3>2. Create a method in MasterPage codebehind which changes the website header.</h3>
-        {% gist 6f81102e5150de2491bb updatePanel.cs %}
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.cs'></script>
+<noscript><pre><code>public void ChangeWebsiteHeader(string newHeader)
+{
+    lblWebsiteHeader.Text = newHeader;
+    //Calling the Update method of UpdatePanel will trigger the Updatepanel
+    UpdatePanelWebsiteHeader.Update();
+}</code></pre></noscript></div>
+
 
             <h3>3. Create the content page with master page reference and an update panel which holds controls to triggers the header change.</h3>
-        {% gist 6f81102e5150de2491bb masterPage.aspx %}
-            {% gist 6f81102e5150de2491bb changeHandler.cs %}
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=masterPage.aspx'></script>
+<noscript><pre><code>&lt;%@ Page Title=&quot;Home Page&quot; Language=&quot;C#&quot; MasterPageFile=&quot;~/Site.master&quot; AutoEventWireup=&quot;true&quot;CodeFile=&quot;Default.aspx.cs&quot; Inherits=&quot;_Default&quot; %&gt;
+&lt;%@ MasterType VirtualPath=&quot;~/Site.master&quot; %&gt;</code></pre></noscript></div>
+
+            <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=changeHandler.cs'></script>
+<noscript><pre><code>protected void btnChangeHeader_Click(object sender, EventArgs e)
+{   
+    Master.ChangeWebsiteHeader(Server.HtmlEncode(txtHeader.Text));
+}</code></pre></noscript></div>
+
 
             <h3>4. Call the MasterPage method from content page.</h3>
-        {% gist 6f81102e5150de2491bb contentTemplate.aspx %}
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=contentTemplate.aspx'></script>
+<noscript><pre><code>&lt;asp:UpdatePanel ID=&quot;UpdatePanelChangeHeader&quot; runat=&quot;server&quot; UpdateMode=&quot;Conditional&quot;&gt;
+    &lt;ContentTemplate&gt;
+        &lt;p&gt;Enter the Website Header: &lt;asp:TextBox ID=&quot;txtHeader&quot; runat=&quot;server&quot; /&gt; &lt;/p&gt;
+        &lt;asp:Button ID=&quot;btnChangeHeader&quot; runat=&quot;server&quot; Text=&quot;Change Header&quot; onclick=&quot;btnChangeHeader_Click&quot; /&gt;
+    &lt;/ContentTemplate&gt;
+&lt;/asp:UpdatePanel&gt;</code></pre></noscript></div>
+
 
             <h3>Summary:</h3>
         <p>In this blog we have seen how can we update the master page from the content page using ajax update panel. You can download the source code from <a href="http://www.box.net/shared/gpa9dlo668">here</a></p>
