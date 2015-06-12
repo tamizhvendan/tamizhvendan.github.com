@@ -4,7 +4,7 @@
   <title><![CDATA[Category: suave | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/suave/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-06-12T10:12:03+05:30</updated>
+  <updated>2015-06-12T10:25:30+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -642,7 +642,7 @@
 <p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this. </p>
 
 <blockquote>
-  <p>Just create functions and combine it to a build bigger system. </p>
+  <p>Just create functions and combine it to build a bigger system. </p>
 </blockquote>
 
 <p>What a nice way to develop a system! </p>
