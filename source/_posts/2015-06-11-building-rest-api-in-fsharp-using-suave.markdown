@@ -8,15 +8,17 @@ categories:
   - suave
 ---
 
-In the last one month lot of great things happening in fsharp world around [suave](suave.io), a simple web development fsharp library. Scott Hanselman [blogged](http://www.hanselman.com/blog/RunningSuaveioAndFWithFAKEInAzureWebAppsWithGitAndTheDeployButton.aspx) about it, [Tomas Petricek](https://twitter.com/tomaspetricek) kickstarted an awesome [hands on session](https://skillsmatter.com/skillscasts/6381-suave-hands-on-with-tomas-petricek) and followed up with a [great talk](http://channel9.msdn.com/Blogs/Seth-Juarez/Deploying-an-F-Web-Application-with-Suave) on Channel 9. Last but not the least, [Tomasz Heimowski](https://twitter.com/theimowski) authored a clear and crisp [book on Suave](http://theimowski.gitbooks.io/suave-music-store/content/)
+In the last one month lot of great things happening in fsharp world around [suave](suave.io), a simple web development fsharp library. Scott Hanselman [blogged](http://www.hanselman.com/blog/RunningSuaveioAndFWithFAKEInAzureWebAppsWithGitAndTheDeployButton.aspx) about it, [Tomas Petricek](https://twitter.com/tomaspetricek) kick-started an awesome [hands on session](https://skillsmatter.com/skillscasts/6381-suave-hands-on-with-tomas-petricek) and followed up with a [great talk](http://channel9.msdn.com/Blogs/Seth-Juarez/Deploying-an-F-Web-Application-with-Suave) on Channel 9. Last but not the least, [Tomasz Heimowski](https://twitter.com/theimowski) authored a clear and crisp [book on Suave](http://theimowski.gitbooks.io/suave-music-store/content/)
 
-I got super excited after learning suave from these resources and started playing with it. One of the great thing about the fsharp community is, if you want to improve any existing library all you need is just a pull request with the feature you would like to have. Yes it as simple as that! It [worked](https://github.com/SuaveIO/suave/pull/259) for me and I am sure for you too if you wish.
+I got super excited after learning suave from these resources and started playing with it. One of the great things about the fsharp community is, if you want to improve any existing library all you need is just send a pull request with the feature you would like to have. Yes, it's as simple as that! It [worked](https://github.com/SuaveIO/suave/pull/259) for me and I am sure for you too, if you wish.
 
-In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the [StrongLoop](http://docs.strongloop.com/display/public/LB/Use+API+Explorer), a node.js REST api library. To keep things simple, we are not going to see validations and error handling as part of this post and I will be covering that in an another post. Let's get started
+In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the [StrongLoop](http://docs.strongloop.com/display/public/LB/Use+API+Explorer), a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post. 
+
+Let's get started
 
 ## Setting up the project
 
-Create a new "F# Console Application" project in Visual Studio with the name ```SuaveRestApi``` and rename ```Program.fs``` to ```App.fs```. This file is going to contain the application bootstrap logic. Add two more files ```Db.fs``` and ```RestFul.fs``` which would contain database access and restful api implementation code respectively. Ensure these file are in the order as shown in below. 
+Create a new "F# Console Application" project in Visual Studio with the name ```SuaveRestApi``` and rename ```Program.fs``` to ```App.fs```. This file is going to contain the application bootstrap logic. Add two more files ```Db.fs``` and ```RestFul.fs``` which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below. 
 
 {% img center /images/sauve_rest_api/proj_structure.png %}
 
@@ -27,11 +29,11 @@ After creating, install the following nuget packages
 
 ## WebPart
 
-The basic build block of Suave is [WebPart](http://theimowski.gitbooks.io/suave-music-store/content/webpart.html). It is an alias of function type ```HttpContext -> Async<HttpContext option>```. This simple function type actually model whole set of Request and Response model of Http protocol. From the Tomasz Heimowski's book here is the definition of ```WebPart```
+The basic building block of Suave is [WebPart](http://theimowski.gitbooks.io/suave-music-store/content/webpart.html). It is an alias of function type ```HttpContext -> Async<HttpContext option>```. This simple function type actually model whole set of Request and Response model of Http protocol. From the Tomasz Heimowski's book here is the definition of the ```WebPart```
 
 > Based on the http context, we give you a promise (async) of optional resulting http context, where the resulting context is likely to have its response set with regards to the logic of the WebPart itself
 
-A ```WebPart``` represents a http request and response. Since it is a function, we can combine multiple ```WebPart```s together and build a complex web application which handles multiple requests and responses. This is the beauty of functional programming. You just think in terms of one function at a time and make it work. Once you are done, all you need to do is just gluing them together. Solving problems using this functional abstraction will make things much easier and help you to write less code compare to it's Object Oriented version.
+A ```WebPart``` represents a http request and response. Since it is a function, we can combine multiple ```WebPart```s together and build a complex web application which handles multiple requests and responses. This is the beauty of functional programming. You just think in terms of one function at a time and make it work. Once you are done, all you need to do is just gluing them together. Solving problems using this functional abstraction will make things much easier and help you to write less code compare to its Object Oriented version.
 
 
 The ```OK``` webpart is a very simple one in Suave which takes a ```string``` and returns a http response with the status code ```200``` and the given string. Add the following code in the ```App.fs``` and run the console app.
@@ -58,7 +60,6 @@ Let's begin by defining a record type representing a *restful* resource. Open ``
 
 ```fsharp
 namespace SuaveRestApi.Rest
-
 [<AutoOpen>]
 module RestFul =  
   type RestResource<'a> = {
@@ -66,9 +67,9 @@ module RestFul =
   }
 ```
 
-This ```RestResource``` is a container representing all the operations on a restful generic resource. The rest api webpart is going to use this.
+This ```RestResource``` is a container representing all the operations on a restful  resource. This record type abstracts the actual resource from the rest api web part. This enables the reuse of rest api web part across multiple resources.
 
-Let's create a function in ```RestFul.fs``` which takes a resource name and this ```RestResource``` and creates a web part
+Let's create a function in ```RestFul.fs``` which takes a resource name and this ```RestResource``` and returns a web part representing the restful api.
 
 ```fsharp
 // string -> RestResource<'a> -> WebPart
@@ -76,15 +77,15 @@ let rest resourceName resource =
   // TODO
 ```
 
-Let's have a look at some of the building blocks of suave library before implementing the ```rest``` function.
+We are going to use the following building blocks of the suave library to implement the ```rest``` function.
 
 * The ```path``` is a function of type: ```string -> WebPart```. It means that if we give it a string it will return ```WebPart```. Under the hood, the function looks at the incoming request and returns ```Some``` if the paths match, and ```None``` otherwise. 
 
-* The ```GET``` is a static in-built ```WebPart``` which matches the http GET requests.
+* The ```GET``` is a static inbuilt ```WebPart``` which matches the HTTP GET requests.
 
 * The ```>>=``` operator composes two WebParts into one by first evaluating the ```WebPart``` on the left, and applying the WebPart on the right only if the first one returned ```Some```.
 
-To return a json response we need to change the mimetype to "application/json" of the response. There is an [inbuilt function](https://github.com/SuaveIO/suave/blob/master/src/Suave/Json.fs) in suave but that uses .Net's ```DataContractJsonSerializer```. I feel it's not ideal to use as we need to write decorator attribute ```DataMember``` to serialize the types.
+To return a json response we need to change the mime type to "application/json" of the response. There is an [inbuilt function](https://github.com/SuaveIO/suave/blob/master/src/Suave/Json.fs) in suave to do this but it is using .Net's ```DataContractJsonSerializer```. I feel it's not ideal to use as we need to write decorator attribute ```DataMember``` to serialize the types.
 
 As [Newtonsoft.Json](http://james.newtonking.com/archive/2014/04/30/json-net-6-0-release-3-serialize-all-the-f) provides serialization support for fsharp types without any need of decorating attributes, we will be using them there.
 
@@ -100,7 +101,7 @@ let JSON v =
 ```
 As the signature indicates ```JSON``` function takes a generic type, serialize it using *Newtonsoft.Json* and return the json response. ```Writers.setMimeType``` takes a mime type and a web part returns the web part with the given mime type.
 
-Now we have everything to implement the Http GET request
+Now we have everything to implement the HTTP GET request
 
 ```fsharp
 let rest resourceName resource =
@@ -109,7 +110,7 @@ let rest resourceName resource =
   path resourcePath >>= GET >>= getAll
 ```
 
-The one cavet here is the path resoultion of Suave library. Based on the webpart given, the ```startWebServer``` function configures it's internal routing table during the application startup and it is static after the application has been started. So, the ```getAll``` webpart will be created only during application startup. To avoid this we need to wrap the ```getAll``` webpart with a ```warbler``` function which ensures that it is called everytime when the incoming request matches the resource path.
+The one caveat here is the path resolution of Suave library. Based on the webpart given, the ```startWebServer``` function configures it's internal routing table during the application startup and it is static after the application has been started. So, the ```getAll``` webpart will be created only during application startup. To avoid this, we need to wrap the ```getAll``` webpart with a ```warbler``` function which ensures that it is called only when the incoming request matches the given resource path.
 
 ```fsharp
 let rest resourceName resource =
@@ -137,7 +138,7 @@ module Db =
     peopleStorage.Values |> Seq.map (fun p -> p)
 ```
 
-Since it's sample app, I am just using a in-memory dictionary to store the details of people. You can easily replace this any datasource. The ```Person``` type represents the details that we are interested in.
+Since it's a sample application, I am just using an in memory dictionary to store the details of people. You can easily replace this with any data source. The ```Person``` type represents the ```People``` resource of the rest api.
 
 The next step is wiring the Restful web part with the application. Open ```App.fs``` and update it as below
 
@@ -156,21 +157,21 @@ let main argv =
   0
 ```
 
-That's it! Now we have the Http Get Request up and running
+That's it! Now we have the HTTP GET Request up and running
 
 {% img center border /images/sauve_rest_api/http_get.png %}
 
-Since we are having no people in our in-memory db, we are getting an empty result here. Let's add a new person using Http POST
+Since we are having no people in our in-memory dictionary, we are getting an empty result here. Let's add a new person using HTTP POST
 
 ## HTTP POST
 
-Http POST uses the same workflow as Http GET. To implement this we are going to use the following features in Suave.
+HTTP POST uses the same workflow as HTTP GET. To implement this, we are going to use the following features in Suave.
 
-* The ```choose``` function takes a list of WebParts, and chooses the first one that applies (returns ```Some```), or if none WebPart applies, then choose will also return ```None```
+* The ```choose``` function takes a list of WebParts, and chooses the first one that applies (i.e which returns ```Some```), or if none WebPart applies, then choose will  return ```None```
 
-* The ```request``` function takes as parameter a function of type ```HttpRequest -> WebPart``` and returns the ```WebPart```. We will use this ```HttpRequest``` to get the POST content.
+* The ```request``` function takes a function of type ```HttpRequest -> WebPart``` and returns the ```WebPart```. We will use this ```HttpRequest``` to get the POST content.
 
-* The ```POST``` is a static in-built ```WebPart``` which matches the http POST requests.
+* The ```POST``` is a static in-built ```WebPart``` which matches the HTTP POST requests.
 
 The first step in implementing POST request is updating the ```RestResource```.
 
@@ -193,7 +194,7 @@ let getResourceFromReq<'a> (req : HttpRequest) =
   req.rawForm |> getString |> fromJson<'a>
 ```
 
-The ```rawForm``` field in the ```HttpRequest``` has the POST content as byte array, we are just deserializing to a fsharp type.
+The ```rawForm``` field in the ```HttpRequest``` has the POST content as a byte array, we are just deserializing to a fsharp type.
 
 The next step is updating the ```rest``` function to support POST
 
@@ -231,13 +232,13 @@ let personWebPart = rest "people" {
 }
 ```
 
-The http POST function in action
+The HTTP POST function in action
 
 {% img center border /images/sauve_rest_api/http_post.png %}
 
 ## HTTP PUT
 
-As we did for GET, POST we will be starting by updating the ```RestResource```
+As we did for GET & POST we will be starting by updating the ```RestResource```
 
 ```fsharp
 type RestResource<'a> = {
@@ -246,13 +247,13 @@ type RestResource<'a> = {
   Update : 'a -> 'a option       
 }
 ```
-We have added a bit of error handling here. This ```Update``` function tries to update a resource and returns the updated resource, if the resource exists. If it didn't it returns ```None```
+We have added a bit of error handling here. This ```Update``` function tries to update a resource and returns the updated resource if the resource exists. If it didn't it returns ```None```
 
-To support Http PUT we will be using the following from suave library
+To support HTTP PUT we will be using the following from suave library
 
-* The ```BAD_REQUEST``` function takes a string and returns a WebPart representing http status code 400 response with given string as it response.
+* The ```BAD_REQUEST``` function takes a string and returns a WebPart representing HTTP status code 400 response with given string as it response.
 
-* The ```PUT``` is a static in-built ```WebPart``` which matches the http PUT requests.
+* The ```PUT``` is a static in-built ```WebPart``` which matches the HTTP PUT requests.
 
 ```fsharp
 let rest resourceName resource =
@@ -310,9 +311,10 @@ let personWebPart = rest "people" {
 
 {% img center border /images/sauve_rest_api/http_put_error.png %}
 
-## HTTP DELTE
+## HTTP DELETE
 
-The first step is updating the ```RestResource```
+Let's begin by updating the ```RestResource```
+
 ```fsharp
 type RestResource<'a> = {
   GetAll : unit -> 'a seq
@@ -321,16 +323,16 @@ type RestResource<'a> = {
   Delete : int -> unit    
 }
 ```
-Http DELETE is little different from GET/POST/PUT as we will be retrieving the id of the resource to be delted from the URL.
+HTTP DELETE is little different from the other implemented requests as we will be retrieving the id of the resource to be deleted from the URL.
 
-For example, **DELTE /people/1** will delete a person with the id 1.  
+For example, **DELETE /people/1** will delete a person with the id 1.  
 
-To retrieve the id from the url we will be using the ```pathScan``` function in Suave. This function similar to ```printf``` which takes a [PrintfFormat]() and a function which takes the output of the printfformat and returns the WebPart. You can get more details about it from the [suave-music-store book](http://theimowski.gitbooks.io/suave-music-store/content/url_parameters.html).
+To retrieve the id from the url, we will be using the ```pathScan``` function in Suave. This function similar to ```printf``` which takes a [PrintfFormat]() and a function which takes the output of the printfformat and returns the WebPart. You can get more details about it from the [suave-music-store book](http://theimowski.gitbooks.io/suave-music-store/content/url_parameters.html).
 
-In addition we will be using the following from suave
+In addition to this, we will be using the following from suave
 
-* The ```NO_CONTENT``` is a static ```WebPart``` represents the Http Response with the status code 204
-* The ```DELETE``` matches the http request of type DELETE
+* The ```NO_CONTENT``` is a static ```WebPart``` represents the HTTP Response with the status code 204
+* The ```DELETE``` matches the HTTP request of type DELETE
 
 ```fsharp
 let rest resourceName resource =
@@ -361,9 +363,9 @@ let rest resourceName resource =
   ]
 ```
 
-One thing to notice here is we hae wrapped the existing ```choose``` function with an another ```choose``` function. It may be little complex to understand but if you understand what each things mean, it is easier. Here the inner ```choose``` function represents the handler functions for GET, POST & PUT requests having the url "/{resourceName}" and the outer one represents the handler for the url "/{resourceName}/{resourceId}".
+One thing to notice here is we have wrapped the existing ```choose``` function with an another ```choose``` function. It may be little complex to understand but if you understand what each thing mean, it is easier. Here the inner ```choose``` function represents the handler functions for GET, POST & PUT requests having the url "/{resourceName}" and the ```DELETE``` webpart represents the HTTP DELETE handler for the url "/{resourceName}/{resourceId}".
 
-The outer ```choose``` function choose one of these based on the incoming request.
+The outer ```choose``` function chooses one of these based on the incoming request.
 
 **Db.fs**
 
@@ -386,7 +388,7 @@ let personWebPart = rest "people" {
 
 ## HTTP GET & HTTP PUT by id
 
-I hope by this time you know how to wire things up in Suave to create an api. Let's add features for getting and updating resource by id.
+I hope by this time you know how to wire things up in Suave to create an API. Let's add features for getting and updating resource by id.
 
 ```fsharp
 type RestResource<'a> = {
@@ -450,7 +452,7 @@ let personWebPart = rest "people" {
 
 ## HTTP HEAD
 
-Http HEAD request checks whether the request with the given id is there or not. It's implementation is straight forward. 
+Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward. 
 
 ```fsharp
 type RestResource<'a> = {
@@ -504,11 +506,13 @@ let personWebPart = rest "people" {
 ```
 {% img center border /images/sauve_rest_api/head.png %}
 
-That's all.. We have successfully implemented a REST api using Suave
+That's all.. We have successfully implemented a REST API using Suave
 
 ## Extending with a new Resource
 
-The beautiful aspect of this functional REST api design we can easily extend it to support other resources. 
+The beautiful aspect of this functional REST API design we can easily extend it to support other resources. 
+
+Here is the rest API implementation of the ```albums``` resource in the [music-store](http://theimowski.gitbooks.io/suave-music-store/content/database.html) application. You can find the source code of MusicStoreDb [here](https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs).
 
 ```fsharp
 [<EntryPoint>]
@@ -544,12 +548,12 @@ let main argv =
 
 In the amazing presentation on [Functional Programming Design Patterns](https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin), Scott Wlaschin had this slide
 
-{% img center border https://pbs.twimg.com/media/B2_4Ko6CEAALUt_.png %}
+{% img center border /images/sauve_rest_api/fp_design_patterns_slide.png %}
 
-I wondered how this can be applied in real-time. By creating a rest api using suave I've understood this. 
+I wondered how this can be applied in real-time. By creating a rest API using suave I've understood this. 
 
-> Just create functions and combine it to build bigger system. 
+> Just create functions and combine it to a build bigger system. 
 
-What a cleaner way to design a system! 
+What a nice way to develop a system! 
 
-You can get the source code associated with this blog post in [my github repository](https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi).
+You can get the source code associated with this blog post in [my GitHub repository](https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi).
