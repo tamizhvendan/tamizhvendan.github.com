@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Jul 15th, 2015 fsharp, suave Comments Securing APIs in Suave Using JSON Web Token In the last blog post, we have seen how we can combine small &hellip;">
+	<meta name="description" content="Jul 23rd, 2015 fsharp, suave Comments Creating Mock API Server in Fsharp Using Suave As part of the current assignment in my day job, I am working &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -156,7 +156,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.33333333333333%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 153.33333333333334%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.33333333333333%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 113.33333333333333%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 113.33333333333333%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 110.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.33333333333333%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.33333333333333%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 116.66666666666667%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.33333333333333%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.33333333333333%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 123.33333333333333%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.33333333333333%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.66666666666667%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.66666666666667%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.33333333333333%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.33333333333333%'>owin</a> <a href='/blog/categories/programming' style='font-size: 120.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.33333333333333%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.33333333333333%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.33333333333333%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 106.66666666666667%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 116.66666666666667%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 110.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.15789473684211%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 150.5263157894737%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.15789473684211%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.63157894736842%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 112.63157894736842%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.47368421052632%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.15789473684211%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.15789473684211%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.78947368421052%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.15789473684211%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.15789473684211%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.10526315789474%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.15789473684211%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 109.47368421052632%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.3157894736842%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.3157894736842%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.15789473684211%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.15789473684211%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.94736842105263%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.15789473684211%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.15789473684211%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.15789473684211%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 109.47368421052632%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.78947368421052%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.47368421052632%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +169,126 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-23T16:56:20+05:30" data-updated="true" itemprop="datePublished">Jul 23<sup>rd</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/suave/'>suave</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/" itemprop="url">Creating Mock API Server in Fsharp Using Suave</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>As part of the current assignment in my day job, I am working in a web application which integrates with an another web application via web APIs. The backend calls the exposed web APIs and does some business logic. Due to some technical limitations, we are not able to setup a development environment of the Web APIs so we have decided to create a mock API server during the development and replace it with the real one in the production.</p>
+
+<p>Since it’s just a mock API server, we don’t want to spend much time on it. Thanks to the awesome light-weight fsharp library <a href="http://suave.io/">Suave</a> we have made it in just 15 minutes! </p>
+
+<p>In this blog post, I will be sharing how we have achieved it. As a sample, we will mock the <a href="https://developer.GitHub.com/v3/">GitHub API</a>.</p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>Create a new fsharp console application project “GitHubMockApiServer” in Visual Studio and install the <a href="https://www.nuget.org/packages/Suave/">suave</a> nuget package.</p>
+
+<p>To keep it short we are going to mock only two GitHub APIs</p>
+
+<ul>
+  <li><a href="https://developer.GitHub.com/v3/users/#get-a-single-user">Get a single user</a> - <strong>/users/:username</strong> </li>
+  <li><a href="https://developer.GitHub.com/v3/repos/#list-user-repositories">List user repositories</a> - <strong>/users/:username/repos</strong></li>
+</ul>
+
+<h2 id="creating-the-mock-apis">Creating the mock APIs</h2>
+
+<p>The first step is getting the sample response for these APIs and save them in separate JSON files. In this example, I’ve created these using my GitHub username and added to the project as below.</p>
+
+<p><img class="center" src="/images/suave_mock_api/project.png" /></p>
+
+<p>After adding, change the “Copy to Output Directory” property of the both the files to “Copy always”</p>
+
+<p>Open the <strong>Program.fs</strong> and update it as follows</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">System.IO</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Successful</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Applicatives</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Web</span>
+</span><span class="line">
+</span><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">json</span> <span class="n">fileName</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">content</span> <span class="o">=</span> <span class="nn">File</span><span class="p">.</span><span class="n">ReadAllText</span> <span class="n">fileName</span>
+</span><span class="line">    <span class="n">content</span><span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="o">,</span> <span class="s">&quot;&quot;</span><span class="o">).</span><span class="n">Replace</span><span class="o">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">,</span><span class="s">&quot;&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">OK</span> <span class="o">&gt;&gt;=</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/users/%s&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;User.json&quot;</span> <span class="o">|&gt;</span> <span class="n">json</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">repos</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/users/%s/repos&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;Repos.json&quot;</span> <span class="o">|&gt;</span> <span class="n">json</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">mockApi</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">repos</span><span class="o">;</span><span class="n">user</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">mockApi</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Short and Sweet! Now you can hit this mock GitHub APIs without worrying about its <a href="https://developer.GitHub.com/v3/#rate-limiting">rate limits</a></p>
+
+<p>The <code>json</code> function reads the sample JSON file, then removes the line breaks and return the HTTP 200 response with the content type as  “application/json”</p>
+
+<p>The nice DSL in suave enabled us to configure the routes without giving much works to our hands :-)  </p>
+
+<h2 id="mock-apis-in-action">Mock APIs in action</h2>
+
+<p><img class="border center" src="/images/suave_mock_api/user_api.png" /></p>
+
+<p><img class="border center" src="/images/suave_mock_api/repos_api.png" /></p>
+
+<h2 id="summary">Summary</h2>
+
+<p>This work is inspired by Scott Wlaschin’s blog post series on <a href="http://fsharpforfunandprofit.com/series/low-risk-ways-to-use-fsharp-at-work.html">Low-risk ways to use F# at work</a>. I am glad to find one more low-risk way to use F# at work and I believe it would help you in future. You can find the sample code in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/GithubMockApiServer">blog-samples GitHub repository</a>.</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1998,174 +2118,6 @@ To make it independent of the host, we have externalized the hosting functionali
 <p>What a nice way to develop a system! </p>
 
 <p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my GitHub repository</a>.</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-05-09T16:19:06+05:30" data-updated="true" itemprop="datePublished">May 9<sup>th</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/05/09/grouping-data-into-buckets-using-fsharp/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/05/09/grouping-data-into-buckets-using-fsharp/" itemprop="url">Grouping Data Into Buckets Using Fsharp</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>Last week I came across an interesting data grouping problem, which groups the data into different buckets based on the given filters as shown in the image below</p>
-
-<p><img class="center" src="/images/fs_data_grouping/bucket_function.png" /></p>
-
-<p>In this blog post I am going to share how can we solve this problem very expressively using fsharp.</p>
-
-<h2 id="parsing-filters-and-translate-to-an-abstract-syntax-tree-ast">Parsing filters and translate to an Abstract Syntax Tree (AST)</h2>
-
-<p>The first step to solve this problem is parsing the filters and translate to an AST. The strong type system in fsharp makes this step pretty easy.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Filter</span> <span class="o">=</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">GreaterThan</span> <span class="k">of</span> <span class="n">int</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Between</span> <span class="k">of</span> <span class="n">int</span> <span class="o">*</span> <span class="n">int</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">LessThan</span> <span class="k">of</span> <span class="n">int</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>Filter</code> type represents the AST of the raw string filter. There are <strong>n</strong> number of ways to transform this incoming string filter to its strongly typed counterpart.</p>
-
-<p>The most idiomatic way of achieving it in fsharp is through <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns#Partial_Active_Patterns">Partial Active Patterns</a></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">Regex</span><span class="o">|_|)</span> <span class="n">pattern</span> <span class="n">input</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">m</span> <span class="o">=</span> <span class="nn">Regex</span><span class="p">.</span><span class="n">Match</span><span class="o">(</span><span class="n">input</span><span class="o">,</span> <span class="n">pattern</span><span class="o">)</span>
-</span><span class="line">  <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">Success</span> <span class="k">then</span> <span class="n">Some</span><span class="o">(</span><span class="nn">List</span><span class="p">.</span><span class="n">tail</span> <span class="o">[</span> <span class="k">for</span> <span class="n">g</span> <span class="k">in</span> <span class="n">m</span><span class="o">.</span><span class="n">Groups</span> <span class="o">-&gt;</span> <span class="n">g</span><span class="o">.</span><span class="n">Value</span> <span class="o">])</span>
-</span><span class="line">  <span class="k">else</span> <span class="n">None</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>You can easily understand this partial active pattern by thinking it as a function with the following signature</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="kt">list</span> <span class="n">option</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>i.e Takes an input, matches it against a pattern. If it matched, then returns the list of matched strings wrapped with the <code>Some</code> type else returns the <code>None</code> type.</p>
-
-<p>Now you may think why we need to write this straight-forward function as a partial active pattern with some weird symbols <code>(|_|)</code> ?</p>
-
-<p>We can certainly do that, but we can’t do <a href="http://fsharpforfunandprofit.com/posts/match-expression/">pattern matching</a> against a function. </p>
-
-<p>The best way to understand this by seeing it in action</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// string -&gt; Filter</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">createFilter</span> <span class="n">filterString</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">match</span> <span class="n">filterString</span> <span class="k">with</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Regex</span> <span class="s">&quot;^&gt;(</span><span class="err">\</span><span class="s">d+)$&quot;</span> <span class="o">[</span><span class="n">min</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">GreaterThan</span><span class="o">(</span><span class="n">int</span> <span class="n">min</span><span class="o">)</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Regex</span> <span class="s">&quot;^(</span><span class="err">\</span><span class="s">d+)-(</span><span class="err">\</span><span class="s">d+)$&quot;</span> <span class="o">[</span><span class="n">min</span><span class="o">;</span><span class="n">max</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">Between</span><span class="o">(</span><span class="n">int</span> <span class="n">min</span><span class="o">,</span><span class="n">int</span> <span class="n">max</span><span class="o">)</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Regex</span> <span class="s">&quot;^&lt;(</span><span class="err">\</span><span class="s">d+)$&quot;</span> <span class="o">[</span><span class="n">max</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="n">LessThan</span><span class="o">(</span><span class="n">int</span> <span class="n">max</span><span class="o">)</span>
-</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">failwith</span> <span class="s">&quot;Invalid Filter&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The above function transforms the raw string filter into its equivalent fsharp type that we have defined before. The pattern matching makes our job very easier by declaratively saying if it matches this, then do this.</p>
-
-<p>One another important benefit that we are getting here, the return value (list of matched strings) is available as a last parameter in the pattern matching. It’s just coming for free. </p>
-
-<p>I’d like to give you an exercise to appreciate this excellent feature in fsharp. Try to implement the above using a function instead of a partial active patterns. </p>
-
-<p>Great! We are done with the first step. Let’s move to the next one.</p>
-
-<h2 id="grouping-the-data-using-the-filter">Grouping the data using the filter</h2>
-
-<p>To do the actual grouping we need to have a function that filters the data based on the given filter. Let me call it as a predicate.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Filter -&gt; int -&gt; bool</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">createPredicate</span> <span class="o">=</span> <span class="k">function</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">GreaterThan</span> <span class="n">min</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="n">min</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Between</span> <span class="o">(</span><span class="n">min</span><span class="o">,</span> <span class="n">max</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">&gt;=</span> <span class="n">min</span> <span class="o">&amp;&amp;</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">max</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">LessThan</span> <span class="n">max</span> <span class="o">-&gt;</span> <span class="k">fun</span> <span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="n">max</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>createPredicate</code> function takes a filter and returns the predicate function <code>int -&gt; bool</code></p>
-
-<p>With the functions <code>createFilter</code> and <code>createPredicate</code> in place, we can combine them and create a new function that takes a raw filter string and translate that to a predicate. </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// string -&gt; int -&gt; bool</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">createRule</span> <span class="o">=</span> <span class="n">createFilter</span> <span class="o">&gt;&gt;</span> <span class="n">createPredicate</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Let me create a new record type <code>BucketRule</code> which holds this string and the predicate</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">BucketRule</span> <span class="o">=</span> <span class="o">{</span> <span class="n">Label</span> <span class="o">:</span> <span class="kt">string</span><span class="o">;</span> <span class="n">Rule</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="kt">bool</span><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">createBucketRule</span> <span class="n">filterString</span> <span class="o">=</span>
-</span><span class="line">  <span class="o">{</span> <span class="n">Label</span> <span class="o">=</span> <span class="n">filterString</span><span class="o">;</span> <span class="n">Rule</span> <span class="o">=</span> <span class="n">createRule</span> <span class="n">filterString</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Now we have all required functions and it’s time to do the data grouping</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">createBucket</span> <span class="n">numbers</span> <span class="n">bucketRule</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">bucketContent</span> <span class="o">=</span> <span class="n">numbers</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">filter</span> <span class="n">bucketRule</span><span class="o">.</span><span class="n">Rule</span>
-</span><span class="line">  <span class="o">(</span><span class="n">bucketRule</span><span class="o">.</span><span class="n">Label</span><span class="o">,</span> <span class="n">bucketContent</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">createBuckets</span> <span class="n">numbers</span> <span class="n">filterStrings</span>  <span class="o">=</span>
-</span><span class="line">  <span class="n">filterStrings</span>
-</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="n">createBucketRule</span>
-</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="n">createBucket</span> <span class="n">numbers</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="summary">Summary</h2>
-
-<p>Though the problem that we have seen is so trivial, the great features in fsharp make it very pleasant to write expressive code to solve it. The complete code snippet is available in <a href="http://fssnip.net/qZ">fssnipnet</a>.</p>
 
 		
 		

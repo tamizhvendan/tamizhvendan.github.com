@@ -1,0 +1,336 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Creating Mock API server in fsharp using Suave - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Creating Mock API Server in Fsharp Using Suave As part of the current assignment in my day job, I am working in a web application which integrates &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+  <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">	
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+  p, li, #tag-cloud {
+    font-family: "Archer A","Archer B","georgia","serif";
+    line-height: 1.4em;
+    font-size: 1.354rem;
+    font-weight: 500;
+    color: #222222;
+    margin: 0;
+    font-style: normal;
+  }  
+  h1, h2, h3 {
+    font-family: 'Archer A','Archer B',georgia,serif;
+    font-weight: 800 !important;
+    font-style: normal;
+    font-size: 2.6154rem !important;
+    padding: 1.6154rem 0;
+    color: #286c8d;
+  }
+  h1 {
+    font-size: 2.6154rem !important;    
+  }
+  h2 {
+    font-size: 1.8rem !important;
+  }
+  h3 {
+    font-size: 1.6154rem !important;
+  }
+  h4 {
+    font-size: 1.5rem !important;
+  }
+  div.mid-col {
+    background-color: #f8f8f8;
+  }
+  pre code {
+    font-family: Consolas,Menlo,Monaco,"Andale Mono","lucida console","Courier New",monospace;
+    font-size: 1em;
+    line-height: 1.8;
+    display: block;
+    background: #fff;
+    color: #000;
+    border: solid 1px #eee;
+    box-shadow: 1px 1px 2px #aaa;
+    margin: 10px 0 8px 0;
+    overflow-x: auto;
+    word-wrap: break-word;
+  }
+  td.gutter {
+    display: none;
+  }
+  td.code {
+    padding-left: 0px;
+  }
+  a:hover {
+    color: #428bca !important;    
+  }
+  </style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.15789473684211%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 150.5263157894737%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.15789473684211%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.63157894736842%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 112.63157894736842%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.47368421052632%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.15789473684211%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.15789473684211%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.78947368421052%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.15789473684211%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.15789473684211%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.10526315789474%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.15789473684211%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 109.47368421052632%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.3157894736842%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.3157894736842%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.15789473684211%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.15789473684211%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.94736842105263%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.15789473684211%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.15789473684211%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.15789473684211%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 109.47368421052632%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.78947368421052%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.47368421052632%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Creating Mock API Server in Fsharp Using Suave</h1>
+	<div class="entry-content" itemprop="articleBody"><p>As part of the current assignment in my day job, I am working in a web application which integrates with an another web application via web APIs. The backend calls the exposed web APIs and does some business logic. Due to some technical limitations, we are not able to setup a development environment of the Web APIs so we have decided to create a mock API server during the development and replace it with the real one in the production.</p>
+
+<p>Since it’s just a mock API server, we don’t want to spend much time on it. Thanks to the awesome light-weight fsharp library <a href="http://suave.io/">Suave</a> we have made it in just 15 minutes! </p>
+
+<p>In this blog post, I will be sharing how we have achieved it. As a sample, we will mock the <a href="https://developer.GitHub.com/v3/">GitHub API</a>.</p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>Create a new fsharp console application project “GitHubMockApiServer” in Visual Studio and install the <a href="https://www.nuget.org/packages/Suave/">suave</a> nuget package.</p>
+
+<p>To keep it short we are going to mock only two GitHub APIs</p>
+
+<ul>
+  <li><a href="https://developer.GitHub.com/v3/users/#get-a-single-user">Get a single user</a> - <strong>/users/:username</strong> </li>
+  <li><a href="https://developer.GitHub.com/v3/repos/#list-user-repositories">List user repositories</a> - <strong>/users/:username/repos</strong></li>
+</ul>
+
+<h2 id="creating-the-mock-apis">Creating the mock APIs</h2>
+
+<p>The first step is getting the sample response for these APIs and save them in separate JSON files. In this example, I’ve created these using my GitHub username and added to the project as below.</p>
+
+<p><img class="center" src="/images/suave_mock_api/project.png" /></p>
+
+<p>After adding, change the “Copy to Output Directory” property of the both the files to “Copy always”</p>
+
+<p>Open the <strong>Program.fs</strong> and update it as follows</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">System.IO</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Successful</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Applicatives</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Web</span>
+</span><span class="line">
+</span><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">json</span> <span class="n">fileName</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">content</span> <span class="o">=</span> <span class="nn">File</span><span class="p">.</span><span class="n">ReadAllText</span> <span class="n">fileName</span>
+</span><span class="line">    <span class="n">content</span><span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="o">,</span> <span class="s">&quot;&quot;</span><span class="o">).</span><span class="n">Replace</span><span class="o">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">,</span><span class="s">&quot;&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">OK</span> <span class="o">&gt;&gt;=</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/users/%s&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;User.json&quot;</span> <span class="o">|&gt;</span> <span class="n">json</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">repos</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/users/%s/repos&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;Repos.json&quot;</span> <span class="o">|&gt;</span> <span class="n">json</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">mockApi</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">repos</span><span class="o">;</span><span class="n">user</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">mockApi</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Short and Sweet! Now you can hit this mock GitHub APIs without worrying about its <a href="https://developer.GitHub.com/v3/#rate-limiting">rate limits</a></p>
+
+<p>The <code>json</code> function reads the sample JSON file, then removes the line breaks and return the HTTP 200 response with the content type as  “application/json”</p>
+
+<p>The nice DSL in suave enabled us to configure the routes without giving much works to our hands :-)  </p>
+
+<h2 id="mock-apis-in-action">Mock APIs in action</h2>
+
+<p><img class="border center" src="/images/suave_mock_api/user_api.png" /></p>
+
+<p><img class="border center" src="/images/suave_mock_api/repos_api.png" /></p>
+
+<h2 id="summary">Summary</h2>
+
+<p>This work is inspired by Scott Wlaschin’s blog post series on <a href="http://fsharpforfunandprofit.com/series/low-risk-ways-to-use-fsharp-at-work.html">Low-risk ways to use F# at work</a>. I am glad to find one more low-risk way to use F# at work and I believe it would help you in future. You can find the sample code in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/GithubMockApiServer">blog-samples GitHub repository</a>.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2015
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

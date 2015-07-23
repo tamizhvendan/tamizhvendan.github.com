@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Feb 2nd, 2012 asp.net mvc, unit testing Comments Unit Testing With Sessions in ASP.NET MVC3 Introduction While talking to my friend regarding his &hellip;">
+	<meta name="description" content="Feb 11th, 2012 asp.net mvc, unit testing Comments Unit Testing Custom Model Binders in MVC3 In my previous post we have seen a way to do unit &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -156,7 +156,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.33333333333333%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 153.33333333333334%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.33333333333333%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 113.33333333333333%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 113.33333333333333%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 110.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.33333333333333%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.33333333333333%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 116.66666666666667%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.33333333333333%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.33333333333333%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 123.33333333333333%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.33333333333333%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.66666666666667%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.66666666666667%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.33333333333333%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.33333333333333%'>owin</a> <a href='/blog/categories/programming' style='font-size: 120.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.33333333333333%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.33333333333333%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.33333333333333%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 106.66666666666667%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 116.66666666666667%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 110.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.15789473684211%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 150.5263157894737%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.15789473684211%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.63157894736842%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 112.63157894736842%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.47368421052632%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.15789473684211%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.15789473684211%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.78947368421052%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.15789473684211%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.15789473684211%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.10526315789474%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.15789473684211%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 109.47368421052632%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.3157894736842%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.3157894736842%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.15789473684211%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.15789473684211%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.94736842105263%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.15789473684211%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.15789473684211%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.15789473684211%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 109.47368421052632%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.78947368421052%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.47368421052632%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +169,73 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-02-11T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 11<sup>th</sup>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2012/02/11/unit-testing-custom-model-binders-in/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/02/11/unit-testing-custom-model-binders-in/" itemprop="url">Unit Testing Custom Model Binders in MVC3</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <p>
+        In <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
+        with Sessions in MVC3 using Custom model binders. In this blog post we are going to see how to do unit test the model binder itself.
+    </p>
+    <p>
+        One remarkable thing which everybody hails in MVC3 is its extensibility and its testability. You can extend/customize the components in the 
+        framework and also you can unit test them with ease.
+    </p>
+    <p>
+        Before getting into unit testing the custom model binder, Lets have a closer look at 
+            the <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.imodelbinder.bindmodel.aspx">BindModel</a> method
+    </p>
+    <br />
+    <img class="center" src="/images/UnitTesting_ModelBinders/BindModel.png">
+       
+        <p>
+            In the BindModel method we are making use of Session property in the HttpContext object which is in turn a property of 
+            the <a href="http://msdn.microsoft.com/en-us/library/dd492673.aspx">ControllerContext</a> object that is passed to the BindModel method as 
+            a parameter by the MVC3 framework. In order to unit test this method we need to have to control over the HttpContext property of 
+            the ControllerContext and the Session property of the HttpContext.
+    </p>
+
+    <p>How to get control over those properties ? Thanks to <a href="http://msdn.microsoft.com/en-us/library/dd460098.aspx">a constructor of ControllerContext</a></p>
+    <br /><img class="center" src="/images/UnitTesting_ModelBinders/ControllerContext.png">        
+        <p>ControllerContext uses the constructor dependency injection to get rid of the direct dependency on <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontextbase.aspx">HttpContextBase</a> and we are going to exploit this to do unit testing. Using a mocking framework we can easily create a mock of HttpContetBase and drive the unit test.</p>
+    <p>The Session property of the HttpContextBase is of type <a href="http://msdn.microsoft.com/en-us/library/system.web.httpsessionstatebase.aspx">HttpSessionStateBase</a> which can also be mocked.</p>
+    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
+    <br /><img class="center" src="/images/UnitTesting_ModelBinders/UnitTest.png">      
+
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -308,124 +375,6 @@
 	<div class="entry-content" itemprop="articleBody">
 		<div class='post'>
 <div dir="ltr" style="text-align: left;" trbidi="on"><div align="justify"><br /></div><div align="justify">2011 has been a magnificent year for me both professionally and personally. The most significant thing about the year 2011 was the time that I have spent with my mentor, team mate and a good friend <a href="http://www.linkedin.com/pub/jijesh-mohan/a/488/545">Jijesh Mohan</a>. I have started the year with full of ambitions but with the uncertainty of how to achieve them. Though I have worked really hard to achieve those ambitions, I failed plenty of times while trying to reach the next level and the reason is absence of direction. Jijesh shared his experience with me and helped a lot in understanding various aspects of programming, software development and much more. Hearty thanks Jijesh <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="http://lh4.ggpht.com/-n3NYjmGhjro/TvyccIdnG0I/AAAAAAAAANY/-8YxbNYlPjU/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" /> . The difference you made in my life as a programmer can not be expressed just by words.&nbsp; <br /><br /></div><div align="justify">It was a tough decision to make, but I have decided to leave Cognizant to explore different real time problems which are totally outside my comfort zone. I would like to thank my cherished manager&nbsp; <a href="http://www.linkedin.com/pub/ramakrishnan-venkatasubramanian/8/85/6a0">Ramakrishnan</a>, and beloved leads <a href="http://in.linkedin.com/pub/vijay-krishnan-ramaswamy/43/738/766">Vijay</a> and <a href="http://www.facebook.com/profile.php?id=100003088519900">Karthik</a>. Thank you all three for the inspiration, responsibilities and freedom you offered me to explore, learn, apply and adopt new technologies on various assignments. The trust you had in me helped a lot to shape up my professional career. I will surely miss you.<br /><br /></div><div align="justify"><strong>What’s Next ?</strong></div><div align="justify"><br />I will be joining <a href="http://www.advisory.com/">Advisory Board</a> in the first week on February 2012. I am very excited about it as it is a position that enable me to solve complex problems which involves huge volumes of data.&nbsp; <br /><br /></div><div align="justify"><strong>Goals </strong></div><div align="justify"><br />The one thing which keep me passionate and crazy about Computer Science is <strong>It is a path with no destination</strong>. One good lesson which I have learned last year is having goals like WaterFall model will not keep you valuable in the market. Like the requirements, the technologies are also volatile so the right way I believe is <strong>being Agile </strong>and the bottom line is set big goals, but make constant corrections along the way. My focus for the year 2012 would be</div><ul><li> <div align="justify">Javascript, HTML5, interactive Web Applications</div></li><li> <div align="justify">Functional Programming</div></li><li> <div align="justify">Working with huge volume of data</div></li><li> <div align="justify">Agile Methodologies</div></li><li> <div align="justify">Open Source Contributions</div></li><li> <div align="justify">Knowledge sharing through blogs and webinars</div></li></ul><div align="justify">Wish you all a very happy and prosperous new year.</div></div></div>
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-11-22T00:00:00+05:30" data-updated="true" itemprop="datePublished">Nov 22<sup>nd</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/categories/programming/'>programming</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/11/22/going-declarative-in-c/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/11/22/going-declarative-in-c/" itemprop="url">Going Declarative in C#</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-
-    <p>
-        <a href="http://en.wikipedia.org/wiki/Declarative_programming">Declarative programming</a> is a simpler, more concise way to describe the 
-            behavior of a software program than <a href="http://en.wikipedia.org/wiki/Imperative_programming">imperative programming</a>. 
-            I am an admirer of declarative aspects of programming ever since I have started writing SQL queries. We always do our best to write code 
-            that is easier to read and maintain. Declarative style is one of the proven ways to write clean code. 
-            <a href="http://msdn.microsoft.com/en-us/library/bb308959.aspx">LINQ</a> is an excellent example of declarative style programming that 
-            enables the developers to simply state what they want to do. When I was learning <a href="http://learnyouahaskell.com/higher-order-functions">higher order functions in Haskell</a>, I have found the interrelationship between the higher order functions and the LINQ. 
-            It really made me to think in a different way to solve a problem. 
-            Through this blog post I would like to share my experiments on <a href="http://en.wikipedia.org/wiki/Higher-order_function">higher order functions</a> in C#.
-    </p>
-
-    <p>Let me start with a very simple requirement. </p>
-    <blockquote>Write a program to print the even numbers present in the given n numbers</blockquote>
-    <p>The code implementation fairly straight forward as below</p>
-    <div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://2.bp.blogspot.com/-F8d-q0yfDxQ/TsutZtHjXFI/AAAAAAAAAMM/VZOQO-TrRkM/s1600/PrintEvenNumbers.PNG" />
-    </div>
-
-    <p>Nothing fancy about this trivial thing. Let me add some more twist to the code by adding two more requirements.</p>
-    <blockquote>Modify the program implemented above to print odd numbers and multiples of four present in the given n numbers</blockquote>
-
-    <p>To be honest, If I have encountered this requirements before I have learnt Higher Order Functions my implementation would be as follows.</p>
-    <br />
-    <div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://2.bp.blogspot.com/-6Yj8HNUD34s/Tsutfjqe-AI/AAAAAAAAAMU/Oq7SKgTBOyA/s1600/TwoMoreReq.PNG"/>
-    </div>
-    
-    <p>If you look at the above implementation with a critical eye, you can find a potential candidate of duplication. 
-        Let me explain the common pattern that is being used in the implemented PrintXXXX functions. 
-        For each number in the numbers enumerable we are doing the following</p>
-    <ul>
-        <li>Deciding whether the number should be printed or not <em>(Deciding)</em></li>  
-        <li>Printing the number if it is passes the above decision <em>(Doing)</em></li>  
-    </ul>    
-<br />
-    <div class="separator" style="clear: both; text-align: center;">
-        <img src="http://1.bp.blogspot.com/-9xr-Hu8TT7U/TsutkGNc9SI/AAAAAAAAAMc/_JeMMy5u1RY/s1600/Duplication.PNG">
-    </div>
-<p>All the three functions iterate over the numbers enumerable and print the numbers. The only thing which actually differentiates the functions is deciding which numbers to be printed.</p>
-<p>Now the question is how can we eliminate this duplication????</p>
-<p>It’s where higher order functions come into picture. If we move the deciding part of the function away from its implementation then we can easily achieve it.&nbsp;&nbsp; Here we go! The brand new implementation of Print would be </p>
-
-<br /><div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://2.bp.blogspot.com/-9RF4Km0s1NA/TsutoVD_WkI/AAAAAAAAAMk/GWASEODqJTk/s1600/HigherOrderPrint.PNG"/>
-</div>
-
-
-<p>In the new implementation we have just isolated the deciding part of the function from its implementation and parameterize it as function delegate that takes an integer as its input and return a Boolean value.&nbsp; In the client code (Main function) we are actually just calling the print function and declaratively telling it to print only those numbers which satisfies the given condition. As we separated the deciding part from the actual implementation, we can easily accommodate any future requirements like “<i style="mso-bidi-font-style: normal;">Printing multiples of five, printing only single digit numbers</i>” by declarative calling the Print function like as below</p>
-<br /><div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://4.bp.blogspot.com/-iunnD2jPXv8/TsutsrFa_4I/AAAAAAAAAMs/oE81RX5J8gY/s1600/AccomodatedRequirement.PNG" />
-</div>
-
-<p>Cool.. Isn’t it ? Let me complicate the things little more. What would you do if you want to call this Print method across different classes?. A notorious option would be creating a <a href="http://en.wikipedia.org/wiki/Utility_class">Utility class</a> with the Print method and calling it from the other classes. We can also solve these using <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">Extension methods</a> which results a clean readable code like as below</p>
-<br /><div class="separator" style="clear: both; text-align: center;">
-    <img border="0" src="http://4.bp.blogspot.com/-DZVepYydQ84/TsutwLqz__I/AAAAAAAAAM0/eNlsA0F2jzI/s1600/ExtensionMethod.PNG" />
-</div>
-
-<p>So far, so good. We have started with a single function and then we added two more, then eliminated the duplication using Higher Order functions and 
-    finally we have made the code readable by using extension method. </p>
-<p>Okay. Now “<i>I want to print the strings which starts with ‘s’ in the given n strings </i>”. Pardon me for complicating things, I will stop by this one.</p>
-<p>It is almost logically similar to what we have done so far. Instead of numbers here it is string. How can we put it into action?. 
-    Thanks to <a href="http://msdn.microsoft.com/en-us/library/512aeb7t%28v=vs.80%29.aspx">Generics</a>. We can easily achieve this by modifying the extension method to support generic type as below</p>
-    <br />
-<div class="separator" style="clear: both; text-align: center;">
-   <img border="0" src="http://3.bp.blogspot.com/-Cwp_3vrURcU/Tsut-VkAqjI/AAAAAAAAAM8/UrutESWMdw4/s1600/GenericExtensionMethod.PNG" />
-</div>
-
-
-<div>That’s it. Now you are free to play with all sort of logic you want. You can play with different set of conditions to print the elements or even you can also use different collection of your custom classes. And all can be done declaratively!!</div>
-<div>Now its time to reveal to the interrelationship exists between the LINQ and the higher order functions. All the LINQ methods are actually using these Print extension methods kind of extension methods under the hood and makes the life of developer easily but letting them to work declaratively. </div>
-<div><a href="http://msdn.microsoft.com/en-us/library/system.threading.tasks.parallel.aspx">Parallel Class</a> a new addition in C# 4.0, also uses higher order functions and enables the developer to say “Hey CLR, I wanna run these methods parallel”. </div>
-<br /><div class="separator" style="clear: both; text-align: center;">
-        <img border="0" src="http://3.bp.blogspot.com/-oghYOKAdsl4/TsuuMGSPzJI/AAAAAAAAANE/YVpPV4cfTOU/s1600/Parallel+Invoke.PNG" />
-</div>
-
-<p>Awesome! No new thread creation and no verbose. </p>
-<h4>Summary</h4>
-<p>Declarative Programming is powerful tool. It creates more readable, cleaner code and also reduces the possibility of logical mistakes in 
-    multiple similar algorithms. That means fewer mistakes now and in the future.</p>
-</div>
-
 		
 		
 	</div>

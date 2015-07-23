@@ -4,7 +4,7 @@
   <title><![CDATA[Category: suave | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/suave/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-07-16T17:11:23+05:30</updated>
+  <updated>2015-07-23T18:17:42+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,81 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Creating Mock API server in fsharp using Suave]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/"/>
+    <updated>2015-07-23T16:56:20+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave</id>
+    <content type="html"><![CDATA[<p>As part of the current assignment in my day job, I am working in a web application which integrates with an another web application via web APIs. The backend calls the exposed web APIs and does some business logic. Due to some technical limitations, we are not able to setup a development environment of the Web APIs so we have decided to create a mock API server during the development and replace it with the real one in the production.</p>
+
+<p>Since it’s just a mock API server, we don’t want to spend much time on it. Thanks to the awesome light-weight fsharp library <a href="http://suave.io/">Suave</a> we have made it in just 15 minutes! </p>
+
+<p>In this blog post, I will be sharing how we have achieved it. As a sample, we will mock the <a href="https://developer.GitHub.com/v3/">GitHub API</a>.</p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>Create a new fsharp console application project “GitHubMockApiServer” in Visual Studio and install the <a href="https://www.nuget.org/packages/Suave/">suave</a> nuget package.</p>
+
+<p>To keep it short we are going to mock only two GitHub APIs</p>
+
+<ul>
+  <li><a href="https://developer.GitHub.com/v3/users/#get-a-single-user">Get a single user</a> - <strong>/users/:username</strong> </li>
+  <li><a href="https://developer.GitHub.com/v3/repos/#list-user-repositories">List user repositories</a> - <strong>/users/:username/repos</strong></li>
+</ul>
+
+<h2 id="creating-the-mock-apis">Creating the mock APIs</h2>
+
+<p>The first step is getting the sample response for these APIs and save them in separate JSON files. In this example, I’ve created these using my GitHub username and added to the project as below.</p>
+
+<p><img class="center" src="/images/suave_mock_api/project.png"></p>
+
+<p>After adding, change the “Copy to Output Directory” property of the both the files to “Copy always”</p>
+
+<p>Open the <strong>Program.fs</strong> and update it as follows</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>open System.IO
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open Suave.Http
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Suave.Http.Successful
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Http.Applicatives
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open Suave.Web
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>[&lt;EntryPoint&gt;]
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let main argv = 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let json fileName =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    let content = File.ReadAllText fileName  
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    content.Replace(&quot;\r&quot;, &quot;&quot;).Replace(&quot;\n&quot;,&quot;&quot;)
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    |&gt; OK &gt;&gt;= Writers.setMimeType &quot;application/json&quot;      
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  let user = pathScan &quot;/users/%s&quot; (fun _ -&gt; &quot;User.json&quot; |&gt; json)  
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let repos = pathScan &quot;/users/%s/repos&quot; (fun _ -&gt; &quot;Repos.json&quot; |&gt; json)
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let mockApi = choose [repos;user]
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  startWebServer defaultConfig mockApi          
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  0
+</pre></div>
+</div>
+</div>
+
+<p>Short and Sweet! Now you can hit this mock GitHub APIs without worrying about its <a href="https://developer.GitHub.com/v3/#rate-limiting">rate limits</a></p>
+
+<p>The <code>json</code> function reads the sample JSON file, then removes the line breaks and return the HTTP 200 response with the content type as  “application/json”</p>
+
+<p>The nice DSL in suave enabled us to configure the routes without giving much works to our hands :-)  </p>
+
+<h2 id="mock-apis-in-action">Mock APIs in action</h2>
+
+<p><img class="border center" src="/images/suave_mock_api/user_api.png"></p>
+
+<p><img class="border center" src="/images/suave_mock_api/repos_api.png"></p>
+
+<h2 id="summary">Summary</h2>
+
+<p>This work is inspired by Scott Wlaschin’s blog post series on <a href="http://fsharpforfunandprofit.com/series/low-risk-ways-to-use-fsharp-at-work.html">Low-risk ways to use F# at work</a>. I am glad to find one more low-risk way to use F# at work and I believe it would help you in future. You can find the sample code in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/GithubMockApiServer">blog-samples GitHub repository</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Securing APIs in Suave using JSON Web Token]]></title>

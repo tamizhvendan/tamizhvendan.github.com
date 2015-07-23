@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fsharp | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-07-16T17:11:23+05:30</updated>
+  <updated>2015-07-23T18:17:42+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,81 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Creating Mock API server in fsharp using Suave]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/"/>
+    <updated>2015-07-23T16:56:20+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave</id>
+    <content type="html"><![CDATA[<p>As part of the current assignment in my day job, I am working in a web application which integrates with an another web application via web APIs. The backend calls the exposed web APIs and does some business logic. Due to some technical limitations, we are not able to setup a development environment of the Web APIs so we have decided to create a mock API server during the development and replace it with the real one in the production.</p>
+
+<p>Since it’s just a mock API server, we don’t want to spend much time on it. Thanks to the awesome light-weight fsharp library <a href="http://suave.io/">Suave</a> we have made it in just 15 minutes! </p>
+
+<p>In this blog post, I will be sharing how we have achieved it. As a sample, we will mock the <a href="https://developer.GitHub.com/v3/">GitHub API</a>.</p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>Create a new fsharp console application project “GitHubMockApiServer” in Visual Studio and install the <a href="https://www.nuget.org/packages/Suave/">suave</a> nuget package.</p>
+
+<p>To keep it short we are going to mock only two GitHub APIs</p>
+
+<ul>
+  <li><a href="https://developer.GitHub.com/v3/users/#get-a-single-user">Get a single user</a> - <strong>/users/:username</strong> </li>
+  <li><a href="https://developer.GitHub.com/v3/repos/#list-user-repositories">List user repositories</a> - <strong>/users/:username/repos</strong></li>
+</ul>
+
+<h2 id="creating-the-mock-apis">Creating the mock APIs</h2>
+
+<p>The first step is getting the sample response for these APIs and save them in separate JSON files. In this example, I’ve created these using my GitHub username and added to the project as below.</p>
+
+<p><img class="center" src="/images/suave_mock_api/project.png"></p>
+
+<p>After adding, change the “Copy to Output Directory” property of the both the files to “Copy always”</p>
+
+<p>Open the <strong>Program.fs</strong> and update it as follows</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>open System.IO
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open Suave.Http
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Suave.Http.Successful
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Http.Applicatives
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open Suave.Web
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>[&lt;EntryPoint&gt;]
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let main argv = 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let json fileName =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    let content = File.ReadAllText fileName  
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    content.Replace(&quot;\r&quot;, &quot;&quot;).Replace(&quot;\n&quot;,&quot;&quot;)
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    |&gt; OK &gt;&gt;= Writers.setMimeType &quot;application/json&quot;      
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  let user = pathScan &quot;/users/%s&quot; (fun _ -&gt; &quot;User.json&quot; |&gt; json)  
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let repos = pathScan &quot;/users/%s/repos&quot; (fun _ -&gt; &quot;Repos.json&quot; |&gt; json)
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let mockApi = choose [repos;user]
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  startWebServer defaultConfig mockApi          
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  0
+</pre></div>
+</div>
+</div>
+
+<p>Short and Sweet! Now you can hit this mock GitHub APIs without worrying about its <a href="https://developer.GitHub.com/v3/#rate-limiting">rate limits</a></p>
+
+<p>The <code>json</code> function reads the sample JSON file, then removes the line breaks and return the HTTP 200 response with the content type as  “application/json”</p>
+
+<p>The nice DSL in suave enabled us to configure the routes without giving much works to our hands :-)  </p>
+
+<h2 id="mock-apis-in-action">Mock APIs in action</h2>
+
+<p><img class="border center" src="/images/suave_mock_api/user_api.png"></p>
+
+<p><img class="border center" src="/images/suave_mock_api/repos_api.png"></p>
+
+<h2 id="summary">Summary</h2>
+
+<p>This work is inspired by Scott Wlaschin’s blog post series on <a href="http://fsharpforfunandprofit.com/series/low-risk-ways-to-use-fsharp-at-work.html">Low-risk ways to use F# at work</a>. I am glad to find one more low-risk way to use F# at work and I believe it would help you in future. You can find the sample code in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/GithubMockApiServer">blog-samples GitHub repository</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Securing APIs in Suave using JSON Web Token]]></title>
@@ -1490,63 +1565,6 @@ To make it independent of the host, we have externalized the hosting functionali
 <h2 id="summary">Summary</h2>
 
 <p>In this blog post we have seen three tips which can help us while using C# libraries in F#. If you know any other interoperability tips, kindly leave a comment below. </p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[My Takeaways]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways/"/>
-    <updated>2015-04-25T15:09:02+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways</id>
-    <content type="html"><![CDATA[<blockquote>
-  <p>This is the concluding part of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">like this</a> before, so during this course, I was about to give up but the statement </p>
-
-<p style="text-align:center"> <strong> Finish what you started </strong> </p>
-
-<p>kept me going. Thank you John, I have learned a great lesson in my life from you.</p>
-
-<p>Back to the business, In this blog post I am going to share my key takeaways on developing a complete web application in fsharp using ASP.NET MVC</p>
-
-<h2 id="enterprise-application-development-in-fsharp">Enterprise application development in fsharp</h2>
-
-<p>As a learner of F#, I have spent lots of time in listening to <a href="https://vimeo.com/channels/c4fsharp">the great talks</a> by the vibrant <a href="http://c4fsharp.net/">fsharp community</a>. Though those talks are great, I was intrigued, how these individual pieces would work together in creating a complete enterprise application. Is it really possible? </p>
-
-<p>Developing this complete <a href="https://github.com/tamizhvendan/fsharp-phonecat">fsharp-phonecat</a> application answered my questions and I am sure it answered yours too. It may appear hard because of less sources and functional paradigm, but once you figured it out, it would be a cakewalk.</p>
-
-<p>The bottom line is <strong>we can create a complete enterprise application in fsharp</strong>. As a matter of fact, there is a book written on this subject, <a href="http://www.amazon.com/gp/product/1617291323/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=1617291323&amp;linkCode=as2&amp;tag=bor0b-20&amp;linkId=SYG2CSFARCGD5KUL">F# Deep Dives</a></p>
-
-<p>If you are not convinced yet, read <a href="http://fsharp.org/testimonials/">these testimonials</a> from the commercial users of F#. </p>
-
-<h2 id="leveraging-the-existing-net-ecosystem">Leveraging the existing .NET ecosystem</h2>
-
-<p>In my perspective F# is a <em>pragmatic functional programming language</em>. In addition to lot of elegant features of the language, it works seamlessly with the existing .NET libraries. This one characteristic I would say is a blessing. You can say, ‘This feature is really cool’, but at the end of the day it should help you to get the job done. F# is not only cool, It can help you too!</p>
-
-<p>In the sample application we have leveraged the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web Api 2</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor Views</a>, <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code <i class='emoji smile'></i>)</p>
-
-<h2 id="using-f-in-your-existing-c-codebase">Using F# in your existing C# Codebase</h2>
-
-<p>As F# is a <a href="http://en.wikipedia.org/wiki/List_of_CLI_languages#CLI_languages">CLI Language</a> it can be added to your existing C# solution. All you need to do just create a new F# project in the solution and this project can work seamlessly with the other projects in the solution. </p>
-
-<p>In the sample application, we have a <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
-
-<p>In the <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
-
-<h2 id="less-is-beautiful">Less is beautiful</h2>
-
-<p>Another cool aspect of F# is you will be writing less lines of code to achieve complex things. It took only <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Domain/SearchParser.fs#L10-L44">35 lines of code</a> to create a parser for a DSL. </p>
-
-<p><a href="http://fsharpforfunandprofit.com/rop/">Railway Oriented Programming</a> by <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a> is an absolute gem. If you would like to know what F# brings to your plate, I strongly suggest you to listen his talk on <a href="http://fsharpforfunandprofit.com/fppatterns/">Functional Design Patterns</a>. The way you see programming will never be the same after you have seen this presentation. </p>
-
-<h2 id="summary">Summary</h2>
-
-<p>In nutshell, F# is just an awesome programming language to create applications. I hope you would have enjoyed this series. If you have any suggestions, kindly leave a comment.</p>
-
-<p>I would like to conclude this post with the below formula</p>
-
-<p style="text-align:center"> <strong> Python + .NET = F# </strong> </p>
 ]]></content>
   </entry>
   

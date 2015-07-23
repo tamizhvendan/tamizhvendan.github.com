@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Jun 24th, 2011 asp.net mvc Comments ASP.NET MVC 3 Ajax - Part I In this blog series ASP.NET MVC3 Ajax we are going to explore about implementing &hellip;">
+	<meta name="description" content="Jun 26th, 2011 asp.net mvc Comments ASP.NET MVC3 Ajax Part II - Adding Animation to Action Link This blog post is the continuation of my previous &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -156,7 +156,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.33333333333333%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 153.33333333333334%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.33333333333333%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 113.33333333333333%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 113.33333333333333%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 110.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.33333333333333%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.33333333333333%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 116.66666666666667%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.33333333333333%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.33333333333333%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 123.33333333333333%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.33333333333333%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.66666666666667%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.66666666666667%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.33333333333333%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.33333333333333%'>owin</a> <a href='/blog/categories/programming' style='font-size: 120.0%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.33333333333333%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.33333333333333%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.33333333333333%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 106.66666666666667%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 116.66666666666667%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 110.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.15789473684211%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 150.5263157894737%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.15789473684211%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.63157894736842%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 112.63157894736842%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.47368421052632%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.15789473684211%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.15789473684211%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.78947368421052%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.15789473684211%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.15789473684211%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.10526315789474%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.15789473684211%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 109.47368421052632%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.3157894736842%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.3157894736842%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.15789473684211%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.15789473684211%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.94736842105263%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.15789473684211%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.15789473684211%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.15789473684211%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 109.47368421052632%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.78947368421052%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.47368421052632%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +169,76 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-26T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jun 26<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/06/26/ajax-mvc3-ajax-part-ii-adding-animation/" itemprop="url">ASP.NET MVC3 Ajax Part II - Adding Animation to Action Link</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+	<div>
+		<p>This blog post is the continuation of my <a href="/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">previous blog post</a>. In the last blog post we have seen how to achieve the basic Ajax functionality using <em>Ajax.ActionLink()</em> helper method. Probably in many websites you might have seen whenever any ajax request is raised by the user, there would be an associated loading text or a loading gif will be displayed which inform the user that something is going on the background. We are now going to see how to achieve the same using the <em>ActionLink()</em> method.</p>
+		<p>
+			<em>ActionLink()</em> method uses a&nbsp;declarative approach to do this. All we need to do is to create a div element contains the element which will be displayed during the Ajax request and associate the div element to the <em>ActionLink()</em> method by assigning the &#8221;<em>LoadingElementId</em>&#8221; AjaxOption to the div element&#8217;s id. Let us see how to do this by using the MVC3 app that we have seen in the <a href="/blog/2011/06/24/aspnet-mvc-3-ajax-part-i/">previous blog post</a>.
+		</p>
+		<h3>Adding Loading Div Element</h3>
+		Open &#8220;Index.cshtml&#8221; and append the following div. It just contains image element which will be displayed during ajax request.
+<div><script src='https://gist.github.com/2ca8aaef6714aafaa889.js?file=Index.cshtml'></script>
+<noscript><pre><code>&lt;div id=&quot;divLoading&quot; style=&quot;display:none&quot;&gt;
+	&lt;img src=&quot;../../Content/images/loading.gif&quot; /&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+
+	<p>Note the inline style. The display has been set to none as it not intended to display only during Ajax request. </p>
+		<h3>Associate Div Element with <em>ActionLink()</em> method</h3>
+		<p>This is very simple. We just need to add the AjaxOption &#8221;<em>LoadingElementId</em>&#8221; and assign it to the loading div element&#8217;s id. The modified <em>ActionLink()</em> method will look as follows.</p>
+		<div style="clear: both; text-align: center;">
+			<img src="http://1.bp.blogspot.com/-6NlSqFH_RBU/TgbDPO7tB_I/AAAAAAAAAHc/BEEQT3XEWmQ/s1600/ActionLink+Method.png" /></div>
+		<br />
+		<h3>Simulating a delay in Action Method</h3>
+		<p>Now when we run the application we might not get a chance to see the loading gif as everything takes place is very less time. In order to see the loading gif, we need to increase the processing time taken by the GreetMe action method. The modified GreetMe action method in <em>HomeController.cs</em> will look as follows. The delay has been introduced by using the <em>Thread.Sleep()</em> method which delay the process by 2 seconds. </p>
+		<div><script src='https://gist.github.com/2ca8aaef6714aafaa889.js?file=HomeController.cs'></script>
+<noscript><pre><code>public string GreetMe() 
+{
+  System.Threading.Thread.Sleep(2000);
+  return &quot;Hello ASP.NET MVC3 Ajax !!&quot;;
+}</code></pre></noscript></div>
+
+	<br />
+		Now when we run the application we will be able to see the loading gif when the Greet Me link is clicked.
+	<h3>Summary</h3>
+		In the Part i &amp; ii of this series we have seen a basic Ajax functionality using <em>Ajax.ActionLink()</em> method. The source code of the demo application can be downloaded from <a href="http://www.box.net/shared/zmn84rj31g2kdx19flxq">here</a>.
+	</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -510,101 +580,6 @@ private void rboBomb_CheckedChanged(object sender, EventArgs e)
 
         <b>Summary</b>
         <p>In this blog we have seen a basic real time example on implementing dynamic polymorphism. You can download the source code of this sample from <a href="http://www.box.net/shared/y12zyr2d66">here</a>.</p>
-    </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-01T00:00:00+05:30" data-updated="true" itemprop="datePublished">Apr 1<sup>st</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/data-access/'>data access</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/04/01/entity-framework-40-as-class-library/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/04/01/entity-framework-40-as-class-library/" itemprop="url">Entity Framework 4.0 as Class Library - Part 2</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>As the continuation of my previous <a href="/blog/2011/03/25/entity-framework-40-class-library-part/">blog post</a>, In this blog post we are going to explore on how to consume the data access class library created in the previous blog post.</p>
-
-        <p>Consuming the Data Access Library created using Entity Framework 4.0 involves the following two steps.</p>
-        <ol>
-            <li>Adding reference to the class library</li>
-            <li>Adding the connection string in the config file (App.config or Web.config)</li>
-        </ol>
-        <p>Let us see how can we do these steps using a console application. To keep things simple I have opt for a console application. It holds the same for an ASP.NET , Windows Form, WPF,WCF, etc.</p>
-
-        <h4>Console Application Creation</h4>
-        <p>Create a new console application called &#8220;HrdConsoleApp&#8221;</p>
-        <img src="http://1.bp.blogspot.com/-jd1uE7HyzUY/TZw4OSKgKVI/AAAAAAAAAFw/O0t-17BazAk/s1600/1.ConsoleAppCreation.PNG" />
-
-        <h4>Add a reference to the Class library</h4>
-        <p>Right click on references and refer the class library &#8220;HRD.DataAccess&#8221; that we have created in the last blog.</p>
-        <img src="http://4.bp.blogspot.com/-238LBeCcS-8/TZw4UoXoTyI/AAAAAAAAAF0/Z-wMwpTZD1k/s1600/2.ReferenceLibrary.PNG" />
-
-        <p>Add reference to System.Data.Entity Library</p>
-        <img src="http://4.bp.blogspot.com/-TIhl2OiTt68/TZw59TQrQ6I/AAAAAAAAAF8/WM5ffjSpETo/s1600/5.DataEntityReference.PNG" />
-
-        <p>Add the App.Config file to the console application by right clicking on the project name in the solution explorer and select &#8220;Add-&gt;New Item&#8221;. Then Copy the connection string from the App.Config file created in the HrdDataAccess Class library Project created earlier and paste it in the App.config file created in the previous step.</p>
-        <img src="http://2.bp.blogspot.com/-ZqMXJ5KdLy8/TZw4Y1uECQI/AAAAAAAAAF4/fIcRIy1se5c/s1600/3.AppConfigCreation.PNG" />
-
-        <img src="http://2.bp.blogspot.com/-HgFzRYacpQA/TZw6IqMd5oI/AAAAAAAAAGA/q_IiJsTNYvU/s1600/4.AppConfig.PNG" />
-        <p>That&#8217;s all now it is all set to access the database with only minimal amount of code.. Here we go!!</p>
-        <h4>Code Please!</h4>
-        <div><script src='https://gist.github.com/7794bb7ac98d6de3b962.js'></script>
-<noscript><pre><code>using System;
-using System.Linq;
-using HRD.DataAccess;
-namespace HrdConsoleApp
-{
-    class Program
-    { 
-        static void Main(string[] args) 
-        { 
-            var hrdEntities = new HRDEntities(); 
-            foreach (Employee employee in hrdEntities.Employees)
-            { 
-                Console.WriteLine(&quot;Name: &quot; + employee.Name); 
-                Console.WriteLine(&quot;Department: &quot; + employee.Department.Name); 
-                Console.WriteLine(&quot;########################&quot;); 
-            } 
-        } 
-    }
-}</code></pre></noscript></div>
-
-
-        <h4>Output</h4>
-        <img src="http://1.bp.blogspot.com/-Fooy-W2-OCQ/TZw6M7tVqTI/AAAAAAAAAGE/tJ5UYVi5LRI/s1600/6.Output.PNG" />
-
-        <h4>Summary:</h4>
-        <p>
-            In this blog series (Part 1 and Part 2) we have seen how to create the data access layer using Entity Framework 4.0 as class library and how to consume it in an application. With the introduction of Entity Framework developing the code for data access layer is no longer a tidy and time consuming job!!
-        </p>
     </div>
 </div>
 
