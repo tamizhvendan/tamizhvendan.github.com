@@ -11,5 +11,4 @@ footer: true
 
 * [Jade Visualizer using Node.js and Socket.io](http://blog.tamizhvendan.in/blog/2012/05/19/jade-visualizer-using-nodejs-and/) on *May 19, 2012*
 
-
-
+* [Adding indexed property in HTTP Request - Suave.IO](https://github.com/SuaveIO/suave/pull/259) on *May 27,2015*
