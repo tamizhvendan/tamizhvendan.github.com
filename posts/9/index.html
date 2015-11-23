@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Feb 11th, 2012 asp.net mvc, unit testing Comments Unit Testing Custom Model Binders in MVC3 In my previous post we have seen a way to do unit &hellip;">
+	<meta name="description" content="Mar 4th, 2012 asp.net mvc, craftsmanship, unit testing Comments Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way Would you like if your &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -156,7 +156,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.15789473684211%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 150.5263157894737%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.15789473684211%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.63157894736842%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 112.63157894736842%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.47368421052632%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.15789473684211%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.15789473684211%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.78947368421052%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.15789473684211%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.15789473684211%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.10526315789474%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.15789473684211%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 109.47368421052632%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.3157894736842%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.3157894736842%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.15789473684211%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.15789473684211%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.94736842105263%'>programming</a> <a href='/blog/categories/rop' style='font-size: 103.15789473684211%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.15789473684211%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.15789473684211%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 109.47368421052632%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.78947368421052%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.47368421052632%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.15789473684211%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 150.5263157894737%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.15789473684211%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.63157894736842%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 112.63157894736842%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.47368421052632%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.15789473684211%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.15789473684211%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.78947368421052%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.15789473684211%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.15789473684211%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.10526315789474%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.15789473684211%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.63157894736842%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.3157894736842%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.3157894736842%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.15789473684211%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.15789473684211%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.94736842105263%'>programming</a> <a href='/blog/categories/react' style='font-size: 103.15789473684211%'>react</a> <a href='/blog/categories/rop' style='font-size: 103.15789473684211%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.15789473684211%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.15789473684211%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 109.47368421052632%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.78947368421052%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.47368421052632%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +169,153 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-04T00:00:00+05:30" data-updated="true" itemprop="datePublished">Mar 4<sup>th</sup>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/" itemprop="url">Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <p>Would you like if your unit test have an assertion like this ?</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh5.ggpht.com/-Z7XXVGQ3sX4/T1J73ct1gqI/AAAAAAAAASQ/qw-uSNrLoOE/image_thumb3.png?imgmax=800">
+    </div>
+    <p>
+        IMHO having a unit test assertion like this with a long magical string value would become a maintenance problem with additional logic being added.
+        It breaks with even minor changes like “adding an extra whitespace” though it is logically correct(Browsers ignores the whitespaces while rendering html)!.
+        It is harder to debug to!!
+    </p>
+    <p>
+        How can we get rid of this long string assertion ? Is there any better way to do assertion against this long magical string ejected from a
+        <a href="http://stephenwalther.com/blog/archive/2009/03/03/chapter-6-understanding-html-helpers.aspx">HtmlHelper</a> ? One thing which strikes on my mind when I come
+        across this problem is why don’t we parse the string as an xml and assert against the xml element instead. It might appear like laborious at the first sight,
+        but by making use of <a href="http://msdn.microsoft.com/en-us/library/system.xml.linq.xelement.aspx">XElement</a> and
+        <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a> we can easily do that.
+    </p>
+
+    <p>In the blog post we are going to see how can we implement this in a more cleaner way. </p>
+
+    <p>Okay.. Enough texts.. Its time to see some code!!</p>
+
+    <p>
+        The first step is to convert the “html string” returned by the html helper to XElement. Generally most of the helpers returns
+        <a href="http://stackoverflow.com/questions/2293357/what-is-an-mvchtmlstring-and-when-should-i-use-it">MvcHtmlString</a>, So, we can easily achieve this
+        by writing an extension method called “ToXElement” on MvcHtmlString.
+    </p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-cwtnsV7pl2c/T1J763QmH1I/AAAAAAAAASg/6QKxAEGZ5uM/image_thumb%25255B2%25255D.png?imgmax=800">
+    </div>
+
+    <p>That’s it! All set to redefine the way custom html helpers are being tested. </p>
+
+    <p>Fine, Let us see it in action. We will start with a handy HtmlHelper method called “Button” which would render a “Html button tag” and here is the test to assert it.</p>
+
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-Zl-hH4zYH1A/T1J7_Y9Qr3I/AAAAAAAAASw/PyWZZJMadV0/image_thumb%25255B10%25255D.png?imgmax=800">
+    </div>
+    <p>
+        The first test uses the ToXElement extension method and assert against the XElement’s properties whereas the second test uses the
+        “magical string with tags added” to do the assertion. Now you may feel what’s wrong with this guy the second test look clean to me,
+        why he is making fuss about it. Yes you are correct, the second one looks clean. But it appears to be clean as the requirement in hand is very simple.
+    </p>
+    <p>IMHO the custom html helpers that we are building in our real world application won’t be as simple as having a button tag with just plain caption in it. </p>
+    <p>Fine, lets see the real world. Voice from your team lead <em></em></p>
+    <p>
+        <em>
+            Hey! the Button HtmlHelper you designed has did a tremendous job. Can you make a small change on it so that it would
+            <strong>generate a button with a class attribute having the value ‘appbutton’ by default</strong>.
+            We need it because it make the button styling consistent with rest of our application ”
+        </em>
+    </p>
+
+    <p>Let us implement the feature by starting with the test for it</p>
+    <p>
+        <a href="http://lh4.ggpht.com/-HScL-9YaD1s/T1J8Awk2YbI/AAAAAAAAAS4/Q3E6JlpRItM/s1600-h/image%25255B23%25255D.png">
+            <img src="http://lh5.ggpht.com/-MyHzxXBfdCM/T1J8DL_KgbI/AAAAAAAAATA/Vvt1j4k-KYo/image_thumb%25255B14%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>
+        Now tell me is the second test clean ? I don’t think so. The generate html string is bit long now also having double quotes inside double quotes makes it hard to read.
+        At the same time the first test remains robust and clean.
+    </p>
+
+    <p>
+        Still not convinced, okay just go up and see the very first test that we have wrote to test the button caption.
+        Do you think the <strong>hard way test</strong> with the “<strong>long magical string</strong>” still pass ??
+    </p>
+
+    <p style="text-align: center; color: #ff0000; font-weight: bold">It would fail</p>
+
+    <p>Why ?? Here is the error message </p>
+    <p>
+        <a href="http://lh5.ggpht.com/-K6RjhSEMhLA/T1J8EpZAZ-I/AAAAAAAAATI/TUutsjz0XdE/s1600-h/image%25255B28%25255D.png">
+            <img src="http://lh4.ggpht.com/-SpmB-mDwffk/T1J8HO3Np4I/AAAAAAAAATQ/oKxboMdbr6I/image_thumb%25255B17%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>Now what would you do, if you decided to persist with the “long magical string”, then your action would be editing the test as below</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh6.ggpht.com/-RJKnvJ5K8dI/T1J8LTJG_iI/AAAAAAAAATg/TAKyOA5Ej9w/image_thumb%25255B21%25255D.png?imgmax=800">
+    </div>
+    <p>Nice job. Now tell me what is the difference between this one and the below one</p>
+    <div style="text-align: center;clear:both">
+        <a href="http://lh6.ggpht.com/-ps4dX_FO-B0/T1J8MhVBtwI/AAAAAAAAATo/u003U24qiBo/s1600-h/image%25255B42%25255D.png">
+            <img src="http://lh3.ggpht.com/-i5zAV0v0JfY/T1J8O7pNIiI/AAAAAAAAATw/Fuo_4WMsFzk/image_thumb%25255B27%25255D.png?imgmax=800">
+        </a>
+    </div>
+    <p>
+        Apart from the test method name everything is same. Is the test clean ? Is the test clearly saying what it is trying to assert ?
+        What would happen if we got the requirement to add one more attribute or even more? Think !!
+    </p>
+
+    <p>But at the same time the tests which written using XElement assertion would remain healthy and their test method name mean what it is testing </p>
+    <p>
+        <a href="http://lh6.ggpht.com/-t5GRHpUvWSI/T1J8Qh6dvqI/AAAAAAAAAT4/WaaIvzaEKCY/s1600-h/image%25255B47%25255D.png">
+            <img src="http://lh3.ggpht.com/-fQ_eFoBZqnE/T1J8TPZgtFI/AAAAAAAAAUA/1wGDDsT5J8Y/image_thumb%25255B30%25255D.png?imgmax=800">
+        </a>
+    </p>
+    <p>I leave it you to decide which one is cleaner. </p>
+    <h4>Summary</h4>
+    <p>Here is the implementation of “Button HtmlHelper” that we unit tested so far</p>
+    <div style="text-align: center;clear:both">
+        <img src="http://lh4.ggpht.com/-lg0jE79JCVI/T1J8Y3QGqOI/AAAAAAAAAUQ/gif78dMv6XI/image_thumb%25255B33%25255D.png?imgmax=800">
+    </div>
+    <p>
+        My humble request to the readers of this blog post, please take care of your “Unit tests” and give some more importance to it.
+        An hour spent upfront would save a day in future.
+    </p>
+    <p>“Beauty is in the eye of the beholder”, If you have a better idea to do the same, kindly leave a comment, I am open to learn from you.</p>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -338,43 +485,6 @@
             unit testing with the custom model binder itself.</p>
 </div>
 
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-29T00:00:00+05:30" data-updated="true" itemprop="datePublished">Dec 29<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/goals/'>goals</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/12/29/2012-year-of-aspirations/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/12/29/2012-year-of-aspirations/" itemprop="url">2012 – a Year of Aspirations</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-<div dir="ltr" style="text-align: left;" trbidi="on"><div align="justify"><br /></div><div align="justify">2011 has been a magnificent year for me both professionally and personally. The most significant thing about the year 2011 was the time that I have spent with my mentor, team mate and a good friend <a href="http://www.linkedin.com/pub/jijesh-mohan/a/488/545">Jijesh Mohan</a>. I have started the year with full of ambitions but with the uncertainty of how to achieve them. Though I have worked really hard to achieve those ambitions, I failed plenty of times while trying to reach the next level and the reason is absence of direction. Jijesh shared his experience with me and helped a lot in understanding various aspects of programming, software development and much more. Hearty thanks Jijesh <img alt="Smile" class="wlEmoticon wlEmoticon-smile" src="http://lh4.ggpht.com/-n3NYjmGhjro/TvyccIdnG0I/AAAAAAAAANY/-8YxbNYlPjU/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" style="border-bottom-style: none; border-left-style: none; border-right-style: none; border-top-style: none;" /> . The difference you made in my life as a programmer can not be expressed just by words.&nbsp; <br /><br /></div><div align="justify">It was a tough decision to make, but I have decided to leave Cognizant to explore different real time problems which are totally outside my comfort zone. I would like to thank my cherished manager&nbsp; <a href="http://www.linkedin.com/pub/ramakrishnan-venkatasubramanian/8/85/6a0">Ramakrishnan</a>, and beloved leads <a href="http://in.linkedin.com/pub/vijay-krishnan-ramaswamy/43/738/766">Vijay</a> and <a href="http://www.facebook.com/profile.php?id=100003088519900">Karthik</a>. Thank you all three for the inspiration, responsibilities and freedom you offered me to explore, learn, apply and adopt new technologies on various assignments. The trust you had in me helped a lot to shape up my professional career. I will surely miss you.<br /><br /></div><div align="justify"><strong>What’s Next ?</strong></div><div align="justify"><br />I will be joining <a href="http://www.advisory.com/">Advisory Board</a> in the first week on February 2012. I am very excited about it as it is a position that enable me to solve complex problems which involves huge volumes of data.&nbsp; <br /><br /></div><div align="justify"><strong>Goals </strong></div><div align="justify"><br />The one thing which keep me passionate and crazy about Computer Science is <strong>It is a path with no destination</strong>. One good lesson which I have learned last year is having goals like WaterFall model will not keep you valuable in the market. Like the requirements, the technologies are also volatile so the right way I believe is <strong>being Agile </strong>and the bottom line is set big goals, but make constant corrections along the way. My focus for the year 2012 would be</div><ul><li> <div align="justify">Javascript, HTML5, interactive Web Applications</div></li><li> <div align="justify">Functional Programming</div></li><li> <div align="justify">Working with huge volume of data</div></li><li> <div align="justify">Agile Methodologies</div></li><li> <div align="justify">Open Source Contributions</div></li><li> <div align="justify">Knowledge sharing through blogs and webinars</div></li></ul><div align="justify">Wish you all a very happy and prosperous new year.</div></div></div>
 		
 		
 	</div>

@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://blog.tamizhvendan.in/blog/2015/11/23/a-beginner-guide-to-setup-react-dot-js-environment-using-babel-6-and-webpack/</loc>
+    <lastmod>2015-11-23T16:12:30+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.tamizhvendan.in/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/</loc>
     <lastmod>2015-07-23T16:56:20+05:30</lastmod>
     <priority>0.8</priority>
@@ -281,28 +287,28 @@
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/archives/</loc>
-    <lastmod>2015-11-11T15:17:00+05:30</lastmod>
+    <lastmod>2015-11-23T20:55:07+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/</loc>
-    <lastmod>2015-11-11T15:17:00+05:30</lastmod>
+    <lastmod>2015-11-23T20:55:07+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/categories/</loc>
-    <lastmod>2015-11-11T15:17:00+05:30</lastmod>
+    <lastmod>2015-11-23T20:55:07+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/open-source-contributions/</loc>
-    <lastmod>2015-11-11T15:17:00+05:30</lastmod>
+    <lastmod>2015-11-23T20:55:07+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

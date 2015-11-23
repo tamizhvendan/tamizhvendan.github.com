@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-11-11T15:17:00+05:30</updated>
+  <updated>2015-11-23T20:55:07+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,301 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[A beginner's guide to setup React.js environment using npm, Babel 6 and Webpack]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/11/23/a-beginner-guide-to-setup-react-dot-js-environment-using-babel-6-and-webpack/"/>
+    <updated>2015-11-23T16:12:30+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/11/23/a-beginner-guide-to-setup-react-dot-js-environment-using-babel-6-and-webpack</id>
+    <content type="html"><![CDATA[<p>Facebook has really changed the way we think about front-end UI development with the introduction of <a href="https://facebook.github.io/react">React</a>. One of the main advantages of this component based approach is, it is easy to reason about as the view is just a function of props and state.</p>
+
+<p>Though, the learning curve of React is smaller compared to that of its counterparts, one intimidating aspect for the beginners is the tools (<a href="http://babeljs.io">Babel</a>, <a href="https://webpack.github.io">Webpack</a>) and libraries around it.</p>
+
+<p>In fact, these tools are not required to use React and but in order to get the most out of the features of <a href="https://github.com/lukehoban/es6features">ES6</a>, <a href="https://facebook.github.io/react/docs/jsx-in-depth.html">JSX</a> and bundling, we need them. In this blog post we are going to see how to setup a React development environment without being sidetracked by the tools.</p>
+
+<p>A Disclaimer: The approach that I am going to share is just for beginners to understand on how to get started with React as going by this lean way has helped a lot when I started learning React.</p>
+
+<h2 id="lets-start-from-scratch">Let’s start from scratch</h2>
+
+<p>Create a new folder ‘react-hello-world’ and initialize it with npm.</p>
+
+<pre><code>mkdir react-hello-world
+cd react-hello-world
+npm init
+</code></pre>
+<p>Accept the default for all the prompts</p>
+
+<h2 id="installing-and-configuring-webpack">Installing and Configuring Webpack</h2>
+
+<p><a href="https://webpack.github.io">Webpack</a> is a module bundler which takes modules with dependencies and generates static assets by bundling them together based on some configuration.</p>
+
+<p>The support of <a href="http://webpack.github.io/docs/loaders.html">loaders</a> in Webpack makes it a perfect fit for using it along with React and we will discuss it later in this post with more details.</p>
+
+<p>Let’s start with installing webpack using npm</p>
+
+<pre><code>npm i webpack -S
+</code></pre>
+
+<p>Webpack requires some configuration settings to carry out its work and the best practice is doing it via a config file called <em>webpack.config.js</em>.</p>
+
+<pre><code>touch webpack.config.js
+</code></pre>
+
+<p>Update the config file as follows</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="keyword">var</span> webpack = require(<span class="string"><span class="delimiter">'</span><span class="content">webpack</span><span class="delimiter">'</span></span>);
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">var</span> path = require(<span class="string"><span class="delimiter">'</span><span class="content">path</span><span class="delimiter">'</span></span>);
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="keyword">var</span> BUILD_DIR = path.resolve(__dirname, <span class="string"><span class="delimiter">'</span><span class="content">src/client/public</span><span class="delimiter">'</span></span>);
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span><span class="keyword">var</span> APP_DIR = path.resolve(__dirname, <span class="string"><span class="delimiter">'</span><span class="content">src/client/app</span><span class="delimiter">'</span></span>);
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span><span class="keyword">var</span> config = {
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  <span class="key">entry</span>: APP_DIR + <span class="string"><span class="delimiter">'</span><span class="content">/index.jsx</span><span class="delimiter">'</span></span>,
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  <span class="key">output</span>: {
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    <span class="key">path</span>: BUILD_DIR,
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    <span class="key">filename</span>: <span class="string"><span class="delimiter">'</span><span class="content">bundle.js</span><span class="delimiter">'</span></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  }
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>};
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>module.exports = config;
+</pre></div>
+</div>
+</div>
+
+<p>The minimalist requirement of a Webpack config file is the presence of entry and output properties.</p>
+
+<p>The <code>APP_DIR</code> holds the directory path of the React application’s codebase and the <code>BUILD_DIR</code> represents the directory path of the bundle file output.</p>
+
+<p>As the name suggests <em>entry</em> specifies the entry file using which the bundling process starts. If you are coming from C# or Java, it’s similar to the class that contains <em>main</em> method. Webpack supports multiple entry points too. Here the <em>index.jsx</em> in the <em>src/client/app</em> directory is the starting point of the application</p>
+
+<p>The <em>output</em> instructs Webpack what to do after the bundling process has been completed. Here, we are instructing it to use the <em>src/client/public</em> directory to output the bundled file with the name <em>bundle.js</em></p>
+
+<p>Let’s create the <em>index.jsx</em> file in the <em>./src/client/app</em> and add the following code to verify this configuration.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>console.log(<span class="string"><span class="delimiter">'</span><span class="content">Hello World!</span><span class="delimiter">'</span></span>);
+</pre></div>
+</div>
+</div>
+
+<p>Now in the terminal run the following command</p>
+
+<pre><code>./node_modules/.bin/webpack -d
+</code></pre>
+
+<p>The above command runs the webpack in the development mode and generates the <em>bundle.js</em> file and its associated map file <em>bundle.js.map</em> in the <em>src/client/public</em> directory.</p>
+
+<p>To make it more interactive, create an <em>index.html</em> file in the <em>src/client</em> directory and modify it to use this <em>bundle.js</em> file</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="tag">&lt;html&gt;</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  <span class="tag">&lt;head&gt;</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    <span class="tag">&lt;meta</span> <span class="attribute-name">charset</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">utf-8</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    <span class="tag">&lt;title&gt;</span>React.js using NPM, Babel6 and Webpack<span class="tag">&lt;/title&gt;</span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  <span class="tag">&lt;/head&gt;</span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  <span class="tag">&lt;body&gt;</span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    <span class="tag">&lt;div</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">app</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    <span class="tag">&lt;script</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">public/bundle.js</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text/javascript</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span><span class="tag">&lt;/script&gt;</span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  <span class="tag">&lt;/body&gt;</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span><span class="tag">&lt;/html&gt;</span>
+</pre></div>
+</div>
+</div>
+
+<p>Now if you open the browser, you can see the <em>Hello World!</em> in the console log.</p>
+
+<p>Note: There is a webpack loader called <a href="https://github.com/webpack/html-loader">html-loader</a> which automatically creates this html file with the correct location of <em>bundle.js</em>.   </p>
+
+<h2 id="setting-up-babel-loader">Setting Up Babel-Loader</h2>
+
+<p>As we have seen in the beginning, by using JSX and ES6 we can be more productive while working with React. But the JSX syntax and ES6, are not supported in all the browsers.</p>
+
+<p>Hence, if we are using them in the React code, we need to use a tool which translates them to the format that has been supported by the browsers. It’s where <a href="http://babeljs.io">babel</a> comes into the picture.</p>
+
+<p>While installing Webpack we touched a little on loaders. Webpack uses loaders to translate the file before bundling them</p>
+
+<p>{% img center /images/react-hello-world/babel-loader.png %}</p>
+
+<p>To setup install the following npm packages</p>
+
+<pre><code>npm i babel-loader babel-preset-es2015 babel-preset-react -S
+</code></pre>
+<p>The <em>babel-preset-es2015</em> and <em>babel-preset-react</em> are plugins being used by the <em>babel-loader</em> to translate ES6 and JSX syntax respectively.</p>
+
+<p>As we did for Webpack, <em>babel-loader</em> also requires some configuration. Here we need to tell it to use the ES6 and JSX plugins.</p>
+
+<p>Create a .babelrc file and update it as below</p>
+
+<pre><code>touch .babelrc
+</code></pre>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>{
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span class="key"><span class="delimiter">&quot;</span><span class="content">presets</span><span class="delimiter">&quot;</span></span> : [<span class="string"><span class="delimiter">&quot;</span><span class="content">es2015</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">react</span><span class="delimiter">&quot;</span></span>]
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>The next step is telling Webpack to use the babel-loader while bundling the files</p>
+
+<p>open <em>webpack.config.js</em> file and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// Existing Code ....</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">var</span> config = {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  <span class="comment">// Existing Code ....</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  <span class="key">module</span> : {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    <span class="key">loaders</span> : [
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      {
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        <span class="key">test</span> : <span class="regexp"><span class="delimiter">/</span><span class="content">\.</span><span class="content">jsx?</span><span class="delimiter">/</span></span>,
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        <span class="key">include</span> : APP_DIR,
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        <span class="key">loader</span> : <span class="string"><span class="delimiter">'</span><span class="content">babel</span><span class="delimiter">'</span></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      }
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    ]
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  }
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+</pre></div>
+</div>
+</div>
+
+<p>The <em>loaders</em> property takes array of loaders, here we are just using <em>babel-loader</em>. Each <em>loader</em> property should specify what are the file extension it has to process via the <em>test</em> property. Here we have configured it to process both <em>.js</em> and <em>.jsx</em> files using the regular expression. The <em>include</em> property specifies what is the directory to be used to look for these file extensions. The <em>loader</em> property represents the name of the loader.</p>
+
+<p>Now we all the setup done. Let’s write some code in React.</p>
+
+<h2 id="hello-react">Hello React</h2>
+
+<p>Use npm to install react and react-dom</p>
+
+<pre><code>npm i react react-dom -S
+</code></pre>
+
+<p>Replace the existing console.log statement in the <em>index.jsx</em> with the following content</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="reserved">import</span> React from <span class="string"><span class="delimiter">'</span><span class="content">react</span><span class="delimiter">'</span></span>;
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="reserved">import</span> {render} from <span class="string"><span class="delimiter">'</span><span class="content">react-dom</span><span class="delimiter">'</span></span>;
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="reserved">class</span> App <span class="reserved">extends</span> React.Component {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  render () {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span class="keyword">return</span> <span class="tag">&lt;p&gt;</span> Hello React!<span class="tag">&lt;/p&gt;</span>;
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  }
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>}
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>render(&lt;App/&gt;, document.getElementById(<span class="string"><span class="delimiter">'</span><span class="content">app</span><span class="delimiter">'</span></span>));
+</pre></div>
+</div>
+</div>
+
+<p>Then run the following command to update the bundle file with the new changes</p>
+
+<pre><code>./node_modules/.bin/webpack -d
+</code></pre>
+
+<p>Now, if you open the <em>index.html</em> in the browser you can see <em>Hello React</em></p>
+
+<h2 id="adding-some-complexity">Adding Some Complexity</h2>
+
+<h3 id="making-webpack-to-watch-the-changes">Making Webpack to watch the changes</h3>
+
+<p>Running the webpack command on every time when you change the file is not a productive work. We can easily change this behavior by using the following command</p>
+
+<pre><code>./node_modules/.bin/webpack -d --watch
+</code></pre>
+<p>Now Webpack is running in the watch mode, which will automatically bundle the file whenever there is a change detected. To test it, change <em>Hello React</em> to something else and refresh the <em>index.html</em> in the browser. You can see your new changes.</p>
+
+<p>If you don’t like refreshing the browser to see the changes you can use <a href="http://gaearon.github.io/react-hot-loader/getstarted/">react-hot-loader</a>!</p>
+
+<h3 id="using-npm-as-a-tool-runner">Using npm as a tool runner</h3>
+
+<p>The command <code>./node_modules/.bin/webpack</code> can be made even simpler by leveraging npm.</p>
+
+<p>Update the packages.json as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>{
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="key"><span class="delimiter">&quot;</span><span class="content">scripts</span><span class="delimiter">&quot;</span></span>: {
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    <span class="key"><span class="delimiter">&quot;</span><span class="content">dev</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">webpack -d --watch</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    <span class="key"><span class="delimiter">&quot;</span><span class="content">build</span><span class="delimiter">&quot;</span></span> : <span class="string"><span class="delimiter">&quot;</span><span class="content">webpack -p</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  },
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Now the command <code>npm run build</code> runs Webpack in production mode, which minimizes the bundle file automatically and<br />
+the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
+
+<h3 id="adding-some-files">Adding some files</h3>
+
+<p>In the sample we have seen only one Component called <em>App</em>. Let’s add some more to test the bundling setup.</p>
+
+<p>Create a new file <em>AwesomeComponent.jsx</em> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="reserved">import</span> React from <span class="string"><span class="delimiter">'</span><span class="content">react</span><span class="delimiter">'</span></span>;
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="reserved">class</span> AwesomeComponent <span class="reserved">extends</span> React.Component {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  constructor(props) {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span class="reserved">super</span>(props);
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    <span class="local-variable">this</span>.state = {<span class="key">likesCount</span> : <span class="integer">0</span>};
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    <span class="local-variable">this</span>.onLike = <span class="local-variable">this</span>.onLike.bind(<span class="local-variable">this</span>);
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  }
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  onLike () {
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    let newLikesCount = <span class="local-variable">this</span>.state.likesCount + <span class="integer">1</span>;
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    <span class="local-variable">this</span>.setState({<span class="key">likesCount</span>: newLikesCount});
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  }
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  render() {
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    <span class="keyword">return</span> (
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>      <span class="tag">&lt;div&gt;</span>
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>        Likes : <span class="tag">&lt;span&gt;</span>{this.state.likesCount}<span class="tag">&lt;/span&gt;</span>
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>        <span class="tag">&lt;div&gt;</span><span class="tag">&lt;button</span> <span class="attribute-name">onClick</span>=<span class="error">{</span><span class="attribute-value">this.onLike</span><span class="error">}</span><span class="tag">&gt;</span>Like Me<span class="tag">&lt;/button&gt;</span><span class="tag">&lt;/div&gt;</span>
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>      &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">div&gt;</span></span>
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span><span class="regexp"><span class="content">    );</span></span>
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span><span class="regexp"><span class="content">  }</span></span>
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span><span class="regexp"><span class="content"></span></span>
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span><span class="regexp"><span class="content">}</span></span>
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span><span class="regexp"><span class="content"></span></span>
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span><span class="regexp"><span class="content">export default AwesomeComponent;</span></span>
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span><span class="regexp"><span class="content"></span></span></pre></div>
+</div>
+</div>
+
+<p>Then include it in the <em>index.jsx</em> file</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="reserved">import</span> AwesomeComponent from <span class="string"><span class="delimiter">'</span><span class="content">./AwesomeComponent.jsx</span><span class="delimiter">'</span></span>;
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="reserved">class</span> App <span class="reserved">extends</span> React.Component {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  <span class="keyword">return</span> (
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      <span class="tag">&lt;div&gt;</span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        <span class="tag">&lt;p&gt;</span> Hello React!<span class="tag">&lt;/p&gt;</span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        <span class="tag">&lt;AwesomeComponent</span> <span class="tag">/&gt;</span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      <span class="tag">&lt;/div&gt;</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    );
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>}
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span><span class="comment">// ...</span>
+</pre></div>
+</div>
+</div>
+
+<p>If your Webpack is already running in watch mode then refresh the browser to see the AwesomeComponent in action!</p>
+
+<p>{% img center /images/react-hello-world/Output.png %}</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post we have seen a lean approach for setting up a development environment to work with React. In the next blog post we will be extending this example to implement the <a href="https://facebook.github.io/react/docs/flux-overview.html">flux</a> architecture using <a href="http://alt.js.org">Alt</a>. You can get the source code associated with this blog post can be found in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/react-hello-world">github repository</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[A hybrid application using ASP.NET MVC3 and Node.js]]></title>
@@ -72,7 +367,7 @@
     <p>Today I’m very glad and excited to announce my little contribution to the open source community called 
     <a href="http://jade-visualizer.herokuapp.com/">“Jade-Visualizer”</a> a web-based visualizer/translator which targets the beginners 
     of <a href="http://jade-lang.com/">Jade</a> (A widely used <a href="http://nodejs.org">Node.js</a> view engine) to learn it effectively. </p> 
-    <p>Its the inspiration from good bloggers, kindled me to <a href="/blog/2011/01/05/thank-god/">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133" /></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122" /></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96" /></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" /></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" /></p>
+    <p>Its the inspiration from good bloggers, kindled me to <a href="{% post_url 2011-01-05-thank-god %}">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133" /></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122" /></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96" /></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" /></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" /></p>
 
 </li></li></li></li></li></li></li></ul></li></li></li></li></li></ul></div>
 ]]></content>
@@ -109,188 +404,19 @@
         <h3>Task 1: Defining the webpage layout using HTML</h3>
         <p>The HTML is very straight forward. Entire webpage contents have been placed inside a div with the id “iGoogle”. Then each column (iGoogle uses three column layout) is defined by a div element with the id representing the corresponding columns. These columns act as a placeholder for Widgets. Each widget defined as a div element which contains two div elements inside it which represents the header and the body of the Widgets<br />
         </p>
-        <div><script src='https://gist.github.com/8cc8e2868203484754b1.js'></script>
-<noscript><pre><code>&lt;div id=&quot;column1&quot;&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader PurpleWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 1&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 2&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 3&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-&lt;/div&gt;
-
-&lt;div id=&quot;column2&quot;&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 4&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-&lt;/div&gt;
-
-&lt;div id=&quot;column3&quot;&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 5&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-    &lt;div class=&quot;Widget&quot;&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
-            &lt;br /&gt;
-            Widget 6&lt;/div&gt;
-        &lt;br /&gt;
-        &lt;div class=&quot;WidgetBody&quot;&gt;
-            &lt;br /&gt;
-        &lt;/div&gt;
-        &lt;br /&gt;
-    &lt;/div&gt;
-    &lt;br /&gt;
-&lt;/div&gt;</code></pre></noscript></div>
-
+        {% gist 8cc8e2868203484754b1 %}
 
         <h3>Task 2: Style the webpage and widgets</h3>
         <p>Now we have the HTML Layout ready. Our next task would be applying style to the webpage and the widgets using CSS.</p>
-        <div><script src='https://gist.github.com/e841e3643400836bd57f.js'></script>
-<noscript><pre><code>/* Entire Page has been divided into 3Columns. Note: iGoogle Page has 3 columns */
-#column1, #column2, #column3
-{
-    display: inline-block;
-    float: left;
-    width: 33%;
-    height: auto;
-    text-align: center;
-    padding-bottom: 100px;
-}
-/* Css Classes for Entire Widget */
-.Widget
-{
-    margin: 10px;
-    margin-left: auto;
-    margin-right: auto;
-    width: 95%;
-    min-height: 200px;
-    border: 1px solid Black;
-}
-/* Css Classes for Widget Headers */
-.WidgetHeader
-{
-    height: 25px;
-    cursor: move;
-    text-align: left;
-    padding-left: 3px;
-    color: White;
-    font-weight: bold;
-}
-.GreenWidgetHeader
-{
-    background-color: Green;
-}
-.GrayWidgetHeader
-{
-    background-color: Gray;
-}
-.PurpleWidgetHeader
-{
-    background-color: Purple;
-}
-/* Css Classes for Widget Body */
-.WidgetBody
-{
-    min-height: 175px;
-    height: auto;
-    background: #F0F0F0;
-}
-/* Placeholder while dragging the widget using jQuery*/
-.ui-sortable-placeholder
-{
-    border: 1px dashed black;
-    visibility: visible !important;
-    height: 50px !important;
-}
-.ui-sortable-placeholder *
-{
-    visibility: hidden;
-}
-.footer
-{
-    clear: both;
-    display: block;
-    position: absolute;
-    color: Green;
-    bottom: 5px;
-    right: 5px;
-}</code></pre></noscript></div>
-
+        {% gist e841e3643400836bd57f %}
 
         <h3>Task 3:  Add the drag and drop functionality using jQuery</h3>
         <p>jQuery offers a rich set of functionality which can be implemented by less lines of coding. With jQuery you can “write less and do more”.  All you need to refer the jQuery API files in your javascript and make use of the functionality it provides. To implement the drag and drop functionality we need the following jQuery library files which can be downloaded from the locations mentioned in the “src” attribute</p>
-        <div><script src='https://gist.github.com/afd522c53a67db5e497b.js'></script>
-<noscript><pre><code>&lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.core.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.widget.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.mouse.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
-&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.sortable.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></pre></noscript></div>
-
+        {% gist afd522c53a67db5e497b %}
 
 	<p>Now we have the necessary jQuery libraries to implement the drag and drop functionality and all set for implementing the drag and drop support. Here is the code part which implements the drag and drop functionality.</p>
 
-        <div><script src='https://gist.github.com/20061eca688b51e73df8.js'></script>
-<noscript><pre><code>$(document).ready(function () {        
-    $(&quot;#column1,#column2,#column3&quot;).sortable({
-        connectWith: &quot;#column1,#column2,#column3&quot;,
-        handle: '.WidgetHeader', opacity: 0.6
-    }); 
-    
-    $(&quot;#column1,#column2,#column3&quot;).disableSelection();
-});</code></pre></noscript></div>
-
+        {% gist 20061eca688b51e73df8 %}
 
     <p>Yes!! That’s it!! Just three function calls and seven lines of coding!! Now you can drag and drop the widgets and play!!  </p>
 

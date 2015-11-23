@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: react | P3 Programmer]]></title>
+  <link href="http://blog.tamizhvendan.in/blog/categories/react/atom.xml" rel="self"/>
+  <link href="http://blog.tamizhvendan.in/"/>
+  <updated>2015-11-23T20:55:07+05:30</updated>
+  <id>http://blog.tamizhvendan.in/</id>
+  <author>
+    <name><![CDATA[Tamizhvendan S]]></name>
+    <email><![CDATA[tamizh88@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[A beginner's guide to setup React.js environment using npm, Babel 6 and Webpack]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/11/23/a-beginner-guide-to-setup-react-dot-js-environment-using-babel-6-and-webpack/"/>
+    <updated>2015-11-23T16:12:30+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/11/23/a-beginner-guide-to-setup-react-dot-js-environment-using-babel-6-and-webpack</id>
+    <content type="html"><![CDATA[<p>Facebook has really changed the way we think about front-end UI development with the introduction of <a href="https://facebook.github.io/react">React</a>. One of the main advantages of this component based approach is, it is easy to reason about as the view is just a function of props and state.</p>
+
+<p>Though, the learning curve of React is smaller compared to that of its counterparts, one intimidating aspect for the beginners is the tools (<a href="http://babeljs.io">Babel</a>, <a href="https://webpack.github.io">Webpack</a>) and libraries around it.</p>
+
+<p>In fact, these tools are not required to use React and but in order to get the most out of the features of <a href="https://github.com/lukehoban/es6features">ES6</a>, <a href="https://facebook.github.io/react/docs/jsx-in-depth.html">JSX</a> and bundling, we need them. In this blog post we are going to see how to setup a React development environment without being sidetracked by the tools.</p>
+
+<p>A Disclaimer: The approach that I am going to share is just for beginners to understand on how to get started with React as going by this lean way has helped a lot when I started learning React.</p>
+
+<h2 id="lets-start-from-scratch">Let’s start from scratch</h2>
+
+<p>Create a new folder ‘react-hello-world’ and initialize it with npm.</p>
+
+<pre><code>mkdir react-hello-world
+cd react-hello-world
+npm init
+</code></pre>
+<p>Accept the default for all the prompts</p>
+
+<h2 id="installing-and-configuring-webpack">Installing and Configuring Webpack</h2>
+
+<p><a href="https://webpack.github.io">Webpack</a> is a module bundler which takes modules with dependencies and generates static assets by bundling them together based on some configuration.</p>
+
+<p>The support of <a href="http://webpack.github.io/docs/loaders.html">loaders</a> in Webpack makes it a perfect fit for using it along with React and we will discuss it later in this post with more details.</p>
+
+<p>Let’s start with installing webpack using npm</p>
+
+<pre><code>npm i webpack -S
+</code></pre>
+
+<p>Webpack requires some configuration settings to carry out its work and the best practice is doing it via a config file called <em>webpack.config.js</em>.</p>
+
+<pre><code>touch webpack.config.js
+</code></pre>
+
+<p>Update the config file as follows</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="keyword">var</span> webpack = require(<span class="string"><span class="delimiter">'</span><span class="content">webpack</span><span class="delimiter">'</span></span>);
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">var</span> path = require(<span class="string"><span class="delimiter">'</span><span class="content">path</span><span class="delimiter">'</span></span>);
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="keyword">var</span> BUILD_DIR = path.resolve(__dirname, <span class="string"><span class="delimiter">'</span><span class="content">src/client/public</span><span class="delimiter">'</span></span>);
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span><span class="keyword">var</span> APP_DIR = path.resolve(__dirname, <span class="string"><span class="delimiter">'</span><span class="content">src/client/app</span><span class="delimiter">'</span></span>);
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span><span class="keyword">var</span> config = {
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  <span class="key">entry</span>: APP_DIR + <span class="string"><span class="delimiter">'</span><span class="content">/index.jsx</span><span class="delimiter">'</span></span>,
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  <span class="key">output</span>: {
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    <span class="key">path</span>: BUILD_DIR,
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    <span class="key">filename</span>: <span class="string"><span class="delimiter">'</span><span class="content">bundle.js</span><span class="delimiter">'</span></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  }
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>};
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>module.exports = config;
+</pre></div>
+</div>
+</div>
+
+<p>The minimalist requirement of a Webpack config file is the presence of entry and output properties.</p>
+
+<p>The <code>APP_DIR</code> holds the directory path of the React application’s codebase and the <code>BUILD_DIR</code> represents the directory path of the bundle file output.</p>
+
+<p>As the name suggests <em>entry</em> specifies the entry file using which the bundling process starts. If you are coming from C# or Java, it’s similar to the class that contains <em>main</em> method. Webpack supports multiple entry points too. Here the <em>index.jsx</em> in the <em>src/client/app</em> directory is the starting point of the application</p>
+
+<p>The <em>output</em> instructs Webpack what to do after the bundling process has been completed. Here, we are instructing it to use the <em>src/client/public</em> directory to output the bundled file with the name <em>bundle.js</em></p>
+
+<p>Let’s create the <em>index.jsx</em> file in the <em>./src/client/app</em> and add the following code to verify this configuration.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>console.log(<span class="string"><span class="delimiter">'</span><span class="content">Hello World!</span><span class="delimiter">'</span></span>);
+</pre></div>
+</div>
+</div>
+
+<p>Now in the terminal run the following command</p>
+
+<pre><code>./node_modules/.bin/webpack -d
+</code></pre>
+
+<p>The above command runs the webpack in the development mode and generates the <em>bundle.js</em> file and its associated map file <em>bundle.js.map</em> in the <em>src/client/public</em> directory.</p>
+
+<p>To make it more interactive, create an <em>index.html</em> file in the <em>src/client</em> directory and modify it to use this <em>bundle.js</em> file</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="tag">&lt;html&gt;</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  <span class="tag">&lt;head&gt;</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    <span class="tag">&lt;meta</span> <span class="attribute-name">charset</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">utf-8</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    <span class="tag">&lt;title&gt;</span>React.js using NPM, Babel6 and Webpack<span class="tag">&lt;/title&gt;</span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  <span class="tag">&lt;/head&gt;</span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  <span class="tag">&lt;body&gt;</span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    <span class="tag">&lt;div</span> <span class="attribute-name">id</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">app</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    <span class="tag">&lt;script</span> <span class="attribute-name">src</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">public/bundle.js</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">text/javascript</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span><span class="tag">&lt;/script&gt;</span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  <span class="tag">&lt;/body&gt;</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span><span class="tag">&lt;/html&gt;</span>
+</pre></div>
+</div>
+</div>
+
+<p>Now if you open the browser, you can see the <em>Hello World!</em> in the console log.</p>
+
+<p>Note: There is a webpack loader called <a href="https://github.com/webpack/html-loader">html-loader</a> which automatically creates this html file with the correct location of <em>bundle.js</em>.   </p>
+
+<h2 id="setting-up-babel-loader">Setting Up Babel-Loader</h2>
+
+<p>As we have seen in the beginning, by using JSX and ES6 we can be more productive while working with React. But the JSX syntax and ES6, are not supported in all the browsers.</p>
+
+<p>Hence, if we are using them in the React code, we need to use a tool which translates them to the format that has been supported by the browsers. It’s where <a href="http://babeljs.io">babel</a> comes into the picture.</p>
+
+<p>While installing Webpack we touched a little on loaders. Webpack uses loaders to translate the file before bundling them</p>
+
+<p>{% img center /images/react-hello-world/babel-loader.png %}</p>
+
+<p>To setup install the following npm packages</p>
+
+<pre><code>npm i babel-loader babel-preset-es2015 babel-preset-react -S
+</code></pre>
+<p>The <em>babel-preset-es2015</em> and <em>babel-preset-react</em> are plugins being used by the <em>babel-loader</em> to translate ES6 and JSX syntax respectively.</p>
+
+<p>As we did for Webpack, <em>babel-loader</em> also requires some configuration. Here we need to tell it to use the ES6 and JSX plugins.</p>
+
+<p>Create a .babelrc file and update it as below</p>
+
+<pre><code>touch .babelrc
+</code></pre>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>{
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span class="key"><span class="delimiter">&quot;</span><span class="content">presets</span><span class="delimiter">&quot;</span></span> : [<span class="string"><span class="delimiter">&quot;</span><span class="content">es2015</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">react</span><span class="delimiter">&quot;</span></span>]
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>The next step is telling Webpack to use the babel-loader while bundling the files</p>
+
+<p>open <em>webpack.config.js</em> file and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// Existing Code ....</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">var</span> config = {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  <span class="comment">// Existing Code ....</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  <span class="key">module</span> : {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    <span class="key">loaders</span> : [
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      {
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        <span class="key">test</span> : <span class="regexp"><span class="delimiter">/</span><span class="content">\.</span><span class="content">jsx?</span><span class="delimiter">/</span></span>,
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        <span class="key">include</span> : APP_DIR,
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        <span class="key">loader</span> : <span class="string"><span class="delimiter">'</span><span class="content">babel</span><span class="delimiter">'</span></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      }
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    ]
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  }
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+</pre></div>
+</div>
+</div>
+
+<p>The <em>loaders</em> property takes array of loaders, here we are just using <em>babel-loader</em>. Each <em>loader</em> property should specify what are the file extension it has to process via the <em>test</em> property. Here we have configured it to process both <em>.js</em> and <em>.jsx</em> files using the regular expression. The <em>include</em> property specifies what is the directory to be used to look for these file extensions. The <em>loader</em> property represents the name of the loader.</p>
+
+<p>Now we all the setup done. Let’s write some code in React.</p>
+
+<h2 id="hello-react">Hello React</h2>
+
+<p>Use npm to install react and react-dom</p>
+
+<pre><code>npm i react react-dom -S
+</code></pre>
+
+<p>Replace the existing console.log statement in the <em>index.jsx</em> with the following content</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="reserved">import</span> React from <span class="string"><span class="delimiter">'</span><span class="content">react</span><span class="delimiter">'</span></span>;
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="reserved">import</span> {render} from <span class="string"><span class="delimiter">'</span><span class="content">react-dom</span><span class="delimiter">'</span></span>;
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="reserved">class</span> App <span class="reserved">extends</span> React.Component {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  render () {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span class="keyword">return</span> <span class="tag">&lt;p&gt;</span> Hello React!<span class="tag">&lt;/p&gt;</span>;
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  }
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>}
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>render(&lt;App/&gt;, document.getElementById(<span class="string"><span class="delimiter">'</span><span class="content">app</span><span class="delimiter">'</span></span>));
+</pre></div>
+</div>
+</div>
+
+<p>Then run the following command to update the bundle file with the new changes</p>
+
+<pre><code>./node_modules/.bin/webpack -d
+</code></pre>
+
+<p>Now, if you open the <em>index.html</em> in the browser you can see <em>Hello React</em></p>
+
+<h2 id="adding-some-complexity">Adding Some Complexity</h2>
+
+<h3 id="making-webpack-to-watch-the-changes">Making Webpack to watch the changes</h3>
+
+<p>Running the webpack command on every time when you change the file is not a productive work. We can easily change this behavior by using the following command</p>
+
+<pre><code>./node_modules/.bin/webpack -d --watch
+</code></pre>
+<p>Now Webpack is running in the watch mode, which will automatically bundle the file whenever there is a change detected. To test it, change <em>Hello React</em> to something else and refresh the <em>index.html</em> in the browser. You can see your new changes.</p>
+
+<p>If you don’t like refreshing the browser to see the changes you can use <a href="http://gaearon.github.io/react-hot-loader/getstarted/">react-hot-loader</a>!</p>
+
+<h3 id="using-npm-as-a-tool-runner">Using npm as a tool runner</h3>
+
+<p>The command <code>./node_modules/.bin/webpack</code> can be made even simpler by leveraging npm.</p>
+
+<p>Update the packages.json as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>{
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="key"><span class="delimiter">&quot;</span><span class="content">scripts</span><span class="delimiter">&quot;</span></span>: {
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    <span class="key"><span class="delimiter">&quot;</span><span class="content">dev</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">webpack -d --watch</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    <span class="key"><span class="delimiter">&quot;</span><span class="content">build</span><span class="delimiter">&quot;</span></span> : <span class="string"><span class="delimiter">&quot;</span><span class="content">webpack -p</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  },
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Now the command <code>npm run build</code> runs Webpack in production mode, which minimizes the bundle file automatically and<br />
+the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
+
+<h3 id="adding-some-files">Adding some files</h3>
+
+<p>In the sample we have seen only one Component called <em>App</em>. Let’s add some more to test the bundling setup.</p>
+
+<p>Create a new file <em>AwesomeComponent.jsx</em> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="reserved">import</span> React from <span class="string"><span class="delimiter">'</span><span class="content">react</span><span class="delimiter">'</span></span>;
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="reserved">class</span> AwesomeComponent <span class="reserved">extends</span> React.Component {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  constructor(props) {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span class="reserved">super</span>(props);
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    <span class="local-variable">this</span>.state = {<span class="key">likesCount</span> : <span class="integer">0</span>};
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    <span class="local-variable">this</span>.onLike = <span class="local-variable">this</span>.onLike.bind(<span class="local-variable">this</span>);
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  }
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  onLike () {
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    let newLikesCount = <span class="local-variable">this</span>.state.likesCount + <span class="integer">1</span>;
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    <span class="local-variable">this</span>.setState({<span class="key">likesCount</span>: newLikesCount});
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  }
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  render() {
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    <span class="keyword">return</span> (
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>      <span class="tag">&lt;div&gt;</span>
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>        Likes : <span class="tag">&lt;span&gt;</span>{this.state.likesCount}<span class="tag">&lt;/span&gt;</span>
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>        <span class="tag">&lt;div&gt;</span><span class="tag">&lt;button</span> <span class="attribute-name">onClick</span>=<span class="error">{</span><span class="attribute-value">this.onLike</span><span class="error">}</span><span class="tag">&gt;</span>Like Me<span class="tag">&lt;/button&gt;</span><span class="tag">&lt;/div&gt;</span>
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>      &lt;<span class="regexp"><span class="delimiter">/</span><span class="content">div&gt;</span></span>
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span><span class="regexp"><span class="content">    );</span></span>
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span><span class="regexp"><span class="content">  }</span></span>
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span><span class="regexp"><span class="content"></span></span>
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span><span class="regexp"><span class="content">}</span></span>
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span><span class="regexp"><span class="content"></span></span>
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span><span class="regexp"><span class="content">export default AwesomeComponent;</span></span>
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span><span class="regexp"><span class="content"></span></span></pre></div>
+</div>
+</div>
+
+<p>Then include it in the <em>index.jsx</em> file</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="reserved">import</span> AwesomeComponent from <span class="string"><span class="delimiter">'</span><span class="content">./AwesomeComponent.jsx</span><span class="delimiter">'</span></span>;
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="reserved">class</span> App <span class="reserved">extends</span> React.Component {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  <span class="keyword">return</span> (
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      <span class="tag">&lt;div&gt;</span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        <span class="tag">&lt;p&gt;</span> Hello React!<span class="tag">&lt;/p&gt;</span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        <span class="tag">&lt;AwesomeComponent</span> <span class="tag">/&gt;</span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      <span class="tag">&lt;/div&gt;</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    );
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>}
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span><span class="comment">// ...</span>
+</pre></div>
+</div>
+</div>
+
+<p>If your Webpack is already running in watch mode then refresh the browser to see the AwesomeComponent in action!</p>
+
+<p>{% img center /images/react-hello-world/Output.png %}</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post we have seen a lean approach for setting up a development environment to work with React. In the next blog post we will be extending this example to implement the <a href="https://facebook.github.io/react/docs/flux-overview.html">flux</a> architecture using <a href="http://alt.js.org">Alt</a>. You can get the source code associated with this blog post can be found in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/react-hello-world">github repository</a>.</p>
+]]></content>
+  </entry>
+  
+</feed>
