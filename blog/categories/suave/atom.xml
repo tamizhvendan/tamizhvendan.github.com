@@ -4,7 +4,7 @@
   <title><![CDATA[Category: suave | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/suave/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-11-23T20:55:07+05:30</updated>
+  <updated>2015-12-29T10:02:35+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,618 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Implementing API Gateway in F# using Rx and Suave]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/12/29/implementing-api-gateway-in-f-number-using-rx-and-suave/"/>
+    <updated>2015-12-29T09:22:49+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/12/29/implementing-api-gateway-in-f-number-using-rx-and-suave</id>
+    <content type="html"><![CDATA[<p>One of the impressive aspects of functional programming is that it will enable you to write simple and expressive code to solve  complex problems. If you are wondering, how is it possible? Well, It is because, Functional Programming provides a lot of higher level abstractions to solve the problem in hand and avoids the need of writing lot of boilerplate &amp; plumbing code. As a developer, you will be more productive and deliver the solution faster.</p>
+
+<p>In this blog post, we are going to see the application of the above statements by implementing an <a href="https://www.nginx.com/blog/building-microservices-using-an-api-gateway">API Gateway Pattern</a> in F# using <a href="http://reactivex.io/">Rx</a> and <a href="https://suave.io/">Suave</a>.  </p>
+
+<blockquote>
+  <p>This blog post is my contribution towards <a href="https://sergeytihon.wordpress.com/2015/10/25/f-advent-calendar-in-english-2015/">fsharp advent calendar 2015</a>. Do check out other great fsharp posts there</p>
+</blockquote>
+
+<h2 id="api-gateway-pattern">API Gateway Pattern</h2>
+<p>Let’s assume that you are asked to build the backend for the below GitHub user profile screen.</p>
+
+<p><img src="http://res.cloudinary.com/tamizhvendan/image/upload/v1450769741/Profile.png" alt="Github Profile" /></p>
+
+<p>This profile screen has 3 components</p>
+
+<ol>
+  <li>
+    <p>User - Username and Avatar</p>
+  </li>
+  <li>
+    <p>Popular Repos - Top 3 Repos of the Given User (determined by the number of stars)</p>
+  </li>
+  <li>
+    <p>Languages being used in the corresponding repos</p>
+  </li>
+</ol>
+
+<p>Now as a developer, you have two options</p>
+
+<ul>
+  <li>
+    <p>Build the Profile completely in client side by calling their corresponding GitHub APIs
+<img src="http://res.cloudinary.com/tamizhvendan/image/upload/v1450769816/Profile_With_API_Calls.png" alt="Profile with URLs" /></p>
+
+    <p>This approach makes the client side complex as it involves five HTTP requests to create the complete profile screen. It has a lot of drawbacks as mentioned in <a href="http://techblog.netflix.com/2013/01/optimizing-netflix-api.html">this blog post</a> by Netflix.</p>
+  </li>
+  <li>
+    <p>Create a Facade API which takes care of the heavy lifting and hides the complexity of calling multiple services by  exposing a single endpoint which returns all the data required to create the profile screen in one API call
+<img src="http://res.cloudinary.com/tamizhvendan/image/upload/v1450775641/API_Gateway.png" alt="API Gateway" /></p>
+
+    <p>This approach is called API Gateway. It is one of the commonly used <a href="http://microservices.io/patterns/apigateway.html">patterns in the microservices</a> world.</p>
+  </li>
+</ul>
+
+<h2 id="rx">Rx</h2>
+
+<p>API Gateway is normally implemented using <a href="http://reactivex.io/">Rx</a>. Rx, an implementation of <a href="https://gist.github.com/staltz/868e7e9bc2a7b8c1f754">Functional Reactive Programming</a>, makes it easy to implement this kind of problems by enable us to think each asynchronous operation as streams (aka Observables). These streams offer a declarative API to work with the asynchronous operations.</p>
+
+<p>In the implementation that we are going to see, we will be using <a href="http://fsprojects.github.io/FSharp.Control.Reactive/">FSharp.Control.Reactive</a>, an extension and wrapper for using the Reactive Extensions (Rx) with F#</p>
+
+<h2 id="project-structure">Project Structure</h2>
+
+<p>Create a new F# Console Application Project with the name <code>RxFsharp</code> and then create the files mentioned below in the given order</p>
+
+<pre><code>RxFsharp
+|--Http.fs --&gt; Abstraction to make http requests
+|--GitHub.fs --&gt; Define data types, transforming &amp; parsing of responses from GitHub
+|--ObservableExtensions.fs --&gt; Some Util methods over Rx Observable
+|--Profile.fs --&gt; Implemention of API Gateway using Rx
+|--ApiGateway.fs --&gt; Suave API
+|--Program.fs --&gt; Entry Point
+|--user.json --&gt; Sample response of GitHub user API
+|--repos.json --&gt; Sample response of GitHub repos API
+|--App.config
+|--packages.config
+</code></pre>
+
+<p>Then install the following NuGet packages</p>
+
+<ul>
+  <li><a href="https://www.nuget.org/packages/FSharp.Control.Reactive">FSharp.Control.Reactive</a></li>
+  <li><a href="https://www.nuget.org/packages/Http.fs">Http.fs</a></li>
+  <li><a href="https://www.nuget.org/packages/Suave">Suave</a></li>
+  <li><a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a></li>
+  <li><a href="https://www.nuget.org/packages/FSharp.Data">FSharp.Data</a></li>
+</ul>
+
+<h2 id="modeling-http-request--response-as-stream">Modeling Http Request &amp; Response as Stream</h2>
+
+<p>In Functional Reactive Programming(FRP) every action is treated as stream. So, first step in implementing an API Gateway is modeling each HTTP request&amp;response as stream.</p>
+
+<p>Open <code>Http.fs</code> file and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Http
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open HttpClient
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open FSharp.Control.Reactive
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>type HttpResponse =
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>| Ok of string
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>| Error of int
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let getResponseAsync url =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  async {
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    let! response =
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      createRequest Get url
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      |&gt; withHeader (UserAgent &quot;FsharpRx&quot;)
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      |&gt; HttpClient.getResponseAsync
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    let httpResponse =
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>      match response.StatusCode with
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>      | 200 -&gt; response.EntityBody.Value |&gt; Ok
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      | _ -&gt; response.StatusCode |&gt; Error
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    return httpResponse
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  }
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>let asyncResponseToObservable = getResponseAsync &gt;&gt; Observable.ofAsync
+</pre></div>
+</div>
+</div>
+
+<p>The <code>getResponseAsync</code> function makes use of <a href="https://github.com/relentless/Http.fs">Http.fs</a>, an HTTP Client library for F#, to fire the HTTP GET request and returns the HTTP response asynchronously.</p>
+
+<p>The HTTP response has been modeled as either <code>Ok</code> with the response content for all the responses with the status code <code>200</code> and everything else is treated as <code>Error</code> for simplicity.</p>
+
+<p>In the final line, we create a stream (aka Observable) from asynchronous response using the function <code>Observable.ofAsync</code> from <a href="https://github.com/fsprojects/FSharp.Control.Reactive">FSharp.Control.Reactive</a></p>
+
+<p>As all the GitHub API <a href="https://developer.github.com/v3/#user-agent-required">requests require user agent</a>, we are adding one before firing the request.</p>
+
+<h2 id="parsing-and-transforming-github-api-responses">Parsing and Transforming GitHub API Responses</h2>
+
+<p>Upon successful response from GitHub, the next step is parsing the JSON response and transforming the parsed response as per the Profile screen requirements.</p>
+
+<p>To parse the response, we are going to leverage the powerful tool of FSharp called <a href="http://fsharp.github.io/FSharp.Data/library/JsonProvider.html">JsonTypeProvider</a></p>
+
+<p>The JSON Type Provider provides statically typed access to JSON documents. It takes a sample document as an input. Here in our case, it is user.json and repos.json</p>
+
+<p>Get the sample response from GitHub using its <a href="https://api.github.com/users/tamizhvendan">User API</a> and <a href="https://api.github.com/users/tamizhvendan/repos">Repos API</a> and save the response in user.json and repos.json respectively.</p>
+
+<p>With the help of JsonTypeProvider, we can now easily parse the raw JSON response to its equivalent types in just a few lines of code in <code>GitHub.fs</code>!</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module GitHub
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Http
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open FSharp.Data
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>type GitHubUser = JsonProvider&lt;&quot;user.json&quot;&gt;
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>type GitHubUserRepos = JsonProvider&lt;&quot;repos.json&quot;&gt;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let parseUser = GitHubUser.Parse
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let parseUserRepos = GitHubUserRepos.Parse
+</pre></div>
+</div>
+</div>
+
+<p>As <code>GitHub.fs</code> is an abstraction of GitHub let’s put their URLs also here in the same file</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let host = &quot;https://api.github.com&quot;
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let userUrl = sprintf &quot;%s/users/%s&quot; host
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let reposUrl = sprintf &quot;%s/users/%s/repos&quot; host
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>let languagesUrl repoName userName = sprintf &quot;%s/repos/%s/%s/languages&quot; host userName repoName
+</pre></div>
+</div>
+</div>
+<p>We have used <a href="http://fsharpforfunandprofit.com/posts/partial-application">partial application</a> of function <code>sprintf</code> in the <code>userUrl</code> and <code>reposUrl</code> function here, so both of these functions take username as its parameter implicitly</p>
+
+<p>The JSON response of <a href="https://api.github.com/repos/tamizhvendan/fsharp-phonecat/languages">languages</a> API is little tricky to parse as its keys are dynamic. The type provider will work only if the underlying response has a fixed schema. So, we can’t use the type provider directly to parse the response of languages API.</p>
+
+<p>We are going to use the inbuilt <a href="http://fsharp.github.io/FSharp.Data/library/JsonValue.html">JSON Parser</a> available with JsonTypeProvider to parse the languages response</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let parseLanguages languagesJson =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  languagesJson
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  |&gt; JsonValue.Parse
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  |&gt; JsonExtensions.Properties
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  |&gt; Array.map fst
+</pre></div>
+</div>
+</div>
+
+<p>The <code>JsonValue.Parse</code> parses the raw string JSON to a type called <code>JsonValue</code> and the <code>JsonExtensions.Properties</code> function takes a <code>JsonValue</code> and returns the key and value pairs of all the properties in the JSON as tuples. As we are interested only in the Keys here, we just pluck that value alone using the function <code>fst</code></p>
+
+<p>Great! Now we are done with parsing the JSON response of all the three APIs and creating it’s equivalent types. The next step is doing some business transformation</p>
+
+<p>One of the requirements of the Profile Screen is that we need to show only the top 3 popular repositories based on the stars received by the repository. Let’s implement it</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let popularRepos (repos : GitHubUserRepos.Root []) =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let ownRepos = repos |&gt; Array.filter (fun repo -&gt; not repo.Fork)
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let takeCount = if ownRepos.Length &gt; 3 then 3 else repos.Length
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  ownRepos
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  |&gt; Array.sortBy (fun r -&gt; -r.StargazersCount)
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  |&gt; Array.toSeq
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  |&gt; Seq.take takeCount
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  |&gt; Seq.toArray
+</pre></div>
+</div>
+</div>
+
+<p>In the <code>Http.fs</code> file, we defined how to get the raw JSON response using Stream as <code>HttpResponse</code> (<code>Ok</code> &amp; <code>Error</code>) and in this <code>GitHub.fs</code>, we have defined how to parse this raw JSON response and transform them its equivalent strongly types.</p>
+
+<p>The final step is integrating both these logic and return the Output record type needed by the Profile Screen</p>
+
+<p>let’s start by defining the Profile type</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type Profile = {
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  Name : string
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  AvatarUrl : string
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  PopularRepositories : Repository seq
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>} and Repository = {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  Name : string
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  Stars : int
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  Languages : string[]
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+</pre></div>
+</div>
+</div>
+<p>Then write functions to get the value from <code>HttpResponse</code> and create this profile output.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let reposResponseToPopularRepos = function
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  |Ok(r) -&gt; r |&gt; parseUserRepos |&gt; popularRepos
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  |_ -&gt; [||]
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>// Languages always associated with a repository
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>let languageResponseToRepoWithLanguages (repo : GitHubUserRepos.Root) = function
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  |Ok(l) -&gt; {Name = repo.Name; Languages = (parseLanguages l); Stars = repo.StargazersCount}
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  |_ -&gt; {Name = repo.Name; Languages = Array.empty; Stars = repo.StargazersCount}
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let toProfile  = function
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  |Ok(u), repos -&gt;
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      let user = parseUser u
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      {Name = user.Name; PopularRepositories = repos; AvatarUrl = user.AvatarUrl} |&gt; Some
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  | _ -&gt; None
+</pre></div>
+</div>
+</div>
+
+<p>All the above functions except <code>toProfile</code> take <code>HttpResponse</code> as its last parameter implicitly.</p>
+
+<p>In <code>reposResponseToPopularRepos</code> function, if the repos API request is successful, we parse the response to its equivalent type and then pick only three of them based on star count and in the case of an error we just return an empty array.</p>
+
+<p>The <code>languageResponseToRepoWithLanguages</code> function handles the response from the Languages API request which takes its associated repository as its first parameter. If the response is successful, then it creates the <code>Repository</code> record with the returned languages else it just the <code>Repository</code> record with an empty array for languages.</p>
+
+<p>The last function <code>toProfile</code> is a merge function which takes a tuple of <code>HttpResponse</code> (of User API request) and <code>Repository []</code> and creates a <code>Profile</code> record if the response is successful. In case of an error, it just returns <code>None</code></p>
+
+<p><em>Note: To keep this blog post simple, I am handling the errors using empty arrays and None. It can be extended using <a href="http://fsharpforfunandprofit.com/rop/">ROP</a></em></p>
+
+<h2 id="implementing-api-gateway">Implementing API Gateway</h2>
+
+<p>Let me quickly summarize what we have done so far. We have created two abstractions.</p>
+
+<ul>
+  <li><code>Http</code> - Responsible for firing the HTTP GET request with the given URL and give the response as a Rx Stream</li>
+</ul>
+
+<pre><code>URL
+  \
+----------Response--|
+
+</code></pre>
+
+<ul>
+  <li><code>GitHub</code> - Takes care of parsing the JSON response from GitHub API and does some business logic (finding top 3 popular repositories). Then returns the output in the format that the Client needs.</li>
+</ul>
+
+<p>With the help of these abstractions now we are going to build the API Gateway to get the profile object.</p>
+
+<p>Open <code>Gateway.fs</code> and add the <code>getProfile</code> function</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>//string -&gt; Async&lt;Profile&gt;
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let getProfile username =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  async {
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    // TODO
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    return! profile
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  }
+</pre></div>
+</div>
+</div>
+<p>It is just a skeleton which just describes the what function does. Let’s start its implementation.</p>
+
+<p>In Rx world, everything is a stream. So, the first step is converting GitHub User API request to stream</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getProfile username =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  // ...
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let userStream = username |&gt; userUrl |&gt; asyncResponseToObservable
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  // ...
+</pre></div>
+</div>
+</div>
+
+<p>We have created the <code>userStream</code> using the <code>userUrl</code> and <code>asyncResponseToObservable</code> function defined earlier.</p>
+
+<pre><code>userURL
+  \
+-----------UJ--|              // UJ - GitHub User Response in JSON format
+</code></pre>
+
+<p>Then we need top three popular repositories as a stream</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getProfile username =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  // ...
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let popularReposStream =
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    username
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    |&gt; reposUrl
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    |&gt; asyncResponseToObservable
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    |&gt; Observable.map reposResponseToPopularRepos
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  // ...
+</pre></div>
+</div>
+</div>
+
+<p>Except the last line, everything is same as that of creating <code>userStream</code>. If you check <a href="https://api.github.com/users/tamizhvendan/repos">GitHub repos API</a> it just returns all the repos associated with the given username. But what we need is only top three of them based on the number of stars it has received.</p>
+
+<p>We already have a function <code>reposResponseToPopularRepos</code> in <code>GitHub.fs</code> which does the job of picking the top three repos from the raw JSON. As the response is in the form Rx stream, we need to get the value from the stream and then we need to apply this function and that’s what the <code>Observable.map</code> does. It is very similar to <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/map">Array.map</a> and <a href="https://msdn.microsoft.com/en-us/library/system.linq.enumerable.select(v=vs.100).aspx">LINQ Select</a></p>
+
+<pre><code>reposURL
+  \
+----------RJ---|                          // RJ - GitHub user repos in JSON format
+          | MAP function (RJ -&gt; PR)       // PR - Popular Repos
+          V
+--------------PR---|
+</code></pre>
+
+<p>The next operation is a little complex. i.e. finding out the programming languages being used in these popular repositories. To get this GitHub API, we need to fire three separate requests to the <a href="https://developer.github.com/v3/repos/#list-languages">Languages API</a> for each repository and then merge the results back with the corresponding repository.</p>
+
+<p>To implement this with the help of Rx streams, we need to understand the <code>flatMap</code> <a href="http://reactivex.io/documentation/operators/flatmap.html">function of Rx</a>.</p>
+
+<p>It is similar to the <code>map</code> function that we have seen before with a difference that it takes a function that returns a new item stream instead of a new item.</p>
+
+<h3 id="map">Map</h3>
+
+<p><img src="http://reactivex.io/documentation/operators/images/map.c.png" alt="Map" /></p>
+
+<p>The <code>map</code> function has the following signature</p>
+
+<pre><code>('a -&gt; 'b) -&gt; IObservable&lt;'a&gt; -&gt; IObservable&lt;'b&gt;
+</code></pre>
+
+<h3 id="flatmap">FlatMap</h3>
+
+<p><img src="http://reactivex.io/documentation/operators/images/flatMap.c.png" alt="FlatMap" /></p>
+
+<p>The <code>flatMap</code> function has the following signature</p>
+
+<pre><code>('a -&gt; IObservable&lt;'b&gt;) -&gt; IObservable&lt;'a&gt; -&gt; IObservable&lt;'b&gt;
+</code></pre>
+
+<p>This function is also called as <code>bind</code> function in the functional programming world. If you would like to know further on this topic, I strongly recommend <a href="http://fsharpforfunandprofit.com/posts/elevated-world">this blog series</a> by the fsharp great, <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a></p>
+
+<p>Back to the problem in hand, we need to fire three HTTP GET Requests to get back the languages associated with the each of the top three popular repos. In terms of the <code>flatMap</code> function, it boils down to three functions of the following syntax</p>
+
+<pre><code>(GitHubUserRepos.Root -&gt; IObservable&lt;Repostiory&gt;)
+  -&gt; IObservable&lt;GitHubUserRepos.Root&gt; -&gt; IObservable&lt;Repostiory&gt;
+</code></pre>
+
+<p>We can implement the solution using three <code>flatMap</code> functions using the above syntax. But, we can make it more granular by creating a new variant of <code>flatMap</code> function to achieve this in a more straightforward way.</p>
+
+<p>The ideal function that we are looking for in this <code>flatMap</code> variant holds the following signature</p>
+
+<pre><code>('a -&gt; IObservable&lt;'b&gt;) -&gt; IObservable&lt;'a []&gt; -&gt; IObservable&lt;'b []&gt;
+</code></pre>
+<p>i.e three <code>flatMap</code> can be rewritten as</p>
+
+<pre><code>(GitHubUserRepos.Root -&gt; IObservable&lt;Repostiory&gt;)
+  -&gt; IObservable&lt;GitHubUserRepos.Root []&gt; -&gt; IObservable&lt;Repostiory []&gt;
+</code></pre>
+
+<p>Let’s name it as <code>flatMap2</code> and add the implementation of it in the file <code>ObservableExtensions.fs</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>module ObservableExtensions
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>open FSharp.Control.Reactive
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>let flatmap2 f observable =
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  observable
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  |&gt; Observable.flatmap (Array.map f &gt;&gt; Observable.mergeArray)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  |&gt; Observable.toArray
+</pre></div>
+</div>
+</div>
+
+<p>Here is the representation of what this function does</p>
+
+<pre><code>-----X[n]--------------------------|-&gt;
+      \   flatMap on each item in X which yield the stream of R
+-------R1-------------------------|-&gt;
+----------R2----------------------|-&gt;
+          ......
+-------------Rn-------------------|-&gt;
+          ||  mergeArray -&gt; merge array of R streams into one stream
+          VV
+------R1-R2--Rn-------------------|-&gt;
+              \ toArray -&gt; Creates an array from an observable sequence
+-------------R[n]-----------------|-&gt;
+</code></pre>
+
+<p>It’s hard to get it right in a single shot. So, let’s see it in detail step by step by applying it to our use case here</p>
+
+<ul>
+  <li>We have the stream of three popular repos (i.e array of repos)</li>
+</ul>
+
+<pre><code>-----X[n]--------------------------|-&gt;
+</code></pre>
+<ul>
+  <li>To get the languages associated with the each repo we need to call the languages API for every repo item in the above step</li>
+</ul>
+
+<pre><code>-----X[n]--------------------------|-&gt;
+      \   flatMap on each item in X which yield the n streams of R
+-------R1-------------------------|-&gt;
+----------R2----------------------|-&gt;
+          ......
+-------------Rn-------------------|-&gt;
+</code></pre>
+<ul>
+  <li>After we received the response from each languages API call, we need to merge them into one stream</li>
+</ul>
+
+<pre><code>-------R1-------------------------|-&gt;
+----------R2----------------------|-&gt;
+          ......
+-------------Rn-------------------|-&gt;
+          |  mergeArray -&gt; merge array of R streams into one stream
+          V
+------R1-R2--Rn-------------------|-&gt;
+</code></pre>
+
+<ul>
+  <li>To integrate this with the expected application response, we need all the responses in a single go</li>
+</ul>
+
+<pre><code>------R1-R2--Rn-------------------|-&gt;
+              \ toArray -&gt; Creates an array from an observable sequence
+-------------R[n]-----------------|-&gt;
+</code></pre>
+
+<p>Great! You got it right!!</p>
+
+<p>Let’s use this <code>flatMap2</code> function and complete the implementation of profile API gateway.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let getProfile username =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  // ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let toRepoWithLanguagesStream (repo : GitHubUserRepos.Root) =    
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    username
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    |&gt; languagesUrl repo.Name
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    |&gt; asyncResponseToObservable
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    |&gt; Observable.map (languageResponseToRepoWithLanguages repo)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let popularReposStream =
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    username
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    |&gt; reposUrl
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    |&gt; asyncResponseToObservable
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    |&gt; Observable.map reposResponseToPopularRepos
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    |&gt; flatmap2 toRepoWithLanguagesStream
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  // ...
+</pre></div>
+</div>
+</div>
+
+<p>The <code>flatmap2</code> function takes the function <code>toRepoWithLanguagesStream</code> which converts the <code>GitHubUserRepos.Root</code> type to <code>IObservable&lt;Repository&gt;</code> to find out the languages associated with the given popular repositories.</p>
+
+<p>The <code>toRepoWithLanguagesStream</code> function does the following</p>
+
+<pre><code>GitHubUserRepos.Root
+  \ create a languages GitHub API stream using the repo name from the input
+-------LR----------|              // LR - languages GitHub API response
+        \ MAP function (GitHubUserRepos.Root -&gt; LR -&gt; R)
+------------R------|              // R - Repository type that defined earlier
+</code></pre>
+<p>The <code>Observable.map</code> function takes only one input, but here we need to two inputs. So, With the help of <a href="http://fsharpforfunandprofit.com/posts/partial-application/">partial application</a>, we created an intermediate function by partially applying the first parameter alone</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Observable.map (languageResponseToRepoWithLanguages repo)
+</pre></div>
+</div>
+</div>
+
+<p>The <code>languageResponseToRepoWithLanguages</code> function has been already defined in the <code>GitHub.fs</code> file.</p>
+
+<p>The last step of the <code>getProfile</code> function is combining this <code>popularReposStream</code> with the <code>userStream</code> created earlier and return the <code>Profile</code> type asynchronously.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let getProfile username =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  // ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  async {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    return! popularReposStream
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>            |&gt; Observable.zip userStream
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>            |&gt; Observable.map toProfile
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>            |&gt; TaskObservableExtensions.ToTask
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>            |&gt; Async.AwaitTask
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  }
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  // ...
+</pre></div>
+</div>
+</div>
+
+<p>The <code>Observable.zip</code> function takes two streams as its input, then merges the output of each stream and return the output as a tuple. From this tuple, we have used <code>Observable.map</code> function to map it a <code>Profile</code> type using the <code>toProfile</code> function created earlier in <code>GitHub.fs</code></p>
+
+<pre><code>-----UR-------------|     // UR - GitHub User API Response
+--------PR----------|     // PR - Popular Repos
+        \ ZIP function (UR -&gt; PR -&gt; (UR,PR))   
+---------(UR,PR)----|
+          \ MAP ( (UR,PR) -&gt; P )  // P - Profile
+----------P---------|
+</code></pre>
+
+<p>The last functions <code>TaskObservableExtensions.ToTask</code> and <code>Async.AwaitTask</code> does the conversion of <code>IObservable</code> to <code>async</code> by converting it to a <code>Task</code> first and then the <code>Task</code> to <code>async</code></p>
+
+<p>The final <code>getProfile</code> function will be like</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let getProfile username =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let userStream = username |&gt; userUrl |&gt; asyncResponseToObservable
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let toRepoWithLanguagesStream (repo : GitHubUserRepos.Root) =    
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    username
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    |&gt; languagesUrl repo.Name
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    |&gt; asyncResponseToObservable
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    |&gt; Observable.map (languageResponseToRepoWithLanguages repo)
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  let popularReposStream =
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    username
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    |&gt; reposUrl
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    |&gt; asyncResponseToObservable
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    |&gt; Observable.map reposResponseToPopularRepos
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    |&gt; flatmap2 toRepoWithLanguagesStream
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  async {
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    return! popularReposStream
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>            |&gt; Observable.zip userStream
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>            |&gt; Observable.map toProfile
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>            |&gt; TaskObservableExtensions.ToTask
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>            |&gt; Async.AwaitTask
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  }
+</pre></div>
+</div>
+</div>
+
+<p>This function is a testimonial on <em>How functional programming helps to write less, robust, and readable code to solve a complex problem</em></p>
+
+<p>We have handled all the five HTTP requests asynchronously, did some error handling (by returning empty types), and finally efficiently combined outputs of these five HTTP requests and created a type to send back to the client. Everything is asynchronous!</p>
+
+<p>Pretty awesome isn’t it?</p>
+
+<h2 id="exposing-the-api">Exposing the API</h2>
+
+<p>The final step is exposing what we have done so far as an API to the outside world. We are going to implement this using <a href="https://suave.io/">Suave</a></p>
+
+<p>Open <code>ApiGateway.fs</code> file and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let JSON v =  
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let jsonSerializerSettings = new JsonSerializerSettings()
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  jsonSerializerSettings.ContractResolver &lt;- new CamelCasePropertyNamesContractResolver()
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  JsonConvert.SerializeObject(v, jsonSerializerSettings)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  |&gt; OK
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  &gt;&gt;= Writers.setMimeType &quot;application/json; charset=utf-8&quot;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let getProfile userName (httpContext : HttpContext) =
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>   async {
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      let! profile = getProfile userName
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      match profile with
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      | Some p -&gt; return! JSON p httpContext
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      | None -&gt; return! NOT_FOUND (sprintf &quot;Username %s not found&quot; userName) httpContext
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>   }
+</pre></div>
+</div>
+</div>
+
+<p>The <code>JSON</code> is a utility function (WebPart in the world of Suave) which takes any type, serialize it to JSON format and return it as JSON HTTP response.</p>
+
+<p>The <code>getProfile</code> function is the API WebPart which calls our backend API gateway implementation and pass the received response to the <code>JSON</code> WebPart defined before.</p>
+
+<p>In case if there is no profile available (Remember? we return empty types in case of errors), we just return <code>404</code> with the message that the given username is not found.</p>
+
+<p>Then update the <code>Program.fs</code> to write the web server code</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let main argv =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let webpart = pathScan &quot;/api/profile/%s&quot; ApiGateway.getProfile
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  startWebServer defaultConfig webpart
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  0
+</pre></div>
+</div>
+</div>
+
+<p>Thanks to <code>Suave</code> for it’s lightweight and low-ceremony offerings in creating an API. We just exposed it in two lines!</p>
+
+<p>Hit <code>F5</code> and access the API at <code>http://localhost:8083/api/profile/{github-username}</code> Bingo!!</p>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote>
+  <p>A language that doesn’t affect the way you think about programming is not worth knowing - Alan Perils</p>
+</blockquote>
+
+<p>The above quote summarizes the gist of this blog post. Functional Programming will help you think better. You can get the source code associated with the blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/RxFsharp">blog-samples GitHub repository</a></p>
+
+<p>Wish you a happy and prosperous new year</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Creating Mock API server in fsharp using Suave]]></title>
@@ -39,7 +651,7 @@
 
 <p>The first step is getting the sample response for these APIs and save them in separate JSON files. In this example, I’ve created these using my GitHub username and added to the project as below.</p>
 
-<p>{% img center /images/suave_mock_api/project.png %}</p>
+<p><img class="center" src="/images/suave_mock_api/project.png"></p>
 
 <p>After adding, change the “Copy to Output Directory” property of the both the files to “Copy always”</p>
 
@@ -78,9 +690,9 @@
 
 <h2 id="mock-apis-in-action">Mock APIs in action</h2>
 
-<p>{% img border center /images/suave_mock_api/user_api.png %}</p>
+<p><img class="border center" src="/images/suave_mock_api/user_api.png"></p>
 
-<p>{% img border center /images/suave_mock_api/repos_api.png %}</p>
+<p><img class="border center" src="/images/suave_mock_api/repos_api.png"></p>
 
 <h2 id="summary">Summary</h2>
 
@@ -93,7 +705,7 @@
     <link href="http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/"/>
     <updated>2015-07-15T12:04:12+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token</id>
-    <content type="html"><![CDATA[<p>In the <a href="{% post_url 2015-06-11-building-rest-api-in-fsharp-using-suave%}">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT). </p>
+    <content type="html"><![CDATA[<p>In the <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT). </p>
 
 <p>This blog post is based on <a href="http://bitoftech.net/">Taiseer’s</a> blog post on <a href="http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/">JSON Web Token in ASP.NET Web API 2 using Owin</a> and I will be covering how to implement the same in <a href="http://suave.io">Suave</a>. If you are interested in the theoretical background of JWT, kindly read his blog post before reading this.</p>
 
@@ -129,7 +741,7 @@
 
 <p>Then add reference the .NET framework library <strong>System.IdentityModel</strong> in all the four projects from GAC and then add a reference to the <strong>SuaveJwt</strong> project library in all the other three projects.</p>
 
-<p>{% img center /images/suave_jwt/project_structure.png %}</p>
+<p><img class="center" src="/images/suave_jwt/project_structure.png"></p>
 
 <h2 id="new-audience-registration">New Audience Registration</h2>
 
@@ -298,7 +910,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Now we have everything to create a new audience. So, let’s run the <strong>SuaveJwt.AuthServerHost</strong> application and verify</p>
 
-<p>{% img center /images/suave_jwt/audience_create.png %}</p>
+<p><img class="center" src="/images/suave_jwt/audience_create.png"></p>
 
 <p>Keep a note of this <em>clientId</em> and <em>base64Secret</em> as we will be using them while defining the resource server (“Audience1” in this case).</p>
 
@@ -308,7 +920,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s begin by defining the business logic to create an access token.</p>
 
-<p>{% img center /images/suave_jwt/createToken.png %}</p>
+<p><img class="center" src="/images/suave_jwt/createToken.png"></p>
 
 <p>Open <em>JwtToken.fs</em> and add the following types</p>
 
@@ -506,7 +1118,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s run the <strong>SuaveJwt.AuthServerHost</strong> and verify the token</p>
 
-<p>{% img center /images/suave_jwt/audience_admin_token.png %}</p>
+<p><img class="center" src="/images/suave_jwt/audience_admin_token.png"></p>
 
 <h2 id="securing-the-resources">Securing the resources</h2>
 
@@ -611,13 +1223,13 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s see it in action</p>
 
-<p>{% img center /images/suave_jwt/audience_sample1_success.png %}</p>
+<p><img class="center" src="/images/suave_jwt/audience_sample1_success.png"></p>
 
 <p>Hurray! We have made it. “/audience1/sample1” is a secured API now!</p>
 
 <p>What will happen if we mess with the access token? Well, we will get an HTTP error. Let’s change the character <code>Q</code> in the access token from upper case to lower case and here is the result of it.</p>
 
-<p>{% img center /images/suave_jwt/audience_sample1_error.png %}</p>
+<p><img class="center" src="/images/suave_jwt/audience_sample1_error.png"></p>
 
 <p>Cool, Isn’t it?</p>
 
@@ -690,7 +1302,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>The <code>jwtAuthroize</code> function in action</p>
 
-<p>{% img center /images/suave_jwt/audience1_sample2_error.png %}</p>
+<p><img class="center" src="/images/suave_jwt/audience1_sample2_error.png"></p>
 
 <p><em>Note: I’ve generated a new access token here to exercise this use case.</em></p>
 
@@ -756,7 +1368,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below. </p>
 
-<p>{% img center /images/sauve_rest_api/proj_structure.png %}</p>
+<p><img class="center" src="/images/sauve_rest_api/proj_structure.png"></p>
 
 <p>After creating, install the following nuget packages</p>
 
@@ -790,7 +1402,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </div>
 <p>The is the simplest Suave application that greets all visitors with the string “Hello, Suave!”. The <code>startWebServer</code> is a blocking function that takes a configuration (port number, ssl, etc.,) and starts a http web server in the port 8083 upon calling.</p>
 
-<p>{% img center border /images/sauve_rest_api/hello_suave.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/hello_suave.png"></p>
 
 <p>The Rest Api that we are going to design here is a <code>WebPart</code> which will be replacing this <code>OK</code> webpart.</p>
 
@@ -919,7 +1531,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>That’s it! Now we have the HTTP GET Request up and running</p>
 
-<p>{% img center border /images/sauve_rest_api/http_get.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_get.png"></p>
 
 <p>Since we are having no people in our in-memory dictionary, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
 
@@ -1010,7 +1622,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>The HTTP POST function in action</p>
 
-<p>{% img center border /images/sauve_rest_api/http_post.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_post.png"></p>
 
 <h2 id="http-put">HTTP PUT</h2>
 
@@ -1094,11 +1706,11 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p><strong>Updating an existing resource</strong></p>
 
-<p>{% img center border /images/sauve_rest_api/http_put.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_put.png"></p>
 
 <p><strong>Updating a non-existing resource</strong></p>
 
-<p>{% img center border /images/sauve_rest_api/http_put_error.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_put_error.png"></p>
 
 <h2 id="http-delete">HTTP DELETE</h2>
 
@@ -1183,7 +1795,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </pre></div>
 </div>
 </div>
-<p>{% img center border /images/sauve_rest_api/http_delete.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_delete.png"></p>
 
 <h2 id="http-get--http-put-by-id">HTTP GET &amp; HTTP PUT by id</h2>
 
@@ -1254,8 +1866,8 @@ To make it independent of the host, we have externalized the hosting functionali
 </div>
 </div>
 
-<p>{% img center border /images/sauve_rest_api/http_get_id.png %}<br />
-{% img center border /images/sauve_rest_api/http_put_id.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/http_get_id.png"><br />
+<img class="center border" src="/images/sauve_rest_api/http_put_id.png"></p>
 
 <h2 id="http-head">HTTP HEAD</h2>
 
@@ -1317,7 +1929,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </pre></div>
 </div>
 </div>
-<p>{% img center border /images/sauve_rest_api/head.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/head.png"></p>
 
 <p>That’s all.. We have successfully implemented a REST API using Suave</p>
 
@@ -1357,13 +1969,13 @@ To make it independent of the host, we have externalized the hosting functionali
 </div>
 </div>
 
-<p>{% img center border /images/sauve_rest_api/get_album_id.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/get_album_id.png"></p>
 
 <h2 id="conclusion">Conclusion</h2>
 
 <p>In the amazing presentation on <a href="https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin">Functional Programming Design Patterns</a>, Scott Wlaschin had this slide</p>
 
-<p>{% img center border /images/sauve_rest_api/fp_design_patterns_slide.png %}</p>
+<p><img class="center border" src="/images/sauve_rest_api/fp_design_patterns_slide.png"></p>
 
 <p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this. </p>
 

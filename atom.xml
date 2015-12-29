@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-11-23T20:51:29+05:30</updated>
+  <updated>2015-12-29T10:02:35+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,803 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Implementing API Gateway in F# using Rx and Suave]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2015/12/29/implementing-api-gateway-in-f-number-using-rx-and-suave/"/>
+    <updated>2015-12-29T09:22:49+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2015/12/29/implementing-api-gateway-in-f-number-using-rx-and-suave</id>
+    <content type="html"><![CDATA[<p>One of the impressive aspects of functional programming is that it will enable you to write simple and expressive code to solve  complex problems. If you are wondering, how is it possible? Well, It is because, Functional Programming provides a lot of higher level abstractions to solve the problem in hand and avoids the need of writing lot of boilerplate &amp; plumbing code. As a developer, you will be more productive and deliver the solution faster.</p>
+
+<p>In this blog post, we are going to see the application of the above statements by implementing an <a href="https://www.nginx.com/blog/building-microservices-using-an-api-gateway">API Gateway Pattern</a> in F# using <a href="http://reactivex.io/">Rx</a> and <a href="https://suave.io/">Suave</a>.  </p>
+
+<blockquote>
+  <p>This blog post is my contribution towards <a href="https://sergeytihon.wordpress.com/2015/10/25/f-advent-calendar-in-english-2015/">fsharp advent calendar 2015</a>. Do check out other great fsharp posts there</p>
+</blockquote>
+
+<h2 id="api-gateway-pattern">API Gateway Pattern</h2>
+<p>Let’s assume that you are asked to build the backend for the below GitHub user profile screen.</p>
+
+<p><img src="http://res.cloudinary.com/tamizhvendan/image/upload/v1450769741/Profile.png" alt="Github Profile" /></p>
+
+<p>This profile screen has 3 components</p>
+
+<ol>
+  <li>
+    <p>User - Username and Avatar</p>
+  </li>
+  <li>
+    <p>Popular Repos - Top 3 Repos of the Given User (determined by the number of stars)</p>
+  </li>
+  <li>
+    <p>Languages being used in the corresponding repos</p>
+  </li>
+</ol>
+
+<p>Now as a developer, you have two options</p>
+
+<ul>
+  <li>
+    <p>Build the Profile completely in client side by calling their corresponding GitHub APIs
+<img src="http://res.cloudinary.com/tamizhvendan/image/upload/v1450769816/Profile_With_API_Calls.png" alt="Profile with URLs" /></p>
+
+    <p>This approach makes the client side complex as it involves five HTTP requests to create the complete profile screen. It has a lot of drawbacks as mentioned in <a href="http://techblog.netflix.com/2013/01/optimizing-netflix-api.html">this blog post</a> by Netflix.</p>
+  </li>
+  <li>
+    <p>Create a Facade API which takes care of the heavy lifting and hides the complexity of calling multiple services by  exposing a single endpoint which returns all the data required to create the profile screen in one API call
+<img src="http://res.cloudinary.com/tamizhvendan/image/upload/v1450775641/API_Gateway.png" alt="API Gateway" /></p>
+
+    <p>This approach is called API Gateway. It is one of the commonly used <a href="http://microservices.io/patterns/apigateway.html">patterns in the microservices</a> world.</p>
+  </li>
+</ul>
+
+<h2 id="rx">Rx</h2>
+
+<p>API Gateway is normally implemented using <a href="http://reactivex.io/">Rx</a>. Rx, an implementation of <a href="https://gist.github.com/staltz/868e7e9bc2a7b8c1f754">Functional Reactive Programming</a>, makes it easy to implement this kind of problems by enable us to think each asynchronous operation as streams (aka Observables). These streams offer a declarative API to work with the asynchronous operations.</p>
+
+<p>In the implementation that we are going to see, we will be using <a href="http://fsprojects.github.io/FSharp.Control.Reactive/">FSharp.Control.Reactive</a>, an extension and wrapper for using the Reactive Extensions (Rx) with F#</p>
+
+<h2 id="project-structure">Project Structure</h2>
+
+<p>Create a new F# Console Application Project with the name <code>RxFsharp</code> and then create the files mentioned below in the given order</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">RxFsharp
+</span><span class="line">|--Http.fs --&gt; Abstraction to make http requests
+</span><span class="line">|--GitHub.fs --&gt; Define data types, transforming &amp; parsing of responses from GitHub
+</span><span class="line">|--ObservableExtensions.fs --&gt; Some Util methods over Rx Observable
+</span><span class="line">|--Profile.fs --&gt; Implemention of API Gateway using Rx
+</span><span class="line">|--ApiGateway.fs --&gt; Suave API
+</span><span class="line">|--Program.fs --&gt; Entry Point
+</span><span class="line">|--user.json --&gt; Sample response of GitHub user API
+</span><span class="line">|--repos.json --&gt; Sample response of GitHub repos API
+</span><span class="line">|--App.config
+</span><span class="line">|--packages.config</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then install the following NuGet packages</p>
+
+<ul>
+  <li><a href="https://www.nuget.org/packages/FSharp.Control.Reactive">FSharp.Control.Reactive</a></li>
+  <li><a href="https://www.nuget.org/packages/Http.fs">Http.fs</a></li>
+  <li><a href="https://www.nuget.org/packages/Suave">Suave</a></li>
+  <li><a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a></li>
+  <li><a href="https://www.nuget.org/packages/FSharp.Data">FSharp.Data</a></li>
+</ul>
+
+<h2 id="modeling-http-request--response-as-stream">Modeling Http Request &amp; Response as Stream</h2>
+
+<p>In Functional Reactive Programming(FRP) every action is treated as stream. So, first step in implementing an API Gateway is modeling each HTTP request&amp;response as stream.</p>
+
+<p>Open <code>Http.fs</code> file and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Http</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">HttpClient</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">FSharp.Control.Reactive</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">HttpResponse</span> <span class="o">=</span>
+</span><span class="line"><span class="o">|</span> <span class="n">Ok</span> <span class="k">of</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">|</span> <span class="n">Error</span> <span class="k">of</span> <span class="n">int</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getResponseAsync</span> <span class="n">url</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">let!</span> <span class="nv">response</span> <span class="o">=</span>
+</span><span class="line">      <span class="n">createRequest</span> <span class="n">Get</span> <span class="n">url</span>
+</span><span class="line">      <span class="o">|&gt;</span> <span class="n">withHeader</span> <span class="o">(</span><span class="n">UserAgent</span> <span class="s">&quot;FsharpRx&quot;</span><span class="o">)</span>
+</span><span class="line">      <span class="o">|&gt;</span> <span class="nn">HttpClient</span><span class="p">.</span><span class="n">getResponseAsync</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">httpResponse</span> <span class="o">=</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">response</span><span class="o">.</span><span class="n">StatusCode</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="mi">200</span> <span class="o">-&gt;</span> <span class="n">response</span><span class="o">.</span><span class="n">EntityBody</span><span class="o">.</span><span class="n">Value</span> <span class="o">|&gt;</span> <span class="n">Ok</span>
+</span><span class="line">      <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">response</span><span class="o">.</span><span class="n">StatusCode</span> <span class="o">|&gt;</span> <span class="n">Error</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">httpResponse</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">asyncResponseToObservable</span> <span class="o">=</span> <span class="n">getResponseAsync</span> <span class="o">&gt;&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">ofAsync</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>getResponseAsync</code> function makes use of <a href="https://github.com/relentless/Http.fs">Http.fs</a>, an HTTP Client library for F#, to fire the HTTP GET request and returns the HTTP response asynchronously.</p>
+
+<p>The HTTP response has been modeled as either <code>Ok</code> with the response content for all the responses with the status code <code>200</code> and everything else is treated as <code>Error</code> for simplicity.</p>
+
+<p>In the final line, we create a stream (aka Observable) from asynchronous response using the function <code>Observable.ofAsync</code> from <a href="https://github.com/fsprojects/FSharp.Control.Reactive">FSharp.Control.Reactive</a></p>
+
+<p>As all the GitHub API <a href="https://developer.github.com/v3/#user-agent-required">requests require user agent</a>, we are adding one before firing the request.</p>
+
+<h2 id="parsing-and-transforming-github-api-responses">Parsing and Transforming GitHub API Responses</h2>
+
+<p>Upon successful response from GitHub, the next step is parsing the JSON response and transforming the parsed response as per the Profile screen requirements.</p>
+
+<p>To parse the response, we are going to leverage the powerful tool of FSharp called <a href="http://fsharp.github.io/FSharp.Data/library/JsonProvider.html">JsonTypeProvider</a></p>
+
+<p>The JSON Type Provider provides statically typed access to JSON documents. It takes a sample document as an input. Here in our case, it is user.json and repos.json</p>
+
+<p>Get the sample response from GitHub using its <a href="https://api.github.com/users/tamizhvendan">User API</a> and <a href="https://api.github.com/users/tamizhvendan/repos">Repos API</a> and save the response in user.json and repos.json respectively.</p>
+
+<p>With the help of JsonTypeProvider, we can now easily parse the raw JSON response to its equivalent types in just a few lines of code in <code>GitHub.fs</code>!</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">GitHub</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">Http</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">FSharp.Data</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">GitHubUser</span> <span class="o">=</span> <span class="n">JsonProvider</span><span class="o">&lt;</span><span class="s">&quot;user.json&quot;</span><span class="o">&gt;</span>
+</span><span class="line"><span class="k">type</span> <span class="nc">GitHubUserRepos</span> <span class="o">=</span> <span class="n">JsonProvider</span><span class="o">&lt;</span><span class="s">&quot;repos.json&quot;</span><span class="o">&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">parseUser</span> <span class="o">=</span> <span class="nn">GitHubUser</span><span class="p">.</span><span class="n">Parse</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">parseUserRepos</span> <span class="o">=</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Parse</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>As <code>GitHub.fs</code> is an abstraction of GitHub let’s put their URLs also here in the same file</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">host</span> <span class="o">=</span> <span class="s">&quot;https://api.github.com&quot;</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">userUrl</span> <span class="o">=</span> <span class="n">sprintf</span> <span class="s">&quot;%s/users/%s&quot;</span> <span class="n">host</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">reposUrl</span> <span class="o">=</span> <span class="n">sprintf</span> <span class="s">&quot;%s/users/%s/repos&quot;</span> <span class="n">host</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">languagesUrl</span> <span class="n">repoName</span> <span class="n">userName</span> <span class="o">=</span> <span class="n">sprintf</span> <span class="s">&quot;%s/repos/%s/%s/languages&quot;</span> <span class="n">host</span> <span class="n">userName</span> <span class="n">repoName</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>We have used <a href="http://fsharpforfunandprofit.com/posts/partial-application">partial application</a> of function <code>sprintf</code> in the <code>userUrl</code> and <code>reposUrl</code> function here, so both of these functions take username as its parameter implicitly</p>
+
+<p>The JSON response of <a href="https://api.github.com/repos/tamizhvendan/fsharp-phonecat/languages">languages</a> API is little tricky to parse as its keys are dynamic. The type provider will work only if the underlying response has a fixed schema. So, we can’t use the type provider directly to parse the response of languages API.</p>
+
+<p>We are going to use the inbuilt <a href="http://fsharp.github.io/FSharp.Data/library/JsonValue.html">JSON Parser</a> available with JsonTypeProvider to parse the languages response</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">parseLanguages</span> <span class="n">languagesJson</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">languagesJson</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">JsonValue</span><span class="p">.</span><span class="n">Parse</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">JsonExtensions</span><span class="p">.</span><span class="n">Properties</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Array</span><span class="p">.</span><span class="n">map</span> <span class="n">fst</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>JsonValue.Parse</code> parses the raw string JSON to a type called <code>JsonValue</code> and the <code>JsonExtensions.Properties</code> function takes a <code>JsonValue</code> and returns the key and value pairs of all the properties in the JSON as tuples. As we are interested only in the Keys here, we just pluck that value alone using the function <code>fst</code></p>
+
+<p>Great! Now we are done with parsing the JSON response of all the three APIs and creating it’s equivalent types. The next step is doing some business transformation</p>
+
+<p>One of the requirements of the Profile Screen is that we need to show only the top 3 popular repositories based on the stars received by the repository. Let’s implement it</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">popularRepos</span> <span class="o">(</span><span class="n">repos</span> <span class="o">:</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="bp">[]</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">ownRepos</span> <span class="o">=</span> <span class="n">repos</span> <span class="o">|&gt;</span> <span class="nn">Array</span><span class="p">.</span><span class="n">filter</span> <span class="o">(</span><span class="k">fun</span> <span class="n">repo</span> <span class="o">-&gt;</span> <span class="ow">not</span> <span class="n">repo</span><span class="o">.</span><span class="n">Fork</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">takeCount</span> <span class="o">=</span> <span class="k">if</span> <span class="n">ownRepos</span><span class="o">.</span><span class="n">Length</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="k">then</span> <span class="mi">3</span> <span class="k">else</span> <span class="n">repos</span><span class="o">.</span><span class="n">Length</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">ownRepos</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Array</span><span class="p">.</span><span class="n">sortBy</span> <span class="o">(</span><span class="k">fun</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="o">-</span><span class="n">r</span><span class="o">.</span><span class="n">StargazersCount</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Array</span><span class="p">.</span><span class="n">toSeq</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">take</span> <span class="n">takeCount</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">toArray</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>In the <code>Http.fs</code> file, we defined how to get the raw JSON response using Stream as <code>HttpResponse</code> (<code>Ok</code> &amp; <code>Error</code>) and in this <code>GitHub.fs</code>, we have defined how to parse this raw JSON response and transform them its equivalent strongly types.</p>
+
+<p>The final step is integrating both these logic and return the Output record type needed by the Profile Screen</p>
+
+<p>let’s start by defining the Profile type</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Profile</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">AvatarUrl</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">PopularRepositories</span> <span class="o">:</span> <span class="n">Repository</span> <span class="n">seq</span>
+</span><span class="line"><span class="o">}</span> <span class="ow">and</span> <span class="n">Repository</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Stars</span> <span class="o">:</span> <span class="n">int</span>
+</span><span class="line">  <span class="n">Languages</span> <span class="o">:</span> <span class="kt">string</span><span class="bp">[]</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Then write functions to get the value from <code>HttpResponse</code> and create this profile output.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">reposResponseToPopularRepos</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">  <span class="o">|</span><span class="n">Ok</span><span class="o">(</span><span class="n">r</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">r</span> <span class="o">|&gt;</span> <span class="n">parseUserRepos</span> <span class="o">|&gt;</span> <span class="n">popularRepos</span>
+</span><span class="line">  <span class="o">|_</span> <span class="o">-&gt;</span> <span class="o">[||]</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// Languages always associated with a repository</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">languageResponseToRepoWithLanguages</span> <span class="o">(</span><span class="n">repo</span> <span class="o">:</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span><span class="o">)</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">  <span class="o">|</span><span class="n">Ok</span><span class="o">(</span><span class="n">l</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">Name</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span> <span class="n">Languages</span> <span class="o">=</span> <span class="o">(</span><span class="n">parseLanguages</span> <span class="n">l</span><span class="o">);</span> <span class="n">Stars</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">StargazersCount</span><span class="o">}</span>
+</span><span class="line">  <span class="o">|_</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">Name</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span> <span class="n">Languages</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">empty</span><span class="o">;</span> <span class="n">Stars</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">StargazersCount</span><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">toProfile</span>  <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">  <span class="o">|</span><span class="n">Ok</span><span class="o">(</span><span class="n">u</span><span class="o">),</span> <span class="n">repos</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="n">parseUser</span> <span class="n">u</span>
+</span><span class="line">      <span class="o">{</span><span class="n">Name</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span> <span class="n">PopularRepositories</span> <span class="o">=</span> <span class="n">repos</span><span class="o">;</span> <span class="n">AvatarUrl</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">AvatarUrl</span><span class="o">}</span> <span class="o">|&gt;</span> <span class="n">Some</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>All the above functions except <code>toProfile</code> take <code>HttpResponse</code> as its last parameter implicitly.</p>
+
+<p>In <code>reposResponseToPopularRepos</code> function, if the repos API request is successful, we parse the response to its equivalent type and then pick only three of them based on star count and in the case of an error we just return an empty array.</p>
+
+<p>The <code>languageResponseToRepoWithLanguages</code> function handles the response from the Languages API request which takes its associated repository as its first parameter. If the response is successful, then it creates the <code>Repository</code> record with the returned languages else it just the <code>Repository</code> record with an empty array for languages.</p>
+
+<p>The last function <code>toProfile</code> is a merge function which takes a tuple of <code>HttpResponse</code> (of User API request) and <code>Repository []</code> and creates a <code>Profile</code> record if the response is successful. In case of an error, it just returns <code>None</code></p>
+
+<p><em>Note: To keep this blog post simple, I am handling the errors using empty arrays and None. It can be extended using <a href="http://fsharpforfunandprofit.com/rop/">ROP</a></em></p>
+
+<h2 id="implementing-api-gateway">Implementing API Gateway</h2>
+
+<p>Let me quickly summarize what we have done so far. We have created two abstractions.</p>
+
+<ul>
+  <li><code>Http</code> - Responsible for firing the HTTP GET request with the given URL and give the response as a Rx Stream</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">URL</span>
+</span><span class="line">  <span class="err">\</span>
+</span><span class="line"><span class="o">----------</span><span class="n">Response</span><span class="o">--|</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li><code>GitHub</code> - Takes care of parsing the JSON response from GitHub API and does some business logic (finding top 3 popular repositories). Then returns the output in the format that the Client needs.</li>
+</ul>
+
+<p>With the help of these abstractions now we are going to build the API Gateway to get the profile object.</p>
+
+<p>Open <code>Gateway.fs</code> and add the <code>getProfile</code> function</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">//string -&gt; Async&lt;Profile&gt;</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">    <span class="c1">// TODO</span>
+</span><span class="line">    <span class="k">return</span><span class="o">!</span> <span class="n">profile</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>It is just a skeleton which just describes the what function does. Let’s start its implementation.</p>
+
+<p>In Rx world, everything is a stream. So, the first step is converting GitHub User API request to stream</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">userStream</span> <span class="o">=</span> <span class="n">username</span> <span class="o">|&gt;</span> <span class="n">userUrl</span> <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We have created the <code>userStream</code> using the <code>userUrl</code> and <code>asyncResponseToObservable</code> function defined earlier.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">userURL</span>
+</span><span class="line">  <span class="err">\</span>
+</span><span class="line"><span class="o">-----------</span><span class="n">UJ</span><span class="o">--|</span>              <span class="c1">// UJ - GitHub User Response in JSON format</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then we need top three popular repositories as a stream</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">popularReposStream</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">reposUrl</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">reposResponseToPopularRepos</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Except the last line, everything is same as that of creating <code>userStream</code>. If you check <a href="https://api.github.com/users/tamizhvendan/repos">GitHub repos API</a> it just returns all the repos associated with the given username. But what we need is only top three of them based on the number of stars it has received.</p>
+
+<p>We already have a function <code>reposResponseToPopularRepos</code> in <code>GitHub.fs</code> which does the job of picking the top three repos from the raw JSON. As the response is in the form Rx stream, we need to get the value from the stream and then we need to apply this function and that’s what the <code>Observable.map</code> does. It is very similar to <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/map">Array.map</a> and <a href="https://msdn.microsoft.com/en-us/library/system.linq.enumerable.select(v=vs.100).aspx">LINQ Select</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">reposURL</span>
+</span><span class="line">  <span class="err">\</span>
+</span><span class="line"><span class="o">----------</span><span class="n">RJ</span><span class="o">---|</span>                          <span class="c1">// RJ - GitHub user repos in JSON format</span>
+</span><span class="line">          <span class="o">|</span> <span class="n">MAP</span> <span class="k">function</span> <span class="o">(</span><span class="n">RJ</span> <span class="o">-&gt;</span> <span class="n">PR</span><span class="o">)</span>       <span class="c1">// PR - Popular Repos</span>
+</span><span class="line">          <span class="n">V</span>
+</span><span class="line"><span class="o">--------------</span><span class="n">PR</span><span class="o">---|</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The next operation is a little complex. i.e. finding out the programming languages being used in these popular repositories. To get this GitHub API, we need to fire three separate requests to the <a href="https://developer.github.com/v3/repos/#list-languages">Languages API</a> for each repository and then merge the results back with the corresponding repository.</p>
+
+<p>To implement this with the help of Rx streams, we need to understand the <code>flatMap</code> <a href="http://reactivex.io/documentation/operators/flatmap.html">function of Rx</a>.</p>
+
+<p>It is similar to the <code>map</code> function that we have seen before with a difference that it takes a function that returns a new item stream instead of a new item.</p>
+
+<h3 id="map">Map</h3>
+
+<p><img src="http://reactivex.io/documentation/operators/images/map.c.png" alt="Map" /></p>
+
+<p>The <code>map</code> function has the following signature</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">b</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="flatmap">FlatMap</h3>
+
+<p><img src="http://reactivex.io/documentation/operators/images/flatMap.c.png" alt="FlatMap" /></p>
+
+<p>The <code>flatMap</code> function has the following signature</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span><span class="o">&gt;)</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This function is also called as <code>bind</code> function in the functional programming world. If you would like to know further on this topic, I strongly recommend <a href="http://fsharpforfunandprofit.com/posts/elevated-world">this blog series</a> by the fsharp great, <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a></p>
+
+<p>Back to the problem in hand, we need to fire three HTTP GET Requests to get back the languages associated with the each of the top three popular repos. In terms of the <code>flatMap</code> function, it boils down to three functions of the following syntax</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="n">Repostiory</span><span class="o">&gt;)</span>
+</span><span class="line">  <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="n">Repostiory</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We can implement the solution using three <code>flatMap</code> functions using the above syntax. But, we can make it more granular by creating a new variant of <code>flatMap</code> function to achieve this in a more straightforward way.</p>
+
+<p>The ideal function that we are looking for in this <code>flatMap</code> variant holds the following signature</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span><span class="o">&gt;)</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span> <span class="bp">[]</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span> <span class="bp">[]</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>i.e three <code>flatMap</code> can be rewritten as</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="n">Repostiory</span><span class="o">&gt;)</span>
+</span><span class="line">  <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="bp">[]</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="n">Repostiory</span> <span class="bp">[]</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Let’s name it as <code>flatMap2</code> and add the implementation of it in the file <code>ObservableExtensions.fs</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">ObservableExtensions</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">FSharp.Control.Reactive</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">flatmap2</span> <span class="n">f</span> <span class="n">observable</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">observable</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">flatmap</span> <span class="o">(</span><span class="nn">Array</span><span class="p">.</span><span class="n">map</span> <span class="n">f</span> <span class="o">&gt;&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">mergeArray</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">toArray</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here is the representation of what this function does</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-----</span><span class="n">X</span><span class="o">[</span><span class="n">n</span><span class="o">]--------------------------|-&gt;</span>
+</span><span class="line">      <span class="err">\</span>   <span class="n">flatMap</span> <span class="n">on</span> <span class="n">each</span> <span class="n">item</span> <span class="k">in</span> <span class="n">X</span> <span class="n">which</span> <span class="k">yield</span> <span class="n">the</span> <span class="n">stream</span> <span class="k">of</span> <span class="n">R</span>
+</span><span class="line"><span class="o">-------</span><span class="n">R1</span><span class="o">-------------------------|-&gt;</span>
+</span><span class="line"><span class="o">----------</span><span class="n">R2</span><span class="o">----------------------|-&gt;</span>
+</span><span class="line">          <span class="o">......</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span><span class="line">          <span class="o">||</span>  <span class="n">mergeArray</span> <span class="o">-&gt;</span> <span class="n">merge</span> <span class="n">array</span> <span class="k">of</span> <span class="n">R</span> <span class="n">streams</span> <span class="n">into</span> <span class="n">one</span> <span class="n">stream</span>
+</span><span class="line">          <span class="n">VV</span>
+</span><span class="line"><span class="o">------</span><span class="n">R1</span><span class="o">-</span><span class="n">R2</span><span class="o">--</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span><span class="line">              <span class="err">\</span> <span class="n">toArray</span> <span class="o">-&gt;</span> <span class="n">Creates</span> <span class="n">an</span> <span class="n">array</span> <span class="n">from</span> <span class="n">an</span> <span class="n">observable</span> <span class="n">sequence</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">R</span><span class="o">[</span><span class="n">n</span><span class="o">]-----------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>It’s hard to get it right in a single shot. So, let’s see it in detail step by step by applying it to our use case here</p>
+
+<ul>
+  <li>We have the stream of three popular repos (i.e array of repos)</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-----</span><span class="n">X</span><span class="o">[</span><span class="n">n</span><span class="o">]--------------------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<ul>
+  <li>To get the languages associated with the each repo we need to call the languages API for every repo item in the above step</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-----</span><span class="n">X</span><span class="o">[</span><span class="n">n</span><span class="o">]--------------------------|-&gt;</span>
+</span><span class="line">      <span class="err">\</span>   <span class="n">flatMap</span> <span class="n">on</span> <span class="n">each</span> <span class="n">item</span> <span class="k">in</span> <span class="n">X</span> <span class="n">which</span> <span class="k">yield</span> <span class="n">the</span> <span class="n">n</span> <span class="n">streams</span> <span class="k">of</span> <span class="n">R</span>
+</span><span class="line"><span class="o">-------</span><span class="n">R1</span><span class="o">-------------------------|-&gt;</span>
+</span><span class="line"><span class="o">----------</span><span class="n">R2</span><span class="o">----------------------|-&gt;</span>
+</span><span class="line">          <span class="o">......</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<ul>
+  <li>After we received the response from each languages API call, we need to merge them into one stream</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-------</span><span class="n">R1</span><span class="o">-------------------------|-&gt;</span>
+</span><span class="line"><span class="o">----------</span><span class="n">R2</span><span class="o">----------------------|-&gt;</span>
+</span><span class="line">          <span class="o">......</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span><span class="line">          <span class="o">|</span>  <span class="n">mergeArray</span> <span class="o">-&gt;</span> <span class="n">merge</span> <span class="n">array</span> <span class="k">of</span> <span class="n">R</span> <span class="n">streams</span> <span class="n">into</span> <span class="n">one</span> <span class="n">stream</span>
+</span><span class="line">          <span class="n">V</span>
+</span><span class="line"><span class="o">------</span><span class="n">R1</span><span class="o">-</span><span class="n">R2</span><span class="o">--</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>To integrate this with the expected application response, we need all the responses in a single go</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">------</span><span class="n">R1</span><span class="o">-</span><span class="n">R2</span><span class="o">--</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span><span class="line">              <span class="err">\</span> <span class="n">toArray</span> <span class="o">-&gt;</span> <span class="n">Creates</span> <span class="n">an</span> <span class="n">array</span> <span class="n">from</span> <span class="n">an</span> <span class="n">observable</span> <span class="n">sequence</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">R</span><span class="o">[</span><span class="n">n</span><span class="o">]-----------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Great! You got it right!!</p>
+
+<p>Let’s use this <code>flatMap2</code> function and complete the implementation of profile API gateway.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">toRepoWithLanguagesStream</span> <span class="o">(</span><span class="n">repo</span> <span class="o">:</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">languagesUrl</span> <span class="n">repo</span><span class="o">.</span><span class="n">Name</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="n">languageResponseToRepoWithLanguages</span> <span class="n">repo</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">popularReposStream</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">reposUrl</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">reposResponseToPopularRepos</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">flatmap2</span> <span class="n">toRepoWithLanguagesStream</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>flatmap2</code> function takes the function <code>toRepoWithLanguagesStream</code> which converts the <code>GitHubUserRepos.Root</code> type to <code>IObservable&lt;Repository&gt;</code> to find out the languages associated with the given popular repositories.</p>
+
+<p>The <code>toRepoWithLanguagesStream</code> function does the following</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span>
+</span><span class="line">  <span class="err">\</span> <span class="n">create</span> <span class="n">a</span> <span class="n">languages</span> <span class="n">GitHub</span> <span class="n">API</span> <span class="n">stream</span> <span class="n">using</span> <span class="n">the</span> <span class="n">repo</span> <span class="n">name</span> <span class="n">from</span> <span class="n">the</span> <span class="n">input</span>
+</span><span class="line"><span class="o">-------</span><span class="n">LR</span><span class="o">----------|</span>              <span class="c1">// LR - languages GitHub API response</span>
+</span><span class="line">        <span class="err">\</span> <span class="n">MAP</span> <span class="k">function</span> <span class="o">(</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="o">-&gt;</span> <span class="n">LR</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">)</span>
+</span><span class="line"><span class="o">------------</span><span class="n">R</span><span class="o">------|</span>              <span class="c1">// R - Repository type that defined earlier</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>The <code>Observable.map</code> function takes only one input, but here we need to two inputs. So, With the help of <a href="http://fsharpforfunandprofit.com/posts/partial-application/">partial application</a>, we created an intermediate function by partially applying the first parameter alone</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="n">languageResponseToRepoWithLanguages</span> <span class="n">repo</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>languageResponseToRepoWithLanguages</code> function has been already defined in the <code>GitHub.fs</code> file.</p>
+
+<p>The last step of the <code>getProfile</code> function is combining this <code>popularReposStream</code> with the <code>userStream</code> created earlier and return the <code>Profile</code> type asynchronously.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">return</span><span class="o">!</span> <span class="n">popularReposStream</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">zip</span> <span class="n">userStream</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">toProfile</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">TaskObservableExtensions</span><span class="p">.</span><span class="n">ToTask</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="n">AwaitTask</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>Observable.zip</code> function takes two streams as its input, then merges the output of each stream and return the output as a tuple. From this tuple, we have used <code>Observable.map</code> function to map it a <code>Profile</code> type using the <code>toProfile</code> function created earlier in <code>GitHub.fs</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-----</span><span class="n">UR</span><span class="o">-------------|</span>     <span class="c1">// UR - GitHub User API Response</span>
+</span><span class="line"><span class="o">--------</span><span class="n">PR</span><span class="o">----------|</span>     <span class="c1">// PR - Popular Repos</span>
+</span><span class="line">        <span class="err">\</span> <span class="n">ZIP</span> <span class="k">function</span> <span class="o">(</span><span class="n">UR</span> <span class="o">-&gt;</span> <span class="n">PR</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">UR</span><span class="o">,</span><span class="n">PR</span><span class="o">))</span>
+</span><span class="line"><span class="o">---------(</span><span class="n">UR</span><span class="o">,</span><span class="n">PR</span><span class="o">)----|</span>
+</span><span class="line">          <span class="err">\</span> <span class="n">MAP</span> <span class="o">(</span> <span class="o">(</span><span class="n">UR</span><span class="o">,</span><span class="n">PR</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">P</span> <span class="o">)</span>  <span class="c1">// P - Profile</span>
+</span><span class="line"><span class="o">----------</span><span class="n">P</span><span class="o">---------|</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The last functions <code>TaskObservableExtensions.ToTask</code> and <code>Async.AwaitTask</code> does the conversion of <code>IObservable</code> to <code>async</code> by converting it to a <code>Task</code> first and then the <code>Task</code> to <code>async</code></p>
+
+<p>The final <code>getProfile</code> function will be like</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">userStream</span> <span class="o">=</span> <span class="n">username</span> <span class="o">|&gt;</span> <span class="n">userUrl</span> <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">toRepoWithLanguagesStream</span> <span class="o">(</span><span class="n">repo</span> <span class="o">:</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">languagesUrl</span> <span class="n">repo</span><span class="o">.</span><span class="n">Name</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="n">languageResponseToRepoWithLanguages</span> <span class="n">repo</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">popularReposStream</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">reposUrl</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">reposResponseToPopularRepos</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">flatmap2</span> <span class="n">toRepoWithLanguagesStream</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">return</span><span class="o">!</span> <span class="n">popularReposStream</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">zip</span> <span class="n">userStream</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">toProfile</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">TaskObservableExtensions</span><span class="p">.</span><span class="n">ToTask</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="n">AwaitTask</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This function is a testimonial on <em>How functional programming helps to write less, robust, and readable code to solve a complex problem</em></p>
+
+<p>We have handled all the five HTTP requests asynchronously, did some error handling (by returning empty types), and finally efficiently combined outputs of these five HTTP requests and created a type to send back to the client. Everything is asynchronous!</p>
+
+<p>Pretty awesome isn’t it?</p>
+
+<h2 id="exposing-the-api">Exposing the API</h2>
+
+<p>The final step is exposing what we have done so far as an API to the outside world. We are going to implement this using <a href="https://suave.io/">Suave</a></p>
+
+<p>Open <code>ApiGateway.fs</code> file and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">JSON</span> <span class="n">v</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">jsonSerializerSettings</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JsonSerializerSettings</span><span class="bp">()</span>
+</span><span class="line">  <span class="n">jsonSerializerSettings</span><span class="o">.</span><span class="n">ContractResolver</span> <span class="o">&lt;-</span> <span class="k">new</span> <span class="n">CamelCasePropertyNamesContractResolver</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">jsonSerializerSettings</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="n">OK</span>
+</span><span class="line">  <span class="o">&gt;&gt;=</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">userName</span> <span class="o">(</span><span class="n">httpContext</span> <span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">   <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">let!</span> <span class="nv">profile</span> <span class="o">=</span> <span class="n">getProfile</span> <span class="n">userName</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">profile</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="n">Some</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">JSON</span> <span class="n">p</span> <span class="n">httpContext</span>
+</span><span class="line">      <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">NOT_FOUND</span> <span class="o">(</span><span class="n">sprintf</span> <span class="s">&quot;Username %s not found&quot;</span> <span class="n">userName</span><span class="o">)</span> <span class="n">httpContext</span>
+</span><span class="line">   <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>JSON</code> is a utility function (WebPart in the world of Suave) which takes any type, serialize it to JSON format and return it as JSON HTTP response.</p>
+
+<p>The <code>getProfile</code> function is the API WebPart which calls our backend API gateway implementation and pass the received response to the <code>JSON</code> WebPart defined before.</p>
+
+<p>In case if there is no profile available (Remember? we return empty types in case of errors), we just return <code>404</code> with the message that the given username is not found.</p>
+
+<p>Then update the <code>Program.fs</code> to write the web server code</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">webpart</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/api/profile/%s&quot;</span> <span class="nn">ApiGateway</span><span class="p">.</span><span class="n">getProfile</span>
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">webpart</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Thanks to <code>Suave</code> for it’s lightweight and low-ceremony offerings in creating an API. We just exposed it in two lines!</p>
+
+<p>Hit <code>F5</code> and access the API at <code>http://localhost:8083/api/profile/{github-username}</code> Bingo!!</p>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote>
+  <p>A language that doesn’t affect the way you think about programming is not worth knowing - Alan Perils</p>
+</blockquote>
+
+<p>The above quote summarizes the gist of this blog post. Functional Programming will help you think better. You can get the source code associated with the blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/RxFsharp">blog-samples GitHub repository</a></p>
+
+<p>Wish you a happy and prosperous new year</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[A beginner's guide to setup React.js environment using npm, Babel 6 and Webpack]]></title>
@@ -378,7 +1175,7 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>`</p>
 
-<p>If your Webpack is already running watch mode then refresh the browser to see the AwesomeComponent in action!</p>
+<p>If your Webpack is already running in watch mode then refresh the browser to see the AwesomeComponent in action!</p>
 
 <p><img class="center" src="http://blog.tamizhvendan.in/images/react-hello-world/Output.png" /></p>
 
@@ -6925,177 +7722,6 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
   <li><strong>Step 10</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root/">Refactoring Composition Root</a></li>
   <li><strong>Conclusion</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways/">My Takeaways</a></li>
 </ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Verbs - Buried abstraction in OO World]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2014/09/26/verbs-buried-abstraction-in-oo-world/"/>
-    <updated>2014-09-26T12:44:00+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2014/09/26/verbs-buried-abstraction-in-oo-world</id>
-    <content type="html"><![CDATA[<p>In Object Oriented Programming, the problem domain is being modeled as objects(nouns) which collaborate with one another in the form of messages(verbs). We are actually creating abstractions and through which we are solving the problems in an organized and cleaner way. But this way of creating abstractions does not scale in all the scenarios.</p>
-
-<p>Let me share it through an example </p>
-
-<p>Lets rewind the time machine to travel back to 2006 (.NET 2.0) which doesn’t have <code>LINQ</code> support. You are asked to solve the following problem statement</p>
-
-<blockquote>
-  <p>You are working on a Student Management Application. Each student is having a name and an age. You are asked to create module to sort the Students based on their name</p>
-</blockquote>
-
-<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Student.cs"></script>
-<noscript><pre><code>public class Student
-{
-  public int Age { get; set; }
-  public string Name { get; set; }
-}</code></pre></noscript></div>
-
-<p>To sort based on Name we need to write a comparer which compares two student names and return some integer</p>
-
-<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=StudentNameComparer.cs"></script>
-<noscript><pre><code>public class StudentNameComparer : IComparer&lt;Student&gt;
-{
-  public int Compare(Student x, Student y)
-  {
-    return string.Compare(x.Name, y.Name, StringComparison.CurrentCulture);
-  }
-}</code></pre></noscript></div>
-
-<p>Then in the main program we will be doing the sorting using <code>Array.Sort</code> method</p>
-
-<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Program.cs"></script>
-<noscript><pre><code>class Program
-{
-  static void Main(string[] args)
-  {
-    List&lt;Student&gt; students = new List&lt;Student&gt;();
-
-    // Populate Students List here	
-
-    Student[] studentsSortedByName = students.ToArray();       
-
-    Array.Sort(studentsSortedByName, new StudentNameComparer());
-  }
-}</code></pre></noscript></div>
-
-<p>Hmmm. You might think what is a big deal in it ? But there is! Let me complicate the scenario by adding a new requirement</p>
-
-<blockquote>
-  <p>You also asked to do sorting based on Age!</p>
-</blockquote>
-
-<p>How do you do it ?</p>
-
-<p>Well! Just create yet another Comparer which compares the age</p>
-
-<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=StudentAgeComparer.cs"></script>
-<noscript><pre><code>public class StudentAgeComparer : IComparer&lt;Student&gt;
-{
-  public int Compare(Student x, Student y)
-  {
-    if (x.Age == y.Age)
-    {
-      return 0;
-    }
-    if (x.Age &lt; y.Age)
-    {
-      return -1;
-    }
-      return 1;
-  }
-}</code></pre></noscript></div>
-
-<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Program1.cs"></script>
-<noscript><pre><code>class Program1
-{
-  static void Main(string[] args)
-  {
-    List&lt;Student&gt; students = new List&lt;Student&gt;();
-	
-    // Populate Students List here	
-
-    Student[] studentsSortedByAge = students.ToArray();       
-
-    Array.Sort(studentsSortedByAge, new StudentAgeComparer());
-  }
-}</code></pre></noscript></div>
-
-<p>So much of code to do the trivial thing, isn’t it ?</p>
-
-<p>Let us dig deep to figure out what is wrong here. First let us start with the comparers <code>StudentAgeComparer</code> and <code>StudentNameComparer</code>. These comparers (nouns) actually escorting the method <code>Compare</code> (verb) and not doing anything productive apart from this. In OO world a verb should always be associated with a noun and because of this way of abstraction, we are adding an unnecessary complexity to the code. </p>
-
-<p>Just think of yet another scenario where want to sort the student by rank, customer by name, product by name. We need to write so much comparers!</p>
-
-<h3 id="verbs-to-the-rescue">Verbs to the rescue</h3>
-
-<p>Let us see the student sorting scenario from a different perspective. In this new pair of (functional)eyes we see the same scenario as</p>
-
-<ul>
-  <li><strong>Order</strong> <em>Student</em> by <strong>Name</strong>  </li>
-  <li><strong>Order</strong> <em>Student</em> by <strong>Age</strong>  </li>
-  <li><strong>Order</strong> <em>Customer</em> by <strong>Name</strong>  </li>
-  <li><strong>Order</strong> <em>Product</em> by <strong>Name</strong>  </li>
-</ul>
-
-<p>i.e the verb <strong>Order</strong> is common across all the scenario. </p>
-
-<p>The only thing which is changing is <em>what we are ordering</em> and <em>by which property</em>. Let us model things based on this verb abstraction.</p>
-
-<p>PseudoCode</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">OrderBy&lt;Student&gt;(s -&gt; s.Name)
-</span><span class="line">OrderBy&lt;Student&gt;(s -&gt; s.Age)
-</span><span class="line">OrderBy&lt;Customer&gt;(c -&gt; c.Name)
-</span><span class="line">OrderBy&lt;Product&gt;(p -&gt; p.Name)</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Here OrderBy is a function which models the verb (Order). Two things to note</p>
-
-<ul>
-  <li>OrderBy is generic and it can act on any types of objects (Student, Customer, Product,…)</li>
-  <li>OrderBy doesn’t know which property to choose so, we need to tell explicitly.</li>
-</ul>
-
-<p>So, what we gained because of this ?</p>
-
-<p>Let us go back to the initial requirement</p>
-
-<blockquote>
-  <p>You are working on a Student Management Application. Each student is having a name and an age. You are asked to create module to sort the Students based on their name and age</p>
-</blockquote>
-
-<p>Now change the time machine to land in 2014. We have <code>LINQ</code> support in <code>C#</code> now which supports verbs (functions) as first class citizens</p>
-
-<div><script src="https://gist.github.com/4fd1f5ea2b4e28658e81.js?file=Program2.cs"></script>
-<noscript><pre><code>class Program2
-{
-  static void Main(string[] args)
-  {
-    List&lt;Student&gt; students = new List&lt;Student&gt;();
-
-    // Populate Students List here	
-
-    var studentsSortedByName = Enumerable.OrderBy(students, s =&gt; s.Name);
-    var studentsSortedByAge = Enumerable.OrderBy(students, s =&gt; s.Age);
-  }
-}</code></pre></noscript></div>
-
-<p>Just two lines instead of two comparers. All we did is just changed the way we create abstractions. Let me explain it using some visuals.</p>
-
-<p><img class="center" src="http://blog.tamizhvendan.in/images/VerbsInOoWorld/Students_Sorted_By_Name.png" title="" /></p>
-
-<p>OrderBy is an abstraction which does only one thing, that is order the objects in an ascending order and does it to the perfection. But to use this abstraction we need to provide two inputs, the objects and a function which provides the propery by which the objects to be sorted </p>
-
-<p>Does it closely resemble what we have seen earlier in the pseudocode ? Since it is generic, we can also use it for all other objects (Product, Customer, etc.,) too !</p>
-
-<p><img class="center" src="http://blog.tamizhvendan.in/images/VerbsInOoWorld/Students_Sorted_By_Age.png" title="" /></p>
-
-<h4 id="summary">Summary</h4>
-
-<p>Verbs(functions) are not silver bullets and they are not the replacement of Nouns(objects). But by choosing our abstraction wisely we can achieve great things with lesser lines of code and in turn release the code with lesser bugs <i class="emoji smile"></i> </p>
 ]]></content>
   </entry>
   

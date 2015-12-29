@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Sep 15th, 2011 craftsmanship Comments Practice, Practice, Practice !! In the pursuit of becoming a better programmer, I have come across lot of good &hellip;">
+	<meta name="description" content="Nov 3rd, 2011 c#, programming Comments Think Before You LINQ LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -23,65 +23,12 @@
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link href="/favicon.png" rel="shortcut icon">
   <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
-	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">	
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
 	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
 	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
   <style type="text/css">
-  p, li, #tag-cloud {
-    font-family: "Archer A","Archer B","georgia","serif";
-    line-height: 1.4em;
-    font-size: 1.354rem;
-    font-weight: 500;
-    color: #222222;
-    margin: 0;
-    font-style: normal;
-  }  
-  h1, h2, h3 {
-    font-family: 'Archer A','Archer B',georgia,serif;
-    font-weight: 800 !important;
-    font-style: normal;
-    font-size: 2.6154rem !important;
-    padding: 1.6154rem 0;
-    color: #286c8d;
-  }
-  h1 {
-    font-size: 2.6154rem !important;    
-  }
-  h2 {
-    font-size: 1.8rem !important;
-  }
-  h3 {
-    font-size: 1.6154rem !important;
-  }
-  h4 {
-    font-size: 1.5rem !important;
-  }
-  div.mid-col {
-    background-color: #f8f8f8;
-  }
-  pre code {
-    font-family: Consolas,Menlo,Monaco,"Andale Mono","lucida console","Courier New",monospace;
-    font-size: 1em;
-    line-height: 1.8;
-    display: block;
-    background: #fff;
-    color: #000;
-    border: solid 1px #eee;
-    box-shadow: 1px 1px 2px #aaa;
-    margin: 10px 0 8px 0;
-    overflow-x: auto;
-    word-wrap: break-word;
-  }
-  td.gutter {
-    display: none;
-  }
-  td.code {
-    padding-left: 0px;
-  }
-  a:hover {
-    color: #428bca !important;    
-  }
+  
   </style>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	
@@ -156,7 +103,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.15789473684211%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 150.5263157894737%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.15789473684211%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.63157894736842%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 112.63157894736842%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.47368421052632%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.15789473684211%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.15789473684211%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.78947368421052%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.15789473684211%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.15789473684211%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 122.10526315789474%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.15789473684211%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.63157894736842%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.3157894736842%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.3157894736842%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.15789473684211%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.15789473684211%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.94736842105263%'>programming</a> <a href='/blog/categories/react' style='font-size: 103.15789473684211%'>react</a> <a href='/blog/categories/rop' style='font-size: 103.15789473684211%'>rop</a> <a href='/blog/categories/rx' style='font-size: 103.15789473684211%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.15789473684211%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 109.47368421052632%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.78947368421052%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.47368421052632%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 148.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 112.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 121.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.0%'>programming</a> <a href='/blog/categories/react' style='font-size: 103.0%'>react</a> <a href='/blog/categories/rop' style='font-size: 103.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 106.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.0%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 112.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -169,6 +116,87 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-11-03T00:00:00+05:30" data-updated="true" itemprop="datePublished">Nov 3<sup>rd</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/categories/programming/'>programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/11/03/think-before-you-linq/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/11/03/think-before-you-linq/" itemprop="url">Think Before You LINQ</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+<div>
+<p>LINQ is an awesome feature which I like the most in C#. The abstraction, expressiveness and the power it offers to the code are simply amazing. In general when we think of abstractions, we tend to think towards expressiveness and <a href="http://martinfowler.com/bliki/FluentInterface.html">fluent interfaces</a> and get carried away.</p>
+
+<p>Efficiency of an abstraction is often an afterthought (Based on my experience, correct me if am wrong) and also it is very hard to define an abstraction which should be efficient for all the real world problems it address. When we encountered any efficiency issue in an abstraction, it is our primary responsibility to get rid of it.</p>
+
+<p>Let us assume that you have found an efficiency issue with an abstraction. How would you troubleshoot it? Think! I believe, awareness of internals of the abstraction would be the prime prerequisite to circumvent the problem.&nbsp; Hence as a professional developer we should be aware of what is happening under the hood when we use LINQ or any such kind of abstractions. Though we are not going to employ this in most of our coding efforts, I feel it would be an ideal weapon that we should keep in our arsenal.</p>
+
+<p>I have encountered one of such efficiency issue with LINQ and it really made me to think twice (even thrice) before applying LINQ to solve the problems. Let me explain it through a simple example. Here is the problem which I am going to solve through LINQ.</p>
+
+<p>“I need a method that should take a collection of numbers as its parameter and write all the numbers in the console. If the collection contains only one number it should not write anything”</p>
+
+<p>Here is the code snippet which address this problem and along with the output.
+	<br>
+  <img src="http://4.bp.blogspot.com/-22Zod3zjsX0/TrJi6zjlU9I/AAAAAAAAALc/oK_RVfhUQOs/s1600/1.PNG" alt="">
+</p>
+
+<p>I have used two abstractions on this function, one is the LINQ extension method “Count” and the other one is iterating through the enumeration abstraction. Would you able to find an efficiency issue lurking on this very simple function? Kudos if you find it out.
+</p>
+
+<p>Let me give a small background about LINQ extension methods and Enumeration. Most of the LINQ extension methods are using lazy execution internally and computes the enumeration on demand basis. However some extension methods (Count, Sum) collectively called <a href="http://code.msdn.microsoft.com/LINQ-Aggregate-Operators-c51b3869">Aggregate Operators</a> causes immediate execution instead of lazy execution on the enumeration. We can we make an enumeration to enumerate lazily by using <a href="http://msdn.microsoft.com/en-us/library/9k7k7cf0.aspx">“yield”</a> statements. Enough theory, &nbsp;let us see some code which shows the efficiency issue associated with the function that we have seen earlier</p>
+
+<br>
+<div>
+  <img src="http://2.bp.blogspot.com/-Gfsxz8fP4WU/TrJi642QHRI/AAAAAAAAALk/OsojBB--7jM/s1600/2.PNG">
+</div>
+
+
+<p>I have added some code in “PrintMe” method to log how it is actually getting executed. Also I have added the “GetNumbers” method which lazily creates a list of numbers using yield statement. </p>
+
+<p>Now can you able to find the exact issue associated with the method “PrintMe”? The red lines are areas of concern. The list is yielded twice!! One while using the Aggregate Operator of LINQ “Count” which causes immediate execution results enumeration all the yields and the second one is yielding the list once again lazily when enumerating through “foreach” loop.</p>
+
+<p>Though it is just a matter of nanoseconds in this example, it may be possible candidate of bottleneck in real world. So, whenever you are doing more than one operation on LINQ or an enumeration or both combined, do not forget think about efficiency. <em>In fact we should give a special attention to the speed of our algorithm when we are actually coding it.</em> (Refer <a href="http://pragprog.com/the-pragmatic-programmer">Pragmatic Programmer</a>, Chapter 6, While You Are Coding)</p>
+
+<p>I hope now you are ready to think about efficiency when you code. Here in our case we can get rid of the efficiency issue by converting the enumeration of number to an array or a list using LINQ <a href="http://code.msdn.microsoft.com/LINQ-Conversion-Operators-e4e59714">convertor operators</a> ToArray or ToList respectively. Like aggregate operators it causes immediate execution and converts the enumeration to the target type. Then we can do the operations on the converted target. Here is the code snippet of that with the output.</p>
+
+<br>
+<img src="http://3.bp.blogspot.com/-sJ0FDYxkl9Y/TrJi63comkI/AAAAAAAAALg/iPn8h9xdVOQ/s1600/3.PNG" alt="">
+
+<p>The modified code now iterate through the list only once!!</p>
+
+<h4>Summary:</h4>
+
+<p>Would you use powerful weapons to get rid of smaller problems, certainly not? LINQ is such kind of powerful weapon which is meant to solve powerful problems. So, think twice before using LINQ and don’t use it blindly. Efficiency Matters!! &nbsp;</p>
+</div></div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -391,157 +419,6 @@
     <p>The bottom-line is we should not combine the unit tests of model validation with the controller’s unit tests and both should be kept separate. 
         You can download the source code which we’ve seen in this blog post series from <a href="http://www.box.net/shared/73e9m5d2ufyi6pazfq4j">here</a></p>
 </div>
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-08-13T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 13<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/" itemprop="url">Test Driving Model Validation in ASP.NET MVC3 - Part 1</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        <p>
-            Entity Framework 4.1(EF4.1) provides in-built support for defining the validation
-             constraints in model through Data Annotation attributes and Fluent API. It’s
-             one of the cool features provided by EF4.1 that enables the developers to define
-             validation rules of the model in an easy and more maintainable way. In addition
-             to that MVC3 framework makes use of these validation model and supports both
-             client and server side validation without writing any code!
-        </p>
-
-        <p>
-            I’m in the early days of practicing Test Driven Development (TDD). Fortunately I
-             have got an opportunity to implement TDD in my current assignment. I feel I am
-             much oriented and focused towards the solution while using TDD. Also it makes
-             me to critique my design and the way I do the coding. I would like to be a
-             better programmer and looking forward to improve myself and hence TDD suits me
-             more. Learning TDD and practicing it is totally different! Yes, in theory it
-             is very easy to read and understand TDD. But when you practice it, you will
-             encounter many more interesting things about TDD and in fact it’s where you can
-             actually learn TDD.
-        </p>
-
-        <p>
-            Okay, how to do TDD with Controller&#8217;s responsibility in the context of Model validation in MVC3. Well, it is easy but
-                we should understand and find out what exactly we want to test and the way to test them. Many articles and blog posts suggest doing it through the controller.
-                Is it really a good approach to test the model validation through controller?&nbsp;&nbsp; Kindly think of it for a moment. 
-                I feel it is not a right way to deal this stuff.&nbsp;
-        </p>
-
-        <p>
-            Let me explain it through a small example. Consider an Employee model which has two properties Name and Age&nbsp;and an EmployeeController responsible for doing
-            CRUD on Employee Model. What is the responsibility of EmployeeController when creating a new Employee data? It should check whether the posted employee model is 
-            valid or not, if it is valid add to the database else return the view with the validation errors. MVC3 framework makes life easy by automatically validating the 
-            Posted model and set the <b>IsValid</b> Property of the ModelState and also add validation errors to the model. Hence controller&#8217;s job is very easy as follows
-        </p>
-        <div style="clear: both; text-align: center;">
-            <br />
-            <img border="0" src="http://2.bp.blogspot.com/-gMWdWyjaBxQ/TkYnWEIpWQI/AAAAAAAAAKI/mvc7iTeatok/s1600/Employee.png" />
-        </div>
-
-        <div style="clear: both; text-align: center;">
-            <br />
-            <img src="http://1.bp.blogspot.com/-DSw1qdzt9ZA/TkYYuJLxKGI/AAAAAAAAAJw/5k1AerK1wiE/s1600/EmpControllerResponsibility.png" />
-        </div>
-        <h4>Corresponding TestCases</h4>
-
-        <ul>
-            <li>When creating a new employee, if the passed employee data is valid, it should be added to the database</li>
-            <li>When creating a new employee, if the passed employee data is InValid, it should not add to the database and show the view with validation errors.</li>
-        </ul>
-        <br />
-        <p>The first unit test will be as following:</p>
-
-        <<div style="clear: both; text-align: center;">
-            <img src="http://3.bp.blogspot.com/-XEBOUhl7_WM/TkYgBqYX9VI/AAAAAAAAAJ0/wqKLvm_NGnw/s1600/EmpControllerUnitTest1.png" />
-        </div>
-
-        <p>
-            This unit test makes use of the following fake Database implementation.
-        </p>
-
-        <div style="clear: both; text-align: center;">
-            <img src="http://4.bp.blogspot.com/-c1GRZq3f1Ms/TkYiTwN9z4I/AAAAAAAAAJ4/lma-KtsMK6Q/s1600/fakeDatabase.png" />
-        </div>
-        <p>
-            To keep this blog post simple, I am not showcasing the TDD steps which I have done here and the EmployeeController Code would be as follows.
-        </p>
-        
-        <div style="clear: both; text-align: center;">
-                <img src="http://1.bp.blogspot.com/-QRcFWLWNsmg/TkYkHGAoWnI/AAAAAAAAAJ8/FEit5wZZWs0/s1600/EmpController.png" />
-        </div>
-        
-        <p>
-            Employee Controller makes use of an InMemory Database (Simplest option!!) &nbsp;which implements the IRepository interface.&nbsp;
-        </p>
-        
-        <div style="clear: both; text-align: center;">
-                <img border="0" src="http://1.bp.blogspot.com/-xy_kB-hQk9o/TkYlRVdooZI/AAAAAAAAAKA/nnxYCWTdTLg/s1600/IRepository.png" />
-        </div>
-
-        <div style="clear: both; text-align: center;">
-                <img border="0" src="http://2.bp.blogspot.com/-yU6djR74NeA/TkYlXKnjBOI/AAAAAAAAAKE/eXcZL2_7qew/s1600/InMemoryDb.png" />
-        </div>
-        
-        <p>
-            I have done all the wire ups to make the first unit test pass. (Pardon me! For the sake of simplicity of this blog post I&#8217;ve violated TDD rules. 
-            Hope you can infer the TDD steps from the coding samples). Its time to &nbsp;move to the next unit test and here comes a bottleneck. &nbsp; &nbsp;
-        </p>
-
-        <p>
-            You may wonder what it is that. There comes a feature of ASP.NET MVC 3 framework. During HTTP post action the framework validates the employee model 
-            and sets the EmployeeController&#8217;s Property <em>ModelState.IsValid</em> to true or false. <b>It occurs only during HTTP post. </b>
-            In our unit test code we are actually calling the action methods of the controller and not making any HTTP post. 
-            So, the ModalState is always true whenever we call the action methods of a controller from a unit testing code.&nbsp;
-        </p>
-
-        <p>
-            In our second test case, we need to setup a controller in such a way that its ModelState property is InValid. 
-            We can do this by adding a ModelError to the ModelState property of the EmployeeController. In fact it is what MVC3 framework is doing under the 
-            hood when making HTTP post.&nbsp;
-        </p>
-
-        <div style="clear: both; text-align: center;">
-                <img src="http://4.bp.blogspot.com/-iVcBB1yZRLI/TkYrDW5JloI/AAAAAAAAAKM/li_PACoQS1E/s1600/EmpControllerUnitTest2.png" />
-        </div>
-        
-        <p>
-            Now we Test drived the controller&#8217;s responsibility in the context of model validation. 
-            In my <a href="/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/">next blog post</a> &nbsp;
-            I&#8217;d showcase how to test drive the model validation itself.
-        </p>
-
-    </div>
-</div>
-
 		
 		
 	</div>

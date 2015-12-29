@@ -4,7 +4,7 @@
   <title><![CDATA[Category: unit testing | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/unit-testing/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-11-23T20:55:07+05:30</updated>
+  <updated>2015-12-29T10:02:35+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -139,7 +139,7 @@
     <id>http://blog.tamizhvendan.in/blog/2012/02/11/unit-testing-custom-model-binders-in</id>
     <content type="html"><![CDATA[<div class="post">
     <p>
-        In <a href="{% post_url 2012-02-02-unit-testing-with-sessions-in-aspnet %}">my previous post</a> we have seen a way to do unit testing 
+        In <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">my previous post</a> we have seen a way to do unit testing 
         with Sessions in MVC3 using Custom model binders. In this blog post we are going to see how to do unit test the model binder itself.
     </p>
     <p>
@@ -151,7 +151,7 @@
             the <a href="http://msdn.microsoft.com/en-us/library/system.web.mvc.imodelbinder.bindmodel.aspx">BindModel</a> method
     </p>
     <br />
-    {% img center /images/UnitTesting_ModelBinders/BindModel.png %}
+    <img class="center" src="/images/UnitTesting_ModelBinders/BindModel.png">
        
         <p>
             In the BindModel method we are making use of Session property in the HttpContext object which is in turn a property of 
@@ -161,11 +161,11 @@
     </p>
 
     <p>How to get control over those properties ? Thanks to <a href="http://msdn.microsoft.com/en-us/library/dd460098.aspx">a constructor of ControllerContext</a></p>
-    <br />{% img center /images/UnitTesting_ModelBinders/ControllerContext.png %}        
+    <br /><img class="center" src="/images/UnitTesting_ModelBinders/ControllerContext.png">        
         <p>ControllerContext uses the constructor dependency injection to get rid of the direct dependency on <a href="http://msdn.microsoft.com/en-us/library/system.web.httpcontextbase.aspx">HttpContextBase</a> and we are going to exploit this to do unit testing. Using a mocking framework we can easily create a mock of HttpContetBase and drive the unit test.</p>
     <p>The Session property of the HttpContextBase is of type <a href="http://msdn.microsoft.com/en-us/library/system.web.httpsessionstatebase.aspx">HttpSessionStateBase</a> which can also be mocked.</p>
-    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="{% post_url 2012-02-02-unit-testing-with-sessions-in-aspnet %}">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
-    <br />{% img center /images/UnitTesting_ModelBinders/UnitTest.png %}      
+    <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
+    <br /><img class="center" src="/images/UnitTesting_ModelBinders/UnitTest.png">      
 
 </div>
 ]]></content>
@@ -196,29 +196,29 @@
         So, I am going to show an app called “MyShop” a mini shopping site through which I am going to explain the concepts involved. 
         The application flow would be as follows</p>
         
-            {% img center /images/UnitTesting_With_Session/Cart.png %}
-            {% img center /images/UnitTesting_With_Session/Cart2.png %}       
+            <img class="center" src="/images/UnitTesting_With_Session/Cart.png">
+            <img class="center" src="/images/UnitTesting_With_Session/Cart2.png">       
         
 
         <h4>Models</h4>
         
         <p>The models are simple, straight forward and self explanatory.</p>
-    {% img center /images/UnitTesting_With_Session/model.png %}  
-    {% img center /images/UnitTesting_With_Session/CartCsharp.png %}    
+    <img class="center" src="/images/UnitTesting_With_Session/model.png">  
+    <img class="center" src="/images/UnitTesting_With_Session/CartCsharp.png">    
         <p>I’ve tried my level best to keep the model as simple as possible. 
         So, Cart in MyShop will have only two public methods. One to add a product to the Cart’s Line and another one to retrieve all the 
         products inside the Cart’s line.</p>
         
         <h4>The CartController Version 1.0</h4>
-        {% img center /images/UnitTesting_With_Session/CartController.png %} 
+        <img class="center" src="/images/UnitTesting_With_Session/CartController.png"> 
         <p>In this CartController version 1.0 we have two public methods Index and AddToCart which are dependent on HttpSession object. 
             This dependency inside the methods is actually preventing us from unit testing the CartController in simple way and we have no 
             choice other than implementing a “Http Simulator” to unit test these two methods. As I said before there is better to do is! Here we go!!</p>
         
         <h4>The CartController Version 2.0</h4>
-        {% img center /images/UnitTesting_With_Session/CartController2.png %} 
+        <img class="center" src="/images/UnitTesting_With_Session/CartController2.png"> 
     <p>No more Sessions!!.. Yeah.. We have got rid of the dependency on the session object by adding a new parameter called cart. Now you can use easily unit test the CartController as follows</p>
-        {% img center /images/UnitTesting_With_Session/UnitTest.png %} 
+        <img class="center" src="/images/UnitTesting_With_Session/UnitTest.png"> 
         <p>Okay we made it easy for unit testing by moving the dependency out of the method and introduced the cart as the parameter. But how does my MVC3 framework will know the cart parameter should come from session object ?… Good Catch!! and here comes the magic called custom ModelBinder</p>
        
         <h4>ModelBinder – A brief background</h4>
@@ -234,9 +234,9 @@
         <p>“<em>Hey! If there is any parameter of type Cart in controller action method, then use my own custom model binder called CartModelBinder to create the object</em>”</p>
         <p>There are two steps to do the above said operation</p>
         <p>1. Creating the custom model binder by inheriting the IModelBinder interface</p>
-        {% img center /images/UnitTesting_With_Session/CartModelBinder.png %} 
+        <img class="center" src="/images/UnitTesting_With_Session/CartModelBinder.png"> 
         <p>2. Registering our custom model binder in the Global.asax.cs file</p>
-        {% img center /images/UnitTesting_With_Session/AppStart.png %} 
+        <img class="center" src="/images/UnitTesting_With_Session/AppStart.png"> 
         <p>
         That’s all.. MVC3 takes care of rest</p>
         
@@ -244,7 +244,7 @@
         <p>In this blog post we have explored how we can get rid of “Http Simulator” to unit test the controllers which involves Session objects using 
             custom model binder. You can download the working example of “MyShop” showcased in this blog post 
             from <a href="http://www.box.com/s/b9lf2heukyivh68921jj">here</a>. 
-            Refer <a href="{% post_url 2012-02-11-unit-testing-custom-model-binders-in %}">my next blog post</a> to check out how to do 
+            Refer <a href="/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
             unit testing with the custom model binder itself.</p>
 
 </p></div>
@@ -259,7 +259,7 @@
     <content type="html"><![CDATA[<div class="post">
     <p>
     <p>
-        In <a href="{% post_url 2011-08-13-test-driving-model-validation-in-aspnet %}">Part-1</a>of this small blog post series, 
+        In <a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>of this small blog post series, 
             we have explored a way to do the TDD of controller’s responsibility in the context of model validation. 
             In this Part-2 we are going to see <strong>“How to do the TDD of Model Validation”</strong>
     </p>
@@ -273,7 +273,7 @@
             <a href="http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationattribute.aspx">ValidationAttribute</a></strong>
         attributes associate with the model. After validating MVC3 adds the validation results to the controller’s <em>ModelState</em>
         Property by the <em>AddModelError</em> method which in turn sets the<em> ModelState.IsValid</em> property 
-            (Refer <a href="{% post_url 2011-08-13-test-driving-model-validation-in-aspnet %}">Part-1</a>). We are actually going to make use of this <em>Validator</em>
+            (Refer <a href="/blog/2011/08/13/test-driving-model-validation-in-aspnet/">Part-1</a>). We are actually going to make use of this <em>Validator</em>
         helper class going to test drive the model validation. 
     </p>
 
@@ -460,7 +460,7 @@
         
         <p>
             Now we Test drived the controller's responsibility in the context of model validation. 
-            In my <a href="{% post_url 2011-08-17-test-driving-model-validation-in-aspnet_17 %}">next blog post</a> &nbsp;
+            In my <a href="/blog/2011/08/17/test-driving-model-validation-in-aspnet_17/">next blog post</a> &nbsp;
             I'd showcase how to test drive the model validation itself.
         </p>
 
