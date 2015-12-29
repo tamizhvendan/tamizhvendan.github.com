@@ -1,20 +1,20 @@
 .gist{
   margin: 15px 0 !important;
 }
- 
+
 .gist-file{
   border: none !important;
 }
- 
+
 .gist-meta{
   border: 1px solid #D2d2d2 !important;
   padding: 12px !important;
   -moz-border-radius-bottomleft: 10px;
   -webkit-border-bottom-left-radius: 10px;
   -moz-border-radius-bottomright: 10px;
-  -webkit-border-bottom-right-radius: 10px; 
+  -webkit-border-bottom-right-radius: 10px;
 }
- 
+
 .gist-data{
   padding: 15px !important;
   font-size: 12px !important;
@@ -26,7 +26,70 @@
   -moz-border-radius-topright: 10px;
   -webkit-border-top-right-radius: 10px;
 }
- 
+
 .line-numbers {
   background-color: #FFFFFF !important;
+}
+
+article code {
+    font-size: 0.7em;
+}
+
+p, li, #tag-cloud {
+  font-family: "Archer A","Archer B","georgia","serif";
+  line-height: 1.4em;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #222222;
+  margin: 0;
+  font-style: normal;
+}
+h1, h2, h3 {
+  font-family: 'Archer A','Archer B',georgia,serif;
+  font-weight: 800 !important;
+  font-style: normal;
+  font-size: 2.6154rem !important;
+  padding: 1.6154rem 0;
+  color: #286c8d;
+}
+h1 {
+  font-size: 2.6154rem !important;
+}
+h2 {
+  font-size: 1.8rem !important;
+}
+h3 {
+  font-size: 1.6154rem !important;
+}
+h4 {
+  font-size: 1.5rem !important;
+}
+div.mid-col {
+  background-color: #f8f8f8;
+}
+pre code {
+  font-family: Consolas,Menlo,Monaco,"Andale Mono","lucida console","Courier New",monospace;
+  font-size: 1em;
+  line-height: 1.8;
+  display: block;
+  background: #fff;
+  color: #000;
+  border: solid 1px #eee;
+  box-shadow: 1px 1px 2px #aaa;
+  margin: 10px 0 8px 0;
+  overflow-x: auto;
+  word-wrap: break-word;
+}
+td.gutter {
+  display: none;
+}
+td.code {
+  padding-left: 0px;
+}
+a:hover {
+  color: #428bca !important;
+}
+
+p {
+  margin-top: 8px;
 }
