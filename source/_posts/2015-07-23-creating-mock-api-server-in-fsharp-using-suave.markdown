@@ -3,14 +3,14 @@ layout: post
 title: "Creating Mock API server in fsharp using Suave"
 date: 2015-07-23 16:56:20 +0530
 comments: true
-categories: 
+categories:
   - fsharp
   - suave
 ---
 
 As part of the current assignment in my day job, I am working in a web application which integrates with an another web application via web APIs. The backend calls the exposed web APIs and does some business logic. Due to some technical limitations, we are not able to setup a development environment of the Web APIs so we have decided to create a mock API server during the development and replace it with the real one in the production.
 
-Since it's just a mock API server, we don't want to spend much time on it. Thanks to the awesome light-weight fsharp library [Suave](http://suave.io/) we have made it in just 15 minutes! 
+Since it's just a mock API server, we don't want to spend much time on it. Thanks to the awesome light-weight fsharp library [Suave](http://suave.io/) we have made it in just 15 minutes!
 
 In this blog post, I will be sharing how we have achieved it. As a sample, we will mock the [GitHub API](https://developer.GitHub.com/v3/).
 
@@ -20,7 +20,7 @@ Create a new fsharp console application project "GitHubMockApiServer" in Visual 
 
 To keep it short we are going to mock only two GitHub APIs
 
-* [Get a single user](https://developer.GitHub.com/v3/users/#get-a-single-user) - **/users/:username** 
+* [Get a single user](https://developer.GitHub.com/v3/users/#get-a-single-user) - **/users/:username**
 * [List user repositories](https://developer.GitHub.com/v3/repos/#list-user-repositories) - **/users/:username/repos**
 
 ## Creating the mock APIs
@@ -34,20 +34,19 @@ After adding, change the "Copy to Output Directory" property of the both the fil
 Open the **Program.fs** and update it as follows
 
 ```fsharp
-open System.IO
-open Suave.Http
-open Suave.Http.Successful
 open Suave
-open Suave.Http.Applicatives
-open Suave.Web
+open Suave.Operators
+open Suave.Successful
+open Suave.Filters
+open System.IO
 
 [<EntryPoint>]
-let main argv = 
+let main argv =
   let json fileName =
     let content = File.ReadAllText fileName  
     content.Replace("\r", "").Replace("\n","")
-    |> OK >>= Writers.setMimeType "application/json"      
-  
+    |> OK >=> Writers.setMimeType "application/json"      
+
   let user = pathScan "/users/%s" (fun _ -> "User.json" |> json)  
   let repos = pathScan "/users/%s/repos" (fun _ -> "Repos.json" |> json)
   let mockApi = choose [repos;user]

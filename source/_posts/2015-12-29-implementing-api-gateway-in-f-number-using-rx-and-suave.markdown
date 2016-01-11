@@ -535,7 +535,7 @@ let JSON v =
 
   JsonConvert.SerializeObject(v, jsonSerializerSettings)
   |> OK
-  >>= Writers.setMimeType "application/json; charset=utf-8"
+  >=> Writers.setMimeType "application/json; charset=utf-8"
 
 let getProfile userName (httpContext : HttpContext) =
    async {
