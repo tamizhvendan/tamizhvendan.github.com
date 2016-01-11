@@ -118,7 +118,7 @@
 	<h1 class="title" itemprop="name">Creating Mock API Server in Fsharp Using Suave</h1>
 	<div class="entry-content" itemprop="articleBody"><p>As part of the current assignment in my day job, I am working in a web application which integrates with an another web application via web APIs. The backend calls the exposed web APIs and does some business logic. Due to some technical limitations, we are not able to setup a development environment of the Web APIs so we have decided to create a mock API server during the development and replace it with the real one in the production.</p>
 
-<p>Since it’s just a mock API server, we don’t want to spend much time on it. Thanks to the awesome light-weight fsharp library <a href="http://suave.io/">Suave</a> we have made it in just 15 minutes! </p>
+<p>Since it’s just a mock API server, we don’t want to spend much time on it. Thanks to the awesome light-weight fsharp library <a href="http://suave.io/">Suave</a> we have made it in just 15 minutes!</p>
 
 <p>In this blog post, I will be sharing how we have achieved it. As a sample, we will mock the <a href="https://developer.GitHub.com/v3/">GitHub API</a>.</p>
 
@@ -129,7 +129,7 @@
 <p>To keep it short we are going to mock only two GitHub APIs</p>
 
 <ul>
-  <li><a href="https://developer.GitHub.com/v3/users/#get-a-single-user">Get a single user</a> - <strong>/users/:username</strong> </li>
+  <li><a href="https://developer.GitHub.com/v3/users/#get-a-single-user">Get a single user</a> - <strong>/users/:username</strong></li>
   <li><a href="https://developer.GitHub.com/v3/repos/#list-user-repositories">List user repositories</a> - <strong>/users/:username/repos</strong></li>
 </ul>
 
@@ -162,20 +162,18 @@
 <span class="line-number">17</span>
 <span class="line-number">18</span>
 <span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">System.IO</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Successful</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Applicatives</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Web</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Successful</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Filters</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.IO</span>
 </span><span class="line">
 </span><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
 </span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">json</span> <span class="n">fileName</span> <span class="o">=</span>
 </span><span class="line">    <span class="k">let</span> <span class="nv">content</span> <span class="o">=</span> <span class="nn">File</span><span class="p">.</span><span class="n">ReadAllText</span> <span class="n">fileName</span>
 </span><span class="line">    <span class="n">content</span><span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="o">,</span> <span class="s">&quot;&quot;</span><span class="o">).</span><span class="n">Replace</span><span class="o">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">,</span><span class="s">&quot;&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="n">OK</span> <span class="o">&gt;&gt;=</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json&quot;</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">OK</span> <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json&quot;</span>
 </span><span class="line">
 </span><span class="line">  <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/users/%s&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;User.json&quot;</span> <span class="o">|&gt;</span> <span class="n">json</span><span class="o">)</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">repos</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/users/%s/repos&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;Repos.json&quot;</span> <span class="o">|&gt;</span> <span class="n">json</span><span class="o">)</span>
@@ -227,7 +225,7 @@
 </section>
 </div>
 			</div>
-			<footer id="footer" class="inner">Copyright &copy; 2015
+			<footer id="footer" class="inner">Copyright &copy; 2016
 
     Tamizhvendan S
 

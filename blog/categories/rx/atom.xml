@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rx | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/rx/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2015-12-29T10:02:35+05:30</updated>
+  <updated>2016-01-11T15:34:48+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -578,7 +578,7 @@
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  JsonConvert.SerializeObject(v, jsonSerializerSettings)
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  |&gt; OK
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  &gt;&gt;= Writers.setMimeType &quot;application/json; charset=utf-8&quot;
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  &gt;=&gt; Writers.setMimeType &quot;application/json; charset=utf-8&quot;
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let getProfile userName (httpContext : HttpContext) =
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>   async {
