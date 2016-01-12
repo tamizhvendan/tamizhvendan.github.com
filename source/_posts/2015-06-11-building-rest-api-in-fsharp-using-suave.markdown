@@ -3,7 +3,7 @@ layout: post
 title: "Building REST Api in fsharp using Suave"
 date: 2015-06-11 10:48:20 +0530
 comments: true
-categories: 
+categories:
   - fsharp
   - suave
 ---
@@ -12,13 +12,13 @@ In the last one month lot of great things happening in fsharp world around [suav
 
 I got super excited after learning suave from these resources and started playing with it. One of the great things about the fsharp community is, if you want to improve any existing library all you need is just send a pull request with the feature you would like to have. Yes, it's as simple as that! It [worked](https://github.com/SuaveIO/suave/pull/259) for me and I am sure for you too, if you wish.
 
-In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the [StrongLoop](http://docs.strongloop.com/display/public/LB/Use+API+Explorer), a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post. 
+In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the [StrongLoop](http://docs.strongloop.com/display/public/LB/Use+API+Explorer), a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post.
 
 Let's get started
 
 ## Setting up the project
 
-Create a new "F# Console Application" project in Visual Studio with the name ```SuaveRestApi``` and rename ```Program.fs``` to ```App.fs```. This file is going to contain the application bootstrap logic. Add two more files ```Db.fs``` and ```RestFul.fs``` which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below. 
+Create a new "F# Console Application" project in Visual Studio with the name ```SuaveRestApi``` and rename ```Program.fs``` to ```App.fs```. This file is going to contain the application bootstrap logic. Add two more files ```Db.fs``` and ```RestFul.fs``` which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below.
 
 {% img center /images/sauve_rest_api/proj_structure.png %}
 
@@ -40,11 +40,11 @@ The ```OK``` webpart is a very simple one in Suave which takes a ```string``` an
 
 ```fsharp
 open Suave.Web
-open Suave.Http.Successful
+open Suave.Successful
 
 [<EntryPoint>]
-let main argv = 
-  startWebServer defaultConfig (OK "Hello, Suave!") 
+let main argv =
+  startWebServer defaultConfig (OK "Hello, Suave!")
   0
 ```
 The is the simplest Suave application that greets all visitors with the string "Hello, Suave!". The ```startWebServer``` is a blocking function that takes a configuration (port number, ssl, etc.,) and starts a http web server in the port 8083 upon calling.
@@ -79,11 +79,11 @@ let rest resourceName resource =
 
 We are going to use the following building blocks of the suave library to implement the ```rest``` function.
 
-* The ```path``` is a function of type: ```string -> WebPart```. It means that if we give it a string it will return ```WebPart```. Under the hood, the function looks at the incoming request and returns ```Some``` if the paths match, and ```None``` otherwise. 
+* The ```path``` is a function of type: ```string -> WebPart```. It means that if we give it a string it will return ```WebPart```. Under the hood, the function looks at the incoming request and returns ```Some``` if the paths match, and ```None``` otherwise.
 
 * The ```GET``` is a static inbuilt ```WebPart``` which matches the HTTP GET requests.
 
-* The ```>>=``` operator composes two WebParts into one by first evaluating the ```WebPart``` on the left, and applying the WebPart on the right only if the first one returned ```Some```.
+* The ```>=>``` operator composes two WebParts into one by first evaluating the ```WebPart``` on the left, and applying the WebPart on the right only if the first one returned ```Some```.
 
 To return a json response we need to change the mime type to "application/json" of the response. There is an [inbuilt function](https://github.com/SuaveIO/suave/blob/master/src/Suave/Json.fs) in suave to do this but it is using .Net's ```DataContractJsonSerializer```. I feel it's not ideal to use as we need to write decorator attribute ```DataMember``` to serialize the types.
 
@@ -96,8 +96,8 @@ let JSON v =
   jsonSerializerSettings.ContractResolver <- new CamelCasePropertyNamesContractResolver()
 
   JsonConvert.SerializeObject(v, jsonSerializerSettings)
-  |> OK 
-  >>= Writers.setMimeType "application/json; charset=utf-8"
+  |> OK
+  >=> Writers.setMimeType "application/json; charset=utf-8"
 ```
 As the signature indicates ```JSON``` function takes a generic type, serialize it using *Newtonsoft.Json* and return the json response. ```Writers.setMimeType``` takes a mime type and a web part returns the web part with the given mime type.
 
@@ -107,7 +107,7 @@ Now we have everything to implement the HTTP GET request
 let rest resourceName resource =
   let resourcePath = "/" + resourceName
   let gellAll = resource.GetAll () |> JSON
-  path resourcePath >>= GET >>= getAll
+  path resourcePath >=> GET >=> getAll
 ```
 
 The one caveat here is the path resolution of Suave library. Based on the webpart given, the ```startWebServer``` function configures it's internal routing table during the application startup and it is static after the application has been started. So, the ```getAll``` webpart will be created only during application startup. To avoid this, we need to wrap the ```getAll``` webpart with a ```warbler``` function which ensures that it is called only when the incoming request matches the given resource path.
@@ -116,7 +116,7 @@ The one caveat here is the path resolution of Suave library. Based on the webpar
 let rest resourceName resource =
   let resourcePath = "/" + resourceName
   let gellAll = warbler (fun _ -> resource.GetAll () |> JSON)
-  path resourcePath >>= GET >>= getAll
+  path resourcePath >=> GET >=> getAll
 ```  
 
 Now we have the middleware to create a web part. Let's create other things and glue them together.
@@ -134,7 +134,7 @@ type Person = {
 }
 module Db =        
   let private peopleStorage = new Dictionary<int, Person>()
-  let getPeople () = 
+  let getPeople () =
     peopleStorage.Values |> Seq.map (fun p -> p)
 ```
 
@@ -149,7 +149,7 @@ open Suave.Web
 open Suave.Http.Successful
 
 [<EntryPoint>]
-let main argv = 
+let main argv =
   let personWebPart = rest "people" {
     GetAll = Db.getPeople
   }
@@ -188,8 +188,8 @@ Then add the following utility functions in ```Restful.fs``` to get the resource
 let fromJson<'a> json =
   JsonConvert.DeserializeObject(json, typeof<'a>) :?> 'a    
 
-let getResourceFromReq<'a> (req : HttpRequest) = 
-  let getString rawForm = 
+let getResourceFromReq<'a> (req : HttpRequest) =
+  let getString rawForm =
     System.Text.Encoding.UTF8.GetString(rawForm)
   req.rawForm |> getString |> fromJson<'a>
 ```
@@ -202,9 +202,9 @@ The next step is updating the ```rest``` function to support POST
 let rest resourceName resource =
   let resourcePath = "/" + resourceName
   let gellAll = warbler (fun _ -> resource.GetAll () |> JSON)
-  path resourcePath >>= choose [
-    GET >>= getAll
-    POST >>= request (getResourceFromReq >> resource.Create >> JSON)
+  path resourcePath >=> choose [
+    GET >=> getAll
+    POST >=> request (getResourceFromReq >> resource.Create >> JSON)
   ]
 ```
 Thanks to the awesome function composition feature, we have combined all these tiny functions and implemented a new request and response.  
@@ -212,7 +212,7 @@ Thanks to the awesome function composition feature, we have combined all these t
 Then update ```Db.fs``` and ```App.fs``` respectively as follows
 
 ```fsharp
-module Db = 
+module Db =
   let createPerson person =
     let id = peopleStorage.Values.Count + 1
     let newPerson = {
@@ -265,12 +265,12 @@ let rest resourceName resource =
     | Some r -> r |> JSON
     | _ -> requestError
 
-  path resourcePath >>= 
+  path resourcePath >=>
     choose [
-      GET >>= getAll
-      POST >>= 
+      GET >=> getAll
+      POST >=>
         request (getResourceFromReq >> resource.Create >> JSON)
-      PUT >>= 
+      PUT >=>
         request (getResourceFromReq >> resource.Update >> handleResource badRequest)
     ]
 ```
@@ -288,7 +288,7 @@ module Db =
       }
       peopleStorage.[personId] <- updatedPerson            
       Some updatedPerson
-    else 
+    else
       None
   let updatePerson personToBeUpdated =
     updatePersonById personToBeUpdated.Id personToBeUpdated
@@ -336,9 +336,9 @@ In addition to this, we will be using the following from suave
 
 ```fsharp
 let rest resourceName resource =
-  
+
   let resourcePath = "/" + resourceName
-  let resourceIdPath = 
+  let resourceIdPath =
     new PrintfFormat<(int -> string),unit,string,string,int>(resourcePath + "/%d")
 
   let badRequest = BAD_REQUEST "Resource not found"
@@ -352,14 +352,14 @@ let rest resourceName resource =
     NO_CONTENT
 
   choose [
-    path resourcePath >>= choose [
-      GET >>= getAll
-      POST >>= 
+    path resourcePath >=> choose [
+      GET >=> getAll
+      POST >=>
         request (getResourceFromReq >> resource.Create >> JSON)
-      PUT >>= 
+      PUT >=>
         request (getResourceFromReq >> resource.Update >> handleResource badRequest)
     ]
-    DELETE >>= pathScan resourceIdPath deleteResourceById
+    DELETE >=> pathScan resourceIdPath deleteResourceById
   ]
 ```
 
@@ -370,7 +370,7 @@ The outer ```choose``` function chooses one of these based on the incoming reque
 **Db.fs**
 
 ```fsharp
-let deletePerson personId = 
+let deletePerson personId =
   peopleStorage.Remove(personId) |> ignore
 ```
 
@@ -395,7 +395,7 @@ type RestResource<'a> = {
   GetAll : unit -> 'a seq
   Create : 'a -> 'a
   Update : 'a -> 'a option
-  Delete : int -> unit 
+  Delete : int -> unit
   GetById : int -> 'a option
   UpdateById : int -> 'a -> 'a option   
 }
@@ -403,24 +403,24 @@ type RestResource<'a> = {
 
 ```fsharp
 let rest resourceName resource =
-  
+
   // .. Existing code ...
-  let getResourceById = 
+  let getResourceById =
     resource.GetById >> handleResource (NOT_FOUND "Resource not found")
   let updateResourceById id =
     request (getResourceFromReq >> (resource.UpdateById id) >> handleResource badRequest)
 
   choose [
-    path resourcePath >>= choose [
-      GET >>= getAll
-      POST >>= 
+    path resourcePath >=> choose [
+      GET >=> getAll
+      POST >=>
         request (getResourceFromReq >> resource.Create >> JSON)
-      PUT >>= 
+      PUT >=>
         request (getResourceFromReq >> resource.Update >> handleResource badRequest)
     ]
-    DELETE >>= pathScan resourceIdPath deleteResourceById
-    GET >>= pathScan resourceIdPath getResourceById
-    PUT >>= pathScan resourceIdPath updateResourceById
+    DELETE >=> pathScan resourceIdPath deleteResourceById
+    GET >=> pathScan resourceIdPath getResourceById
+    PUT >=> pathScan resourceIdPath updateResourceById
   ]
 ```
 
@@ -452,37 +452,37 @@ let personWebPart = rest "people" {
 
 ## HTTP HEAD
 
-Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward. 
+Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward.
 
 ```fsharp
 type RestResource<'a> = {
   GetAll : unit -> 'a seq
   Create : 'a -> 'a
   Update : 'a -> 'a option
-  Delete : int -> unit 
+  Delete : int -> unit
   GetById : int -> 'a option
-  UpdateById : int -> 'a -> 'a option 
+  UpdateById : int -> 'a -> 'a option
   IsExists : int -> bool
 }
 
 let rest resourceName resource =
-  
+
   // .. Existing code ...
   let isResourceExists id =
     if resource.IsExists id then OK "" else NOT_FOUND ""
 
   choose [
-    path resourcePath >>= choose [
-      GET >>= getAll
-      POST >>= 
+    path resourcePath >=> choose [
+      GET >=> getAll
+      POST >=>
         request (getResourceFromReq >> resource.Create >> JSON)
-      PUT >>= 
+      PUT >=>
         request (getResourceFromReq >> resource.Update >> handleResource badRequest)
     ]
-    DELETE >>= pathScan resourceIdPath deleteResourceById
-    GET >>= pathScan resourceIdPath getResourceById
-    PUT >>= pathScan resourceIdPath updateResourceById
-    HEAD >>= pathScan resourceIdPath isResourceExists
+    DELETE >=> pathScan resourceIdPath deleteResourceById
+    GET >=> pathScan resourceIdPath getResourceById
+    PUT >=> pathScan resourceIdPath updateResourceById
+    HEAD >=> pathScan resourceIdPath isResourceExists
   ]
 ```
 **Db.fs**
@@ -510,7 +510,7 @@ That's all.. We have successfully implemented a REST API using Suave
 
 ## Extending with a new Resource
 
-The beautiful aspect of this functional REST API design we can easily extend it to support other resources. 
+The beautiful aspect of this functional REST API design we can easily extend it to support other resources.
 
 Here is the rest API implementation of the ```albums``` resource in the [music-store](http://theimowski.gitbooks.io/suave-music-store/content/database.html) application. You can find the source code of MusicStoreDb [here](https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs).
 
@@ -539,7 +539,7 @@ let main argv =
   }
 
   startWebServer defaultConfig (choose [personWebPart;albumWebPart])
-  0 
+  0
 ```
 
 {% img center border /images/sauve_rest_api/get_album_id.png %}
@@ -550,10 +550,10 @@ In the amazing presentation on [Functional Programming Design Patterns](https://
 
 {% img center border /images/sauve_rest_api/fp_design_patterns_slide.png %}
 
-I wondered how this can be applied in real-time. By creating a rest API using suave I've understood this. 
+I wondered how this can be applied in real-time. By creating a rest API using suave I've understood this.
 
-> Just create functions and combine it to build a bigger system. 
+> Just create functions and combine it to build a bigger system.
 
-What a nice way to develop a system! 
+What a nice way to develop a system!
 
 You can get the source code associated with this blog post in [my GitHub repository](https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi).

@@ -3,12 +3,12 @@ layout: post
 title: "Securing APIs in Suave using JSON Web Token"
 date: 2015-07-15 12:04:12 +0530
 comments: true
-categories: 
+categories:
   - fsharp  
   - suave
 ---
 
-In the [last blog post]({% post_url 2015-06-11-building-rest-api-in-fsharp-using-suave%}), we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT). 
+In the [last blog post]({% post_url 2015-06-11-building-rest-api-in-fsharp-using-suave%}), we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT).
 
 This blog post is based on [Taiseer's](http://bitoftech.net/) blog post on [JSON Web Token in ASP.NET Web API 2 using Owin](http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/) and I will be covering how to implement the same in [Suave](http://suave.io). If you are interested in the theoretical background of JWT, kindly read his blog post before reading this.
 
@@ -59,9 +59,9 @@ let createAudience audienceName =
   let clientId = Guid.NewGuid().ToString("N")
   let data = Array.zeroCreate 32
   RNGCryptoServiceProvider.Create().GetBytes(data)
-  let secret = data |> Base64String.create 
-  {ClientId = clientId; Secret = secret; Name =  audienceName} 
-``` 
+  let secret = data |> Base64String.create
+  {ClientId = clientId; Secret = secret; Name =  audienceName}
+```
 
 The above snippet creates an audience record with a random client id and secret key. The secret key is of type [base64 URL encoded](https://en.wikipedia.org/wiki/Base64#URL_applications) string. This type doesn't exist, so let's create it.
 
@@ -69,13 +69,13 @@ Add a new source file *Encodings.fs* in the **SuaveJwt** project and add this ty
 
 ```fsharp
 type Base64String = private Base64String of string with
-        
-  static member decode (base64String : Base64String) = 
+
+  static member decode (base64String : Base64String) =
     let (Base64String text) = base64String
     let pad text =
       let padding = 3 - ((String.length text + 3) % 4)
       if padding = 0 then text else (text + new String('=', padding))
-    
+
     Convert.FromBase64String(pad(text.Replace('-', '+').Replace('_', '/')))
 
   static member create data =
@@ -84,10 +84,10 @@ type Base64String = private Base64String of string with
       .Replace('+', '-')
       .Replace('/', '_') |> Base64String;
 
-     
+
   static member fromString = Base64String
 
-  override this.ToString() = 
+  override this.ToString() =
     let (Base64String str) = this
     str
 ```  
@@ -113,7 +113,7 @@ type Config = {
 }
 
 let audienceWebPart config =
-  
+
   let toAudienceCreateResponse (audience : Audience) = {
     Base64Secret = audience.Secret.ToString()
     ClientId = audience.ClientId        
@@ -122,19 +122,19 @@ let audienceWebPart config =
 
   let tryCreateAudience (ctx: HttpContext) =
     match mapJsonPayload<AudienceCreateRequest> ctx.request with
-    | Some audienceCreateRequest -> 
+    | Some audienceCreateRequest ->
         async {
-          let! audience = 
+          let! audience =
             audienceCreateRequest.Name |> createAudience |> config.SaveAudience                     
           let audienceCreateResponse = toAudienceCreateResponse audience
           return! JSON audienceCreateResponse ctx
         }
     | None -> BAD_REQUEST "Invalid Audience Create Request" ctx
 
-  path config.AddAudienceUrlPath >>= POST >>= tryCreateAudience 
+  path config.AddAudienceUrlPath >=> POST >=> tryCreateAudience
 ```
 
-The ```audienceWebPart``` function retrieves the ```AudienceCreateRequest``` from the JSON request payload and creates a new audience. 
+The ```audienceWebPart``` function retrieves the ```AudienceCreateRequest``` from the JSON request payload and creates a new audience.
 To make it independent of the host, we have externalized the hosting functionality using the ```Config``` record type.
 
 The ```mapJsonPayload``` and ```JSON``` functions serialize and deserialize JSON objects across the wire respectively. These functions are not part of Suave, so let's add them
@@ -145,20 +145,20 @@ Add a new source file *SuaveJson.fs* in the **SuaveJwt** project and add these f
 let JSON v =     
   let jsonSerializerSettings = new JsonSerializerSettings()
   jsonSerializerSettings.ContractResolver <- new CamelCasePropertyNamesContractResolver()
-  
+
   JsonConvert.SerializeObject(v, jsonSerializerSettings)
-  |> OK 
-  >>= Writers.setMimeType "application/json; charset=utf-8"
+  |> OK
+  >=> Writers.setMimeType "application/json; charset=utf-8"
 
 let mapJsonPayload<'a> (req : HttpRequest) =     
   let fromJson json =
-    try 
+    try
       let obj = JsonConvert.DeserializeObject(json, typeof<'a>) :?> 'a    
       Some obj
     with
     | _ -> None
 
-  let getString rawForm = 
+  let getString rawForm =
     System.Text.Encoding.UTF8.GetString(rawForm)
 
   req.rawForm |> getString |> fromJson
@@ -180,12 +180,12 @@ startWebServer defaultConfig audienceWebPart'
 
 It is a straight forward self-host suave server program which exposes the audience web part.
 
-The *AudienceStorage* is responsible for storing the created audiences and to add it create a new source file *AudienceStorage.fs* in the **SuaveJwt.AuthServerHost** project and add these functions 
+The *AudienceStorage* is responsible for storing the created audiences and to add it create a new source file *AudienceStorage.fs* in the **SuaveJwt.AuthServerHost** project and add these functions
 
 ```fsharp
 module AudienceStorage
 
-let private audienceStorage 
+let private audienceStorage
   = new Dictionary<string, Audience>()
 
 let saveAudience (audience : Audience) =      
@@ -228,10 +228,10 @@ type IdentityStore = {
 type Token = {
   AccessToken : string        
   ExpiresIn : float        
-} 
+}
 ```
 
-These types are generic abstractions which decouple the token creation part from the underlying host. 
+These types are generic abstractions which decouple the token creation part from the underlying host.
 
 The ```TokenCreateRequest``` models the underlying issuer and token lifetime.
 
@@ -240,22 +240,22 @@ The ```IdentityStore``` represents a generic data store in which the identity in
 With these types in place let's add the ```createToken``` function in the *SuaveJwt.fs* file
 
 ```fsharp
-let createToken tokenCreateRequest identityStore audience = 
+let createToken tokenCreateRequest identityStore audience =
   async {
-    let! isValidCredentials = 
+    let! isValidCredentials =
       identityStore.isValidCredentials tokenCreateRequest.UserName tokenCreateRequest.Password
     if isValidCredentials then                            
-      let signingCredentials = 
+      let signingCredentials =
         (identityStore.getSecurityKey >> identityStore.getSigningCredentials) audience.Secret
       let issuedOn = Nullable DateTime.UtcNow
       let expiresBy = Nullable (DateTime.UtcNow.Add(tokenCreateRequest.TokenTimeSpan))       
-      let! claims =  identityStore.getClaims tokenCreateRequest.UserName 
-      let jwtSecurityToken = 
+      let! claims =  identityStore.getClaims tokenCreateRequest.UserName
+      let jwtSecurityToken =
         new JwtSecurityToken(tokenCreateRequest.Issuer, audience.ClientId, claims, issuedOn, expiresBy, signingCredentials)
       let handler = new JwtSecurityTokenHandler()
       let accessToken = handler.WriteToken(jwtSecurityToken)                
       return Some {AccessToken = accessToken; ExpiresIn = tokenCreateRequest.TokenTimeSpan.TotalSeconds}
-    else return None 
+    else return None
   }
 ```
 
@@ -281,12 +281,12 @@ type Config = {
 }
 
 let audienceWebPart config identityStore =
-  
+
   // ... existing functions ...
 
   let tryCreateToken (ctx: HttpContext) =
     match mapJsonPayload<TokenCreateCredentials> ctx.request with
-    | Some tokenCreateCredentials -> 
+    | Some tokenCreateCredentials ->
       async {
         let! audience = config.GetAudience tokenCreateCredentials.ClientId
         match audience with
@@ -301,14 +301,14 @@ let audienceWebPart config identityStore =
             match token with
             | Some token -> return! JSON token ctx
             | None -> return! BAD_REQUEST "Invalid Login Credentials" ctx
-            
+
         | None -> return! BAD_REQUEST "Invalid Client Id" ctx
       }    
     | None -> BAD_REQUEST "Invalid Token Create Request" ctx
 
   choose [
-    path config.AddAudienceUrlPath >>= POST >>= tryCreateAudience
-    path config.CreateTokenUrlPath >>= POST >>= tryCreateToken
+    path config.AddAudienceUrlPath >=> POST >=> tryCreateAudience
+    path config.CreateTokenUrlPath >=> POST >=> tryCreateToken
   ]
 ```
 
@@ -344,7 +344,7 @@ startWebServer defaultConfig audienceWebPart'
 
 ```fsharp
 let getAudience clientId =        
-  if audienceStorage.ContainsKey(clientId) then 
+  if audienceStorage.ContainsKey(clientId) then
     Some audienceStorage.[clientId] |> async.Return
   else
     None |> async.Return
@@ -386,7 +386,7 @@ let isValidCredentials username password =
   username = password |> async.Return
 ```
 
-To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same. 
+To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same.
 
 Let's run the **SuaveJwt.AuthServerHost** and verify the token
 
@@ -406,7 +406,7 @@ type TokenValidationRequest = {
   AccessToken : string
 }
 
-let validate tokenValidationRequest = 
+let validate tokenValidationRequest =
   let tokenValidationParameters =
     let validationParams = new TokenValidationParameters()
     validationParams.ValidAudience <- tokenValidationRequest.ClientId
@@ -415,9 +415,9 @@ let validate tokenValidationRequest =
     validationParams.ValidateIssuerSigningKey <- true
     validationParams.IssuerSigningKey <-  tokenValidationRequest.SecurityKey
     validationParams
-  try 
-    let handler = new JwtSecurityTokenHandler() 
-    let principal = 
+  try
+    let handler = new JwtSecurityTokenHandler()
+    let principal =
       handler.ValidateToken(tokenValidationRequest.AccessToken, tokenValidationParameters, ref null)
     principal.Claims |> Choice1Of2
   with
@@ -437,7 +437,7 @@ type JwtConfig = {
     ClientId : string    
 }
 
-let jwtAuthenticate jwtConfig webpart (ctx: HttpContext) = 
+let jwtAuthenticate jwtConfig webpart (ctx: HttpContext) =
 
   let updateContextWithClaims claims =
     { ctx with userState = ctx.userState.Remove("Claims").Add("Claims", claims) }    
@@ -450,36 +450,36 @@ let jwtAuthenticate jwtConfig webpart (ctx: HttpContext) =
         ClientId = jwtConfig.ClientId
         AccessToken = accessToken
       }
-      let validationResult = validate tokenValidationRequest 
+      let validationResult = validate tokenValidationRequest
       match validationResult with
       | Choice1Of2 claims -> webpart (updateContextWithClaims claims)
       | Choice2Of2 err -> FORBIDDEN err ctx                         
-      
-  | _ -> BAD_REQUEST "Invalid Request. Provide both clientid and token" ctx  
-``` 
 
-The ```jwtAuthenticate``` function validates the access token present in the request header and invokes the given *WebPart* if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the *WebPart*. 
+  | _ -> BAD_REQUEST "Invalid Request. Provide both clientid and token" ctx  
+```
+
+The ```jwtAuthenticate``` function validates the access token present in the request header and invokes the given *WebPart* if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the *WebPart*.
 
 Upon successful access token validation, the ```jwtAuthenticate``` function puts the claims in the ```userState``` map of incoming ```HttpContext``` so that subsequent *WebPart*s in the pipeline can use it.
 
 The ```JwtConfig``` record abstracts the underlying audience from the validation logic so that it can be reused across multiple audiences.
 
-Now we have a functionality secure a web part. Let's create an audience and leverage this 
+Now we have a functionality secure a web part. Let's create an audience and leverage this
 
 Update the *Program.fs* file in the **Audience1** project as mentioned below
 
 ```fsharp
 [<EntryPoint>]
-let main argv = 
-    
+let main argv =
+
   let jwtConfig = {
     Issuer = "http://localhost:8083/suave"
     ClientId = "7ff79ba3305c4e4f9d0ececeae70c78f"
     SecurityKey = KeyStore.securityKey (Base64String.fromString "Op5EqjC70aLS2dx3gI0zADPIZGX2As6UEwjA4oyBjMo")       
   }
 
-  let sample1 = path "/audience1/sample1" >>= jwtAuthenticate jwtConfig (OK "Sample 1")
-  let config = { defaultConfig with bindings = [HttpBinding.mk' HTTP "127.0.0.1" 8084] }
+  let sample1 = path "/audience1/sample1" >=> jwtAuthenticate jwtConfig (OK "Sample 1")
+  let config = { defaultConfig with bindings = [HttpBinding.mkSimple HTTP "127.0.0.1" 8084] }
 
   startWebServer config sample1
   0
@@ -503,14 +503,14 @@ Cool, Isn't it?
 
 Let's add authorization based on the claims that we have obtained from the JWT token
 
-Open *Secure.fs* and update the authorization functionality 
+Open *Secure.fs* and update the authorization functionality
 
 ```fsharp
 type AuthorizationResult =
   | Authorized
   | UnAuthorized of string
 
-let jwtAuthorize jwtConfig authorizeUser webpart  = 
+let jwtAuthorize jwtConfig authorizeUser webpart  =
 
   let getClaims (ctx: HttpContext) =
     let userState = ctx.userState
@@ -533,31 +533,31 @@ let jwtAuthorize jwtConfig authorizeUser webpart  =
     | None -> FORBIDDEN "Claims not found" httpContext
 
   jwtAuthenticate jwtConfig authorize
-``` 
+```
 
-The ```jwtConfig``` function is very similar to the ```jwtAuthenticate``` function which provides authorization in addition to the authentication. 
+The ```jwtConfig``` function is very similar to the ```jwtAuthenticate``` function which provides authorization in addition to the authentication.
 
 The key here is the parameter ```authorizeUser``` which is a function that takes a sequence of claims and returns an ```AuthorizationResult```.
 
-Like ```jwtAuthenticate`` function, the ```jwtConfig``` function is also abstracted from the underlying *Audience* so we can use it across multiple *Audience*s. 
+Like ```jwtAuthenticate`` function, the ```jwtConfig``` function is also abstracted from the underlying *Audience* so we can use it across multiple *Audience*s.
 
-Let's use this in the **Audience1**. 
+Let's use this in the **Audience1**.
 
 **Program.fs**
 
 ```fsharp
 [<EntryPoint>]
-let main argv = 
+let main argv =
 
   // ... existing code ...
-  
+
   // Claim Seq -> Async<AuthorizationResult>
   let authorizeAdmin (claims : Claim seq) =
     match claims |> Seq.tryFind (fun c -> c.Type = ClaimTypes.Role && c.Value = "Admin") with
     | Some _ -> Authorized |> async.Return
     | None -> UnAuthorized "User is not an admin" |> async.Return
 
-  let sample2 = path "/audience1/sample2" >>= jwtAuthorize jwtConfig authorizeAdmin (OK "Sample 2") 
+  let sample2 = path "/audience1/sample2" >=> jwtAuthorize jwtConfig authorizeAdmin (OK "Sample 2")
   let app = choose [sample1;sample2]
 
   startWebServer config app
@@ -576,11 +576,11 @@ That's it we have successfully completed all the three steps mentioned at the be
 
 One cool thing about the design of the **SuaveJwt** library is, it doesn't have any assumption about the *Authorization Server* and the *Resource Server*. Because of it, we can easily extend it.
 
-Let's prove it by updating the *Program.fs* file in the **Audience2** project. 
+Let's prove it by updating the *Program.fs* file in the **Audience2** project.
 
 ```fsharp
 [<EntryPoint>]
-let main argv = 
+let main argv =
   let jwtConfig = {
     Issuer = "http://localhost:8083/suave"
     ClientId = "ada9263885c440869fb484fe354de13d"
@@ -593,9 +593,9 @@ let main argv =
     | None -> UnAuthorized "User is not a Super User" |> async.Return
 
   let authorize = jwtAuthorize jwtConfig
-  let sample1 = path "/audience2/sample1" >>= OK "Sample 1"
-  let sample2 = path "/audience2/sample2" >>= authorize authorizeSuperUser (OK "Sample 2")      
-  let config = { defaultConfig with bindings = [HttpBinding.mk' HTTP "127.0.0.1" 8085] }    
+  let sample1 = path "/audience2/sample1" >=> OK "Sample 1"
+  let sample2 = path "/audience2/sample2" >=> authorize authorizeSuperUser (OK "Sample 2")      
+  let config = { defaultConfig with bindings = [HttpBinding.mkSimple HTTP "127.0.0.1" 8085] }    
   let app = choose [sample1;sample2]
 
   startWebServer config app
@@ -609,4 +609,3 @@ Note that the ```jwtConfig``` values are different from that of **Audience1** an
 Suave provides a simple and elegant way of extending its core functionality. In this blog post, we have seen how to bend it to support JWT based authorization and I believe we can do a lot of other cool things too!
 
 You can find the complete source code of the sample application used in this blog post in my [blog-samples](https://github.com/tamizhvendan/blog-samples/tree/master/SuaveJwtSampleApplication) GitHub repository.    
-
