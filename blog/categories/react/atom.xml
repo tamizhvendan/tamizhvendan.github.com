@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/react/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-01-11T15:34:48+05:30</updated>
+  <updated>2016-01-12T17:25:33+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -126,7 +126,7 @@ npm init
 
 <p>While installing Webpack we touched a little on loaders. Webpack uses loaders to translate the file before bundling them</p>
 
-<p><img class="center" src="/images/react-hello-world/babel-loader.png"></p>
+<p>{% img center /images/react-hello-world/babel-loader.png %}</p>
 
 <p>To setup install the following npm packages</p>
 
@@ -300,7 +300,7 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
 
 <p>If your Webpack is already running in watch mode then refresh the browser to see the AwesomeComponent in action!</p>
 
-<p><img class="center" src="/images/react-hello-world/Output.png"></p>
+<p>{% img center /images/react-hello-world/Output.png %}</p>
 
 <h2 id="summary">Summary</h2>
 

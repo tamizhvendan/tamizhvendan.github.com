@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-01-11T15:34:48+05:30</updated>
+  <updated>2016-01-12T17:09:39+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -1280,7 +1280,7 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
     <link href="http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/"/>
     <updated>2015-07-15T12:04:12+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token</id>
-    <content type="html"><![CDATA[<p>In the <a href="http://blog.tamizhvendan.in/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT). </p>
+    <content type="html"><![CDATA[<p>In the <a href="http://blog.tamizhvendan.in/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT).</p>
 
 <p>This blog post is based on <a href="http://bitoftech.net/">Taiseer’s</a> blog post on <a href="http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/">JSON Web Token in ASP.NET Web API 2 using Owin</a> and I will be covering how to implement the same in <a href="http://suave.io">Suave</a>. If you are interested in the theoretical background of JWT, kindly read his blog post before reading this.</p>
 
@@ -1475,10 +1475,10 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
 </span><span class="line">        <span class="o">}</span>
 </span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Audience Create Request&quot;</span> <span class="n">ctx</span>
 </span><span class="line">
-</span><span class="line">  <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;&gt;=</span> <span class="n">POST</span> <span class="o">&gt;&gt;=</span> <span class="n">tryCreateAudience</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateAudience</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>The <code>audienceWebPart</code> function retrieves the <code>AudienceCreateRequest</code> from the JSON request payload and creates a new audience. <br />
+<p>The <code>audienceWebPart</code> function retrieves the <code>AudienceCreateRequest</code> from the JSON request payload and creates a new audience.<br />
 To make it independent of the host, we have externalized the hosting functionality using the <code>Config</code> record type.</p>
 
 <p>The <code>mapJsonPayload</code> and <code>JSON</code> functions serialize and deserialize JSON objects across the wire respectively. These functions are not part of Suave, so let’s add them</p>
@@ -1511,7 +1511,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">
 </span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">jsonSerializerSettings</span><span class="o">)</span>
 </span><span class="line">  <span class="o">|&gt;</span> <span class="n">OK</span>
-</span><span class="line">  <span class="o">&gt;&gt;=</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
+</span><span class="line">  <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
 </span><span class="line">
 </span><span class="line"><span class="k">let</span> <span class="nv">mapJsonPayload</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">(</span><span class="n">req</span> <span class="o">:</span> <span class="n">HttpRequest</span><span class="o">)</span> <span class="o">=</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">fromJson</span> <span class="n">json</span> <span class="o">=</span>
@@ -1549,7 +1549,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>It is a straight forward self-host suave server program which exposes the audience web part.</p>
 
-<p>The <em>AudienceStorage</em> is responsible for storing the created audiences and to add it create a new source file <em>AudienceStorage.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project and add these functions </p>
+<p>The <em>AudienceStorage</em> is responsible for storing the created audiences and to add it create a new source file <em>AudienceStorage.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project and add these functions</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -1624,7 +1624,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line"><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>These types are generic abstractions which decouple the token creation part from the underlying host. </p>
+<p>These types are generic abstractions which decouple the token creation part from the underlying host.</p>
 
 <p>The <code>TokenCreateRequest</code> models the underlying issuer and token lifetime.</p>
 
@@ -1759,8 +1759,8 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Token Create Request&quot;</span> <span class="n">ctx</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;&gt;=</span> <span class="n">POST</span> <span class="o">&gt;&gt;=</span> <span class="n">tryCreateAudience</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">CreateTokenUrlPath</span> <span class="o">&gt;&gt;=</span> <span class="n">POST</span> <span class="o">&gt;&gt;=</span> <span class="n">tryCreateToken</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateAudience</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">CreateTokenUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateToken</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -1882,7 +1882,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">  <span class="n">username</span> <span class="o">=</span> <span class="n">password</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same. </p>
+<p>To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same.</p>
 
 <p>Let’s run the <strong>SuaveJwt.AuthServerHost</strong> and verify the token</p>
 
@@ -2000,13 +2000,13 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Request. Provide both clientid and token&quot;</span> <span class="n">ctx</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>The <code>jwtAuthenticate</code> function validates the access token present in the request header and invokes the given <em>WebPart</em> if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the <em>WebPart</em>. </p>
+<p>The <code>jwtAuthenticate</code> function validates the access token present in the request header and invokes the given <em>WebPart</em> if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the <em>WebPart</em>.</p>
 
 <p>Upon successful access token validation, the <code>jwtAuthenticate</code> function puts the claims in the <code>userState</code> map of incoming <code>HttpContext</code> so that subsequent <em>WebPart</em>s in the pipeline can use it.</p>
 
 <p>The <code>JwtConfig</code> record abstracts the underlying audience from the validation logic so that it can be reused across multiple audiences.</p>
 
-<p>Now we have a functionality secure a web part. Let’s create an audience and leverage this </p>
+<p>Now we have a functionality secure a web part. Let’s create an audience and leverage this</p>
 
 <p>Update the <em>Program.fs</em> file in the <strong>Audience1</strong> project as mentioned below</p>
 
@@ -2033,8 +2033,8 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="n">SecurityKey</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">securityKey</span> <span class="o">(</span><span class="nn">Base64String</span><span class="p">.</span><span class="n">fromString</span> <span class="s">&quot;Op5EqjC70aLS2dx3gI0zADPIZGX2As6UEwjA4oyBjMo&quot;</span><span class="o">)</span>
 </span><span class="line">  <span class="o">}</span>
 </span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample1&quot;</span> <span class="o">&gt;&gt;=</span> <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mk&#39;</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8084</span><span class="o">]</span> <span class="o">}</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample1&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mkSimple</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8084</span><span class="o">]</span> <span class="o">}</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">sample1</span>
 </span><span class="line">  <span class="mi">0</span>
@@ -2056,7 +2056,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s add authorization based on the claims that we have obtained from the JWT token</p>
 
-<p>Open <em>Secure.fs</em> and update the authorization functionality </p>
+<p>Open <em>Secure.fs</em> and update the authorization functionality</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2114,13 +2114,13 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">  <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="n">authorize</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>The <code>jwtConfig</code> function is very similar to the <code>jwtAuthenticate</code> function which provides authorization in addition to the authentication. </p>
+<p>The <code>jwtConfig</code> function is very similar to the <code>jwtAuthenticate</code> function which provides authorization in addition to the authentication.</p>
 
 <p>The key here is the parameter <code>authorizeUser</code> which is a function that takes a sequence of claims and returns an <code>AuthorizationResult</code>.</p>
 
-<p>Like <code>jwtAuthenticate`` function, the</code>jwtConfig&#8220;` function is also abstracted from the underlying <em>Audience</em> so we can use it across multiple <em>Audience</em>s. </p>
+<p>Like <code>jwtAuthenticate`` function, the</code>jwtConfig&#8220;` function is also abstracted from the underlying <em>Audience</em> so we can use it across multiple <em>Audience</em>s.</p>
 
-<p>Let’s use this in the <strong>Audience1</strong>. </p>
+<p>Let’s use this in the <strong>Audience1</strong>.</p>
 
 <p><strong>Program.fs</strong></p>
 
@@ -2151,7 +2151,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">Authorized</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
 </span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">UnAuthorized</span> <span class="s">&quot;User is not an admin&quot;</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
 </span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample2&quot;</span> <span class="o">&gt;&gt;=</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span> <span class="n">authorizeAdmin</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample2&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span> <span class="n">authorizeAdmin</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">sample1</span><span class="o">;</span><span class="n">sample2</span><span class="o">]</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">app</span>
@@ -2170,7 +2170,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>One cool thing about the design of the <strong>SuaveJwt</strong> library is, it doesn’t have any assumption about the <em>Authorization Server</em> and the <em>Resource Server</em>. Because of it, we can easily extend it.</p>
 
-<p>Let’s prove it by updating the <em>Program.fs</em> file in the <strong>Audience2</strong> project. </p>
+<p>Let’s prove it by updating the <em>Program.fs</em> file in the <strong>Audience2</strong> project.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2207,9 +2207,9 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">UnAuthorized</span> <span class="s">&quot;User is not a Super User&quot;</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
 </span><span class="line">
 </span><span class="line">  <span class="k">let</span> <span class="nv">authorize</span> <span class="o">=</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample1&quot;</span> <span class="o">&gt;&gt;=</span> <span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample2&quot;</span> <span class="o">&gt;&gt;=</span> <span class="n">authorize</span> <span class="n">authorizeSuperUser</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mk&#39;</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8085</span><span class="o">]</span> <span class="o">}</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample1&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample2&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">authorize</span> <span class="n">authorizeSuperUser</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mkSimple</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8085</span><span class="o">]</span> <span class="o">}</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">sample1</span><span class="o">;</span><span class="n">sample2</span><span class="o">]</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">app</span>
@@ -2223,7 +2223,6 @@ To make it independent of the host, we have externalized the hosting functionali
 <p>Suave provides a simple and elegant way of extending its core functionality. In this blog post, we have seen how to bend it to support JWT based authorization and I believe we can do a lot of other cool things too!</p>
 
 <p>You can find the complete source code of the sample application used in this blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveJwtSampleApplication">blog-samples</a> GitHub repository.    </p>
-
 ]]></content>
   </entry>
   
@@ -2236,13 +2235,13 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>I got super excited after learning suave from these resources and started playing with it. One of the great things about the fsharp community is, if you want to improve any existing library all you need is just send a pull request with the feature you would like to have. Yes, it’s as simple as that! It <a href="https://github.com/SuaveIO/suave/pull/259">worked</a> for me and I am sure for you too, if you wish.</p>
 
-<p>In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the <a href="http://docs.strongloop.com/display/public/LB/Use+API+Explorer">StrongLoop</a>, a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post. </p>
+<p>In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the <a href="http://docs.strongloop.com/display/public/LB/Use+API+Explorer">StrongLoop</a>, a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post.</p>
 
 <p>Let’s get started</p>
 
 <h2 id="setting-up-the-project">Setting up the project</h2>
 
-<p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below. </p>
+<p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below.</p>
 
 <p><img class="center" src="http://blog.tamizhvendan.in/images/sauve_rest_api/proj_structure.png" /></p>
 
@@ -2273,7 +2272,7 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-number">6</span>
 <span class="line-number">7</span>
 </pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">Suave.Web</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Successful</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Successful</span>
 </span><span class="line">
 </span><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
 </span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
@@ -2320,13 +2319,13 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <ul>
   <li>
-    <p>The <code>path</code> is a function of type: <code>string -&gt; WebPart</code>. It means that if we give it a string it will return <code>WebPart</code>. Under the hood, the function looks at the incoming request and returns <code>Some</code> if the paths match, and <code>None</code> otherwise. </p>
+    <p>The <code>path</code> is a function of type: <code>string -&gt; WebPart</code>. It means that if we give it a string it will return <code>WebPart</code>. Under the hood, the function looks at the incoming request and returns <code>Some</code> if the paths match, and <code>None</code> otherwise.</p>
   </li>
   <li>
     <p>The <code>GET</code> is a static inbuilt <code>WebPart</code> which matches the HTTP GET requests.</p>
   </li>
   <li>
-    <p>The <code>&gt;&gt;=</code> operator composes two WebParts into one by first evaluating the <code>WebPart</code> on the left, and applying the WebPart on the right only if the first one returned <code>Some</code>.</p>
+    <p>The <code>&gt;=&gt;</code> operator composes two WebParts into one by first evaluating the <code>WebPart</code> on the left, and applying the WebPart on the right only if the first one returned <code>Some</code>.</p>
   </li>
 </ul>
 
@@ -2349,7 +2348,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">
 </span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">jsonSerializerSettings</span><span class="o">)</span>
 </span><span class="line">  <span class="o">|&gt;</span> <span class="n">OK</span>
-</span><span class="line">  <span class="o">&gt;&gt;=</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
+</span><span class="line">  <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>As the signature indicates <code>JSON</code> function takes a generic type, serialize it using <em>Newtonsoft.Json</em> and return the json response. <code>Writers.setMimeType</code> takes a mime type and a web part returns the web part with the given mime type.</p>
 
@@ -2362,7 +2361,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span>
-</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>The one caveat here is the path resolution of Suave library. Based on the webpart given, the <code>startWebServer</code> function configures it’s internal routing table during the application startup and it is static after the application has been started. So, the <code>getAll</code> webpart will be created only during application startup. To avoid this, we need to wrap the <code>getAll</code> webpart with a <code>warbler</code> function which ensures that it is called only when the incoming request matches the given resource path.</p>
@@ -2374,7 +2373,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">warbler</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Now we have the middleware to create a web part. Let’s create other things and glue them together.</p>
@@ -2503,9 +2502,9 @@ To make it independent of the host, we have externalized the hosting functionali
 </pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">warbler</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">    <span class="n">POST</span> <span class="o">&gt;&gt;=</span> <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">    <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>Thanks to the awesome function composition feature, we have combined all these tiny functions and implemented a new request and response.  </p>
@@ -2604,12 +2603,12 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span> <span class="o">|&gt;</span> <span class="n">JSON</span>
 </span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">requestError</span>
 </span><span class="line">
-</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">    <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">    <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
@@ -2741,14 +2740,14 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="n">NO_CONTENT</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">    <span class="o">]</span>
-</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -2832,16 +2831,16 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="o">(</span><span class="n">resource</span><span class="o">.</span><span class="n">UpdateById</span> <span class="n">id</span><span class="o">)</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">    <span class="o">]</span>
-</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
-</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
-</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
+</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -2884,7 +2883,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <h2 id="http-head">HTTP HEAD</h2>
 
-<p>Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward. </p>
+<p>Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -2932,17 +2931,17 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="k">if</span> <span class="n">resource</span><span class="o">.</span><span class="n">IsExists</span> <span class="n">id</span> <span class="k">then</span> <span class="n">OK</span> <span class="s">&quot;&quot;</span> <span class="k">else</span> <span class="n">NOT_FOUND</span> <span class="s">&quot;&quot;</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">    <span class="o">]</span>
-</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
-</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
-</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
-</span><span class="line">    <span class="n">HEAD</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">isResourceExists</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
+</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
+</span><span class="line">    <span class="n">HEAD</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">isResourceExists</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p><strong>Db.fs</strong></p>
@@ -2978,7 +2977,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <h2 id="extending-with-a-new-resource">Extending with a new Resource</h2>
 
-<p>The beautiful aspect of this functional REST API design we can easily extend it to support other resources. </p>
+<p>The beautiful aspect of this functional REST API design we can easily extend it to support other resources.</p>
 
 <p>Here is the rest API implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
 
@@ -3042,13 +3041,13 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p><img class="center border" src="http://blog.tamizhvendan.in/images/sauve_rest_api/fp_design_patterns_slide.png" /></p>
 
-<p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this. </p>
+<p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this.</p>
 
 <blockquote>
-  <p>Just create functions and combine it to build a bigger system. </p>
+  <p>Just create functions and combine it to build a bigger system.</p>
 </blockquote>
 
-<p>What a nice way to develop a system! </p>
+<p>What a nice way to develop a system!</p>
 
 <p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my GitHub repository</a>.</p>
 ]]></content>

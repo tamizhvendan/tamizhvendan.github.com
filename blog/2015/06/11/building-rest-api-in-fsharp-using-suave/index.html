@@ -120,13 +120,13 @@
 
 <p>I got super excited after learning suave from these resources and started playing with it. One of the great things about the fsharp community is, if you want to improve any existing library all you need is just send a pull request with the feature you would like to have. Yes, it’s as simple as that! It <a href="https://github.com/SuaveIO/suave/pull/259">worked</a> for me and I am sure for you too, if you wish.</p>
 
-<p>In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the <a href="http://docs.strongloop.com/display/public/LB/Use+API+Explorer">StrongLoop</a>, a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post. </p>
+<p>In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the <a href="http://docs.strongloop.com/display/public/LB/Use+API+Explorer">StrongLoop</a>, a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post.</p>
 
 <p>Let’s get started</p>
 
 <h2 id="setting-up-the-project">Setting up the project</h2>
 
-<p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below. </p>
+<p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below.</p>
 
 <p><img class="center" src="/images/sauve_rest_api/proj_structure.png" /></p>
 
@@ -157,7 +157,7 @@
 <span class="line-number">6</span>
 <span class="line-number">7</span>
 </pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">Suave.Web</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http.Successful</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Successful</span>
 </span><span class="line">
 </span><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
 </span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
@@ -204,13 +204,13 @@
 
 <ul>
   <li>
-    <p>The <code>path</code> is a function of type: <code>string -&gt; WebPart</code>. It means that if we give it a string it will return <code>WebPart</code>. Under the hood, the function looks at the incoming request and returns <code>Some</code> if the paths match, and <code>None</code> otherwise. </p>
+    <p>The <code>path</code> is a function of type: <code>string -&gt; WebPart</code>. It means that if we give it a string it will return <code>WebPart</code>. Under the hood, the function looks at the incoming request and returns <code>Some</code> if the paths match, and <code>None</code> otherwise.</p>
   </li>
   <li>
     <p>The <code>GET</code> is a static inbuilt <code>WebPart</code> which matches the HTTP GET requests.</p>
   </li>
   <li>
-    <p>The <code>&gt;&gt;=</code> operator composes two WebParts into one by first evaluating the <code>WebPart</code> on the left, and applying the WebPart on the right only if the first one returned <code>Some</code>.</p>
+    <p>The <code>&gt;=&gt;</code> operator composes two WebParts into one by first evaluating the <code>WebPart</code> on the left, and applying the WebPart on the right only if the first one returned <code>Some</code>.</p>
   </li>
 </ul>
 
@@ -233,7 +233,7 @@
 </span><span class="line">
 </span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">jsonSerializerSettings</span><span class="o">)</span>
 </span><span class="line">  <span class="o">|&gt;</span> <span class="n">OK</span>
-</span><span class="line">  <span class="o">&gt;&gt;=</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
+</span><span class="line">  <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>As the signature indicates <code>JSON</code> function takes a generic type, serialize it using <em>Newtonsoft.Json</em> and return the json response. <code>Writers.setMimeType</code> takes a mime type and a web part returns the web part with the given mime type.</p>
 
@@ -246,7 +246,7 @@
 </pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span>
-</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>The one caveat here is the path resolution of Suave library. Based on the webpart given, the <code>startWebServer</code> function configures it’s internal routing table during the application startup and it is static after the application has been started. So, the <code>getAll</code> webpart will be created only during application startup. To avoid this, we need to wrap the <code>getAll</code> webpart with a <code>warbler</code> function which ensures that it is called only when the incoming request matches the given resource path.</p>
@@ -258,7 +258,7 @@
 </pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">warbler</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Now we have the middleware to create a web part. Let’s create other things and glue them together.</p>
@@ -387,9 +387,9 @@
 </pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">rest</span> <span class="n">resourceName</span> <span class="n">resource</span> <span class="o">=</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">resourcePath</span> <span class="o">=</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span> <span class="n">resourceName</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">gellAll</span> <span class="o">=</span> <span class="n">warbler</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">GetAll</span> <span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">    <span class="n">POST</span> <span class="o">&gt;&gt;=</span> <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">    <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p>Thanks to the awesome function composition feature, we have combined all these tiny functions and implemented a new request and response.  </p>
@@ -488,12 +488,12 @@
 </span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span> <span class="o">|&gt;</span> <span class="n">JSON</span>
 </span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">requestError</span>
 </span><span class="line">
-</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">    <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">    <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
@@ -625,14 +625,14 @@
 </span><span class="line">    <span class="n">NO_CONTENT</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">    <span class="o">]</span>
-</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -716,16 +716,16 @@
 </span><span class="line">    <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="o">(</span><span class="n">resource</span><span class="o">.</span><span class="n">UpdateById</span> <span class="n">id</span><span class="o">)</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">    <span class="o">]</span>
-</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
-</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
-</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
+</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -768,7 +768,7 @@
 
 <h2 id="http-head">HTTP HEAD</h2>
 
-<p>Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward. </p>
+<p>Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -816,17 +816,17 @@
 </span><span class="line">    <span class="k">if</span> <span class="n">resource</span><span class="o">.</span><span class="n">IsExists</span> <span class="n">id</span> <span class="k">then</span> <span class="n">OK</span> <span class="s">&quot;&quot;</span> <span class="k">else</span> <span class="n">NOT_FOUND</span> <span class="s">&quot;&quot;</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;&gt;=</span> <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">getAll</span>
-</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">resourcePath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">getAll</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Create</span> <span class="o">&gt;&gt;</span> <span class="n">JSON</span><span class="o">)</span>
-</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;&gt;=</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span>
 </span><span class="line">        <span class="n">request</span> <span class="o">(</span><span class="n">getResourceFromReq</span> <span class="o">&gt;&gt;</span> <span class="n">resource</span><span class="o">.</span><span class="n">Update</span> <span class="o">&gt;&gt;</span> <span class="n">handleResource</span> <span class="n">badRequest</span><span class="o">)</span>
 </span><span class="line">    <span class="o">]</span>
-</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
-</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
-</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
-</span><span class="line">    <span class="n">HEAD</span> <span class="o">&gt;&gt;=</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">isResourceExists</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">deleteResourceById</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">getResourceById</span>
+</span><span class="line">    <span class="n">PUT</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">updateResourceById</span>
+</span><span class="line">    <span class="n">HEAD</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="n">resourceIdPath</span> <span class="n">isResourceExists</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 <p><strong>Db.fs</strong></p>
@@ -862,7 +862,7 @@
 
 <h2 id="extending-with-a-new-resource">Extending with a new Resource</h2>
 
-<p>The beautiful aspect of this functional REST API design we can easily extend it to support other resources. </p>
+<p>The beautiful aspect of this functional REST API design we can easily extend it to support other resources.</p>
 
 <p>Here is the rest API implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
 
@@ -926,13 +926,13 @@
 
 <p><img class="center border" src="/images/sauve_rest_api/fp_design_patterns_slide.png" /></p>
 
-<p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this. </p>
+<p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this.</p>
 
 <blockquote>
-  <p>Just create functions and combine it to build a bigger system. </p>
+  <p>Just create functions and combine it to build a bigger system.</p>
 </blockquote>
 
-<p>What a nice way to develop a system! </p>
+<p>What a nice way to develop a system!</p>
 
 <p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my GitHub repository</a>.</p>
 </div>

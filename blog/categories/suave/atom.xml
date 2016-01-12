@@ -4,7 +4,7 @@
   <title><![CDATA[Category: suave | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/suave/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-01-11T15:34:48+05:30</updated>
+  <updated>2016-01-12T17:25:33+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -651,7 +651,7 @@
 
 <p>The first step is getting the sample response for these APIs and save them in separate JSON files. In this example, I’ve created these using my GitHub username and added to the project as below.</p>
 
-<p><img class="center" src="/images/suave_mock_api/project.png"></p>
+<p>{% img center /images/suave_mock_api/project.png %}</p>
 
 <p>After adding, change the “Copy to Output Directory” property of the both the files to “Copy always”</p>
 
@@ -689,9 +689,9 @@
 
 <h2 id="mock-apis-in-action">Mock APIs in action</h2>
 
-<p><img class="border center" src="/images/suave_mock_api/user_api.png"></p>
+<p>{% img border center /images/suave_mock_api/user_api.png %}</p>
 
-<p><img class="border center" src="/images/suave_mock_api/repos_api.png"></p>
+<p>{% img border center /images/suave_mock_api/repos_api.png %}</p>
 
 <h2 id="summary">Summary</h2>
 
@@ -704,7 +704,7 @@
     <link href="http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/"/>
     <updated>2015-07-15T12:04:12+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token</id>
-    <content type="html"><![CDATA[<p>In the <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT). </p>
+    <content type="html"><![CDATA[<p>In the <a href="{% post_url 2015-06-11-building-rest-api-in-fsharp-using-suave%}">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT).</p>
 
 <p>This blog post is based on <a href="http://bitoftech.net/">Taiseer’s</a> blog post on <a href="http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/">JSON Web Token in ASP.NET Web API 2 using Owin</a> and I will be covering how to implement the same in <a href="http://suave.io">Suave</a>. If you are interested in the theoretical background of JWT, kindly read his blog post before reading this.</p>
 
@@ -740,7 +740,7 @@
 
 <p>Then add reference the .NET framework library <strong>System.IdentityModel</strong> in all the four projects from GAC and then add a reference to the <strong>SuaveJwt</strong> project library in all the other three projects.</p>
 
-<p><img class="center" src="/images/suave_jwt/project_structure.png"></p>
+<p>{% img center /images/suave_jwt/project_structure.png %}</p>
 
 <h2 id="new-audience-registration">New Audience Registration</h2>
 
@@ -760,8 +760,8 @@
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let clientId = Guid.NewGuid().ToString(&quot;N&quot;)
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let data = Array.zeroCreate 32
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>  RNGCryptoServiceProvider.Create().GetBytes(data)
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  let secret = data |&gt; Base64String.create 
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  {ClientId = clientId; Secret = secret; Name =  audienceName} 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  let secret = data |&gt; Base64String.create
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  {ClientId = clientId; Secret = secret; Name =  audienceName}
 </pre></div>
 </div>
 </div>
@@ -772,13 +772,13 @@
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type Base64String = private Base64String of string with
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>        
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  static member decode (base64String : Base64String) = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  static member decode (base64String : Base64String) =
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    let (Base64String text) = base64String
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    let pad text =
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      let padding = 3 - ((String.length text + 3) % 4)
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      if padding = 0 then text else (text + new String('=', padding))
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    Convert.FromBase64String(pad(text.Replace('-', '+').Replace('_', '/')))
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>  static member create data =
@@ -787,10 +787,10 @@
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>      .Replace('+', '-')
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>      .Replace('/', '_') |&gt; Base64String;
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>     
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>
 <span class="line-numbers"><a href="#n18" name="n18">18</a></span>  static member fromString = Base64String
 <span class="line-numbers"><a href="#n19" name="n19">19</a></span>
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  override this.ToString() = 
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  override this.ToString() =
 <span class="line-numbers"><a href="#n21" name="n21">21</a></span>    let (Base64String str) = this
 <span class="line-numbers"><a href="#n22" name="n22">22</a></span>    str
 </pre></div>
@@ -818,7 +818,7 @@
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>}
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>let audienceWebPart config =
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>
 <span class="line-numbers"><a href="#n18" name="n18">18</a></span>  let toAudienceCreateResponse (audience : Audience) = {
 <span class="line-numbers"><a href="#n19" name="n19">19</a></span>    Base64Secret = audience.Secret.ToString()
 <span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    ClientId = audience.ClientId        
@@ -827,21 +827,21 @@
 <span class="line-numbers"><a href="#n23" name="n23">23</a></span>
 <span class="line-numbers"><a href="#n24" name="n24">24</a></span>  let tryCreateAudience (ctx: HttpContext) =
 <span class="line-numbers"><a href="#n25" name="n25">25</a></span>    match mapJsonPayload&lt;AudienceCreateRequest&gt; ctx.request with
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    | Some audienceCreateRequest -&gt; 
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    | Some audienceCreateRequest -&gt;
 <span class="line-numbers"><a href="#n27" name="n27">27</a></span>        async {
-<span class="line-numbers"><a href="#n28" name="n28">28</a></span>          let! audience = 
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>          let! audience =
 <span class="line-numbers"><a href="#n29" name="n29">29</a></span>            audienceCreateRequest.Name |&gt; createAudience |&gt; config.SaveAudience                     
 <span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>          let audienceCreateResponse = toAudienceCreateResponse audience
 <span class="line-numbers"><a href="#n31" name="n31">31</a></span>          return! JSON audienceCreateResponse ctx
 <span class="line-numbers"><a href="#n32" name="n32">32</a></span>        }
 <span class="line-numbers"><a href="#n33" name="n33">33</a></span>    | None -&gt; BAD_REQUEST &quot;Invalid Audience Create Request&quot; ctx
 <span class="line-numbers"><a href="#n34" name="n34">34</a></span>
-<span class="line-numbers"><a href="#n35" name="n35">35</a></span>  path config.AddAudienceUrlPath &gt;&gt;= POST &gt;&gt;= tryCreateAudience 
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>  path config.AddAudienceUrlPath &gt;=&gt; POST &gt;=&gt; tryCreateAudience
 </pre></div>
 </div>
 </div>
 
-<p>The <code>audienceWebPart</code> function retrieves the <code>AudienceCreateRequest</code> from the JSON request payload and creates a new audience. <br />
+<p>The <code>audienceWebPart</code> function retrieves the <code>AudienceCreateRequest</code> from the JSON request payload and creates a new audience.<br />
 To make it independent of the host, we have externalized the hosting functionality using the <code>Config</code> record type.</p>
 
 <p>The <code>mapJsonPayload</code> and <code>JSON</code> functions serialize and deserialize JSON objects across the wire respectively. These functions are not part of Suave, so let’s add them</p>
@@ -852,20 +852,20 @@ To make it independent of the host, we have externalized the hosting functionali
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let JSON v =     
 <span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let jsonSerializerSettings = new JsonSerializerSettings()
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  jsonSerializerSettings.ContractResolver &lt;- new CamelCasePropertyNamesContractResolver()
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  JsonConvert.SerializeObject(v, jsonSerializerSettings)
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  |&gt; OK 
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  &gt;&gt;= Writers.setMimeType &quot;application/json; charset=utf-8&quot;
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  |&gt; OK
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  &gt;=&gt; Writers.setMimeType &quot;application/json; charset=utf-8&quot;
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let mapJsonPayload&lt;'a&gt; (req : HttpRequest) =     
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let fromJson json =
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    try 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    try
 <span class="line-numbers"><a href="#n12" name="n12">12</a></span>      let obj = JsonConvert.DeserializeObject(json, typeof&lt;'a&gt;) :?&gt; 'a    
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>      Some obj
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>    with
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>    | _ -&gt; None
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let getString rawForm = 
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let getString rawForm =
 <span class="line-numbers"><a href="#n18" name="n18">18</a></span>    System.Text.Encoding.UTF8.GetString(rawForm)
 <span class="line-numbers"><a href="#n19" name="n19">19</a></span>
 <span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  req.rawForm |&gt; getString |&gt; fromJson
@@ -891,12 +891,12 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>It is a straight forward self-host suave server program which exposes the audience web part.</p>
 
-<p>The <em>AudienceStorage</em> is responsible for storing the created audiences and to add it create a new source file <em>AudienceStorage.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project and add these functions </p>
+<p>The <em>AudienceStorage</em> is responsible for storing the created audiences and to add it create a new source file <em>AudienceStorage.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project and add these functions</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>module AudienceStorage
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span>
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let private audienceStorage 
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let private audienceStorage
 <span class="line-numbers"><a href="#n4" name="n4">4</a></span>  = new Dictionary&lt;string, Audience&gt;()
 <span class="line-numbers"><a href="#n5" name="n5">5</a></span>
 <span class="line-numbers"><a href="#n6" name="n6">6</a></span>let saveAudience (audience : Audience) =      
@@ -909,7 +909,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Now we have everything to create a new audience. So, let’s run the <strong>SuaveJwt.AuthServerHost</strong> application and verify</p>
 
-<p><img class="center" src="/images/suave_jwt/audience_create.png"></p>
+<p>{% img center /images/suave_jwt/audience_create.png %}</p>
 
 <p>Keep a note of this <em>clientId</em> and <em>base64Secret</em> as we will be using them while defining the resource server (“Audience1” in this case).</p>
 
@@ -919,7 +919,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s begin by defining the business logic to create an access token.</p>
 
-<p><img class="center" src="/images/suave_jwt/createToken.png"></p>
+<p>{% img center /images/suave_jwt/createToken.png %}</p>
 
 <p>Open <em>JwtToken.fs</em> and add the following types</p>
 
@@ -941,12 +941,12 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>type Token = {
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>  AccessToken : string        
 <span class="line-numbers"><a href="#n17" name="n17">17</a></span>  ExpiresIn : float        
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>} 
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>}
 </pre></div>
 </div>
 </div>
 
-<p>These types are generic abstractions which decouple the token creation part from the underlying host. </p>
+<p>These types are generic abstractions which decouple the token creation part from the underlying host.</p>
 
 <p>The <code>TokenCreateRequest</code> models the underlying issuer and token lifetime.</p>
 
@@ -955,22 +955,22 @@ To make it independent of the host, we have externalized the hosting functionali
 <p>With these types in place let’s add the <code>createToken</code> function in the <em>SuaveJwt.fs</em> file</p>
 
 <div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let createToken tokenCreateRequest identityStore audience = 
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let createToken tokenCreateRequest identityStore audience =
 <span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  async {
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let! isValidCredentials = 
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let! isValidCredentials =
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      identityStore.isValidCredentials tokenCreateRequest.UserName tokenCreateRequest.Password
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    if isValidCredentials then                            
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      let signingCredentials = 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      let signingCredentials =
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        (identityStore.getSecurityKey &gt;&gt; identityStore.getSigningCredentials) audience.Secret
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      let issuedOn = Nullable DateTime.UtcNow
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      let expiresBy = Nullable (DateTime.UtcNow.Add(tokenCreateRequest.TokenTimeSpan))       
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      let! claims =  identityStore.getClaims tokenCreateRequest.UserName 
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      let jwtSecurityToken = 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      let! claims =  identityStore.getClaims tokenCreateRequest.UserName
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      let jwtSecurityToken =
 <span class="line-numbers"><a href="#n12" name="n12">12</a></span>        new JwtSecurityToken(tokenCreateRequest.Issuer, audience.ClientId, claims, issuedOn, expiresBy, signingCredentials)
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>      let handler = new JwtSecurityTokenHandler()
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>      let accessToken = handler.WriteToken(jwtSecurityToken)                
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>      return Some {AccessToken = accessToken; ExpiresIn = tokenCreateRequest.TokenTimeSpan.TotalSeconds}
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    else return None 
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    else return None
 <span class="line-numbers"><a href="#n17" name="n17">17</a></span>  }
 </pre></div>
 </div>
@@ -998,12 +998,12 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>let audienceWebPart config identityStore =
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
 <span class="line-numbers"><a href="#n17" name="n17">17</a></span>  // ... existing functions ...
 <span class="line-numbers"><a href="#n18" name="n18">18</a></span>
 <span class="line-numbers"><a href="#n19" name="n19">19</a></span>  let tryCreateToken (ctx: HttpContext) =
 <span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    match mapJsonPayload&lt;TokenCreateCredentials&gt; ctx.request with
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    | Some tokenCreateCredentials -&gt; 
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    | Some tokenCreateCredentials -&gt;
 <span class="line-numbers"><a href="#n22" name="n22">22</a></span>      async {
 <span class="line-numbers"><a href="#n23" name="n23">23</a></span>        let! audience = config.GetAudience tokenCreateCredentials.ClientId
 <span class="line-numbers"><a href="#n24" name="n24">24</a></span>        match audience with
@@ -1018,14 +1018,14 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n33" name="n33">33</a></span>            match token with
 <span class="line-numbers"><a href="#n34" name="n34">34</a></span>            | Some token -&gt; return! JSON token ctx
 <span class="line-numbers"><a href="#n35" name="n35">35</a></span>            | None -&gt; return! BAD_REQUEST &quot;Invalid Login Credentials&quot; ctx
-<span class="line-numbers"><a href="#n36" name="n36">36</a></span>            
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>
 <span class="line-numbers"><a href="#n37" name="n37">37</a></span>        | None -&gt; return! BAD_REQUEST &quot;Invalid Client Id&quot; ctx
 <span class="line-numbers"><a href="#n38" name="n38">38</a></span>      }    
 <span class="line-numbers"><a href="#n39" name="n39">39</a></span>    | None -&gt; BAD_REQUEST &quot;Invalid Token Create Request&quot; ctx
 <span class="line-numbers"><strong><a href="#n40" name="n40">40</a></strong></span>
 <span class="line-numbers"><a href="#n41" name="n41">41</a></span>  choose [
-<span class="line-numbers"><a href="#n42" name="n42">42</a></span>    path config.AddAudienceUrlPath &gt;&gt;= POST &gt;&gt;= tryCreateAudience
-<span class="line-numbers"><a href="#n43" name="n43">43</a></span>    path config.CreateTokenUrlPath &gt;&gt;= POST &gt;&gt;= tryCreateToken
+<span class="line-numbers"><a href="#n42" name="n42">42</a></span>    path config.AddAudienceUrlPath &gt;=&gt; POST &gt;=&gt; tryCreateAudience
+<span class="line-numbers"><a href="#n43" name="n43">43</a></span>    path config.CreateTokenUrlPath &gt;=&gt; POST &gt;=&gt; tryCreateToken
 <span class="line-numbers"><a href="#n44" name="n44">44</a></span>  ]
 </pre></div>
 </div>
@@ -1065,7 +1065,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getAudience clientId =        
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  if audienceStorage.ContainsKey(clientId) then 
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  if audienceStorage.ContainsKey(clientId) then
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>    Some audienceStorage.[clientId] |&gt; async.Return
 <span class="line-numbers"><a href="#n4" name="n4">4</a></span>  else
 <span class="line-numbers"><a href="#n5" name="n5">5</a></span>    None |&gt; async.Return
@@ -1113,11 +1113,11 @@ To make it independent of the host, we have externalized the hosting functionali
 </div>
 </div>
 
-<p>To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same. </p>
+<p>To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same.</p>
 
 <p>Let’s run the <strong>SuaveJwt.AuthServerHost</strong> and verify the token</p>
 
-<p><img class="center" src="/images/suave_jwt/audience_admin_token.png"></p>
+<p>{% img center /images/suave_jwt/audience_admin_token.png %}</p>
 
 <h2 id="securing-the-resources">Securing the resources</h2>
 
@@ -1133,7 +1133,7 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  AccessToken : string
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>}
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>let validate tokenValidationRequest = 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>let validate tokenValidationRequest =
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let tokenValidationParameters =
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    let validationParams = new TokenValidationParameters()
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>    validationParams.ValidAudience &lt;- tokenValidationRequest.ClientId
@@ -1142,9 +1142,9 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>    validationParams.ValidateIssuerSigningKey &lt;- true
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>    validationParams.IssuerSigningKey &lt;-  tokenValidationRequest.SecurityKey
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>    validationParams
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  try 
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    let handler = new JwtSecurityTokenHandler() 
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    let principal = 
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  try
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    let handler = new JwtSecurityTokenHandler()
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    let principal =
 <span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      handler.ValidateToken(tokenValidationRequest.AccessToken, tokenValidationParameters, ref null)
 <span class="line-numbers"><a href="#n21" name="n21">21</a></span>    principal.Claims |&gt; Choice1Of2
 <span class="line-numbers"><a href="#n22" name="n22">22</a></span>  with
@@ -1166,7 +1166,7 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    ClientId : string    
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>}
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let jwtAuthenticate jwtConfig webpart (ctx: HttpContext) = 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let jwtAuthenticate jwtConfig webpart (ctx: HttpContext) =
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let updateContextWithClaims claims =
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    { ctx with userState = ctx.userState.Remove(&quot;Claims&quot;).Add(&quot;Claims&quot;, claims) }    
@@ -1179,38 +1179,38 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n17" name="n17">17</a></span>        ClientId = jwtConfig.ClientId
 <span class="line-numbers"><a href="#n18" name="n18">18</a></span>        AccessToken = accessToken
 <span class="line-numbers"><a href="#n19" name="n19">19</a></span>      }
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      let validationResult = validate tokenValidationRequest 
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      let validationResult = validate tokenValidationRequest
 <span class="line-numbers"><a href="#n21" name="n21">21</a></span>      match validationResult with
 <span class="line-numbers"><a href="#n22" name="n22">22</a></span>      | Choice1Of2 claims -&gt; webpart (updateContextWithClaims claims)
 <span class="line-numbers"><a href="#n23" name="n23">23</a></span>      | Choice2Of2 err -&gt; FORBIDDEN err ctx                         
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>      
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>
 <span class="line-numbers"><a href="#n25" name="n25">25</a></span>  | _ -&gt; BAD_REQUEST &quot;Invalid Request. Provide both clientid and token&quot; ctx  
 </pre></div>
 </div>
 </div>
 
-<p>The <code>jwtAuthenticate</code> function validates the access token present in the request header and invokes the given <em>WebPart</em> if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the <em>WebPart</em>. </p>
+<p>The <code>jwtAuthenticate</code> function validates the access token present in the request header and invokes the given <em>WebPart</em> if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the <em>WebPart</em>.</p>
 
 <p>Upon successful access token validation, the <code>jwtAuthenticate</code> function puts the claims in the <code>userState</code> map of incoming <code>HttpContext</code> so that subsequent <em>WebPart</em>s in the pipeline can use it.</p>
 
 <p>The <code>JwtConfig</code> record abstracts the underlying audience from the validation logic so that it can be reused across multiple audiences.</p>
 
-<p>Now we have a functionality secure a web part. Let’s create an audience and leverage this </p>
+<p>Now we have a functionality secure a web part. Let’s create an audience and leverage this</p>
 
 <p>Update the <em>Program.fs</em> file in the <strong>Audience1</strong> project as mentioned below</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv = 
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let jwtConfig = {
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    Issuer = &quot;http://localhost:8083/suave&quot;
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    ClientId = &quot;7ff79ba3305c4e4f9d0ececeae70c78f&quot;
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    SecurityKey = KeyStore.securityKey (Base64String.fromString &quot;Op5EqjC70aLS2dx3gI0zADPIZGX2As6UEwjA4oyBjMo&quot;)       
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  }
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let sample1 = path &quot;/audience1/sample1&quot; &gt;&gt;= jwtAuthenticate jwtConfig (OK &quot;Sample 1&quot;)
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  let config = { defaultConfig with bindings = [HttpBinding.mk' HTTP &quot;127.0.0.1&quot; 8084] }
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let sample1 = path &quot;/audience1/sample1&quot; &gt;=&gt; jwtAuthenticate jwtConfig (OK &quot;Sample 1&quot;)
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  let config = { defaultConfig with bindings = [HttpBinding.mkSimple HTTP &quot;127.0.0.1&quot; 8084] }
 <span class="line-numbers"><a href="#n12" name="n12">12</a></span>
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>  startWebServer config sample1
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>  0
@@ -1222,26 +1222,26 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s see it in action</p>
 
-<p><img class="center" src="/images/suave_jwt/audience_sample1_success.png"></p>
+<p>{% img center /images/suave_jwt/audience_sample1_success.png %}</p>
 
 <p>Hurray! We have made it. “/audience1/sample1” is a secured API now!</p>
 
 <p>What will happen if we mess with the access token? Well, we will get an HTTP error. Let’s change the character <code>Q</code> in the access token from upper case to lower case and here is the result of it.</p>
 
-<p><img class="center" src="/images/suave_jwt/audience_sample1_error.png"></p>
+<p>{% img center /images/suave_jwt/audience_sample1_error.png %}</p>
 
 <p>Cool, Isn’t it?</p>
 
 <p>Let’s add authorization based on the claims that we have obtained from the JWT token</p>
 
-<p>Open <em>Secure.fs</em> and update the authorization functionality </p>
+<p>Open <em>Secure.fs</em> and update the authorization functionality</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type AuthorizationResult =
 <span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  | Authorized
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  | UnAuthorized of string
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>let jwtAuthorize jwtConfig authorizeUser webpart  = 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>let jwtAuthorize jwtConfig authorizeUser webpart  =
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  let getClaims (ctx: HttpContext) =
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    let userState = ctx.userState
@@ -1268,29 +1268,29 @@ To make it independent of the host, we have externalized the hosting functionali
 </div>
 </div>
 
-<p>The <code>jwtConfig</code> function is very similar to the <code>jwtAuthenticate</code> function which provides authorization in addition to the authentication. </p>
+<p>The <code>jwtConfig</code> function is very similar to the <code>jwtAuthenticate</code> function which provides authorization in addition to the authentication.</p>
 
 <p>The key here is the parameter <code>authorizeUser</code> which is a function that takes a sequence of claims and returns an <code>AuthorizationResult</code>.</p>
 
-<p>Like <code>jwtAuthenticate`` function, the</code>jwtConfig``` function is also abstracted from the underlying <em>Audience</em> so we can use it across multiple <em>Audience</em>s. </p>
+<p>Like <code>jwtAuthenticate`` function, the</code>jwtConfig``` function is also abstracted from the underlying <em>Audience</em> so we can use it across multiple <em>Audience</em>s.</p>
 
-<p>Let’s use this in the <strong>Audience1</strong>. </p>
+<p>Let’s use this in the <strong>Audience1</strong>.</p>
 
 <p><strong>Program.fs</strong></p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv =
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  // ... existing code ...
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  // Claim Seq -&gt; Async&lt;AuthorizationResult&gt;
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  let authorizeAdmin (claims : Claim seq) =
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    match claims |&gt; Seq.tryFind (fun c -&gt; c.Type = ClaimTypes.Role &amp;&amp; c.Value = &quot;Admin&quot;) with
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    | Some _ -&gt; Authorized |&gt; async.Return
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    | None -&gt; UnAuthorized &quot;User is not an admin&quot; |&gt; async.Return
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  let sample2 = path &quot;/audience1/sample2&quot; &gt;&gt;= jwtAuthorize jwtConfig authorizeAdmin (OK &quot;Sample 2&quot;) 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  let sample2 = path &quot;/audience1/sample2&quot; &gt;=&gt; jwtAuthorize jwtConfig authorizeAdmin (OK &quot;Sample 2&quot;)
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>  let app = choose [sample1;sample2]
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>  startWebServer config app
@@ -1301,7 +1301,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>The <code>jwtAuthroize</code> function in action</p>
 
-<p><img class="center" src="/images/suave_jwt/audience1_sample2_error.png"></p>
+<p>{% img center /images/suave_jwt/audience1_sample2_error.png %}</p>
 
 <p><em>Note: I’ve generated a new access token here to exercise this use case.</em></p>
 
@@ -1311,11 +1311,11 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>One cool thing about the design of the <strong>SuaveJwt</strong> library is, it doesn’t have any assumption about the <em>Authorization Server</em> and the <em>Resource Server</em>. Because of it, we can easily extend it.</p>
 
-<p>Let’s prove it by updating the <em>Program.fs</em> file in the <strong>Audience2</strong> project. </p>
+<p>Let’s prove it by updating the <em>Program.fs</em> file in the <strong>Audience2</strong> project.</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv = 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv =
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let jwtConfig = {
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    Issuer = &quot;http://localhost:8083/suave&quot;
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    ClientId = &quot;ada9263885c440869fb484fe354de13d&quot;
@@ -1328,9 +1328,9 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n12" name="n12">12</a></span>    | None -&gt; UnAuthorized &quot;User is not a Super User&quot; |&gt; async.Return
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let authorize = jwtAuthorize jwtConfig
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  let sample1 = path &quot;/audience2/sample1&quot; &gt;&gt;= OK &quot;Sample 1&quot;
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let sample2 = path &quot;/audience2/sample2&quot; &gt;&gt;= authorize authorizeSuperUser (OK &quot;Sample 2&quot;)      
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let config = { defaultConfig with bindings = [HttpBinding.mk' HTTP &quot;127.0.0.1&quot; 8085] }    
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  let sample1 = path &quot;/audience2/sample1&quot; &gt;=&gt; OK &quot;Sample 1&quot;
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let sample2 = path &quot;/audience2/sample2&quot; &gt;=&gt; authorize authorizeSuperUser (OK &quot;Sample 2&quot;)      
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let config = { defaultConfig with bindings = [HttpBinding.mkSimple HTTP &quot;127.0.0.1&quot; 8085] }    
 <span class="line-numbers"><a href="#n18" name="n18">18</a></span>  let app = choose [sample1;sample2]
 <span class="line-numbers"><a href="#n19" name="n19">19</a></span>
 <span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  startWebServer config app
@@ -1346,7 +1346,6 @@ To make it independent of the host, we have externalized the hosting functionali
 <p>Suave provides a simple and elegant way of extending its core functionality. In this blog post, we have seen how to bend it to support JWT based authorization and I believe we can do a lot of other cool things too!</p>
 
 <p>You can find the complete source code of the sample application used in this blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveJwtSampleApplication">blog-samples</a> GitHub repository.    </p>
-
 ]]></content>
   </entry>
   
@@ -1359,15 +1358,15 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>I got super excited after learning suave from these resources and started playing with it. One of the great things about the fsharp community is, if you want to improve any existing library all you need is just send a pull request with the feature you would like to have. Yes, it’s as simple as that! It <a href="https://github.com/SuaveIO/suave/pull/259">worked</a> for me and I am sure for you too, if you wish.</p>
 
-<p>In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the <a href="http://docs.strongloop.com/display/public/LB/Use+API+Explorer">StrongLoop</a>, a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post. </p>
+<p>In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the <a href="http://docs.strongloop.com/display/public/LB/Use+API+Explorer">StrongLoop</a>, a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post.</p>
 
 <p>Let’s get started</p>
 
 <h2 id="setting-up-the-project">Setting up the project</h2>
 
-<p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below. </p>
+<p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below.</p>
 
-<p><img class="center" src="/images/sauve_rest_api/proj_structure.png"></p>
+<p>{% img center /images/sauve_rest_api/proj_structure.png %}</p>
 
 <p>After creating, install the following nuget packages</p>
 
@@ -1390,18 +1389,18 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>open Suave.Web
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>open Suave.Http.Successful
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>open Suave.Successful
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>
 <span class="line-numbers"><a href="#n4" name="n4">4</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>let main argv = 
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  startWebServer defaultConfig (OK &quot;Hello, Suave!&quot;) 
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>let main argv =
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  startWebServer defaultConfig (OK &quot;Hello, Suave!&quot;)
 <span class="line-numbers"><a href="#n7" name="n7">7</a></span>  0
 </pre></div>
 </div>
 </div>
 <p>The is the simplest Suave application that greets all visitors with the string “Hello, Suave!”. The <code>startWebServer</code> is a blocking function that takes a configuration (port number, ssl, etc.,) and starts a http web server in the port 8083 upon calling.</p>
 
-<p><img class="center border" src="/images/sauve_rest_api/hello_suave.png"></p>
+<p>{% img center border /images/sauve_rest_api/hello_suave.png %}</p>
 
 <p>The Rest Api that we are going to design here is a <code>WebPart</code> which will be replacing this <code>OK</code> webpart.</p>
 
@@ -1436,13 +1435,13 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <ul>
   <li>
-    <p>The <code>path</code> is a function of type: <code>string -&gt; WebPart</code>. It means that if we give it a string it will return <code>WebPart</code>. Under the hood, the function looks at the incoming request and returns <code>Some</code> if the paths match, and <code>None</code> otherwise. </p>
+    <p>The <code>path</code> is a function of type: <code>string -&gt; WebPart</code>. It means that if we give it a string it will return <code>WebPart</code>. Under the hood, the function looks at the incoming request and returns <code>Some</code> if the paths match, and <code>None</code> otherwise.</p>
   </li>
   <li>
     <p>The <code>GET</code> is a static inbuilt <code>WebPart</code> which matches the HTTP GET requests.</p>
   </li>
   <li>
-    <p>The <code>&gt;&gt;=</code> operator composes two WebParts into one by first evaluating the <code>WebPart</code> on the left, and applying the WebPart on the right only if the first one returned <code>Some</code>.</p>
+    <p>The <code>&gt;=&gt;</code> operator composes two WebParts into one by first evaluating the <code>WebPart</code> on the left, and applying the WebPart on the right only if the first one returned <code>Some</code>.</p>
   </li>
 </ul>
 
@@ -1457,8 +1456,8 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n4" name="n4">4</a></span>  jsonSerializerSettings.ContractResolver &lt;- new CamelCasePropertyNamesContractResolver()
 <span class="line-numbers"><a href="#n5" name="n5">5</a></span>
 <span class="line-numbers"><a href="#n6" name="n6">6</a></span>  JsonConvert.SerializeObject(v, jsonSerializerSettings)
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  |&gt; OK 
-<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  &gt;&gt;= Writers.setMimeType &quot;application/json; charset=utf-8&quot;
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  |&gt; OK
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  &gt;=&gt; Writers.setMimeType &quot;application/json; charset=utf-8&quot;
 </pre></div>
 </div>
 </div>
@@ -1470,7 +1469,7 @@ To make it independent of the host, we have externalized the hosting functionali
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let rest resourceName resource =
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let gellAll = resource.GetAll () |&gt; JSON
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;&gt;= GET &gt;&gt;= getAll
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;=&gt; GET &gt;=&gt; getAll
 </pre></div>
 </div>
 </div>
@@ -1481,7 +1480,7 @@ To make it independent of the host, we have externalized the hosting functionali
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let rest resourceName resource =
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;&gt;= GET &gt;&gt;= getAll
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;=&gt; GET &gt;=&gt; getAll
 </pre></div>
 </div>
 </div>
@@ -1501,7 +1500,7 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>}
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>module Db =        
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let private peopleStorage = new Dictionary&lt;int, Person&gt;()
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  let getPeople () = 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  let getPeople () =
 <span class="line-numbers"><a href="#n12" name="n12">12</a></span>    peopleStorage.Values |&gt; Seq.map (fun p -&gt; p)
 </pre></div>
 </div>
@@ -1518,7 +1517,7 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.Http.Successful
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let main argv = 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let main argv =
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let personWebPart = rest &quot;people&quot; {
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    GetAll = Db.getPeople
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  }
@@ -1530,7 +1529,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>That’s it! Now we have the HTTP GET Request up and running</p>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_get.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_get.png %}</p>
 
 <p>Since we are having no people in our in-memory dictionary, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
 
@@ -1567,8 +1566,8 @@ To make it independent of the host, we have externalized the hosting functionali
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let fromJson&lt;'a&gt; json =
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span>  JsonConvert.DeserializeObject(json, typeof&lt;'a&gt;) :?&gt; 'a    
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>let getResourceFromReq&lt;'a&gt; (req : HttpRequest) = 
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  let getString rawForm = 
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>let getResourceFromReq&lt;'a&gt; (req : HttpRequest) =
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  let getString rawForm =
 <span class="line-numbers"><a href="#n6" name="n6">6</a></span>    System.Text.Encoding.UTF8.GetString(rawForm)
 <span class="line-numbers"><a href="#n7" name="n7">7</a></span>  req.rawForm |&gt; getString |&gt; fromJson&lt;'a&gt;
 </pre></div>
@@ -1583,9 +1582,9 @@ To make it independent of the host, we have externalized the hosting functionali
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let rest resourceName resource =
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;&gt;= choose [
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    GET &gt;&gt;= getAll
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    POST &gt;&gt;= request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    GET &gt;=&gt; getAll
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    POST &gt;=&gt; request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
 <span class="line-numbers"><a href="#n7" name="n7">7</a></span>  ]
 </pre></div>
 </div>
@@ -1595,7 +1594,7 @@ To make it independent of the host, we have externalized the hosting functionali
 <p>Then update <code>Db.fs</code> and <code>App.fs</code> respectively as follows</p>
 
 <div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Db = 
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Db =
 <span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let createPerson person =
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let id = peopleStorage.Values.Count + 1
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    let newPerson = {
@@ -1621,7 +1620,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>The HTTP POST function in action</p>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_post.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_post.png %}</p>
 
 <h2 id="http-put">HTTP PUT</h2>
 
@@ -1659,12 +1658,12 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    | Some r -&gt; r |&gt; JSON
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    | _ -&gt; requestError
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  path resourcePath &gt;&gt;= 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  path resourcePath &gt;=&gt;
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>    choose [
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      GET &gt;&gt;= getAll
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      POST &gt;&gt;= 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      GET &gt;=&gt; getAll
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      POST &gt;=&gt;
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      PUT &gt;&gt;= 
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      PUT &gt;=&gt;
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
 <span class="line-numbers"><a href="#n17" name="n17">17</a></span>    ]
 </pre></div>
@@ -1684,7 +1683,7 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      }
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      peopleStorage.[personId] &lt;- updatedPerson            
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>      Some updatedPerson
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    else 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    else
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>      None
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let updatePerson personToBeUpdated =
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>    updatePersonById personToBeUpdated.Id personToBeUpdated
@@ -1705,11 +1704,11 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p><strong>Updating an existing resource</strong></p>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_put.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_put.png %}</p>
 
 <p><strong>Updating a non-existing resource</strong></p>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_put_error.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_put_error.png %}</p>
 
 <h2 id="http-delete">HTTP DELETE</h2>
 
@@ -1740,9 +1739,9 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let rest resourceName resource =
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let resourcePath = &quot;/&quot; + resourceName
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let resourceIdPath = 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let resourceIdPath =
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    new PrintfFormat&lt;(int -&gt; string),unit,string,string,int&gt;(resourcePath + &quot;/%d&quot;)
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  let badRequest = BAD_REQUEST &quot;Resource not found&quot;
@@ -1756,14 +1755,14 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>    NO_CONTENT
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>
 <span class="line-numbers"><a href="#n17" name="n17">17</a></span>  choose [
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    path resourcePath &gt;&gt;= choose [
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      GET &gt;&gt;= getAll
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      POST &gt;&gt;= 
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    path resourcePath &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      GET &gt;=&gt; getAll
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      POST &gt;=&gt;
 <span class="line-numbers"><a href="#n21" name="n21">21</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      PUT &gt;&gt;= 
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      PUT &gt;=&gt;
 <span class="line-numbers"><a href="#n23" name="n23">23</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
 <span class="line-numbers"><a href="#n24" name="n24">24</a></span>    ]
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    DELETE &gt;&gt;= pathScan resourceIdPath deleteResourceById
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    DELETE &gt;=&gt; pathScan resourceIdPath deleteResourceById
 <span class="line-numbers"><a href="#n26" name="n26">26</a></span>  ]
 </pre></div>
 </div>
@@ -1776,7 +1775,7 @@ To make it independent of the host, we have externalized the hosting functionali
 <p><strong>Db.fs</strong></p>
 
 <div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let deletePerson personId = 
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let deletePerson personId =
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span>  peopleStorage.Remove(personId) |&gt; ignore
 </pre></div>
 </div>
@@ -1794,7 +1793,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </pre></div>
 </div>
 </div>
-<p><img class="center border" src="/images/sauve_rest_api/http_delete.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_delete.png %}</p>
 
 <h2 id="http-get--http-put-by-id">HTTP GET &amp; HTTP PUT by id</h2>
 
@@ -1805,7 +1804,7 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
 <span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
 <span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit 
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit
 <span class="line-numbers"><a href="#n6" name="n6">6</a></span>  GetById : int -&gt; 'a option
 <span class="line-numbers"><a href="#n7" name="n7">7</a></span>  UpdateById : int -&gt; 'a -&gt; 'a option   
 <span class="line-numbers"><a href="#n8" name="n8">8</a></span>}
@@ -1815,24 +1814,24 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let rest resourceName resource =
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  // .. Existing code ...
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let getResourceById = 
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let getResourceById =
 <span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    resource.GetById &gt;&gt; handleResource (NOT_FOUND &quot;Resource not found&quot;)
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let updateResourceById id =
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    request (getResourceFromReq &gt;&gt; (resource.UpdateById id) &gt;&gt; handleResource badRequest)
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  choose [
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    path resourcePath &gt;&gt;= choose [
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      GET &gt;&gt;= getAll
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      POST &gt;&gt;= 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    path resourcePath &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      GET &gt;=&gt; getAll
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      POST &gt;=&gt;
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      PUT &gt;&gt;= 
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      PUT &gt;=&gt;
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>    ]
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    DELETE &gt;&gt;= pathScan resourceIdPath deleteResourceById
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    GET &gt;&gt;= pathScan resourceIdPath getResourceById
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    PUT &gt;&gt;= pathScan resourceIdPath updateResourceById
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    DELETE &gt;=&gt; pathScan resourceIdPath deleteResourceById
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    GET &gt;=&gt; pathScan resourceIdPath getResourceById
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    PUT &gt;=&gt; pathScan resourceIdPath updateResourceById
 <span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  ]
 </pre></div>
 </div>
@@ -1865,42 +1864,42 @@ To make it independent of the host, we have externalized the hosting functionali
 </div>
 </div>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_get_id.png"><br />
-<img class="center border" src="/images/sauve_rest_api/http_put_id.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_get_id.png %}<br />
+{% img center border /images/sauve_rest_api/http_put_id.png %}</p>
 
 <h2 id="http-head">HTTP HEAD</h2>
 
-<p>Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward. </p>
+<p>Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward.</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
 <span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit
 <span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  GetById : int -&gt; 'a option
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  UpdateById : int -&gt; 'a -&gt; 'a option 
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  UpdateById : int -&gt; 'a -&gt; 'a option
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  IsExists : int -&gt; bool
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
 <span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>let rest resourceName resource =
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
 <span class="line-numbers"><a href="#n13" name="n13">13</a></span>  // .. Existing code ...
 <span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let isResourceExists id =
 <span class="line-numbers"><a href="#n15" name="n15">15</a></span>    if resource.IsExists id then OK &quot;&quot; else NOT_FOUND &quot;&quot;
 <span class="line-numbers"><a href="#n16" name="n16">16</a></span>
 <span class="line-numbers"><a href="#n17" name="n17">17</a></span>  choose [
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    path resourcePath &gt;&gt;= choose [
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      GET &gt;&gt;= getAll
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      POST &gt;&gt;= 
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    path resourcePath &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      GET &gt;=&gt; getAll
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      POST &gt;=&gt;
 <span class="line-numbers"><a href="#n21" name="n21">21</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      PUT &gt;&gt;= 
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      PUT &gt;=&gt;
 <span class="line-numbers"><a href="#n23" name="n23">23</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
 <span class="line-numbers"><a href="#n24" name="n24">24</a></span>    ]
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    DELETE &gt;&gt;= pathScan resourceIdPath deleteResourceById
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    GET &gt;&gt;= pathScan resourceIdPath getResourceById
-<span class="line-numbers"><a href="#n27" name="n27">27</a></span>    PUT &gt;&gt;= pathScan resourceIdPath updateResourceById
-<span class="line-numbers"><a href="#n28" name="n28">28</a></span>    HEAD &gt;&gt;= pathScan resourceIdPath isResourceExists
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    DELETE &gt;=&gt; pathScan resourceIdPath deleteResourceById
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    GET &gt;=&gt; pathScan resourceIdPath getResourceById
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>    PUT &gt;=&gt; pathScan resourceIdPath updateResourceById
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>    HEAD &gt;=&gt; pathScan resourceIdPath isResourceExists
 <span class="line-numbers"><a href="#n29" name="n29">29</a></span>  ]
 </pre></div>
 </div>
@@ -1928,13 +1927,13 @@ To make it independent of the host, we have externalized the hosting functionali
 </pre></div>
 </div>
 </div>
-<p><img class="center border" src="/images/sauve_rest_api/head.png"></p>
+<p>{% img center border /images/sauve_rest_api/head.png %}</p>
 
 <p>That’s all.. We have successfully implemented a REST API using Suave</p>
 
 <h2 id="extending-with-a-new-resource">Extending with a new Resource</h2>
 
-<p>The beautiful aspect of this functional REST API design we can easily extend it to support other resources. </p>
+<p>The beautiful aspect of this functional REST API design we can easily extend it to support other resources.</p>
 
 <p>Here is the rest API implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
 
@@ -1963,26 +1962,26 @@ To make it independent of the host, we have externalized the hosting functionali
 <span class="line-numbers"><a href="#n22" name="n22">22</a></span>  }
 <span class="line-numbers"><a href="#n23" name="n23">23</a></span>
 <span class="line-numbers"><a href="#n24" name="n24">24</a></span>  startWebServer defaultConfig (choose [personWebPart;albumWebPart])
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  0 
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  0
 </pre></div>
 </div>
 </div>
 
-<p><img class="center border" src="/images/sauve_rest_api/get_album_id.png"></p>
+<p>{% img center border /images/sauve_rest_api/get_album_id.png %}</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
 <p>In the amazing presentation on <a href="https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin">Functional Programming Design Patterns</a>, Scott Wlaschin had this slide</p>
 
-<p><img class="center border" src="/images/sauve_rest_api/fp_design_patterns_slide.png"></p>
+<p>{% img center border /images/sauve_rest_api/fp_design_patterns_slide.png %}</p>
 
-<p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this. </p>
+<p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this.</p>
 
 <blockquote>
-  <p>Just create functions and combine it to build a bigger system. </p>
+  <p>Just create functions and combine it to build a bigger system.</p>
 </blockquote>
 
-<p>What a nice way to develop a system! </p>
+<p>What a nice way to develop a system!</p>
 
 <p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my GitHub repository</a>.</p>
 ]]></content>

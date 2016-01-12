@@ -116,7 +116,7 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
 	<h1 class="title" itemprop="name">Securing APIs in Suave Using JSON Web Token</h1>
-	<div class="entry-content" itemprop="articleBody"><p>In the <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT). </p>
+	<div class="entry-content" itemprop="articleBody"><p>In the <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT).</p>
 
 <p>This blog post is based on <a href="http://bitoftech.net/">Taiseer’s</a> blog post on <a href="http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/">JSON Web Token in ASP.NET Web API 2 using Owin</a> and I will be covering how to implement the same in <a href="http://suave.io">Suave</a>. If you are interested in the theoretical background of JWT, kindly read his blog post before reading this.</p>
 
@@ -311,10 +311,10 @@
 </span><span class="line">        <span class="o">}</span>
 </span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Audience Create Request&quot;</span> <span class="n">ctx</span>
 </span><span class="line">
-</span><span class="line">  <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;&gt;=</span> <span class="n">POST</span> <span class="o">&gt;&gt;=</span> <span class="n">tryCreateAudience</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateAudience</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>The <code>audienceWebPart</code> function retrieves the <code>AudienceCreateRequest</code> from the JSON request payload and creates a new audience. <br />
+<p>The <code>audienceWebPart</code> function retrieves the <code>AudienceCreateRequest</code> from the JSON request payload and creates a new audience.<br />
 To make it independent of the host, we have externalized the hosting functionality using the <code>Config</code> record type.</p>
 
 <p>The <code>mapJsonPayload</code> and <code>JSON</code> functions serialize and deserialize JSON objects across the wire respectively. These functions are not part of Suave, so let’s add them</p>
@@ -347,7 +347,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">
 </span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">jsonSerializerSettings</span><span class="o">)</span>
 </span><span class="line">  <span class="o">|&gt;</span> <span class="n">OK</span>
-</span><span class="line">  <span class="o">&gt;&gt;=</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
+</span><span class="line">  <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
 </span><span class="line">
 </span><span class="line"><span class="k">let</span> <span class="nv">mapJsonPayload</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">(</span><span class="n">req</span> <span class="o">:</span> <span class="n">HttpRequest</span><span class="o">)</span> <span class="o">=</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">fromJson</span> <span class="n">json</span> <span class="o">=</span>
@@ -385,7 +385,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>It is a straight forward self-host suave server program which exposes the audience web part.</p>
 
-<p>The <em>AudienceStorage</em> is responsible for storing the created audiences and to add it create a new source file <em>AudienceStorage.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project and add these functions </p>
+<p>The <em>AudienceStorage</em> is responsible for storing the created audiences and to add it create a new source file <em>AudienceStorage.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project and add these functions</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -460,7 +460,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line"><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>These types are generic abstractions which decouple the token creation part from the underlying host. </p>
+<p>These types are generic abstractions which decouple the token creation part from the underlying host.</p>
 
 <p>The <code>TokenCreateRequest</code> models the underlying issuer and token lifetime.</p>
 
@@ -595,8 +595,8 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Token Create Request&quot;</span> <span class="n">ctx</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;&gt;=</span> <span class="n">POST</span> <span class="o">&gt;&gt;=</span> <span class="n">tryCreateAudience</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">CreateTokenUrlPath</span> <span class="o">&gt;&gt;=</span> <span class="n">POST</span> <span class="o">&gt;&gt;=</span> <span class="n">tryCreateToken</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateAudience</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">CreateTokenUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateToken</span>
 </span><span class="line">  <span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -718,7 +718,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">  <span class="n">username</span> <span class="o">=</span> <span class="n">password</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same. </p>
+<p>To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same.</p>
 
 <p>Let’s run the <strong>SuaveJwt.AuthServerHost</strong> and verify the token</p>
 
@@ -836,13 +836,13 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Request. Provide both clientid and token&quot;</span> <span class="n">ctx</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>The <code>jwtAuthenticate</code> function validates the access token present in the request header and invokes the given <em>WebPart</em> if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the <em>WebPart</em>. </p>
+<p>The <code>jwtAuthenticate</code> function validates the access token present in the request header and invokes the given <em>WebPart</em> if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the <em>WebPart</em>.</p>
 
 <p>Upon successful access token validation, the <code>jwtAuthenticate</code> function puts the claims in the <code>userState</code> map of incoming <code>HttpContext</code> so that subsequent <em>WebPart</em>s in the pipeline can use it.</p>
 
 <p>The <code>JwtConfig</code> record abstracts the underlying audience from the validation logic so that it can be reused across multiple audiences.</p>
 
-<p>Now we have a functionality secure a web part. Let’s create an audience and leverage this </p>
+<p>Now we have a functionality secure a web part. Let’s create an audience and leverage this</p>
 
 <p>Update the <em>Program.fs</em> file in the <strong>Audience1</strong> project as mentioned below</p>
 
@@ -869,8 +869,8 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="n">SecurityKey</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">securityKey</span> <span class="o">(</span><span class="nn">Base64String</span><span class="p">.</span><span class="n">fromString</span> <span class="s">&quot;Op5EqjC70aLS2dx3gI0zADPIZGX2As6UEwjA4oyBjMo&quot;</span><span class="o">)</span>
 </span><span class="line">  <span class="o">}</span>
 </span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample1&quot;</span> <span class="o">&gt;&gt;=</span> <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mk&#39;</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8084</span><span class="o">]</span> <span class="o">}</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample1&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mkSimple</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8084</span><span class="o">]</span> <span class="o">}</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">sample1</span>
 </span><span class="line">  <span class="mi">0</span>
@@ -892,7 +892,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s add authorization based on the claims that we have obtained from the JWT token</p>
 
-<p>Open <em>Secure.fs</em> and update the authorization functionality </p>
+<p>Open <em>Secure.fs</em> and update the authorization functionality</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -950,13 +950,13 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">  <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="n">authorize</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>The <code>jwtConfig</code> function is very similar to the <code>jwtAuthenticate</code> function which provides authorization in addition to the authentication. </p>
+<p>The <code>jwtConfig</code> function is very similar to the <code>jwtAuthenticate</code> function which provides authorization in addition to the authentication.</p>
 
 <p>The key here is the parameter <code>authorizeUser</code> which is a function that takes a sequence of claims and returns an <code>AuthorizationResult</code>.</p>
 
-<p>Like <code>jwtAuthenticate`` function, the</code>jwtConfig&#8220;` function is also abstracted from the underlying <em>Audience</em> so we can use it across multiple <em>Audience</em>s. </p>
+<p>Like <code>jwtAuthenticate`` function, the</code>jwtConfig&#8220;` function is also abstracted from the underlying <em>Audience</em> so we can use it across multiple <em>Audience</em>s.</p>
 
-<p>Let’s use this in the <strong>Audience1</strong>. </p>
+<p>Let’s use this in the <strong>Audience1</strong>.</p>
 
 <p><strong>Program.fs</strong></p>
 
@@ -987,7 +987,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">Authorized</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
 </span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">UnAuthorized</span> <span class="s">&quot;User is not an admin&quot;</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
 </span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample2&quot;</span> <span class="o">&gt;&gt;=</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span> <span class="n">authorizeAdmin</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample2&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span> <span class="n">authorizeAdmin</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">sample1</span><span class="o">;</span><span class="n">sample2</span><span class="o">]</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">app</span>
@@ -1006,7 +1006,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>One cool thing about the design of the <strong>SuaveJwt</strong> library is, it doesn’t have any assumption about the <em>Authorization Server</em> and the <em>Resource Server</em>. Because of it, we can easily extend it.</p>
 
-<p>Let’s prove it by updating the <em>Program.fs</em> file in the <strong>Audience2</strong> project. </p>
+<p>Let’s prove it by updating the <em>Program.fs</em> file in the <strong>Audience2</strong> project.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -1043,9 +1043,9 @@ To make it independent of the host, we have externalized the hosting functionali
 </span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">UnAuthorized</span> <span class="s">&quot;User is not a Super User&quot;</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
 </span><span class="line">
 </span><span class="line">  <span class="k">let</span> <span class="nv">authorize</span> <span class="o">=</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample1&quot;</span> <span class="o">&gt;&gt;=</span> <span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample2&quot;</span> <span class="o">&gt;&gt;=</span> <span class="n">authorize</span> <span class="n">authorizeSuperUser</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mk&#39;</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8085</span><span class="o">]</span> <span class="o">}</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample1&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample2&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">authorize</span> <span class="n">authorizeSuperUser</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mkSimple</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8085</span><span class="o">]</span> <span class="o">}</span>
 </span><span class="line">  <span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">sample1</span><span class="o">;</span><span class="n">sample2</span><span class="o">]</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">app</span>
@@ -1059,7 +1059,6 @@ To make it independent of the host, we have externalized the hosting functionali
 <p>Suave provides a simple and elegant way of extending its core functionality. In this blog post, we have seen how to bend it to support JWT based authorization and I believe we can do a lot of other cool things too!</p>
 
 <p>You can find the complete source code of the sample application used in this blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveJwtSampleApplication">blog-samples</a> GitHub repository.    </p>
-
 </div>
 
 </article>

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: programming | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/programming/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-01-11T15:34:48+05:30</updated>
+  <updated>2016-01-12T17:25:33+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -38,7 +38,7 @@
         But if the array is empty it get bind to null!!
     </p> <p>
         In this blog post, we are going to get rid of this intriguing behaviour by writing a Custom JSON model binder.
-        Hope it would be useful and save you some hairs <i class='emoji smile'></i>
+        Hope it would be useful and save you some hairs {% emoji smile %}
 
         <h3>The Sample Application – “MyMobileStore”</h3>
     <p>
@@ -49,16 +49,16 @@
 
     <h3>Show me the code</h3>
     <p>Core classes</p>
-    <p><img class="center" src="/images/JsonModelBinding/CoreClasses.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/CoreClasses.png  %}</p>
     <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
     <p>
-    <p><img class="center" src="/images/JsonModelBinding/MobileController.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/MobileController.png  %}</p>
     <p>
         Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
         the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
     </p>
     <p>
-    <p><img class="center" src="/images/JsonModelBinding/MobileFilter.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/MobileFilter.png  %}</p>
     </p> <p>
         The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
         One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
@@ -73,18 +73,18 @@
         will happily accepts them as a parameter and continue its work without any mishaps.
     </p>
 
-    <p><img class="center" src="/images/JsonModelBinding/Problem.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/Problem.png  %}</p>
     <p>
         But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
         reference exception and breaks the functionality!!
     </p>
-    <p><img class="center" src="/images/JsonModelBinding/BadWorld.png" title="" ></p>
-    <p><img class="center" src="/images/JsonModelBinding/NullException.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/BadWorld.png  %}</p>
+    <p>{% img center /images/JsonModelBinding/NullException.png  %}</p>
 
     <p>
         <em>
             (Now you might have understood why I added a tweak in the number of mobile types
-            <i class='emoji smile'></i>)
+            {% emoji smile %})
         </em>
     </p>
     <h3>Possible Solutions</h3>
@@ -105,7 +105,7 @@
 
     <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
     <p>
-        <img class="center" src="/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
+        {% img center /images/JsonModelBinding/MobileFilterModelBinder.png  %}
     </p>
 
     <p>
@@ -115,11 +115,11 @@
     </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
 
     <p>
-        <img class="center" src="/images/JsonModelBinding/Global.png" title="" >
+        {% img center /images/JsonModelBinding/Global.png  %}
     </p>
     <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
     <p>
-        <img class="center" src="/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
+        {% img center /images/JsonModelBinding/NoMoreBadWorld.png  %}
     </p> 
     <h3>Conclusion</h3> 
     <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
@@ -284,84 +284,11 @@
 	</p>
 	<p>I am going to explain this “why” using a Weather Station example. To keep things simple, the Weather Station that we are going to see will keep track of only the temperature. Whenever the temperature changes, it simplify notifies its subscribers with the new temperature. Flash News is one of the subscribers which show the temperature in flash news. News Feed, another subscriber which adds the temperature information to the news feed. Fine, enough theory! It’s time to see the code.</p>
 	<p>Here is the implementation of Observer Pattern using Delegates alone. </p>
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{
-    class WeatherStation
-    {
-        private int _temperature;
-        public TemperatureReporter Reporter { get; set; }
-
-        public int Temperature
-        {
-            get { return _temperature; }
-            set
-            {
-                if (Reporter != null)
-                {
-                    Reporter(value);
-                }
-                _tempearture = value;
-            }
-        }
-    }
-
-    class NewsFeed
-    {
-        WeatherStation weatherStation;
-
-        public void AddTemperatureInfoToFeed(int temperature)
-        {
-            Console.WriteLine(&quot;News Feed: New temperature &quot; + temperature + &quot; added to feed.&quot;);
-        }
-
-        public NewsFeed(WeatherStation weatherStation)
-        {
-            this.weatherStation = weatherStation;
-            weatherStation.Reporter += AddTemperatureInfoToFeed;
-        }
-    }
-
-    class FlashNews
-    {
-        WeatherStation weatherStation;
-
-        public void ShowTemperatureInfoInFlashNews(int temperature)
-        {
-            Console.WriteLine(&quot;Flash News: New temperature is &quot; + temperature + &quot;.&quot;);
-        }
-
-        public FlashNews(WeatherStation weatherStation)
-        {
-            this.weatherStation = weatherStation;
-            weatherStation.Reporter += ShowTemperatureInfoInFlashNews;
-        }
-    }
-}</code></pre></noscript></div>
-
+	{% gist fb9f64cd49646ddf8eba PubSub.cs %}
 
 	<h4>The Main Program</h4>
 
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=Program.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{
-    public delegate void TemperatureReporter(int tempearture);
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            // Observer Pattern Using Delegates
-            WeatherStation weatherStation = new WeatherStation();
-            FlashNews flashNews = new FlashNews(weatherStation);
-            NewsFeed newsFeed = new NewsFeed(weatherStation);
-            weatherStation.Temperature = 30;
-            weatherStation.Temperature = 15;
-            weatherStation.Temperature = 45;
-        }
-    }
-}</code></pre></noscript></div>
-
+	{% gist fb9f64cd49646ddf8eba Program.cs %}
 	<h4>The output</h4>
 	<div style="clear: both; text-align: center;">
 		<img src="http://1.bp.blogspot.com/-LjDx8rPsr50/Th0bSdtTyHI/AAAAAAAAAHk/dMBuF4GLgD0/s1600/delegates-output.PNG" /></div>
@@ -374,124 +301,15 @@
 		<li>A subscriber can broadcast to other subscribers by invoking the delegate</li>
 	</ul>
 	Clearly all the above 3 drawbacks violates the Observer Pattern.Here is our evil subscriber code implementation. 
-<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{
-    class EvilSubscriber
-    {
-        WeatherStation weatherStation;
-
-        public void EvilMessage(int temperature)
-        {
-            Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
-        }
-
-        public EvilSubscriber(WeatherStation weatherStation)
-        {
-            this.weatherStation = weatherStation;
-
-            // Broadcast to all the subscriber
-            weatherStation.Reporter(60);
-
-            // Reassign the subscriber            
-            weatherStation.Reporter = EvilMessage;
-
-            // Replace all the subscribers            
-            weatherStation.Reporter = null;
-        }
-    }
-}</code></pre></noscript></div>
-
+{% gist fb9f64cd49646ddf8eba EvilSubscriber.cs %}
 
 	<p>Hope now you understand the need of a better implementation of observer pattern. Here comes the salvage. Event! Use event along with delegates. With event in place, compiler will not allow the evil subscriber to get compiled. </p>
 	<h4>Robust implementation of Weather Station using events</h4>
 
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub2.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{ 
-    class WeatherStation2 
-    { 
-        private int _tempearture; 
-        
-        public event TemperatureReporter Reporter; 
-        
-        public int Temperature 
-        { 
-            get 
-            { 
-                return _tempearture; 
-            } 
-            set 
-            { 
-                if (Reporter != null) 
-                { 
-                    Reporter(value); 
-                } 
-                _tempearture = value; 
-            } 
-        }
-    } 
-    
-    class NewsFeed2 
-    { 
-        WeatherStation2 weatherStation; 
-        
-        public void AddTemperatureInfoToFeed(int temperature) 
-        { 
-            Console.WriteLine(&quot;News Feed2: New temperature &quot; + temperature + &quot; added to feed.&quot;); 
-        } 
-        
-        public NewsFeed2(WeatherStation2 weatherStation) 
-        { 
-            this.weatherStation = weatherStation; 
-            weatherStation.Reporter += AddTemperatureInfoToFeed; 
-        } 
-    } 
-    
-    class FlashNews2 
-    { 
-        
-        WeatherStation2 weatherStation; 
-        
-        public void ShowTemperatureInfoInFlashNews(int temperature) 
-        { 
-            Console.WriteLine(&quot;Flash News2: New temperature is &quot; + temperature + &quot;.&quot;); 
-        } 
-        
-        public FlashNews2(WeatherStation2 weatherStation) 
-        { 
-            this.weatherStation = weatherStation; weatherStation.Reporter += ShowTemperatureInfoInFlashNews; 
-        } 
-    } 
-}    			</code></pre></noscript></div>
-
+	{% gist fb9f64cd49646ddf8eba PubSub2.cs %}
 
 	<p>The unfortunate evil subscriber no longer compiles with events!</p>
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber2.cs'></script>
-<noscript><pre><code>class EvilSubscriber2
-{
-    WeatherStation2 weatherStation;
-
-    public void EvilMessage(int temperature)
-    {
-        Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
-    }
-
-    public EvilSubscriber2(WeatherStation2 weatherStation)
-    {
-        this.weatherStation = weatherStation;
-
-        // Broadcast to all the subscriber         
-        weatherStation.Reporter(60); // Compiler Error                
-
-        // Reassign the subscriber                
-        weatherStation.Reporter = EvilMessage; // Compiler Error  
-
-        // Replace all the subscribers                 
-        weatherStation.Reporter = null; // Compiler Error    
-    }
-}</code></pre></noscript></div>
-
+	{% gist fb9f64cd49646ddf8eba EvilSubscriber2.cs %}
 	<br />
 	You&nbsp;can download the source code from <a href="http://www.box.net/shared/kunno1y9noj26qodstnz">here</a>
 </div>
@@ -552,12 +370,7 @@
             <li>This interface IWeapon will have a public method called "Attack" which defines a contract so that all the Weapon we are going to create should implement this IWeapon interface and provide the implementation code for the Attack() method</li>
         </ol>
 
-        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=IWeapon.cs'></script>
-<noscript><pre><code>public interface IWeapon 
-{ 
-    void Attack(); 
-}</code></pre></noscript></div>
-
+        {% gist 062dc9ce4593c16aaf82 IWeapon.cs %}
 
 
         <h4>Step3: Create the concrete Weapon Classes&nbsp;</h4>
@@ -568,35 +381,11 @@
         </ol>
 
 
-        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Sword.cs'></script>
-<noscript><pre><code>public class Sword : IWeapon    
-{       
-    public void Attack() 
-    {            
-        System.Windows.Forms.MessageBox.Show(&quot;Sword!!&quot;);        
-    }    
-}</code></pre></noscript></div>
+        {% gist 062dc9ce4593c16aaf82 Sword.cs %}
 
+        {% gist 062dc9ce4593c16aaf82 Gun.cs %}
 
-        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Gun.cs'></script>
-<noscript><pre><code>public class Gun : IWeapon    
-{       
-    public void Attack() 
-    {            
-        System.Windows.Forms.MessageBox.Show(&quot;Gun!!&quot;);        
-    }    
-}</code></pre></noscript></div>
-
-
-        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Bomb.cs'></script>
-<noscript><pre><code>public class Bomb : IWeapon    
-{       
-    public void Attack() 
-    {
-        System.Windows.Forms.MessageBox.Show(&quot;Bomb!!&quot;);        
-    }    
-}</code></pre></noscript></div>
-
+        {% gist 062dc9ce4593c16aaf82 Bomb.cs %}
 
         <p>The Attack() method will show a message box with a text saying the weapon name being used.</p>
 
@@ -605,39 +394,16 @@
         <ol>
             <li>Add a private instance variable of type IWeapon in the MainForm class and initialize with the sword class. 
                 This will hold the reference of current weapon being used Note: Sword is the default weapon.
-                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=MainForm.cs'></script>
-<noscript><pre><code>public partial class MainForm : Form
-{
-	private IWeapon weapon = new Sword();	
-}</code></pre></noscript></div>
-
+                {% gist 062dc9ce4593c16aaf82 MainForm.cs %}
             </li>
             <li>Now we are going to add event handlers for the weapons radio buttons. 
                 They will change the reference stored in the instance variable "weapon" to the respective Weapons class. 
                 Add the checked change event for all the radio button and their event handlers will look like as follows.
-                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=ChangeWeaponHandler.cs'></script>
-<noscript><pre><code>private void rboSword_CheckedChanged(object sender, EventArgs e)
-{
-	weapon = new Sword();
-}
-private void rboGun_CheckedChanged(object sender, EventArgs e)
-{
-	weapon = new Gun();
-}
-private void rboBomb_CheckedChanged(object sender, EventArgs e)
-{
-	weapon = new Bomb();
-}</code></pre></noscript></div>
-
+                {% gist 062dc9ce4593c16aaf82 ChangeWeaponHandler.cs %}
             </li>
             <li>Add the Click event handler for the "Attack" button. 
                 This event handler will simply call the Attack() method of the instance variable "weapon"
-                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=AttackHandler.cs'></script>
-<noscript><pre><code>private void btnAttack_Click(object sender, EventArgs e)
-{
-	weapon.Attack();
-}</code></pre></noscript></div>
-
+                {% gist 062dc9ce4593c16aaf82 AttackHandler.cs %}
             </li>
         </ol>
 
