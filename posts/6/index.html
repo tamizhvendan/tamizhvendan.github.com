@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Jan 2nd, 2015 asp.net mvc, fsharp, functional-programming, rx, signalr Comments Step-3 PhoneCat Recommendation System Using F# Agents, SignalR and &hellip;">
+	<meta name="description" content="Jan 6th, 2015 devops, fake, fsharp Comments Step-4 Build Automation Using FAKE This is step 4 of my blog series on Web Application Development in &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -103,7 +103,7 @@
 	</div>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 148.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 112.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 121.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.0%'>programming</a> <a href='/blog/categories/react' style='font-size: 103.0%'>react</a> <a href='/blog/categories/rop' style='font-size: 103.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 106.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.0%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 112.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 148.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 121.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.0%'>programming</a> <a href='/blog/categories/react' style='font-size: 103.0%'>react</a> <a href='/blog/categories/rop' style='font-size: 103.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 106.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.0%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 112.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.0%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -116,6 +116,271 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-06T05:22:32+05:30" data-updated="true" itemprop="datePublished">Jan 6<sup>th</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/devops/'>devops</a>, <a class='category' href='/blog/categories/fake/'>fake</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/01/06/step-4-build-automation-using-fake/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/01/06/step-4-build-automation-using-fake/" itemprop="url">Step-4 Build Automation Using FAKE</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote>
+  <p>This is step 4 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the last three steps, we have seen how to build an web application in fsharp by leveraging <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web-Api</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor</a> and <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">SignalR</a>. In this step for a change we are going to take the <a href="http://en.wikipedia.org/wiki/DevOps">DevOps</a> side of the application and going to add the build automation capabilities for the application. Let’s get stated!</p>
+
+<h2 id="fake---an-awesome-build-automation-library">Fake - An awesome build automation library</h2>
+
+<p><a href="http://fsharp.github.io/FAKE/">Fake</a> is a F# version of very successful and widely used build automation libraries <a href="http://www.gnu.org/software/make/">Make</a> and <a href="http://en.wikipedia.org/wiki/Rake_%28software%29">Rake</a>. The combination of <a href="http://fsharp.org/testimonials/">fsharp’s expressiveness</a> and the <a href="http://fsharp.github.io/FAKE/gettingstarted.html">Fake’s DSL</a> is a visual treat to the eyes and especially if you are someone who is using <a href="http://en.wikipedia.org/wiki/MSBuild">MsBuild</a> xml files for doing build automation you will definitely appreciate it.</p>
+
+<h3 id="adding-nugetexe-to-nuget-folder">Adding nuget.exe to .nuget folder</h3>
+
+<p>As we are going to drive the nuget packages installation from the fsharp script file, we will be needing a <a href="nuget.org/nuget.exe">command line version of nuget</a>. Download it and place it inside the <strong>.nuget</strong> folder</p>
+
+<p>Also its a good practice to add a <a href="http://docs.nuget.org/docs/reference/nuget-config-settings">Nuget.config file</a>. Add it too under <strong>.nuget</strong> folder. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
+</span><span class="line"><span class="nt">&lt;configuration&gt;</span>
+</span><span class="line">  <span class="nt">&lt;packageSources&gt;</span>
+</span><span class="line">    <span class="nt">&lt;add</span> <span class="na">key=</span><span class="s">&quot;nuget.org&quot;</span> <span class="na">value=</span><span class="s">&quot;https://www.nuget.org/api/v2/&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">  <span class="nt">&lt;/packageSources&gt;</span>
+</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="adding-buildbat-file">Adding build.bat file</h3>
+
+<p>Create a batch file <strong>build.bat</strong> in the root directory of the solution. It is going act as bootstrap file which initiates the entire build process.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="p">@</span><span class="k">echo</span> <span class="k">off</span>
+</span><span class="line"><span class="k">cls</span>
+</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;FAKE&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
+</span><span class="line"><span class="s2">&quot;tools\FAKE\tools\Fake.exe&quot;</span> build.fsx
+</span><span class="line"><span class="k">pause</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>It just download the Fake nuget package using the nuget.exe that we added earlier and call the fake.exe with the fsharp build script <strong>build.fsx</strong>.</p>
+
+<h3 id="adding-buildfsx-file">Adding build.fsx file</h3>
+
+<p>Create a <a href="http://blogs.msdn.com/b/chrsmith/archive/2008/09/12/scripting-in-f.aspx">fsharp script file</a> with the name <strong>build.fsx</strong> in the root directory. This script is going to implement all our build automation tasks by using fake library.</p>
+
+<h3 id="cleaning-the-build-directory">Cleaning the build directory</h3>
+
+<p>Just a like any other build process, the first step is to clear the build directory. Fake follows the same convention of MsBuild’s <a href="http://msdn.microsoft.com/en-us/library/ms171462.aspx">Targets</a>. Defining targets in Fake is less verbose compare to its MsBuild’s counterpart. As a matter of fact, it is a fsharp function that take two parameters, the name of the target and a function which defines the target. </p>
+
+<p>Since it is a script file we need to add reference to the <strong>FakeLib.dll</strong> before writing the actual code.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">r</span> <span class="s">&quot;tools/FAKE/tools/FakeLib.dll&quot;</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Fake</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">buildDir</span> <span class="o">=</span> <span class="s">&quot;./build&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">Target</span> <span class="s">&quot;Clean&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">CleanDir</span> <span class="n">buildDir</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Less verbose, Isn’t it ?</p>
+
+<p>The <code>CleanDir</code> is a predefined function in Fake library which clean up this build directory. If the directory doesn’t exist it creates the directory. </p>
+
+<h3 id="build-the-solution">Build the solution</h3>
+
+<p>After cleaning the build directory the next step is to carrying out the actual build process. Before building the application we need to resolve the nuget packages being referred in the application. It’s so simple in Fake. All you need to do is just call predefined function <code>RestorePackages</code>.    </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Build&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">RestorePackages</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">!!</span> <span class="s">&quot;./PhoneCat.sln&quot;</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">MSBuildRelease</span> <span class="n">buildDir</span> <span class="s">&quot;Build&quot;</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">Log</span> <span class="s">&quot;Build-Output: &quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>The <code>!!</code> is a function which takes a file path and returns <a href="http://fsharp.github.io/FAKE/apidocs/fake-filesystem-fileincludes.html">FileIncludes</a> which is Fake’s internal representation of a file set.</p>
+
+<p>FileIncludes <a href="https://github.com/fsharp/FAKE/blob/master/src/app/FakeLib/Globbing/FileSystem.fs#L95-l117">implements</a> <code>IEnumerable&lt;string&gt;</code> so it can be used wherever we need an <code>IEnumerable&lt;string&gt;</code>. </p>
+
+<p>The <code>MsBuildRelease</code> is also a predefined function in Fake which builds the given solution (which is piped from the <code>!!</code>). The first two parameters are the output build directory path and the target names which should be run by MsBuild. Fake offers lot of functional wrappers on top of MsBuild and you can find more about it in this <a href="http://fsharp.github.io/FAKE/apidocs/fake-msbuildhelper.html">api documentation.</a>. </p>
+
+<p>The last line just pipes the log result from the <code>MsBuildRelease</code> function to the log output.</p>
+
+<h3 id="running-unit-tests-using-nunitrunner">Running unit tests using Nunit.Runner</h3>
+
+<p>Now we have built the solution and the next step is running the unit test cases. Since I’ve written the test cases using Nunit and we are going to see how to run nunit tests using Fake. Fake also supports <a href="http://fsharp.github.io/FAKE/apidocs/fake-xunithelper.html">XUnit</a> and <a href="http://fsharp.github.io/FAKE/apidocs/fake-mstest.html">MsTest</a>. Porting the below code to other unit testing framework is very straight forward.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Test&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">  <span class="o">!!</span> <span class="o">(</span><span class="n">buildDir</span> <span class="o">+</span> <span class="s">&quot;/*.Tests.dll&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">NUnit</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">p</span> <span class="k">with</span> <span class="n">ToolPath</span> <span class="o">=</span> <span class="s">&quot;./tools/NUnit.Runners/tools&quot;</span> <span class="o">})</span>
+</span><span class="line"><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>As we did it in the build target, the <code>!!</code> function picks all the unit test files (I’ve used a convention of naming the unit tests projects with the <strong>.Tests</strong> suffix) in the build directory and transform them to FileIncludes. </p>
+
+<p>The <code>NUnit</code> is yet another <a href="http://fsharp.github.io/FAKE/apidocs/fake-nunitsequential.html">inbuilt function of Fake</a> which runs nunit on the given group of assemblies.</p>
+
+<p>It takes two parameter, a function that returns the modified default <code>NUnitParams</code> value and a sequence of assembly paths. We have modified the default <code>ToolPath</code> property which specifies the file path of <strong>NUnit Runner</strong> </p>
+
+<p>As we did for Fake we have to modify the batch file as below to install the Nunit Runner nuget package before running the actual script.  </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="p">@</span><span class="k">echo</span> <span class="k">off</span>
+</span><span class="line"><span class="k">cls</span>
+</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;FAKE&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
+</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;NUnit.Runners&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="s2">&quot;tools\FAKE\tools\Fake.exe&quot;</span> build.fsx
+</span><span class="line"><span class="k">pause</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="deploy-the-application-in-iis">Deploy the application in IIS</h3>
+
+<p>Well, now we are at the final step of the build process which deploy the application in the local IIS server. </p>
+
+<p>Deploying an application in IIS is super easy using Fake. All you need to do is just input necessary things like site name, virtual directory name, etc., and call the <code>IIS</code> function in <strong>Fake.IIS</strong> library which is installed as part of Fake.</p>
+
+<p>To begin with we need to add reference in the beginning <strong>build.fsx</strong> to include the <strong>Fake.IIS</strong> library. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">r</span> <span class="s">&quot;tools/FAKE/tools/Fake.IIS.dll&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This <strong>Fake.IIS</strong> makes heavy use of <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.servermanager(v=vs.90).aspx">ServerManager</a> which helps to dynamically configure IIS 7.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Deploy&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">siteName</span> <span class="o">=</span> <span class="s">&quot;fsharp&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">appPool</span> <span class="o">=</span> <span class="s">&quot;fsharp.appPool&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">port</span> <span class="o">=</span> <span class="s">&quot;:9999:&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">vdir</span> <span class="o">=</span> <span class="s">&quot;/phonecat&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">webBuildPath</span> <span class="o">=</span> <span class="n">buildDir</span> <span class="o">+</span> <span class="s">&quot;/_PublishedWebsites/Web&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sitePhysicalPath</span> <span class="o">=</span> <span class="s">@&quot;c:\inetpub\wwwroot\phonecat&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">XCopy</span> <span class="n">webBuildPath</span> <span class="n">sitePhysicalPath</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">(</span><span class="n">IIS</span>
+</span><span class="line">    <span class="o">(</span><span class="n">Site</span> <span class="n">siteName</span> <span class="s">&quot;http&quot;</span> <span class="n">port</span> <span class="s">@&quot;C:\inetpub\wwwroot&quot;</span> <span class="n">appPool</span><span class="o">)</span>
+</span><span class="line">    <span class="o">(</span><span class="n">ApplicationPool</span> <span class="n">appPool</span> <span class="k">true</span> <span class="s">&quot;v4.0&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="o">(</span><span class="n">Some</span><span class="o">(</span><span class="n">Application</span> <span class="n">vdir</span> <span class="n">sitePhysicalPath</span><span class="o">)))</span>
+</span><span class="line"><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>When we build a web project using MsBuild in release mode, it creates a deployable directory which can be accessed using the path <em>/_PublishedWebsites/Web</em> in the build directory. So, after building the application we just need to copy this deployable directory to the <strong>intepub\wwwroot</strong> directory using the XCopy function in Fake.</p>
+
+<p>The <code>IIS</code> function takes three parameters</p>
+
+<ul>
+  <li>site - A function with the signature <code>ServerManager -&gt; Site</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.site(v=vs.90).aspx">Site</a> with the given site settings. </li>
+  <li>appPool - A function with the signature <code>ServerManager -&gt; ApplicationPool</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.applicationpool(v=vs.90).aspx">AppPool</a> with the given appPool settings.  </li>
+  <li>app - An option type with the signature <code>(Site -&gt; ServerManager -&gt; Application) option</code> provides the <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.application(v=vs.90).aspx">Application</a>  </li>
+</ul>
+
+<p>Fake’s IIS helper library has in-built function for Site, ApplicationPool and Application which takes the necessary inputs need for its creation and returns the associated instances. All of these function creates Site, ApplicationPool and Application respectively if they are not available in the IIS. </p>
+
+<h3 id="running-the-targets">Running the Targets</h3>
+
+<p>In the above steps we just defined various Fake targets. These targets doesn’t execute on its own and we need to explicitly define the order of its execution and initiate.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="s">&quot;Clean&quot;</span>
+</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Build&quot;</span>
+</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Test&quot;</span>
+</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Deploy&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">RunTargetOrDefault</span> <span class="s">&quot;Deploy&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>==&gt;</code> is one of <a href="http://fsharp.github.io/FAKE/apidocs/fake-additionalsyntax.html">the DSL in Fake</a> which is actually a function that defines the target execution order.</p>
+
+<p>The <code>RunTargetOrDefault</code> function runs the target specified in the parameter or executes the default target.</p>
+
+<h3 id="summary">Summary</h3>
+
+<p>Fake is just awesome. We can automate so much things with very few lines of code and the beauty is it can be used in <strong>any .net projects</strong>. If you are using MsBuild Xml scripts, do try Fake! It will make you super productive. You can find the source of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/4">fsharp-phonecat repository</a>. </p>
+
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1170,892 +1435,6 @@ Manufactures View follows the similar steps that we have used to create the Phon
 
 <h3 id="summary">Summary</h3>
 <p>In this blog post we have seen how to create MVC Razor views in fsharp. You can find the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/2">source code in the github repository</a>. In the later posts we will be adding more interactivity. Stay tuned !!</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-12-17T17:31:44+05:30" data-updated="true" itemprop="datePublished">Dec 17<sup>th</sup>, 2014</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/functional-programming/'>functional-programming</a>, <a class='category' href='/blog/categories/web-api/'>web-api</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/" itemprop="url">Step 1 - Phonecat Backend Using Web Api and TypeProviders</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<blockquote>
-  <p>This is step 1 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In the <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">last blog post</a> we have created the basic home page of phone cat with the placeholders and in this post we are going it wire the home page with the backend web apis.</p>
-
-<p><img src="/images/fsharp_phonecat/step_1/home_page.png" /></p>
-
-<p>As the above screenshot indicates we are going to develop three web api endpoints which serve the data to the front-end and we are going to use the existing json data available in <a href="https://github.com/angular/angular-phonecat/tree/master/app/phones">angular-phonecat</a> repository as our backend data store.</p>
-
-<p>Initially I’ve planned to include TDD steps in this post but to keep it simple I am ignoring it. If you are interested in the tests that I’ve written check the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/1">source code.</a></p>
-
-<h3 id="promotions-api">Promotions Api</h3>
-
-<p>Let’s start with the promotions api which serves the data of three recently launched mobile phones. The first step is to create an ApiController called “PromotionsController”. You can create it by right clicking on the “Controllers” directory in the <strong>Web</strong> project and select <strong>Add -&gt; Source file</strong>. In the dialog box, name it as “PromotionsController”</p>
-
-<p>After creating, update the controller with the dependencies as mentioned below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">Web</span><span class="p">.</span><span class="n">Controllers</span>
-</span><span class="line">
-</span><span class="line"><span class="k">open</span> <span class="nn">System.Web.Http</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">RoutePrefix</span><span class="o">(</span><span class="s">&quot;api/promotions&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line"><span class="k">type</span> <span class="nc">PromotionsController</span>
-</span><span class="line">  <span class="o">(</span>
-</span><span class="line">    <span class="n">getPromotions</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">PhoneIndex</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">PromotionPhone</span><span class="o">&gt;,</span>
-</span><span class="line">    <span class="n">phoneIndexes</span><span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">PhoneIndex</span><span class="o">&gt;</span>
-</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">inherit</span> <span class="n">ApiController</span><span class="bp">()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>PromotionsController</code> has two dependencies. </p>
-
-<ul>
-  <li>
-    <p><code>getPromotions</code> is a function a that takes a sequence of a domain model <code>PhoneIndex</code> and returns the sequence of domain model <code>PromotionPhone</code> which represents the phones that are recently launched.</p>
-  </li>
-  <li>
-    <p><code>phoneIndexes</code> is a sequence of domain model <code>PhoneIndex</code> that represents the phones available in the backend data store.</p>
-  </li>
-</ul>
-
-<p>These domain models currently not exists, so add them in the domain project as mentioned below</p>
-
-<p>Right click on the domain project and select <strong>Add -&gt; Source file</strong>. In the dialog box, name it as “Promotions”. It creates a fsharp module with the name <code>Promotions</code> and add the <code>PromotionPhone</code> domain model</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Domain</span>
-</span><span class="line"><span class="o">[&lt;</span><span class="n">AutoOpen</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">module</span> <span class="nn">Promotions</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">PromotionPhone</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">Id</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">    <span class="n">ImageUrl</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">    <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Similarly, create an another source file called <code>Production</code> and add the domain model <code>PhoneIndex</code></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">AutoOpen</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">module</span> <span class="nn">Production</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">PhoneIndex</span> <span class="o">=</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">Id</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">      <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">      <span class="n">ImageUrl</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">      <span class="n">Age</span> <span class="o">:</span> <span class="n">int</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>Age</code> property represents the age of the phone since its launch (so lower is younger!). Now the domain models are ready, the next step is to create an end point to expose it. </p>
-
-<p>Let’s add a action method in PromotionsController which does the same</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Get</span> <span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">getPromotions</span> <span class="n">phoneIndexes</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The scaffolding is ready and the next step is to add the domain method <code>getPromotions</code> which does the actual business logic of giving recently launched phones.</p>
-
-<p>Add the <code>getPromotions</code> function in the <code>Promotions</code> file as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getPromotions</span> <span class="o">(</span><span class="n">phoneIndexes</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">PhoneIndex</span><span class="o">&gt;)</span> <span class="o">=</span>
-</span><span class="line">  <span class="n">phoneIndexes</span>
-</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">filter</span> <span class="o">(</span><span class="k">fun</span> <span class="n">phone</span> <span class="o">-&gt;</span> <span class="n">phone</span><span class="o">.</span><span class="n">Age</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="o">)</span>
-</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">phone</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">Id</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Id</span><span class="o">;</span> <span class="n">Name</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span> <span class="n">ImageUrl</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">ImageUrl</span><span class="o">})</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>getPromotions</code> just filters the phones with the age less than 3 and map them to the corresponding <code>PromotionPhone</code> types.</p>
-
-<p>Now its time to get the actual data from the data store. As I have mentioned earlier we will be using <a href="https://github.com/angular/angular-phonecat/tree/master/app/phones">angular-phonecat</a> repository as our data store. To access the data we will be using <a href="http://fsharp.github.io/FSharp.Data/library/JsonProvider.html">JsonTypeProvider</a>.</p>
-
-<p>In the <em>DataAccess</em> project install the nuget package <a href="https://www.nuget.org/packages/FSharp.Data">FSharp.Data</a> and add a source file <code>TypeProviders</code>. Then update it with the type provider for Phone Index</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">DataAccess</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">FSharp.Data</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">AutoOpen</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">module</span> <span class="nn">TypeProviders</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">Literal</span><span class="o">&gt;]</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">samplePhoneIndexes</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-</span><span class="line"><span class="s">  [{</span>
-</span><span class="line"><span class="s">      &quot;age&quot;: 1,</span>
-</span><span class="line"><span class="s">      &quot;id&quot;: &quot;id0&quot;,</span>
-</span><span class="line"><span class="s">      &quot;imageUrl&quot;: &quot;id0.jpg&quot;,</span>
-</span><span class="line"><span class="s">      &quot;name&quot;: &quot;Name0&quot;,</span>
-</span><span class="line"><span class="s">      &quot;snippet&quot;: &quot;Sample Snippet0&quot;</span>
-</span><span class="line"><span class="s">  },{</span>
-</span><span class="line"><span class="s">      &quot;age&quot;: 2,</span>
-</span><span class="line"><span class="s">      &quot;id&quot;: &quot;id1&quot;,</span>
-</span><span class="line"><span class="s">      &quot;imageUrl&quot;: &quot;id1.jpg&quot;,</span>
-</span><span class="line"><span class="s">      &quot;name&quot;: &quot;Name1&quot;,</span>
-</span><span class="line"><span class="s">      &quot;snippet&quot;: &quot;Sample Snippet2&quot;</span>
-</span><span class="line"><span class="s">  }]</span>
-</span><span class="line"><span class="s">  &quot;&quot;&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">PhoneIndexTypeProvider</span> <span class="o">=</span> <span class="n">JsonProvider</span><span class="o">&lt;</span><span class="n">samplePhoneIndexes</span><span class="o">&gt;</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">ToPhoneIndex</span> <span class="o">(</span><span class="n">phoneIndex</span> <span class="o">:</span> <span class="nn">PhoneIndexTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">Id</span> <span class="o">=</span> <span class="n">phoneIndex</span><span class="o">.</span><span class="n">Id</span><span class="o">;</span> <span class="n">Name</span> <span class="o">=</span> <span class="n">phoneIndex</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span> <span class="n">Age</span> <span class="o">=</span> <span class="n">phoneIndex</span><span class="o">.</span><span class="n">Age</span><span class="o">;</span> <span class="n">ImageUrl</span> <span class="o">=</span> <span class="n">phoneIndex</span><span class="o">.</span><span class="n">ImageUrl</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>ToPhoneIndex</code> is a utility function which converts the data store model <code>PhoneIndexTypeProvider.Root</code> to the domain model <code>PhoneIndex</code></p>
-
-<p>Now we got the type provide for <code>PhoneIndex</code>, the next step is populating it from the github repository. To do that add a source file <code>GitHubRepository</code> and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">DataAccess</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="k">module</span> <span class="nn">GitHubRepository</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">Literal</span><span class="o">&gt;]</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">gitHubRepoUrl</span> <span class="o">=</span> <span class="s">&quot;https://raw.githubusercontent.com/angular/angular-phonecat/master/app/phones/&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">phoneIndexes</span> <span class="o">=</span> <span class="nn">PhoneIndexTypeProvider</span><span class="p">.</span><span class="n">Load</span><span class="o">(</span><span class="n">gitHubRepoUrl</span> <span class="o">+</span> <span class="s">&quot;phones.json&quot;</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">getPhoneIndexes</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">phoneIndexes</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>That’s it! just three line of code to get the data from the <a href="https://raw.githubusercontent.com/angular/angular-phonecat/master/app/phones/phones.json">angular-phonecat repo</a> and map to the equivalent strongly typed models  </p>
-
-<h4 id="composition-root">Composition Root</h4>
-
-<p>Now we need to wire up the controller with the domain and the data access. We can use a <a href="http://www.hanselman.com/blog/ListOfNETDependencyInjectionContainersIOC.aspx">Dependency Injection Container</a> to achieve it. In fact it used to be my default decision. But after reading this <a href="http://blog.ploeh.dk/2012/11/06/WhentouseaDIContainer/">wonderful blog post</a> by <a href="https://twitter.com/ploeh">Mark Seeman</a> I have actually started rethinking about dependency injection. In this sample application we are going to use the <a href="http://blog.ploeh.dk/2011/07/28/CompositionRoot/">Composition Root</a> as suggested by Mark Seeman.</p>
-
-<p>In the <em>Web</em> project create a source file with the name <code>Infrastructure</code> and add the following composition root</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Web</span>
-</span><span class="line">
-</span><span class="line"><span class="k">open</span> <span class="nn">System</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">System.Web.Http.Dispatcher</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">System.Web.Http.Controllers</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Web.Controllers</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.DataAccess</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="k">module</span> <span class="nn">Infrastructure</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">CompositionRoot</span>
-</span><span class="line">    <span class="o">(</span>
-</span><span class="line">      <span class="n">phoneIndexes</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneIndexTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;</span>
-</span><span class="line">    <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">interface</span> <span class="n">IHttpControllerActivator</span> <span class="k">with</span>
-</span><span class="line">
-</span><span class="line">      <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Create</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">controllerDescriptor</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">let</span> <span class="nv">phoneIndexes</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">phoneIndexes</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToPhoneIndex</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">PromotionsController</span><span class="o">&gt;</span> <span class="k">then</span>
-</span><span class="line">            <span class="k">let</span> <span class="nv">promotionsController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PromotionsController</span><span class="o">(</span><span class="n">getPromotions</span><span class="o">,</span> <span class="n">phoneIndexes&#39;</span><span class="o">)</span>
-</span><span class="line">            <span class="n">promotionsController</span> <span class="o">:&gt;</span> <span class="n">IHttpController</span>
-</span><span class="line">        <span class="k">else</span>
-</span><span class="line">            <span class="n">raise</span> <span class="o">&lt;|</span> <span class="n">ArgumentException</span><span class="o">((</span><span class="n">sprintf</span> <span class="s">&quot;Unknown controller type requested: %A&quot;</span> <span class="n">controllerType</span><span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>We have actually created a custom implementation of <code>IHttpControllerActivator</code> as mentioned <a href="http://blog.ploeh.dk/2012/09/28/DependencyInjectionandLifetimeManagementwithASP.NETWebAPI/">here</a> which takes care of initializing the controllers by wiring the data store and the domain functions with the controller</p>
-
-<p>The only pending task is tell ASP.NET Web Api to use this composition root. Update the <em>Global.asax.fs</em> file as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">static</span> <span class="k">member</span> <span class="n">RegisterWebApi</span><span class="o">(</span><span class="n">config</span><span class="o">:</span> <span class="n">HttpConfiguration</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// existing configuration will be here</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// Additional Web API settings</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">phoneIndexes</span> <span class="o">=</span> <span class="nn">GitHubRepository</span><span class="p">.</span><span class="n">getPhoneIndexes</span><span class="bp">()</span>
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">Services</span><span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="n">typeof</span><span class="o">&lt;</span><span class="n">IHttpControllerActivator</span><span class="o">&gt;,</span> <span class="n">CompositionRoot</span><span class="o">(</span><span class="n">phoneIndexes</span><span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>We have done an optimization by getting the phone indexes from the github when the application is starting, so that any requests to the application doesn’t get the data from github (typical enterprise performance improvement!).</p>
-
-<h3 id="manufacturers-api">Manufacturers Api</h3>
-
-<p>We are going to create the Manufacturers Api in the same way as Promotions Api. Let’s start from <code>ManufacturersController</code></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">Web</span><span class="p">.</span><span class="n">Controllers</span>
-</span><span class="line">
-</span><span class="line"><span class="k">open</span> <span class="nn">System.Web.Http</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">ManufacturerViewModel</span> <span class="o">=</span> <span class="o">{</span> <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">RoutePrefix</span><span class="o">(</span><span class="s">&quot;api/manufactures&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line"><span class="k">type</span> <span class="nc">ManufacturersController</span>
-</span><span class="line">  <span class="o">(</span>
-</span><span class="line">    <span class="n">getManufacturerNames</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">ManufacturerName</span><span class="o">&gt;,</span>
-</span><span class="line">    <span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;</span>
-</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">inherit</span> <span class="n">ApiController</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Get</span> <span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">getManufacturerNames</span> <span class="n">phones</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">distinct</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">name</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">Name</span> <span class="o">=</span> <span class="nn">ManufacturerName</span><span class="p">.</span><span class="n">ToString</span> <span class="n">name</span><span class="o">})</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>As <code>PromotionsController</code>, <code>ManufacturersController</code> has also two dependencies.</p>
-
-<ul>
-  <li>
-    <p><code>getManufacturerNames</code> is a function takes a sequence of domain model <code>Phone</code> and returns the sequence of domain model <code>ManufacturerName</code> which represents the manufacturer names of the given phones.</p>
-  </li>
-  <li>
-    <p><code>phones</code> is a sequence of domain model &#8220;`Phone&#8220; that represents the phones available in the backend data store</p>
-  </li>
-</ul>
-
-<p>The <code>Get</code> method in the <code>ManufacturersController</code> returns the manufacturer names for the given phones</p>
-
-<p>The <code>ManufacturerViewModel</code> is just a DTO that is used to share the data across the wire.</p>
-
-<p>The next step is to add the domain models. In the <code>Production</code> file of <em>Domain</em> project add the following</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">ManufacturerName</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">Samsung</span> <span class="o">|</span> <span class="n">Motorola</span> <span class="o">|</span> <span class="n">Dell</span> <span class="o">|</span> <span class="n">LG</span> <span class="o">|</span> <span class="n">TMobile</span> <span class="o">|</span> <span class="n">Sanyo</span> <span class="o">|</span> <span class="n">Unknown</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">static</span> <span class="k">member</span> <span class="n">ToString</span> <span class="o">=</span> <span class="k">function</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">Samsung</span> <span class="o">-&gt;</span> <span class="s">&quot;Samsung&quot;</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">Motorola</span> <span class="o">-&gt;</span> <span class="s">&quot;Motorola&quot;</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">Dell</span> <span class="o">-&gt;</span> <span class="s">&quot;Dell&quot;</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">LG</span> <span class="o">-&gt;</span> <span class="s">&quot;LG&quot;</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">TMobile</span> <span class="o">-&gt;</span> <span class="s">&quot;T-Mobile&quot;</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">Sanyo</span> <span class="o">-&gt;</span> <span class="s">&quot;Sanyo&quot;</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">Unknown</span> <span class="o">-&gt;</span> <span class="s">&quot;Unknown&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">static</span> <span class="k">member</span> <span class="n">ToManufacturerName</span> <span class="o">(</span><span class="n">name</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">      <span class="k">match</span> <span class="n">name</span><span class="o">.</span><span class="n">ToLower</span><span class="bp">()</span> <span class="k">with</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">n</span> <span class="k">when</span> <span class="n">n</span><span class="o">.</span><span class="n">Contains</span><span class="o">(</span><span class="s">&quot;samsung&quot;</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">Samsung</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">n</span> <span class="k">when</span> <span class="n">n</span><span class="o">.</span><span class="n">Contains</span><span class="o">(</span><span class="s">&quot;motorola&quot;</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">Motorola</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">n</span> <span class="k">when</span> <span class="n">n</span><span class="o">.</span><span class="n">Contains</span><span class="o">(</span><span class="s">&quot;dell&quot;</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">Dell</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">n</span> <span class="k">when</span> <span class="n">n</span><span class="o">.</span><span class="n">Contains</span><span class="o">(</span><span class="s">&quot;lg&quot;</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">LG</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">n</span> <span class="k">when</span> <span class="n">n</span><span class="o">.</span><span class="n">Contains</span><span class="o">(</span><span class="s">&quot;t-mobile&quot;</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">TMobile</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">n</span> <span class="k">when</span> <span class="n">n</span><span class="o">.</span><span class="n">Contains</span><span class="o">(</span><span class="s">&quot;sanyo&quot;</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">Sanyo</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">n</span> <span class="k">when</span> <span class="n">n</span><span class="o">.</span><span class="n">Contains</span><span class="o">(</span><span class="s">&quot;nexus&quot;</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">Samsung</span>
-</span><span class="line">      <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">Unknown</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">Phone</span> <span class="o">=</span>
-</span><span class="line">  <span class="o">{</span> <span class="n">Id</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">    <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">    <span class="n">Description</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">    <span class="n">ImageUrl</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>As the backend data-store doesn’t directly gives the manufacturer name, we will be adding two <strong>static</strong> members that derives the manufacturer name from the phone name. The <code>ToString</code> function translates to the domain model to its equivalent string version</p>
-
-<p>After defining the domain models, add the business logic for the getting the manufacturer names from the phone in the new source file <code>Phones</code> of the <em>Domain</em> project.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">AutoOpen</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">module</span> <span class="nn">Phones</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">getManufacturerNames</span> <span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;)</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">phones</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="nn">ManufacturerName</span><span class="p">.</span><span class="n">ToManufacturerName</span> <span class="n">p</span><span class="o">.</span><span class="n">Name</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>The <code>getManufacturerNames</code> is a straight forward function that map given the phones to its equivalent manufacture names.</p>
-
-<p>The next step would be fetching the phones from the data-store. </p>
-
-<p>Let’s start by defining a type provider for the phone. Update the <code>TypeProviders</code> module in the <em>DataAccess</em> project as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-<span class="line-number">35</span>
-<span class="line-number">36</span>
-<span class="line-number">37</span>
-<span class="line-number">38</span>
-<span class="line-number">39</span>
-<span class="line-number">40</span>
-<span class="line-number">41</span>
-<span class="line-number">42</span>
-<span class="line-number">43</span>
-<span class="line-number">44</span>
-<span class="line-number">45</span>
-<span class="line-number">46</span>
-<span class="line-number">47</span>
-<span class="line-number">48</span>
-<span class="line-number">49</span>
-<span class="line-number">50</span>
-<span class="line-number">51</span>
-<span class="line-number">52</span>
-<span class="line-number">53</span>
-<span class="line-number">54</span>
-<span class="line-number">55</span>
-<span class="line-number">56</span>
-<span class="line-number">57</span>
-<span class="line-number">58</span>
-<span class="line-number">59</span>
-<span class="line-number">60</span>
-<span class="line-number">61</span>
-<span class="line-number">62</span>
-<span class="line-number">63</span>
-<span class="line-number">64</span>
-<span class="line-number">65</span>
-<span class="line-number">66</span>
-<span class="line-number">67</span>
-<span class="line-number">68</span>
-<span class="line-number">69</span>
-<span class="line-number">70</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">Literal</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">private</span> <span class="n">samplePhoneJson</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-</span><span class="line"><span class="s">{</span>
-</span><span class="line"><span class="s">  &quot;additionalFeatures&quot;: &quot;Trackball&quot;, </span>
-</span><span class="line"><span class="s">  &quot;android&quot;: {</span>
-</span><span class="line"><span class="s">      &quot;os&quot;: &quot;Android 2.2&quot;, </span>
-</span><span class="line"><span class="s">      &quot;ui&quot;: &quot;&quot;</span>
-</span><span class="line"><span class="s">  }, </span>
-</span><span class="line"><span class="s">  &quot;availability&quot;: [</span>
-</span><span class="line"><span class="s">      &quot;Sprint&quot;</span>
-</span><span class="line"><span class="s">  ], </span>
-</span><span class="line"><span class="s">  &quot;battery&quot;: {</span>
-</span><span class="line"><span class="s">      &quot;standbyTime&quot;: &quot;&quot;, </span>
-</span><span class="line"><span class="s">      &quot;talkTime&quot;: &quot;4 hours&quot;, </span>
-</span><span class="line"><span class="s">      &quot;type&quot;: &quot;Lithium Ion (Li-Ion) (1130 mAH)&quot;</span>
-</span><span class="line"><span class="s">  }, </span>
-</span><span class="line"><span class="s">  &quot;camera&quot;: {</span>
-</span><span class="line"><span class="s">      &quot;features&quot;: [</span>
-</span><span class="line"><span class="s">          &quot;Video&quot;</span>
-</span><span class="line"><span class="s">      ], </span>
-</span><span class="line"><span class="s">      &quot;primary&quot;: &quot;3.2 megapixels&quot;</span>
-</span><span class="line"><span class="s">  }, </span>
-</span><span class="line"><span class="s">  &quot;connectivity&quot;: {</span>
-</span><span class="line"><span class="s">      &quot;bluetooth&quot;: &quot;Bluetooth 2.1&quot;, </span>
-</span><span class="line"><span class="s">      &quot;cell&quot;: &quot;CDMA2000 1xEV-DO Rev.A&quot;, </span>
-</span><span class="line"><span class="s">      &quot;gps&quot;: true, </span>
-</span><span class="line"><span class="s">      &quot;infrared&quot;: false, </span>
-</span><span class="line"><span class="s">      &quot;wifi&quot;: &quot;802.11 b/g&quot;</span>
-</span><span class="line"><span class="s">  }, </span>
-</span><span class="line"><span class="s">  &quot;description&quot;: &quot;Zio uses CDMA2000 1xEV-DO rev&quot;, </span>
-</span><span class="line"><span class="s">  &quot;display&quot;: {</span>
-</span><span class="line"><span class="s">      &quot;screenResolution&quot;: &quot;WVGA (800 x 480)&quot;, </span>
-</span><span class="line"><span class="s">      &quot;screenSize&quot;: &quot;3.5 inches&quot;, </span>
-</span><span class="line"><span class="s">      &quot;touchScreen&quot;: true</span>
-</span><span class="line"><span class="s">  }, </span>
-</span><span class="line"><span class="s">  &quot;hardware&quot;: {</span>
-</span><span class="line"><span class="s">      &quot;accelerometer&quot;: true, </span>
-</span><span class="line"><span class="s">      &quot;audioJack&quot;: &quot;3.5mm&quot;, </span>
-</span><span class="line"><span class="s">      &quot;cpu&quot;: &quot;600MHz Qualcomm MSM7627&quot;, </span>
-</span><span class="line"><span class="s">      &quot;fmRadio&quot;: false, </span>
-</span><span class="line"><span class="s">      &quot;physicalKeyboard&quot;: false, </span>
-</span><span class="line"><span class="s">      &quot;usb&quot;: &quot;USB 2.0&quot;</span>
-</span><span class="line"><span class="s">  }, </span>
-</span><span class="line"><span class="s">  &quot;id&quot;: &quot;sanyo-zio&quot;, </span>
-</span><span class="line"><span class="s">  &quot;images&quot;: [</span>
-</span><span class="line"><span class="s">      &quot;img/phones/sanyo-zio.0.jpg&quot;, </span>
-</span><span class="line"><span class="s">      &quot;img/phones/sanyo-zio.1.jpg&quot;, </span>
-</span><span class="line"><span class="s">      &quot;img/phones/sanyo-zio.2.jpg&quot;</span>
-</span><span class="line"><span class="s">  ], </span>
-</span><span class="line"><span class="s">  &quot;name&quot;: &quot;SANYO ZIO&quot;, </span>
-</span><span class="line"><span class="s">  &quot;sizeAndWeight&quot;: {</span>
-</span><span class="line"><span class="s">      &quot;dimensions&quot;: [</span>
-</span><span class="line"><span class="s">          &quot;58.6 mm (w)&quot;, </span>
-</span><span class="line"><span class="s">          &quot;116.0 mm (h)&quot;, </span>
-</span><span class="line"><span class="s">          &quot;12.2 mm (d)&quot;</span>
-</span><span class="line"><span class="s">      ], </span>
-</span><span class="line"><span class="s">      &quot;weight&quot;: &quot;105.0 grams&quot;</span>
-</span><span class="line"><span class="s">  }, </span>
-</span><span class="line"><span class="s">  &quot;storage&quot;: {</span>
-</span><span class="line"><span class="s">      &quot;flash&quot;: &quot;130MB&quot;, </span>
-</span><span class="line"><span class="s">      &quot;ram&quot;: &quot;256MB&quot;</span>
-</span><span class="line"><span class="s">  }</span>
-</span><span class="line"><span class="s">}</span>
-</span><span class="line">
-</span><span class="line"><span class="s">&quot;&quot;&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">PhoneTypeProvider</span> <span class="o">=</span> <span class="n">JsonProvider</span><span class="o">&lt;</span><span class="n">samplePhoneJson</span><span class="o">&gt;</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">ToPhone</span> <span class="o">(</span><span class="n">phone</span> <span class="o">:</span> <span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">Id</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Id</span><span class="o">;</span> <span class="n">Name</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span> <span class="n">Description</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Description</span><span class="o">;</span> <span class="n">ImageUrl</span> <span class="o">=</span> <span class="n">phone</span><span class="o">.</span><span class="n">Images</span><span class="o">.[</span><span class="mi">0</span><span class="o">]</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Like <code>ToPhoneIndex</code> utility function,  <code>ToPhone</code> converts the data store model <code>PhoneTypeProvider.Root</code> to the domain model <code>Phone</code></p>
-
-<p>Unlike the phone index, <a href="https://github.com/angular/angular-phonecat/tree/master/app/phones">angular-phonecat</a> repository stores the details of each phones in a seperate json file with the naming convention of <strong>{phoneId}.json</strong>. So, in order to get the details of all the phones, we need to fire multiple requests to get the details. Thanks to <a href="http://blogs.msdn.com/b/dsyme/archive/2010/01/09/async-and-parallel-design-patterns-in-f-parallelizing-cpu-and-i-o-computations.aspx">fsharp async workflow</a> we can easily pull all the data parallelly and populate the strongly typed domain models from them.</p>
-
-<p>Update the <code>GitHubRepository</code> module with the code to populate the data from the data store.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">DataAccess</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="k">module</span> <span class="nn">GitHubRepository</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">Literal</span><span class="o">&gt;]</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">gitHubRepoUrl</span> <span class="o">=</span> <span class="s">&quot;https://raw.githubusercontent.com/angular/angular-phonecat/master/app/phones/&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">phoneIndexes</span> <span class="o">=</span> <span class="nn">PhoneIndexTypeProvider</span><span class="p">.</span><span class="n">Load</span><span class="o">(</span><span class="n">gitHubRepoUrl</span> <span class="o">+</span> <span class="s">&quot;phones.json&quot;</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">phoneIds</span> <span class="o">=</span> <span class="n">phoneIndexes</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">Id</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">pMap</span> <span class="n">ids</span> <span class="o">=</span>
-</span><span class="line">      <span class="n">seq</span> <span class="o">{</span><span class="k">for</span> <span class="n">id</span> <span class="k">in</span> <span class="n">ids</span> <span class="o">-&gt;</span> <span class="n">async</span> <span class="o">{</span> <span class="k">return</span> <span class="n">id</span><span class="o">,</span> <span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Load</span><span class="o">(</span><span class="n">gitHubRepoUrl</span> <span class="o">+</span> <span class="n">id</span> <span class="o">+</span> <span class="s">&quot;.json&quot;</span><span class="o">)</span> <span class="o">}}</span>
-</span><span class="line">      <span class="o">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="n">Parallel</span>
-</span><span class="line">      <span class="o">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="n">RunSynchronously</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">phones</span> <span class="o">=</span> <span class="n">pMap</span> <span class="n">phoneIds</span> <span class="o">|&gt;</span> <span class="nn">Map</span><span class="p">.</span><span class="n">ofSeq</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">getPhoneIndexes</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">phoneIndexes</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">getPhones</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">Value</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Expressiveness is one of the reason behind my fsharp addiction. Just see the above code we have done some much thing with just few lines of code. We have fetched the details of all the phones using their ids from phone index and created an in-memory map.</p>
-
-<p>The <code>getPhones</code> function returns the strongly typed <code>PhoneTypeProvider</code> models from the in-memory map.</p>
-
-<p>The last thing is to wire up all the things and create the <code>ManufacturersController</code>. Update the <code>CompositionRoot</code> type in the <code>Infrastructure</code> module with the below code</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span>
-</span><span class="line">  <span class="o">(</span>
-</span><span class="line">    <span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;,</span>
-</span><span class="line">    <span class="n">phoneIndexes</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneIndexTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;</span>
-</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">interface</span> <span class="n">IHttpControllerActivator</span> <span class="k">with</span>
-</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Create</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">controllerDescriptor</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">let</span> <span class="nv">phones</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToPhone</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">phoneIndexes</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">phoneIndexes</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToPhoneIndex</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">PromotionsController</span><span class="o">&gt;</span> <span class="k">then</span>
-</span><span class="line">        <span class="k">let</span> <span class="nv">promotionsController</span> <span class="o">=</span>
-</span><span class="line">          <span class="k">new</span> <span class="n">PromotionsController</span><span class="o">(</span><span class="n">getPromotions</span><span class="o">,</span> <span class="n">phoneIndexes&#39;</span><span class="o">)</span>
-</span><span class="line">        <span class="n">promotionsController</span> <span class="o">:&gt;</span> <span class="n">IHttpController</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">ManufacturersController</span><span class="o">&gt;</span> <span class="k">then</span>
-</span><span class="line">        <span class="k">let</span> <span class="nv">manufacturersController</span> <span class="o">=</span>
-</span><span class="line">          <span class="k">new</span> <span class="n">ManufacturersController</span><span class="o">(</span><span class="n">getManufacturerNames</span><span class="o">,</span> <span class="n">phones&#39;</span><span class="o">)</span>
-</span><span class="line">        <span class="n">manufacturersController</span> <span class="o">:&gt;</span> <span class="n">IHttpController</span>
-</span><span class="line">    <span class="k">else</span>
-</span><span class="line">        <span class="n">raise</span> <span class="o">&lt;|</span> <span class="n">ArgumentException</span><span class="o">((</span><span class="n">sprintf</span> <span class="s">&quot;Unknown controller type requested: %A&quot;</span> <span class="n">controllerType</span><span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>And update the <em>Global.asax.fs</em> as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">static</span> <span class="k">member</span> <span class="n">RegisterWebApi</span><span class="o">(</span><span class="n">config</span><span class="o">:</span> <span class="n">HttpConfiguration</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// existing configuration will be here</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// Additional Web API settings</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">phones</span> <span class="o">=</span> <span class="nn">GitHubRepository</span><span class="p">.</span><span class="n">getPhones</span><span class="bp">()</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">phoneIndexes</span> <span class="o">=</span> <span class="nn">GitHubRepository</span><span class="p">.</span><span class="n">getPhoneIndexes</span><span class="bp">()</span>
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">Services</span><span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="n">typeof</span><span class="o">&lt;</span><span class="n">IHttpControllerActivator</span><span class="o">&gt;,</span> <span class="n">CompositionRoot</span><span class="o">(</span><span class="n">phones</span><span class="o">,</span> <span class="n">phoneIndexes</span><span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="top-selling-phones-api">Top Selling Phones Api</h3>
-
-<p>Create <code>PhonesController</code> in the <em>Web</em> project and add the api to return the top selling phones</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">Web</span><span class="p">.</span><span class="n">Controllers</span>
-</span><span class="line">
-</span><span class="line"><span class="k">open</span> <span class="nn">System.Web.Http</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">RoutePrefix</span><span class="o">(</span><span class="s">&quot;api/phones&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line"><span class="k">type</span> <span class="nc">PhonesController</span>
-</span><span class="line">  <span class="o">(</span>
-</span><span class="line">    <span class="n">getTopSellingPhones</span> <span class="o">:</span> <span class="n">int</span> <span class="o">-&gt;</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;,</span>
-</span><span class="line">    <span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;</span>
-</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">inherit</span> <span class="n">ApiController</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;topselling&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetTopSelling</span> <span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">getTopSellingPhones</span> <span class="mi">3</span> <span class="n">phones</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>getTopSellingPhones</code> picks given count of phones from the given phones and return them.</p>
-
-<p>In the <code>Phones</code> module of <em>Domain</em> project add the function <code>getTopSellingPhones</code></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getTopSellingPhones</span> <span class="o">(</span><span class="n">phonesSold</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">PhoneSold</span><span class="o">&gt;)</span> <span class="n">phoneCount</span> <span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;)</span> <span class="o">=</span>
-</span><span class="line">  <span class="n">phonesSold</span>
-</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">Quantity</span><span class="o">,</span> <span class="o">(</span><span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">find</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p&#39;</span> <span class="o">-&gt;</span> <span class="n">p&#39;</span><span class="o">.</span><span class="n">Id</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">Id</span><span class="o">)))</span>
-</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">sortBy</span> <span class="o">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="o">-(</span><span class="n">fst</span> <span class="n">x</span><span class="o">))</span>
-</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">take</span> <span class="n">phoneCount</span>
-</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="n">snd</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>PhoneSold</code> domain model represents how much quantity of each phone has been sold. The <code>getTopSellingPhones</code> sorts the given phones in the descending order based on the quantity being sold and return the given count of the phones from the sorting result</p>
-
-<p>Right now the <code>PhoneSold</code> domain model is not added. So add them in the new module <code>Purchases</code> in the <em>Domain</em> project as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">AutoOpen</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">module</span> <span class="nn">Purchases</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">type</span> <span class="nc">PhoneSold</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">Id</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">    <span class="n">Quantity</span> <span class="o">:</span> <span class="n">int</span>
-</span><span class="line">  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The angular data-store doesn’t provide quantity sold information, so we need to get it from somewhere else. To keep it simple, we are going add an <code>InMemoryInventory</code> in <em>DataAccess</em> project as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">DataAccess</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">PhoneCat.Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="k">module</span> <span class="nn">InMemoryInventory</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">getPhonesSold</span> <span class="bp">()</span> <span class="o">=</span> <span class="o">[</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">Id</span> <span class="o">=</span> <span class="s">&quot;motorola-xoom-with-wi-fi&quot;</span><span class="o">;</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="mi">10</span><span class="o">}</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">Id</span> <span class="o">=</span> <span class="s">&quot;motorola-atrix-4g&quot;</span><span class="o">;</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="mi">24</span><span class="o">}</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">Id</span> <span class="o">=</span> <span class="s">&quot;nexus-s&quot;</span><span class="o">;</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="mi">4</span><span class="o">}</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">Id</span> <span class="o">=</span> <span class="s">&quot;samsung-galaxy-tab&quot;</span><span class="o">;</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="mi">41</span><span class="o">}</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">Id</span> <span class="o">=</span> <span class="s">&quot;sanyo-zio&quot;</span><span class="o">;</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="mi">31</span><span class="o">}</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">Id</span> <span class="o">=</span> <span class="s">&quot;motorola-xoom&quot;</span><span class="o">;</span> <span class="n">Quantity</span> <span class="o">=</span> <span class="mi">6</span><span class="o">}</span>
-</span><span class="line">  <span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>As previous api’s we need wire things up and create the controller in the <code>CompositeRoot</code></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"> <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">PhonesController</span><span class="o">&gt;</span> <span class="k">then</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">getTopSellingPhones</span> <span class="o">=</span> <span class="nn">Phones</span><span class="p">.</span><span class="n">getTopSellingPhones</span> <span class="o">(</span><span class="nn">InMemoryInventory</span><span class="p">.</span><span class="n">getPhonesSold</span><span class="bp">()</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">phonesController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PhonesController</span><span class="o">(</span><span class="n">getTopSellingPhones</span><span class="o">,</span> <span class="n">phones&#39;</span><span class="o">)</span>
-</span><span class="line">  <span class="n">phonesController</span> <span class="o">:&gt;</span> <span class="n">IHttpController</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>We have used <a href="http://fsharpforfunandprofit.com/posts/partial-application/">partial application</a> of the <code>Phones.getTopSellingPhones</code> function here. Its signature is <code>seq&lt;PhoneSold&gt; -&gt; int -&gt; seq&lt;Phone&gt; -&gt; seq&lt;Phone&gt;</code><br />
-but the controller expects the function with the signature <code>int -&gt; seq&lt;Phone&gt; -&gt; seq&lt;Phone&gt;</code>.</p>
-
-<p>The expression</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getTopSellingPhones</span> <span class="o">=</span> <span class="nn">Phones</span><span class="p">.</span><span class="n">getTopSellingPhones</span> <span class="o">(</span><span class="nn">InMemoryInventory</span><span class="p">.</span><span class="n">getPhonesSold</span><span class="bp">()</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>actually does this.</p>
-
-<h3 id="front-end">Front-End</h3>
-
-<p>As front-end is out of the scope of this blog post I am not covering it here. I’ve actually developed it using knockout.js.</p>
-
-<h2 id="summary">Summary</h2>
-
-<p>We have covered a quite a large ground here by creating three web-api endpoints in fsharp using Web Api 2. In the later posts we will be adding error handling and making it robust. The source code for this step can be found in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/1">github repository</a></p>
 
 		
 		

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: javascript | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/javascript/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-01-12T17:25:33+05:30</updated>
+  <updated>2016-02-01T21:13:04+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -126,7 +126,7 @@ npm init
 
 <p>While installing Webpack we touched a little on loaders. Webpack uses loaders to translate the file before bundling them</p>
 
-<p>{% img center /images/react-hello-world/babel-loader.png %}</p>
+<p><img class="center" src="/images/react-hello-world/babel-loader.png"></p>
 
 <p>To setup install the following npm packages</p>
 
@@ -300,7 +300,7 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
 
 <p>If your Webpack is already running in watch mode then refresh the browser to see the AwesomeComponent in action!</p>
 
-<p>{% img center /images/react-hello-world/Output.png %}</p>
+<p><img class="center" src="/images/react-hello-world/Output.png"></p>
 
 <h2 id="summary">Summary</h2>
 
@@ -367,7 +367,7 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
     <p>Today I’m very glad and excited to announce my little contribution to the open source community called 
     <a href="http://jade-visualizer.herokuapp.com/">“Jade-Visualizer”</a> a web-based visualizer/translator which targets the beginners 
     of <a href="http://jade-lang.com/">Jade</a> (A widely used <a href="http://nodejs.org">Node.js</a> view engine) to learn it effectively. </p> 
-    <p>Its the inspiration from good bloggers, kindled me to <a href="{% post_url 2011-01-05-thank-god %}">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133" /></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122" /></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96" /></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" /></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" /></p>
+    <p>Its the inspiration from good bloggers, kindled me to <a href="/blog/2011/01/05/thank-god/">start writing</a> blogs and Its the inspiration from many people who are all contributing to the open source community, encouraged me to kick start my contribution through this tiny web-app. This is my first step towards a great journey of more than 1000 miles and I hope it would lay a firm foundation.</p> <p><strong>What is Jade?</strong></p> <p><a href="https://github.com/visionmedia/jade#readme">Jade</a> is a high performance template engine for Node.js and the default rendering engine for the <a href="http://expressjs.com/">express</a> framework. If you are from the ASP.NET MVC background (like me), its similar to <a href="http://www.asp.net/mvc/videos/mvc-3/mvc-3-razor-view-engine">Razor</a> view engine. Unlike razor, Jade is less verbose and easier to read.</p> <p><strong>Why Jade-Visualizer ?</strong></p> <p><a href="http://www.w3schools.com/">W3schools</a> is my starting point and reference when it comes to basics of web development. I have learned and toyed with JavaScript, html, css in my early days using the “<a href="http://www.w3schools.com/css/tryit.asp?filename=trycss_default">Try it yourself</a>” feature available in their website. It is very intuitive to use and we can learn effectively by actually getting our hands dirty. Also, the immediate output of what we do would certainly help us (helped me!) to understand things much better.</p> <p>I am a kind of “Show me the code” programmer, would love to play with code rather than learning by just theory. When I am learning Jade, I found it very interesting as I never exposed to <a href="http://haml-lang.com">haml</a> kind of syntax. To learn it, I’ve created a sample web-page in node.js and for each feature in Jade, I’ve modified the jade page and understand its behaviour by seeing the html source in the browser.</p> <p>One day after toying with Jade for quite some time, I’ve went to bed and it strikes. <em>“How nice it would be to have a “Try it yourself” kind of feature for learning jade ?”</em>&nbsp; and hence <a href="http://jade-visualizer.herokuapp.com/">Jade-Visualizer</a></p> <p><strong>How to use Jade-Visualizer ?</strong></p> <p>Jade-Visaulizer is a single-page app, with only three parts. </p> <blockquote> <p>1. The Jade Template – A textarea to play with the jade-template</p> <p><a href="http://lh3.ggpht.com/-v_4K4nC5X8g/T7akj2dl48I/AAAAAAAAAYA/9IwuGzv5CxA/s1600-h/image%25255B3%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-tX9_bKdkoCM/T7akk6bPFmI/AAAAAAAAAYI/jxhVxCnRcvk/image_thumb%25255B1%25255D.png?imgmax=800" width="352" height="133" /></a></p></blockquote> <blockquote> <p>2. Data – Want to mix some data with the jade template ? It is for you. Enter some hacky data in JSON format in it and start toying!</p> <p><a href="http://lh5.ggpht.com/-cpsUeVldirk/T7akmeaR3EI/AAAAAAAAAYQ/xnpFbbSatxg/s1600-h/image%25255B7%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: block; float: none; border-top-width: 0px; border-bottom-width: 0px; margin-left: auto; border-left-width: 0px; margin-right: auto; padding-top: 0px" title="image" border="0" alt="image" src="http://lh5.ggpht.com/-lq2NOBAmynI/T7aknqHcIxI/AAAAAAAAAYY/_7wiHbu2XPw/image_thumb%25255B3%25255D.png?imgmax=800" width="313" height="122" /></a></p> <p>3. Output – Excited about what would be the generated output ? This part will help you to feed your brain.</p> <p align="center"><a href="http://lh6.ggpht.com/-CkroM0OM1II/T7ako3S4kTI/AAAAAAAAAYc/aNGmF8Ce0Cg/s1600-h/image%25255B11%25255D.png"><img style="background-image: none; border-right-width: 0px; padding-left: 0px; padding-right: 0px; display: inline; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; padding-top: 0px" title="image" border="0" alt="image" src="http://lh4.ggpht.com/-FzPHwu-tPxc/T7akpxtOanI/AAAAAAAAAYo/lRg032qDWgA/image_thumb%25255B5%25255D.png?imgmax=800" width="342" height="96" /></a></p> <p align="center">Don’t forget to click the “Translate” button to view the html <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" /></p></blockquote> <p align="left"><strong>Behind the Scene</strong></p> <p align="left">Curious about what are all the things behind this app ? Here is the list</p> <ul> <li> <div align="left"><a href="http://nodejs.org">Node.js</a> - My new toy in programming</div> <li> <div align="left"><a href="http://socket.io/">Socket.Io</a></div> <li> <div align="left"><a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap</a></div> <li> <div align="left"><a href="http://codemirror.net/">CodeMirror</a> and <a href="http://google-code-prettify.googlecode.com/svn/trunk/README.html">Prettify</a></div> <li> <div align="left"><a href="https://github.com/tamizhvendan/jade-visualizer">Github</a></div> <li> <div align="left"><a href="http://www.heroku.com/">Heroku</a></div></li> <p><strong>Why Node.js ?</strong></p> <p>There are lot of fuss about Node.js in the industry. Will it scale ? Is it insanely fast ? JavaScript on server side ? Will it work out?. I am not going to answer for these questions and I am not a expert too! I believe a <a href="http://lmgtfy.com/?q=nodejs">simple google search</a> will help you much much better than me. Then why this section in this blog post ? Let me explain</p> <p>I would like to add an another flavour to Node.js by putting my words on <em>why you should learn Node.js </em>especially if you are from a .net background like me</p> <ul> <li><em>I’m using </em><a href="http://www.ubuntu.com"><em>Ubuntu</em></a><em> to play with node.js –</em> Node has helped me to come out from windows and inspired me to work with Linux for the first time in my life  <li><em>I’m using </em><a href="http://www.vim.org/"><em>Vim</em></a><em> to write node.js apps – </em>Awesome editor! I am regretting myself for not using this so far. Its my default editor even in windows now&nbsp; <li><em>I’m using </em><a href="https://github.com"><em>Github</em></a><em> as a version control</em> to store <a href="https://github.com/tamizhvendan/NodeJsKatas">my nodejs katas</a>  <li><em>I’ve full control over my apps in node.js – </em>Its helping me to learn some of the under the hood stuff which I never learnt before. <a href="https://github.com/tamizhvendan/jade-visualizer">Source code of Jade-Visualizer</a> is an excellent example for this. I am using my own module to serve the static files. Yes, I’m re-inventing the wheel. But I am learning, That’s good for myself!  <li><em>I’m a part of </em><a href="http://nodejs.org/community/"><em>vibrant community</em></a> – I’m having a sense of belonging feeling  <li><em>I’m getting better at javascript</em> – I love this tricky language and its really twisting my programming brain  <li><em>I’m getting exposed to various frameworks, tools, datastores, techniques, skills</em> every day which I like very much  <li>Last but not least, <em>its helping me to contribute back to the community</em></li> <p><u>Note:</u> Its just my personal views, I’m just sharing what are all benefits that I am reaping by virtue of Node.js.</p> <p><strong>Summary</strong></p> <p>I would like to conclude this blog post by dedicating the “jade-visualizer” to all the open-source contributors in the planet. Its you who inspired me! Hearty thanks to one and all <img style="border-bottom-style: none; border-left-style: none; border-top-style: none; border-right-style: none" class="wlEmoticon wlEmoticon-smile" alt="Smile" src="http://lh4.ggpht.com/-t_I-2AzWiW8/T7akq4S6BXI/AAAAAAAAAYw/msikTfLIqoY/wlEmoticon-smile%25255B2%25255D.png?imgmax=800" /></p>
 
 </li></li></li></li></li></li></li></ul></li></li></li></li></li></ul></div>
 ]]></content>
@@ -404,19 +404,188 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
         <h3>Task 1: Defining the webpage layout using HTML</h3>
         <p>The HTML is very straight forward. Entire webpage contents have been placed inside a div with the id “iGoogle”. Then each column (iGoogle uses three column layout) is defined by a div element with the id representing the corresponding columns. These columns act as a placeholder for Widgets. Each widget defined as a div element which contains two div elements inside it which represents the header and the body of the Widgets<br />
         </p>
-        {% gist 8cc8e2868203484754b1 %}
+        <div><script src='https://gist.github.com/8cc8e2868203484754b1.js'></script>
+<noscript><pre><code>&lt;div id=&quot;column1&quot;&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader PurpleWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 1&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 2&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 3&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;column2&quot;&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 4&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+&lt;/div&gt;
+
+&lt;div id=&quot;column3&quot;&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GreenWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 5&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+    &lt;div class=&quot;Widget&quot;&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetHeader GrayWidgetHeader&quot;&gt;
+            &lt;br /&gt;
+            Widget 6&lt;/div&gt;
+        &lt;br /&gt;
+        &lt;div class=&quot;WidgetBody&quot;&gt;
+            &lt;br /&gt;
+        &lt;/div&gt;
+        &lt;br /&gt;
+    &lt;/div&gt;
+    &lt;br /&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+
 
         <h3>Task 2: Style the webpage and widgets</h3>
         <p>Now we have the HTML Layout ready. Our next task would be applying style to the webpage and the widgets using CSS.</p>
-        {% gist e841e3643400836bd57f %}
+        <div><script src='https://gist.github.com/e841e3643400836bd57f.js'></script>
+<noscript><pre><code>/* Entire Page has been divided into 3Columns. Note: iGoogle Page has 3 columns */
+#column1, #column2, #column3
+{
+    display: inline-block;
+    float: left;
+    width: 33%;
+    height: auto;
+    text-align: center;
+    padding-bottom: 100px;
+}
+/* Css Classes for Entire Widget */
+.Widget
+{
+    margin: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    min-height: 200px;
+    border: 1px solid Black;
+}
+/* Css Classes for Widget Headers */
+.WidgetHeader
+{
+    height: 25px;
+    cursor: move;
+    text-align: left;
+    padding-left: 3px;
+    color: White;
+    font-weight: bold;
+}
+.GreenWidgetHeader
+{
+    background-color: Green;
+}
+.GrayWidgetHeader
+{
+    background-color: Gray;
+}
+.PurpleWidgetHeader
+{
+    background-color: Purple;
+}
+/* Css Classes for Widget Body */
+.WidgetBody
+{
+    min-height: 175px;
+    height: auto;
+    background: #F0F0F0;
+}
+/* Placeholder while dragging the widget using jQuery*/
+.ui-sortable-placeholder
+{
+    border: 1px dashed black;
+    visibility: visible !important;
+    height: 50px !important;
+}
+.ui-sortable-placeholder *
+{
+    visibility: hidden;
+}
+.footer
+{
+    clear: both;
+    display: block;
+    position: absolute;
+    color: Green;
+    bottom: 5px;
+    right: 5px;
+}</code></pre></noscript></div>
+
 
         <h3>Task 3:  Add the drag and drop functionality using jQuery</h3>
         <p>jQuery offers a rich set of functionality which can be implemented by less lines of coding. With jQuery you can “write less and do more”.  All you need to refer the jQuery API files in your javascript and make use of the functionality it provides. To implement the drag and drop functionality we need the following jQuery library files which can be downloaded from the locations mentioned in the “src” attribute</p>
-        {% gist afd522c53a67db5e497b %}
+        <div><script src='https://gist.github.com/afd522c53a67db5e497b.js'></script>
+<noscript><pre><code>&lt;script src=&quot;http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.core.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.widget.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.mouse.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;http://jqueryui.com/ui/jquery.ui.sortable.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</code></pre></noscript></div>
+
 
 	<p>Now we have the necessary jQuery libraries to implement the drag and drop functionality and all set for implementing the drag and drop support. Here is the code part which implements the drag and drop functionality.</p>
 
-        {% gist 20061eca688b51e73df8 %}
+        <div><script src='https://gist.github.com/20061eca688b51e73df8.js'></script>
+<noscript><pre><code>$(document).ready(function () {        
+    $(&quot;#column1,#column2,#column3&quot;).sortable({
+        connectWith: &quot;#column1,#column2,#column3&quot;,
+        handle: '.WidgetHeader', opacity: 0.6
+    }); 
+    
+    $(&quot;#column1,#column2,#column3&quot;).disableSelection();
+});</code></pre></noscript></div>
+
 
     <p>Yes!! That’s it!! Just three function calls and seven lines of coding!! Now you can drag and drop the widgets and play!!  </p>
 

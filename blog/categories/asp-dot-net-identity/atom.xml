@@ -4,7 +4,7 @@
   <title><![CDATA[Category: asp.net-identity | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/asp-dot-net-identity/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-01-12T17:25:33+05:30</updated>
+  <updated>2016-02-01T21:13:04+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -19,18 +19,18 @@
     <updated>2015-02-04T17:24:22+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 6 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 6 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="{% post_url 2015-01-18-step-5-advanced-search-dsl-using-fparsec %}">last blog post</a> we have added an interactive feature to search phones and in this blog post we are going to add authentication to our PhoneCat application using Owin Authentication Middleware and ASP.NET identity.</p>
+<p>In the <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">last blog post</a> we have added an interactive feature to search phones and in this blog post we are going to add authentication to our PhoneCat application using Owin Authentication Middleware and ASP.NET identity.</p>
 
 <p>In the first half of this blog post we are going to see how to implement a new user registration workflow </p>
 
-<p>{% img /images/fsharp_phonecat/step_6/registration_workflow.png %}</p>
+<p><img src="/images/fsharp_phonecat/step_6/registration_workflow.png"></p>
 
 <p>And in the second half, we are going to see how to do authentication using the registered login credentials</p>
 
-<p>{% img /images/fsharp_phonecat/step_6/login_workflow.png %}</p>
+<p><img src="/images/fsharp_phonecat/step_6/login_workflow.png"></p>
 
 <h3 id="owin-authentication-middleware-in-brief">Owin Authentication Middleware in brief</h3>
 
@@ -128,7 +128,7 @@
 </div>
 <p><em>Note: I’ve intentionally ignored the bootstrap css form styles here to keep the code snippet less noisy</em></p>
 
-<p>{% img /images/fsharp_phonecat/step_6/new_user_registration.png %}</p>
+<p><img src="/images/fsharp_phonecat/step_6/new_user_registration.png"></p>
 
 <p>It’s a typical razor view representing the registration screen. For the sake of simplicity I’ve ignored the retype password field. </p>
 
@@ -260,7 +260,7 @@
 </pre></div>
 </div>
 </div>
-<p>{% img /images/fsharp_phonecat/step_6/login.png %}</p>
+<p><img src="/images/fsharp_phonecat/step_6/login.png"></p>
 
 <p>The next step is the crux of this blog post. Challenging the incoming user login credentials against its corresponding registered one.</p>
 

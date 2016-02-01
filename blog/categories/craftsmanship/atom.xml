@@ -4,7 +4,7 @@
   <title><![CDATA[Category: craftsmanship | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/craftsmanship/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-01-12T17:25:33+05:30</updated>
+  <updated>2016-02-01T21:13:04+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,128 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Keep it Simple]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2016/02/01/keep-it-simple/"/>
+    <updated>2016-02-01T15:51:46+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2016/02/01/keep-it-simple</id>
+    <content type="html"><![CDATA[<p>Last week, I was working on a task which involves populating some PostgreSQL database tables from CSV files. Though this is a straight forward work, I’ve encountered an interesting approach while manipulating a CSV file to adhere some changes in the database schema. In this blog post, I will be sharing what it is and how it made me think better.</p>
+
+<p>Unlike my other blog posts, this post is more on the thought process behind my approach than the code.</p>
+
+<h3 id="the-story">The Story</h3>
+
+<p>The CSV file that we suppose to import to a database table has the following Structure with 1000 rows</p>
+
+<pre><code>code,value
+XAS,0.23
+SDR,3.21
+WFZ,1.87
+........
+........
+
+</code></pre>
+
+<p>The column name <code>code</code> and <code>value</code> are just for illustration.</p>
+
+<p>The Proposed schema change is introduce a new column called <code>year</code> with a fixed value <code>2015</code> for all the rows. So, the expected CSV file would like</p>
+
+<pre><code>year,code,value
+2015,XAS,0.23
+2015,SDR,3.21
+2015,WFZ,1.87
+........
+........
+</code></pre>
+
+<p>A Very Simple Task</p>
+
+<p>Now, How can we solve it?</p>
+
+<h3 id="approach-1---dont-try-this-at-your-officehome">Approach 1 - Don’t try this at your office/home</h3>
+
+<p>Let me start with an approach number one</p>
+
+<blockquote>
+  <p>Edit all the rows manually</p>
+</blockquote>
+
+<p>It is something that you never wanted to see/do. So, let me move on to the next approach without wasting any time here</p>
+
+<h3 id="approach-2---leverage-your-programming-skill">Approach 2 - Leverage your programming skill</h3>
+
+<blockquote>
+  <p>Pick your favorite programming language and whack the CSV file  </p>
+</blockquote>
+
+<p>I believe this would be the approach that came to your mind when you read the problem statement. A typical programmer’s instinct!</p>
+
+<p>So, you picked your programming language ‘X’, what would be the next steps</p>
+
+<ul>
+  <li>Open the IDE/Editor - <em>Wait for it to load!</em></li>
+  <li>Create a Project - <em>if required and wait for it also to load!</em></li>
+  <li>Start typing - <em>and your phone rings</em></li>
+  <li>Refer library documentation - <em>or Refer Stackoverflow</em></li>
+  <li>Compile - <em>and wait for it</em> - <em>Ignore this step and wait for a run-time error if your programming language is dynamic</em></li>
+  <li>Execute - <em>A bug -&gt; Go to Google -&gt; Stack Overflow -&gt; Change the code -&gt; Start again</em></li>
+  <li>You are done!</li>
+</ul>
+
+<p><em>I’ve exaggerated some things here. If you don’t agree with any steps, just ignore that step</em></p>
+
+<p>After 2 to 15 minutes (based on your ability &amp; the ceremony of your programming language) you have solved the problem.</p>
+
+<p>Is it really worth? Well, It depends on the context.</p>
+
+<p>If there are lot of CSV files which require the same change or also few more like this will about to come in the near future, then this effort really makes sense</p>
+
+<p>But, here it is only one file which requires the change. So, I feel it is a complex response to a simple problem</p>
+
+<h3 id="approach-3---use-a-tool">Approach 3 - Use a tool</h3>
+
+<blockquote>
+  <p>Use a shiny CSV management tool to make the changes</p>
+</blockquote>
+
+<p>It is slightly better approach than the previous one but it also has its own downsides</p>
+
+<ul>
+  <li>Googling to find the tool</li>
+  <li>Download it - <em>Your office firewall is blocking that site! / Registration on the tool site / Requires Java x.x version</em></li>
+  <li>Open the CSV file.</li>
+  <li>Refer the tool’s documentation</li>
+  <li>Get the job done</li>
+</ul>
+
+<p>You can also Microsoft Excel to achieve this. But again a heavy solution to solve a simple problem!</p>
+
+<p>There should be a simple approach! That’s what we are going to see next.</p>
+
+<h3 id="approach-4---find-and-replace">Approach 4 - Find And Replace</h3>
+
+<blockquote>
+  <p>Just use Find and Replace in an advanced editor</p>
+</blockquote>
+
+<p>This approach involves just three steps</p>
+
+<ul>
+  <li>Open the CSV file in an advanced text editor (notepad++, atom, sublime text, etc.,)</li>
+  <li>Select all the text and press <code>tab</code></li>
+  <li>Open <code>Find and Replace</code>. Find for <code>tab</code> and replace it with <code>2015,</code></li>
+</ul>
+
+<p>That’s it!</p>
+
+<h3 id="summary">Summary</h3>
+
+<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">The older I get, the more I realize the biggest problem to solve in tech is to get people to stop making things harder than they have to be.</p>&mdash; Chad Fowler (@chadfowler) <a href="https://twitter.com/chadfowler/status/646624348028190720">September 23, 2015</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[An interesting JSON Model Binding behaviour in ASP.NET MVC3]]></title>
@@ -38,7 +160,7 @@
         But if the array is empty it get bind to null!!
     </p> <p>
         In this blog post, we are going to get rid of this intriguing behaviour by writing a Custom JSON model binder.
-        Hope it would be useful and save you some hairs {% emoji smile %}
+        Hope it would be useful and save you some hairs <i class='emoji smile'></i>
 
         <h3>The Sample Application – “MyMobileStore”</h3>
     <p>
@@ -49,16 +171,16 @@
 
     <h3>Show me the code</h3>
     <p>Core classes</p>
-    <p>{% img center /images/JsonModelBinding/CoreClasses.png  %}</p>
+    <p><img class="center" src="/images/JsonModelBinding/CoreClasses.png" title="" ></p>
     <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
     <p>
-    <p>{% img center /images/JsonModelBinding/MobileController.png  %}</p>
+    <p><img class="center" src="/images/JsonModelBinding/MobileController.png" title="" ></p>
     <p>
         Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
         the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
     </p>
     <p>
-    <p>{% img center /images/JsonModelBinding/MobileFilter.png  %}</p>
+    <p><img class="center" src="/images/JsonModelBinding/MobileFilter.png" title="" ></p>
     </p> <p>
         The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
         One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
@@ -73,18 +195,18 @@
         will happily accepts them as a parameter and continue its work without any mishaps.
     </p>
 
-    <p>{% img center /images/JsonModelBinding/Problem.png  %}</p>
+    <p><img class="center" src="/images/JsonModelBinding/Problem.png" title="" ></p>
     <p>
         But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
         reference exception and breaks the functionality!!
     </p>
-    <p>{% img center /images/JsonModelBinding/BadWorld.png  %}</p>
-    <p>{% img center /images/JsonModelBinding/NullException.png  %}</p>
+    <p><img class="center" src="/images/JsonModelBinding/BadWorld.png" title="" ></p>
+    <p><img class="center" src="/images/JsonModelBinding/NullException.png" title="" ></p>
 
     <p>
         <em>
             (Now you might have understood why I added a tweak in the number of mobile types
-            {% emoji smile %})
+            <i class='emoji smile'></i>)
         </em>
     </p>
     <h3>Possible Solutions</h3>
@@ -105,7 +227,7 @@
 
     <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
     <p>
-        {% img center /images/JsonModelBinding/MobileFilterModelBinder.png  %}
+        <img class="center" src="/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
     </p>
 
     <p>
@@ -115,11 +237,11 @@
     </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
 
     <p>
-        {% img center /images/JsonModelBinding/Global.png  %}
+        <img class="center" src="/images/JsonModelBinding/Global.png" title="" >
     </p>
     <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
     <p>
-        {% img center /images/JsonModelBinding/NoMoreBadWorld.png  %}
+        <img class="center" src="/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
     </p> 
     <h3>Conclusion</h3> 
     <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
@@ -351,7 +473,7 @@
         <li><a href="http://www.catb.org/~esr/">Eric S Raymond</a></li>
     </ul>
     <p>One great thing about all these excellent folks is they share their knowledge, either through Books or through their blogs. We are very fortunate. Now it’s our turn to learn from their wisdom and move forward.</p>
-    {% blockquote Mark Twain %}The man who does not read good books has no advantage over the man who can't read them.{% endblockquote %}<div>I have found the following magnificent books in the quest</div>
+    <blockquote><p>The man who does not read good books has no advantage over the man who can't read them.</p><footer><strong>Mark Twain</strong></footer></blockquote><div>I have found the following magnificent books in the quest</div>
     <ul>
         <li>Pragmatic Programmer – Andrew Hunt, Dave Thomas</li>
         <ul>

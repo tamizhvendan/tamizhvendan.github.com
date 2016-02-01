@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-01-12T17:09:39+05:30</updated>
+  <updated>2016-02-01T21:13:04+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,138 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Keep it Simple]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2016/02/01/keep-it-simple/"/>
+    <updated>2016-02-01T15:51:46+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2016/02/01/keep-it-simple</id>
+    <content type="html"><![CDATA[<p>Last week, I was working on a task which involves populating some PostgreSQL database tables from CSV files. Though this is a straight forward work, I’ve encountered an interesting approach while manipulating a CSV file to adhere some changes in the database schema. In this blog post, I will be sharing what it is and how it made me think better.</p>
+
+<p>Unlike my other blog posts, this post is more on the thought process behind my approach than the code.</p>
+
+<h3 id="the-story">The Story</h3>
+
+<p>The CSV file that we suppose to import to a database table has the following Structure with 1000 rows</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">code,value
+</span><span class="line">XAS,0.23
+</span><span class="line">SDR,3.21
+</span><span class="line">WFZ,1.87
+</span><span class="line">........
+</span><span class="line">........
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The column name <code>code</code> and <code>value</code> are just for illustration.</p>
+
+<p>The Proposed schema change is introduce a new column called <code>year</code> with a fixed value <code>2015</code> for all the rows. So, the expected CSV file would like</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">year,code,value
+</span><span class="line">2015,XAS,0.23
+</span><span class="line">2015,SDR,3.21
+</span><span class="line">2015,WFZ,1.87
+</span><span class="line">........
+</span><span class="line">........</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>A Very Simple Task</p>
+
+<p>Now, How can we solve it?</p>
+
+<h3 id="approach-1---dont-try-this-at-your-officehome">Approach 1 - Don’t try this at your office/home</h3>
+
+<p>Let me start with an approach number one</p>
+
+<blockquote>
+  <p>Edit all the rows manually</p>
+</blockquote>
+
+<p>It is something that you never wanted to see/do. So, let me move on to the next approach without wasting any time here</p>
+
+<h3 id="approach-2---leverage-your-programming-skill">Approach 2 - Leverage your programming skill</h3>
+
+<blockquote>
+  <p>Pick your favorite programming language and whack the CSV file  </p>
+</blockquote>
+
+<p>I believe this would be the approach that came to your mind when you read the problem statement. A typical programmer’s instinct!</p>
+
+<p>So, you picked your programming language ‘X’, what would be the next steps</p>
+
+<ul>
+  <li>Open the IDE/Editor - <em>Wait for it to load!</em></li>
+  <li>Create a Project - <em>if required and wait for it also to load!</em></li>
+  <li>Start typing - <em>and your phone rings</em></li>
+  <li>Refer library documentation - <em>or Refer Stackoverflow</em></li>
+  <li>Compile - <em>and wait for it</em> - <em>Ignore this step and wait for a run-time error if your programming language is dynamic</em></li>
+  <li>Execute - <em>A bug -&gt; Go to Google -&gt; Stack Overflow -&gt; Change the code -&gt; Start again</em></li>
+  <li>You are done!</li>
+</ul>
+
+<p><em>I’ve exaggerated some things here. If you don’t agree with any steps, just ignore that step</em></p>
+
+<p>After 2 to 15 minutes (based on your ability &amp; the ceremony of your programming language) you have solved the problem.</p>
+
+<p>Is it really worth? Well, It depends on the context.</p>
+
+<p>If there are lot of CSV files which require the same change or also few more like this will about to come in the near future, then this effort really makes sense</p>
+
+<p>But, here it is only one file which requires the change. So, I feel it is a complex response to a simple problem</p>
+
+<h3 id="approach-3---use-a-tool">Approach 3 - Use a tool</h3>
+
+<blockquote>
+  <p>Use a shiny CSV management tool to make the changes</p>
+</blockquote>
+
+<p>It is slightly better approach than the previous one but it also has its own downsides</p>
+
+<ul>
+  <li>Googling to find the tool</li>
+  <li>Download it - <em>Your office firewall is blocking that site! / Registration on the tool site / Requires Java x.x version</em></li>
+  <li>Open the CSV file.</li>
+  <li>Refer the tool’s documentation</li>
+  <li>Get the job done</li>
+</ul>
+
+<p>You can also Microsoft Excel to achieve this. But again a heavy solution to solve a simple problem!</p>
+
+<p>There should be a simple approach! That’s what we are going to see next.</p>
+
+<h3 id="approach-4---find-and-replace">Approach 4 - Find And Replace</h3>
+
+<blockquote>
+  <p>Just use Find and Replace in an advanced editor</p>
+</blockquote>
+
+<p>This approach involves just three steps</p>
+
+<ul>
+  <li>Open the CSV file in an advanced text editor (notepad++, atom, sublime text, etc.,)</li>
+  <li>Select all the text and press <code>tab</code></li>
+  <li>Open <code>Find and Replace</code>. Find for <code>tab</code> and replace it with <code>2015,</code></li>
+</ul>
+
+<p>That’s it!</p>
+
+<h3 id="summary">Summary</h3>
+
+<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">The older I get, the more I realize the biggest problem to solve in tech is to get people to stop making things harder than they have to be.</p>&mdash; Chad Fowler (@chadfowler) <a href="https://twitter.com/chadfowler/status/646624348028190720">September 23, 2015</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Implementing API Gateway in F# using Rx and Suave]]></title>
@@ -7689,36 +7821,6 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
 <p><img class="center" src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800" /></p>
 
 <p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the <a href="http://blog.tamizhvendan.in/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">next-post</a> we will be wiring up the backend. Stay tuned !</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Web Application Development in Fsharp using ASP.NET MVC]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/"/>
-    <updated>2014-12-10T17:07:48+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc</id>
-    <content type="html"><![CDATA[<h3 id="introduction">Introduction</h3>
-
-<p>Fsharp is my new favorite language in recent times and I’ve been learning it for the last six months. I always believe the best way to learn a language / technology / framework is to create something using it and also learning from the mistakes while creating it. So, here is my attempt to create a sample web application in fsharp using ASP.NET MVC framework. In this series of blog posts I’m going to share my experience on creating “phone-cat” web application inspired from the <a href="https://github.com/angular/angular-phonecat">angular-phonecat</a>. </p>
-
-<p>As it is my maiden attempt to create a relatively large web application in fsharp, if you find something that can be improved, feel free to share <em>I’m willing to learn from you.</em></p>
-
-<h3 id="blog-series-links">Blog Series Links</h3>
-
-<ul>
-  <li><strong>Step 0</strong> - <a href="http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
-  <li><strong>Step 1</strong> - <a href="http://blog.tamizhvendan.in/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Creating Web Api endpoints for fsharp-phonecat using Web Api 2</a></li>
-  <li><strong>Step 2</strong> - <a href="http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Creating ASP.NET MVC Razor Views for fsharp-phonecat</a></li>
-  <li><strong>Step 3</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">PhoneCat Recommendation System using F# Agents, SignalR and Rx</a></li>
-  <li><strong>Step 4</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake/">Build Automation using Fake</a></li>
-  <li><strong>Step 5</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">Advanced Search DSL using FSParsec</a></li>
-  <li><strong>Step 6</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Authentication using Owin and Asp.Net Identity</a></li>
-  <li><strong>Step 7</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">Validation and Error handling using ROP</a></li>
-  <li><strong>Step 8</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/">Adding Shopping Cart</a></li>
-  <li><strong>Step 9</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout/">Adding Checkout</a></li>
-  <li><strong>Step 10</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/04/02/step-10-refactoring-composition-root/">Refactoring Composition Root</a></li>
-  <li><strong>Conclusion</strong> - <a href="http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways/">My Takeaways</a></li>
-</ul>
 ]]></content>
   </entry>
   

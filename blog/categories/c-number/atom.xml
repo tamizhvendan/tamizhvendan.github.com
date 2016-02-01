@@ -4,7 +4,7 @@
   <title><![CDATA[Category: c# | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/c-number/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-01-12T17:25:33+05:30</updated>
+  <updated>2016-02-01T21:13:04+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -167,11 +167,84 @@
 	</p>
 	<p>I am going to explain this “why” using a Weather Station example. To keep things simple, the Weather Station that we are going to see will keep track of only the temperature. Whenever the temperature changes, it simplify notifies its subscribers with the new temperature. Flash News is one of the subscribers which show the temperature in flash news. News Feed, another subscriber which adds the temperature information to the news feed. Fine, enough theory! It’s time to see the code.</p>
 	<p>Here is the implementation of Observer Pattern using Delegates alone. </p>
-	{% gist fb9f64cd49646ddf8eba PubSub.cs %}
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    class WeatherStation
+    {
+        private int _temperature;
+        public TemperatureReporter Reporter { get; set; }
+
+        public int Temperature
+        {
+            get { return _temperature; }
+            set
+            {
+                if (Reporter != null)
+                {
+                    Reporter(value);
+                }
+                _tempearture = value;
+            }
+        }
+    }
+
+    class NewsFeed
+    {
+        WeatherStation weatherStation;
+
+        public void AddTemperatureInfoToFeed(int temperature)
+        {
+            Console.WriteLine(&quot;News Feed: New temperature &quot; + temperature + &quot; added to feed.&quot;);
+        }
+
+        public NewsFeed(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+            weatherStation.Reporter += AddTemperatureInfoToFeed;
+        }
+    }
+
+    class FlashNews
+    {
+        WeatherStation weatherStation;
+
+        public void ShowTemperatureInfoInFlashNews(int temperature)
+        {
+            Console.WriteLine(&quot;Flash News: New temperature is &quot; + temperature + &quot;.&quot;);
+        }
+
+        public FlashNews(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+            weatherStation.Reporter += ShowTemperatureInfoInFlashNews;
+        }
+    }
+}</code></pre></noscript></div>
+
 
 	<h4>The Main Program</h4>
 
-	{% gist fb9f64cd49646ddf8eba Program.cs %}
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=Program.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    public delegate void TemperatureReporter(int tempearture);
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Observer Pattern Using Delegates
+            WeatherStation weatherStation = new WeatherStation();
+            FlashNews flashNews = new FlashNews(weatherStation);
+            NewsFeed newsFeed = new NewsFeed(weatherStation);
+            weatherStation.Temperature = 30;
+            weatherStation.Temperature = 15;
+            weatherStation.Temperature = 45;
+        }
+    }
+}</code></pre></noscript></div>
+
 	<h4>The output</h4>
 	<div style="clear: both; text-align: center;">
 		<img src="http://1.bp.blogspot.com/-LjDx8rPsr50/Th0bSdtTyHI/AAAAAAAAAHk/dMBuF4GLgD0/s1600/delegates-output.PNG" /></div>
@@ -184,15 +257,124 @@
 		<li>A subscriber can broadcast to other subscribers by invoking the delegate</li>
 	</ul>
 	Clearly all the above 3 drawbacks violates the Observer Pattern.Here is our evil subscriber code implementation. 
-{% gist fb9f64cd49646ddf8eba EvilSubscriber.cs %}
+<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{
+    class EvilSubscriber
+    {
+        WeatherStation weatherStation;
+
+        public void EvilMessage(int temperature)
+        {
+            Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
+        }
+
+        public EvilSubscriber(WeatherStation weatherStation)
+        {
+            this.weatherStation = weatherStation;
+
+            // Broadcast to all the subscriber
+            weatherStation.Reporter(60);
+
+            // Reassign the subscriber            
+            weatherStation.Reporter = EvilMessage;
+
+            // Replace all the subscribers            
+            weatherStation.Reporter = null;
+        }
+    }
+}</code></pre></noscript></div>
+
 
 	<p>Hope now you understand the need of a better implementation of observer pattern. Here comes the salvage. Event! Use event along with delegates. With event in place, compiler will not allow the evil subscriber to get compiled. </p>
 	<h4>Robust implementation of Weather Station using events</h4>
 
-	{% gist fb9f64cd49646ddf8eba PubSub2.cs %}
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub2.cs'></script>
+<noscript><pre><code>namespace DelegatesAndEvents
+{ 
+    class WeatherStation2 
+    { 
+        private int _tempearture; 
+        
+        public event TemperatureReporter Reporter; 
+        
+        public int Temperature 
+        { 
+            get 
+            { 
+                return _tempearture; 
+            } 
+            set 
+            { 
+                if (Reporter != null) 
+                { 
+                    Reporter(value); 
+                } 
+                _tempearture = value; 
+            } 
+        }
+    } 
+    
+    class NewsFeed2 
+    { 
+        WeatherStation2 weatherStation; 
+        
+        public void AddTemperatureInfoToFeed(int temperature) 
+        { 
+            Console.WriteLine(&quot;News Feed2: New temperature &quot; + temperature + &quot; added to feed.&quot;); 
+        } 
+        
+        public NewsFeed2(WeatherStation2 weatherStation) 
+        { 
+            this.weatherStation = weatherStation; 
+            weatherStation.Reporter += AddTemperatureInfoToFeed; 
+        } 
+    } 
+    
+    class FlashNews2 
+    { 
+        
+        WeatherStation2 weatherStation; 
+        
+        public void ShowTemperatureInfoInFlashNews(int temperature) 
+        { 
+            Console.WriteLine(&quot;Flash News2: New temperature is &quot; + temperature + &quot;.&quot;); 
+        } 
+        
+        public FlashNews2(WeatherStation2 weatherStation) 
+        { 
+            this.weatherStation = weatherStation; weatherStation.Reporter += ShowTemperatureInfoInFlashNews; 
+        } 
+    } 
+}    			</code></pre></noscript></div>
+
 
 	<p>The unfortunate evil subscriber no longer compiles with events!</p>
-	{% gist fb9f64cd49646ddf8eba EvilSubscriber2.cs %}
+	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber2.cs'></script>
+<noscript><pre><code>class EvilSubscriber2
+{
+    WeatherStation2 weatherStation;
+
+    public void EvilMessage(int temperature)
+    {
+        Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
+    }
+
+    public EvilSubscriber2(WeatherStation2 weatherStation)
+    {
+        this.weatherStation = weatherStation;
+
+        // Broadcast to all the subscriber         
+        weatherStation.Reporter(60); // Compiler Error                
+
+        // Reassign the subscriber                
+        weatherStation.Reporter = EvilMessage; // Compiler Error  
+
+        // Replace all the subscribers                 
+        weatherStation.Reporter = null; // Compiler Error    
+    }
+}</code></pre></noscript></div>
+
 	<br />
 	You&nbsp;can download the source code from <a href="http://www.box.net/shared/kunno1y9noj26qodstnz">here</a>
 </div>
@@ -253,7 +435,12 @@
             <li>This interface IWeapon will have a public method called "Attack" which defines a contract so that all the Weapon we are going to create should implement this IWeapon interface and provide the implementation code for the Attack() method</li>
         </ol>
 
-        {% gist 062dc9ce4593c16aaf82 IWeapon.cs %}
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=IWeapon.cs'></script>
+<noscript><pre><code>public interface IWeapon 
+{ 
+    void Attack(); 
+}</code></pre></noscript></div>
+
 
 
         <h4>Step3: Create the concrete Weapon Classes&nbsp;</h4>
@@ -264,11 +451,35 @@
         </ol>
 
 
-        {% gist 062dc9ce4593c16aaf82 Sword.cs %}
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Sword.cs'></script>
+<noscript><pre><code>public class Sword : IWeapon    
+{       
+    public void Attack() 
+    {            
+        System.Windows.Forms.MessageBox.Show(&quot;Sword!!&quot;);        
+    }    
+}</code></pre></noscript></div>
 
-        {% gist 062dc9ce4593c16aaf82 Gun.cs %}
 
-        {% gist 062dc9ce4593c16aaf82 Bomb.cs %}
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Gun.cs'></script>
+<noscript><pre><code>public class Gun : IWeapon    
+{       
+    public void Attack() 
+    {            
+        System.Windows.Forms.MessageBox.Show(&quot;Gun!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
+
+        <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=Bomb.cs'></script>
+<noscript><pre><code>public class Bomb : IWeapon    
+{       
+    public void Attack() 
+    {
+        System.Windows.Forms.MessageBox.Show(&quot;Bomb!!&quot;);        
+    }    
+}</code></pre></noscript></div>
+
 
         <p>The Attack() method will show a message box with a text saying the weapon name being used.</p>
 
@@ -277,16 +488,39 @@
         <ol>
             <li>Add a private instance variable of type IWeapon in the MainForm class and initialize with the sword class. 
                 This will hold the reference of current weapon being used Note: Sword is the default weapon.
-                {% gist 062dc9ce4593c16aaf82 MainForm.cs %}
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=MainForm.cs'></script>
+<noscript><pre><code>public partial class MainForm : Form
+{
+	private IWeapon weapon = new Sword();	
+}</code></pre></noscript></div>
+
             </li>
             <li>Now we are going to add event handlers for the weapons radio buttons. 
                 They will change the reference stored in the instance variable "weapon" to the respective Weapons class. 
                 Add the checked change event for all the radio button and their event handlers will look like as follows.
-                {% gist 062dc9ce4593c16aaf82 ChangeWeaponHandler.cs %}
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=ChangeWeaponHandler.cs'></script>
+<noscript><pre><code>private void rboSword_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Sword();
+}
+private void rboGun_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Gun();
+}
+private void rboBomb_CheckedChanged(object sender, EventArgs e)
+{
+	weapon = new Bomb();
+}</code></pre></noscript></div>
+
             </li>
             <li>Add the Click event handler for the "Attack" button. 
                 This event handler will simply call the Attack() method of the instance variable "weapon"
-                {% gist 062dc9ce4593c16aaf82 AttackHandler.cs %}
+                <div><script src='https://gist.github.com/062dc9ce4593c16aaf82.js?file=AttackHandler.cs'></script>
+<noscript><pre><code>private void btnAttack_Click(object sender, EventArgs e)
+{
+	weapon.Attack();
+}</code></pre></noscript></div>
+
             </li>
         </ol>
 

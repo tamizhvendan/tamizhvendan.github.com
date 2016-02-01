@@ -5,11 +5,11 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>Unit Testing with Sessions in ASP.NET MVC3 - P3 Programmer</title>
+	<title>Keep it Simple - P3 Programmer</title>
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Unit Testing With Sessions in ASP.NET MVC3 Introduction While talking to my friend regarding his project, he told me about how he is doing unit &hellip;">
+	<meta name="description" content="Keep It Simple Last week, I was working on a task which involves populating some PostgreSQL database tables from CSV files. Though this is a &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +19,7 @@
 
 	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
 	
-	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2016/02/01/keep-it-simple/">
   <link rel="dns-prefetch" href="//fonts.googleapis.com">
 	<link href="/favicon.png" rel="shortcut icon">
   <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
@@ -115,78 +115,131 @@
 			
 			<div class="mid-col-container">
 				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-	<h1 class="title" itemprop="name">Unit Testing With Sessions in ASP.NET MVC3</h1>
-	<div class="entry-content" itemprop="articleBody"><div class='post'>
-    <h3>Introduction</h3>
-        
-        <p>While talking to my friend regarding his project, he told me about how he is doing unit testing which involves sessions in ASP.NET MVC3. 
-            His team is actually using a “HttpSimulator” which simulates the web request and then the do unit test by verifying the session by interacting 
-            with the simulator. When digging further I have come to know that this way of unit testing session objects are influenced 
-            from the “ASP.NET Webforms”. It reminds me the talk of <a href="http://www.infoq.com/presentations/Functional-Thinking">Neil Ford on 
-                Function Thinking</a>. In that video he talks about an analogy called “Axe and Chain Saw” to explain our way of thinking as
-        </p>
-        <blockquote>When we give a chain saw to people who were cutting trees by axe, they would tend to use chain saw in the same way as the use Axe. 
-            Which is obviously inefficient. So we should understand at the capabilities of the tool in our hand before we using it</blockquote>
-       
-        <p>ASP.NET MVC3 is far better than Web Forms when it comes to unit testing. We don’t need to use a simulator to test against our sessions. 
-            There is a better way to do this MVC3 and in this blog post we are going to explore it.<p/>
-       
-        <h4>Time for Code</h4>       
-        <p>Shopping Cart is the first thing that strikes our mind when we want to quote an example for using Http session. 
-        So, I am going to show an app called “MyShop” a mini shopping site through which I am going to explain the concepts involved. 
-        The application flow would be as follows</p>
-        
-            <img class="center" src="/images/UnitTesting_With_Session/Cart.png">
-            <img class="center" src="/images/UnitTesting_With_Session/Cart2.png">       
-        
+	<h1 class="title" itemprop="name">Keep It Simple</h1>
+	<div class="entry-content" itemprop="articleBody"><p>Last week, I was working on a task which involves populating some PostgreSQL database tables from CSV files. Though this is a straight forward work, I’ve encountered an interesting approach while manipulating a CSV file to adhere some changes in the database schema. In this blog post, I will be sharing what it is and how it made me think better.</p>
 
-        <h4>Models</h4>
-        
-        <p>The models are simple, straight forward and self explanatory.</p>
-    <img class="center" src="/images/UnitTesting_With_Session/model.png">  
-    <img class="center" src="/images/UnitTesting_With_Session/CartCsharp.png">    
-        <p>I’ve tried my level best to keep the model as simple as possible. 
-        So, Cart in MyShop will have only two public methods. One to add a product to the Cart’s Line and another one to retrieve all the 
-        products inside the Cart’s line.</p>
-        
-        <h4>The CartController Version 1.0</h4>
-        <img class="center" src="/images/UnitTesting_With_Session/CartController.png"> 
-        <p>In this CartController version 1.0 we have two public methods Index and AddToCart which are dependent on HttpSession object. 
-            This dependency inside the methods is actually preventing us from unit testing the CartController in simple way and we have no 
-            choice other than implementing a “Http Simulator” to unit test these two methods. As I said before there is better to do is! Here we go!!</p>
-        
-        <h4>The CartController Version 2.0</h4>
-        <img class="center" src="/images/UnitTesting_With_Session/CartController2.png"> 
-    <p>No more Sessions!!.. Yeah.. We have got rid of the dependency on the session object by adding a new parameter called cart. Now you can use easily unit test the CartController as follows</p>
-        <img class="center" src="/images/UnitTesting_With_Session/UnitTest.png"> 
-        <p>Okay we made it easy for unit testing by moving the dependency out of the method and introduced the cart as the parameter. But how does my MVC3 framework will know the cart parameter should come from session object ?… Good Catch!! and here comes the magic called custom ModelBinder</p>
-       
-        <h4>ModelBinder – A brief background</h4>
-        <p>Model binding is an exciting feature in MVC3 framework which automatically creates the C# objects directly from Http request and 
-            pass it to the Action methods in controller as parameter values. It uses a default model binder which looks at the form values, 
-            query string values that are submitted with the Http Request and create the model object.</p>
-        <h4>CartModelBinder</h4>
-        
-        <p>In our case, we need to have a object of Cart which is populated from the Session object and not from the HttpRequest. 
-            The default model binder used by MVC3 has no idea about session object. So, Its our responsibility to tell to the MVC3 framework
-        </p>
-        
-        <p>“<em>Hey! If there is any parameter of type Cart in controller action method, then use my own custom model binder called CartModelBinder to create the object</em>”</p>
-        <p>There are two steps to do the above said operation</p>
-        <p>1. Creating the custom model binder by inheriting the IModelBinder interface</p>
-        <img class="center" src="/images/UnitTesting_With_Session/CartModelBinder.png"> 
-        <p>2. Registering our custom model binder in the Global.asax.cs file</p>
-        <img class="center" src="/images/UnitTesting_With_Session/AppStart.png"> 
-        <p>
-        That’s all.. MVC3 takes care of rest</p>
-        
-        <h4>Summary</h4>
-        <p>In this blog post we have explored how we can get rid of “Http Simulator” to unit test the controllers which involves Session objects using 
-            custom model binder. You can download the working example of “MyShop” showcased in this blog post 
-            from <a href="http://www.box.com/s/b9lf2heukyivh68921jj">here</a>. 
-            Refer <a href="/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
-            unit testing with the custom model binder itself.</p>
-</div>
+<p>Unlike my other blog posts, this post is more on the thought process behind my approach than the code.</p>
+
+<h3 id="the-story">The Story</h3>
+
+<p>The CSV file that we suppose to import to a database table has the following Structure with 1000 rows</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">code,value
+</span><span class="line">XAS,0.23
+</span><span class="line">SDR,3.21
+</span><span class="line">WFZ,1.87
+</span><span class="line">........
+</span><span class="line">........
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The column name <code>code</code> and <code>value</code> are just for illustration.</p>
+
+<p>The Proposed schema change is introduce a new column called <code>year</code> with a fixed value <code>2015</code> for all the rows. So, the expected CSV file would like</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">year,code,value
+</span><span class="line">2015,XAS,0.23
+</span><span class="line">2015,SDR,3.21
+</span><span class="line">2015,WFZ,1.87
+</span><span class="line">........
+</span><span class="line">........</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>A Very Simple Task</p>
+
+<p>Now, How can we solve it?</p>
+
+<h3 id="approach-1---dont-try-this-at-your-officehome">Approach 1 - Don’t try this at your office/home</h3>
+
+<p>Let me start with an approach number one</p>
+
+<blockquote>
+  <p>Edit all the rows manually</p>
+</blockquote>
+
+<p>It is something that you never wanted to see/do. So, let me move on to the next approach without wasting any time here</p>
+
+<h3 id="approach-2---leverage-your-programming-skill">Approach 2 - Leverage your programming skill</h3>
+
+<blockquote>
+  <p>Pick your favorite programming language and whack the CSV file  </p>
+</blockquote>
+
+<p>I believe this would be the approach that came to your mind when you read the problem statement. A typical programmer’s instinct!</p>
+
+<p>So, you picked your programming language ‘X’, what would be the next steps</p>
+
+<ul>
+  <li>Open the IDE/Editor - <em>Wait for it to load!</em></li>
+  <li>Create a Project - <em>if required and wait for it also to load!</em></li>
+  <li>Start typing - <em>and your phone rings</em></li>
+  <li>Refer library documentation - <em>or Refer Stackoverflow</em></li>
+  <li>Compile - <em>and wait for it</em> - <em>Ignore this step and wait for a run-time error if your programming language is dynamic</em></li>
+  <li>Execute - <em>A bug -&gt; Go to Google -&gt; Stack Overflow -&gt; Change the code -&gt; Start again</em></li>
+  <li>You are done!</li>
+</ul>
+
+<p><em>I’ve exaggerated some things here. If you don’t agree with any steps, just ignore that step</em></p>
+
+<p>After 2 to 15 minutes (based on your ability &amp; the ceremony of your programming language) you have solved the problem.</p>
+
+<p>Is it really worth? Well, It depends on the context.</p>
+
+<p>If there are lot of CSV files which require the same change or also few more like this will about to come in the near future, then this effort really makes sense</p>
+
+<p>But, here it is only one file which requires the change. So, I feel it is a complex response to a simple problem</p>
+
+<h3 id="approach-3---use-a-tool">Approach 3 - Use a tool</h3>
+
+<blockquote>
+  <p>Use a shiny CSV management tool to make the changes</p>
+</blockquote>
+
+<p>It is slightly better approach than the previous one but it also has its own downsides</p>
+
+<ul>
+  <li>Googling to find the tool</li>
+  <li>Download it - <em>Your office firewall is blocking that site! / Registration on the tool site / Requires Java x.x version</em></li>
+  <li>Open the CSV file.</li>
+  <li>Refer the tool’s documentation</li>
+  <li>Get the job done</li>
+</ul>
+
+<p>You can also Microsoft Excel to achieve this. But again a heavy solution to solve a simple problem!</p>
+
+<p>There should be a simple approach! That’s what we are going to see next.</p>
+
+<h3 id="approach-4---find-and-replace">Approach 4 - Find And Replace</h3>
+
+<blockquote>
+  <p>Just use Find and Replace in an advanced editor</p>
+</blockquote>
+
+<p>This approach involves just three steps</p>
+
+<ul>
+  <li>Open the CSV file in an advanced text editor (notepad++, atom, sublime text, etc.,)</li>
+  <li>Select all the text and press <code>tab</code></li>
+  <li>Open <code>Find and Replace</code>. Find for <code>tab</code> and replace it with <code>2015,</code></li>
+</ul>
+
+<p>That’s it!</p>
+
+<h3 id="summary">Summary</h3>
+
+<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">The older I get, the more I realize the biggest problem to solve in tech is to get people to stop making things harder than they have to be.</p>&mdash; Chad Fowler (@chadfowler) <a href="https://twitter.com/chadfowler/status/646624348028190720">September 23, 2015</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 </div>
 
 </article>
@@ -229,8 +282,8 @@ Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Sha
       
         
         // var disqus_developer = 1;
-        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/';
-        var disqus_url = 'http://blog.tamizhvendan.in/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/';
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2016/02/01/keep-it-simple/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2016/02/01/keep-it-simple/';
         var disqus_script = 'embed.js';
       
     (function () {
