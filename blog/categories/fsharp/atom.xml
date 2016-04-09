@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fsharp | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-02-01T21:13:04+05:30</updated>
+  <updated>2016-04-09T15:02:37+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -651,7 +651,7 @@
 
 <p>The first step is getting the sample response for these APIs and save them in separate JSON files. In this example, I’ve created these using my GitHub username and added to the project as below.</p>
 
-<p><img class="center" src="/images/suave_mock_api/project.png"></p>
+<p>{% img center /images/suave_mock_api/project.png %}</p>
 
 <p>After adding, change the “Copy to Output Directory” property of the both the files to “Copy always”</p>
 
@@ -689,9 +689,9 @@
 
 <h2 id="mock-apis-in-action">Mock APIs in action</h2>
 
-<p><img class="border center" src="/images/suave_mock_api/user_api.png"></p>
+<p>{% img border center /images/suave_mock_api/user_api.png %}</p>
 
-<p><img class="border center" src="/images/suave_mock_api/repos_api.png"></p>
+<p>{% img border center /images/suave_mock_api/repos_api.png %}</p>
 
 <h2 id="summary">Summary</h2>
 
@@ -704,7 +704,7 @@
     <link href="http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/"/>
     <updated>2015-07-15T12:04:12+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token</id>
-    <content type="html"><![CDATA[<p>In the <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT).</p>
+    <content type="html"><![CDATA[<p>In the <a href="{% post_url 2015-06-11-building-rest-api-in-fsharp-using-suave%}">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT).</p>
 
 <p>This blog post is based on <a href="http://bitoftech.net/">Taiseer’s</a> blog post on <a href="http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/">JSON Web Token in ASP.NET Web API 2 using Owin</a> and I will be covering how to implement the same in <a href="http://suave.io">Suave</a>. If you are interested in the theoretical background of JWT, kindly read his blog post before reading this.</p>
 
@@ -740,7 +740,7 @@
 
 <p>Then add reference the .NET framework library <strong>System.IdentityModel</strong> in all the four projects from GAC and then add a reference to the <strong>SuaveJwt</strong> project library in all the other three projects.</p>
 
-<p><img class="center" src="/images/suave_jwt/project_structure.png"></p>
+<p>{% img center /images/suave_jwt/project_structure.png %}</p>
 
 <h2 id="new-audience-registration">New Audience Registration</h2>
 
@@ -909,7 +909,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Now we have everything to create a new audience. So, let’s run the <strong>SuaveJwt.AuthServerHost</strong> application and verify</p>
 
-<p><img class="center" src="/images/suave_jwt/audience_create.png"></p>
+<p>{% img center /images/suave_jwt/audience_create.png %}</p>
 
 <p>Keep a note of this <em>clientId</em> and <em>base64Secret</em> as we will be using them while defining the resource server (“Audience1” in this case).</p>
 
@@ -919,7 +919,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s begin by defining the business logic to create an access token.</p>
 
-<p><img class="center" src="/images/suave_jwt/createToken.png"></p>
+<p>{% img center /images/suave_jwt/createToken.png %}</p>
 
 <p>Open <em>JwtToken.fs</em> and add the following types</p>
 
@@ -1117,7 +1117,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s run the <strong>SuaveJwt.AuthServerHost</strong> and verify the token</p>
 
-<p><img class="center" src="/images/suave_jwt/audience_admin_token.png"></p>
+<p>{% img center /images/suave_jwt/audience_admin_token.png %}</p>
 
 <h2 id="securing-the-resources">Securing the resources</h2>
 
@@ -1222,13 +1222,13 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Let’s see it in action</p>
 
-<p><img class="center" src="/images/suave_jwt/audience_sample1_success.png"></p>
+<p>{% img center /images/suave_jwt/audience_sample1_success.png %}</p>
 
 <p>Hurray! We have made it. “/audience1/sample1” is a secured API now!</p>
 
 <p>What will happen if we mess with the access token? Well, we will get an HTTP error. Let’s change the character <code>Q</code> in the access token from upper case to lower case and here is the result of it.</p>
 
-<p><img class="center" src="/images/suave_jwt/audience_sample1_error.png"></p>
+<p>{% img center /images/suave_jwt/audience_sample1_error.png %}</p>
 
 <p>Cool, Isn’t it?</p>
 
@@ -1301,7 +1301,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>The <code>jwtAuthroize</code> function in action</p>
 
-<p><img class="center" src="/images/suave_jwt/audience1_sample2_error.png"></p>
+<p>{% img center /images/suave_jwt/audience1_sample2_error.png %}</p>
 
 <p><em>Note: I’ve generated a new access token here to exercise this use case.</em></p>
 
@@ -1366,7 +1366,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below.</p>
 
-<p><img class="center" src="/images/sauve_rest_api/proj_structure.png"></p>
+<p>{% img center /images/sauve_rest_api/proj_structure.png %}</p>
 
 <p>After creating, install the following nuget packages</p>
 
@@ -1400,7 +1400,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </div>
 <p>The is the simplest Suave application that greets all visitors with the string “Hello, Suave!”. The <code>startWebServer</code> is a blocking function that takes a configuration (port number, ssl, etc.,) and starts a http web server in the port 8083 upon calling.</p>
 
-<p><img class="center border" src="/images/sauve_rest_api/hello_suave.png"></p>
+<p>{% img center border /images/sauve_rest_api/hello_suave.png %}</p>
 
 <p>The Rest Api that we are going to design here is a <code>WebPart</code> which will be replacing this <code>OK</code> webpart.</p>
 
@@ -1529,7 +1529,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>That’s it! Now we have the HTTP GET Request up and running</p>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_get.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_get.png %}</p>
 
 <p>Since we are having no people in our in-memory dictionary, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
 
@@ -1620,7 +1620,7 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p>The HTTP POST function in action</p>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_post.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_post.png %}</p>
 
 <h2 id="http-put">HTTP PUT</h2>
 
@@ -1704,11 +1704,11 @@ To make it independent of the host, we have externalized the hosting functionali
 
 <p><strong>Updating an existing resource</strong></p>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_put.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_put.png %}</p>
 
 <p><strong>Updating a non-existing resource</strong></p>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_put_error.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_put_error.png %}</p>
 
 <h2 id="http-delete">HTTP DELETE</h2>
 
@@ -1793,7 +1793,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </pre></div>
 </div>
 </div>
-<p><img class="center border" src="/images/sauve_rest_api/http_delete.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_delete.png %}</p>
 
 <h2 id="http-get--http-put-by-id">HTTP GET &amp; HTTP PUT by id</h2>
 
@@ -1864,8 +1864,8 @@ To make it independent of the host, we have externalized the hosting functionali
 </div>
 </div>
 
-<p><img class="center border" src="/images/sauve_rest_api/http_get_id.png"><br />
-<img class="center border" src="/images/sauve_rest_api/http_put_id.png"></p>
+<p>{% img center border /images/sauve_rest_api/http_get_id.png %}<br />
+{% img center border /images/sauve_rest_api/http_put_id.png %}</p>
 
 <h2 id="http-head">HTTP HEAD</h2>
 
@@ -1927,7 +1927,7 @@ To make it independent of the host, we have externalized the hosting functionali
 </pre></div>
 </div>
 </div>
-<p><img class="center border" src="/images/sauve_rest_api/head.png"></p>
+<p>{% img center border /images/sauve_rest_api/head.png %}</p>
 
 <p>That’s all.. We have successfully implemented a REST API using Suave</p>
 
@@ -1967,13 +1967,13 @@ To make it independent of the host, we have externalized the hosting functionali
 </div>
 </div>
 
-<p><img class="center border" src="/images/sauve_rest_api/get_album_id.png"></p>
+<p>{% img center border /images/sauve_rest_api/get_album_id.png %}</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
 <p>In the amazing presentation on <a href="https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin">Functional Programming Design Patterns</a>, Scott Wlaschin had this slide</p>
 
-<p><img class="center border" src="/images/sauve_rest_api/fp_design_patterns_slide.png"></p>
+<p>{% img center border /images/sauve_rest_api/fp_design_patterns_slide.png %}</p>
 
 <p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this.</p>
 
@@ -1994,7 +1994,7 @@ To make it independent of the host, we have externalized the hosting functionali
     <id>http://blog.tamizhvendan.in/blog/2015/05/09/grouping-data-into-buckets-using-fsharp</id>
     <content type="html"><![CDATA[<p>Last week I came across an interesting data grouping problem, which groups the data into different buckets based on the given filters as shown in the image below</p>
 
-<p><img class="center" src="/images/fs_data_grouping/bucket_function.png"></p>
+<p>{% img center /images/fs_data_grouping/bucket_function.png %}</p>
 
 <p>In this blog post I am going to share how can we solve this problem very expressively using fsharp.</p>
 

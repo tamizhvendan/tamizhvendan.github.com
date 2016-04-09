@@ -4,7 +4,7 @@
   <title><![CDATA[Category: asp.net mvc | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/asp-dot-net-mvc/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-02-01T21:13:04+05:30</updated>
+  <updated>2016-04-09T15:02:37+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -19,10 +19,10 @@
     <updated>2015-03-28T13:07:20+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/03/28/step-9-adding-checkout</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 9 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 9 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="/blog/2015/03/20/step-8-adding-shopping-cart/">last blog post</a> we have added the shopping cart feature to our phonecat application and in this blog post we are going to implement the checkout feature.</p>
+<p>In the <a href="{% post_url 2015-03-20-step-8-adding-shopping-cart%}">last blog post</a> we have added the shopping cart feature to our phonecat application and in this blog post we are going to implement the checkout feature.</p>
 
 <p>Implementing the checkout feature involves two steps.<br />
   1. Adding a View Cart Page<br />
@@ -30,7 +30,7 @@
 
 <h3 id="adding-a-view-cart-page">Adding a View Cart Page</h3>
 
-<p><img class="border" src="/images/fsharp_phonecat/step_9/view-cart.png"></p>
+<p>{% img border /images/fsharp_phonecat/step_9/view-cart.png %}</p>
 
 <p>As we have done in the previous posts, let’s begin by extending our shopping cart domain. The first step is to add a function to retrieve the items in the shopping cart. </p>
 
@@ -142,7 +142,7 @@
 
 <p>The <code>OrderRequest</code> type represents the order being placed by the user and the <code>OrderConfirmed</code> type represents the successful order creation.</p>
 
-<p>To Keep things simple, we are just going to see the order confirmation and we are intentionally leaving out error handling and validation. We can easily <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">add them as we did</a>  it in the user registration step and I leave it you as an exercise.</p>
+<p>To Keep things simple, we are just going to see the order confirmation and we are intentionally leaving out error handling and validation. We can easily <a href="{% post_url 2015-03-02-step-7-validation-and-error-handling-using-rop %}">add them as we did</a>  it in the user registration step and I leave it you as an exercise.</p>
 
 <p>The next step is storing the incoming order. </p>
 
@@ -183,7 +183,7 @@
 
 <p>The checkout method is straightforward. We get the <code>UserId</code> from the <code>User.Identity</code> property and place the order using it. Upon successful order confirmation, we are clearing the shopping cart and rendering the <code>Checkout</code> view.</p>
 
-<p><img class="border" src="/images/fsharp_phonecat/step_9/order-confirmation.png"></p>
+<p>{% img border /images/fsharp_phonecat/step_9/order-confirmation.png %}</p>
 
 <p>The important thing to notice here the <code>Authorize</code> attribute. Just like any other e-commerce portal, we are not allowing anonymous check out here. The presence of <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.authorizeattribute%28v=vs.118%29.aspx">this authorize attribute</a> ensures that only logged in users are checking out and in case if they are not logged in it would redirect the user to the login page.</p>
 
@@ -225,10 +225,10 @@
     <updated>2015-01-02T05:44:52+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 3 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 3 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the last two steps we have seen how to create a <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">web apis</a> and <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
+<p>In the last two steps we have seen how to create a <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">web apis</a> and <a href="{% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
 
 <h3 id="a-small-flashback">A Small Flashback</h3>
 <p>I’ve actually planned to put this blog post for the great fsharp community initiative <a href="https://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/">F# Advent Calender</a>. Unfortunately it was not able to get through as I’ve <a href="http://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/#comment-4135">nominated myself</a> little late. I always believe there is an opportunity behind every adversity. I didn’t get hung up and I knew this is one of the great topic to blog about. When I decided to blog about it, I needed a sample web application. So, I was creating that sample application and it suddenly strikes! <em>How about a blog series on web application development in fsharp?</em> I’ve immediately started working on it and hence this blog series.</p>
@@ -237,10 +237,10 @@
 <p>In this blog post we are going to build a recommendation system which keeps track of what phones that the user is viewing, and based on his navigation history, we will be recommending a phone that he might be interested in</p>
 
 <p style="text-align:center"> <strong> User visits "Motorola XOOM™" </strong> </p>
-<p><img src="/images/fsharp_phonecat/step_3/Phone_1.png"></p>
+<p>{% img /images/fsharp_phonecat/step_3/Phone_1.png %}</p>
 
 <p style="text-align:center"> <strong> User visits "Motorola XOOM™ with Wi-Fi" </strong> </p>
-<p><img src="/images/fsharp_phonecat/step_3/Phone_2.png"></p>
+<p>{% img /images/fsharp_phonecat/step_3/Phone_2.png %}</p>
 
 <p>Let us start the implementation by defining two high level tasks</p>
 
@@ -251,9 +251,9 @@
 
 <h3 id="tracking-user-navigation">1. Tracking user navigation</h3>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png" width="600" height="500"></p>
+<p>{% img center /images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png 600 500 %}</p>
 
-<p>The first two components has been already implemented as part of <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
+<p>The first two components has been already implemented as part of <a href="{% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
 
 <p>Create a source file in the <strong>Web</strong> project and name it as <code>PhoneViewTracker</code>. Add a function <code>observePhonesViewed</code> which will be invoked when you a user visits a phone.</p>
 
@@ -387,7 +387,7 @@
 
 <p><strong>Workflow</strong></p>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_3/Phone_Recommendation_Workflow.png" width="600" height="500"></p>
+<p>{% img center /images/fsharp_phonecat/step_3/Phone_Recommendation_Workflow.png 600 500 %}</p>
 
 <ol>
   <li>User initiates the recommendation request using SignalR</li>
@@ -610,13 +610,13 @@
     <updated>2014-12-23T19:47:20+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 2 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 2 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
+<p>In the <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
 
 <h3 id="phone-view">Phone View</h3>
-<p><img src="/images/fsharp_phonecat/step_2/Phone.png"></p>
+<p>{% img /images/fsharp_phonecat/step_2/Phone.png %}</p>
 
 <p>As we did it in the step-1 we are going to start with the controller which serves the phone view. Let’s get started by creating a source file in <strong>Web</strong> project under the folders <em>Controllers</em> with the name <code>PhoneController</code></p>
 
@@ -850,7 +850,7 @@
 <p>That’s it. Phone View is up and running! Click the Phone Links in the Home Page it will take you to the Phones View Page.</p>
 
 <h3 id="manufacturers-view">Manufacturers View</h3>
-<p><img src="/images/fsharp_phonecat/step_2/Manufacturer.png"><br />
+<p>{% img /images/fsharp_phonecat/step_2/Manufacturer.png %}<br />
 Manufactures View follows the similar steps that we have used to create the Phone View. It displays the Phones manufactured by a selected manufacturer in the home page.</p>
 
 <p>Let’s start from the controller. Create a controller in the <strong>Web</strong> project with the name <code>ManufacturerController</code></p>
@@ -955,12 +955,12 @@ Manufactures View follows the similar steps that we have used to create the Phon
     <updated>2014-12-17T17:31:44+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 1 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 1 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">last blog post</a> we have created the basic home page of phone cat with the placeholders and in this post we are going it wire the home page with the backend web apis.</p>
+<p>In the <a href="{% post_url 2014-12-10-step-0-setting-up-the-fsharp-phonecat-solution %}">last blog post</a> we have created the basic home page of phone cat with the placeholders and in this post we are going it wire the home page with the backend web apis.</p>
 
-<p><img src="/images/fsharp_phonecat/step_1/home_page.png"></p>
+<p>{% img /images/fsharp_phonecat/step_1/home_page.png %}</p>
 
 <p>As the above screenshot indicates we are going to develop three web api endpoints which serve the data to the front-end and we are going to use the existing json data available in <a href="https://github.com/angular/angular-phonecat/tree/master/app/phones">angular-phonecat</a> repository as our backend data store.</p>
 
@@ -1549,7 +1549,7 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
     <updated>2014-12-10T22:15:50+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 0 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 0 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
 <p>In this blog post, we are going to set up the visual studio solution and create the high level project structure for the <em>fsharp-phonecat</em> application. </p>
@@ -1560,25 +1560,25 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
 
 <p>The first step is to create an blank visual studio solution and name it as <strong>PhoneCat</strong></p>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_0/BlankSolution.png" width="700" height="700"></p>
+<p>{% img center /images/fsharp_phonecat/step_0/BlankSolution.png 700 700 %}</p>
 
 <p>After creating the blank solution create two fsharp class libraries and name it as <strong>Domain</strong> and <strong>DataAccess</strong> respectively.</p>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_0/ClassLibrary.png" width="700" height="700"></p>
+<p>{% img center /images/fsharp_phonecat/step_0/ClassLibrary.png 700 700 %}</p>
 
 <p>Do delete the sample fsharp files Domain1.fs, DataAccess1.fs and Script.fsx that are created by default while creating the class libraries</p>
 
 <p>Then create a ASP.NET MVC web project using <a href="https://visualstudiogallery.msdn.microsoft.com/39ae8dec-d11a-4ac9-974e-be0fdadec71b">F# MVC 5 template</a> and name it as <em>Web</em></p>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_0/WebProject.png" width="700" height="700"></p>
+<p>{% img center /images/fsharp_phonecat/step_0/WebProject.png 700 700 %}</p>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_0/MVC5.png"></p>
+<p>{% img center /images/fsharp_phonecat/step_0/MVC5.png %}</p>
 
 <p>We are going to use TDD, so create test projects for each of the above projects created and name it as <strong>Domain.Tests</strong>, <strong>DataAccess.Tests</strong> and <strong>Web.Tests</strong> respectively.</p>
 
 <p>The final project structure would look like</p>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_0/ProjectStructure.png"></p>
+<p>{% img center /images/fsharp_phonecat/step_0/ProjectStructure.png %}</p>
 
 <p>F# MVC 5 template comes with a default Bootstrap theme and we are going to extend it by using e-commerce theme from <a href="http://startbootstrap.com/template-overviews/shop-homepage/">Start Bootstrap</a>. Download the theme and add <em>shop-homepage.css</em> to the Content directory of <strong>Web</strong> project. After adding it update <em>Global.asax.fs</em> to include this css file while bundling.</p>
 
@@ -1603,9 +1603,9 @@ type BundleConfig() =<br />
 
 <p>Now the stage is set for awesomeness. Update <strong>_Layout.cshtml</strong> and <strong>Index.cshtml</strong> as mentioned in the bootstrap theme and run the web project.</p>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800"></p>
+<p>{% img center /images/fsharp_phonecat/step_0/HomePage.png 800 800 %}</p>
 
-<p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">next-post</a> we will be wiring up the backend. Stay tuned !</p>
+<p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">next-post</a> we will be wiring up the backend. Stay tuned !</p>
 ]]></content>
   </entry>
   

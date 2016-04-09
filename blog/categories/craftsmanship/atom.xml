@@ -4,7 +4,7 @@
   <title><![CDATA[Category: craftsmanship | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/craftsmanship/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-02-01T21:13:04+05:30</updated>
+  <updated>2016-04-09T15:02:37+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -160,7 +160,7 @@ WFZ,1.87
         But if the array is empty it get bind to null!!
     </p> <p>
         In this blog post, we are going to get rid of this intriguing behaviour by writing a Custom JSON model binder.
-        Hope it would be useful and save you some hairs <i class='emoji smile'></i>
+        Hope it would be useful and save you some hairs {% emoji smile %}
 
         <h3>The Sample Application – “MyMobileStore”</h3>
     <p>
@@ -171,16 +171,16 @@ WFZ,1.87
 
     <h3>Show me the code</h3>
     <p>Core classes</p>
-    <p><img class="center" src="/images/JsonModelBinding/CoreClasses.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/CoreClasses.png  %}</p>
     <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
     <p>
-    <p><img class="center" src="/images/JsonModelBinding/MobileController.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/MobileController.png  %}</p>
     <p>
         Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
         the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
     </p>
     <p>
-    <p><img class="center" src="/images/JsonModelBinding/MobileFilter.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/MobileFilter.png  %}</p>
     </p> <p>
         The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
         One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
@@ -195,18 +195,18 @@ WFZ,1.87
         will happily accepts them as a parameter and continue its work without any mishaps.
     </p>
 
-    <p><img class="center" src="/images/JsonModelBinding/Problem.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/Problem.png  %}</p>
     <p>
         But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
         reference exception and breaks the functionality!!
     </p>
-    <p><img class="center" src="/images/JsonModelBinding/BadWorld.png" title="" ></p>
-    <p><img class="center" src="/images/JsonModelBinding/NullException.png" title="" ></p>
+    <p>{% img center /images/JsonModelBinding/BadWorld.png  %}</p>
+    <p>{% img center /images/JsonModelBinding/NullException.png  %}</p>
 
     <p>
         <em>
             (Now you might have understood why I added a tweak in the number of mobile types
-            <i class='emoji smile'></i>)
+            {% emoji smile %})
         </em>
     </p>
     <h3>Possible Solutions</h3>
@@ -227,7 +227,7 @@ WFZ,1.87
 
     <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
     <p>
-        <img class="center" src="/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
+        {% img center /images/JsonModelBinding/MobileFilterModelBinder.png  %}
     </p>
 
     <p>
@@ -237,11 +237,11 @@ WFZ,1.87
     </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
 
     <p>
-        <img class="center" src="/images/JsonModelBinding/Global.png" title="" >
+        {% img center /images/JsonModelBinding/Global.png  %}
     </p>
     <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
     <p>
-        <img class="center" src="/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
+        {% img center /images/JsonModelBinding/NoMoreBadWorld.png  %}
     </p> 
     <h3>Conclusion</h3> 
     <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
@@ -473,7 +473,7 @@ WFZ,1.87
         <li><a href="http://www.catb.org/~esr/">Eric S Raymond</a></li>
     </ul>
     <p>One great thing about all these excellent folks is they share their knowledge, either through Books or through their blogs. We are very fortunate. Now it’s our turn to learn from their wisdom and move forward.</p>
-    <blockquote><p>The man who does not read good books has no advantage over the man who can't read them.</p><footer><strong>Mark Twain</strong></footer></blockquote><div>I have found the following magnificent books in the quest</div>
+    {% blockquote Mark Twain %}The man who does not read good books has no advantage over the man who can't read them.{% endblockquote %}<div>I have found the following magnificent books in the quest</div>
     <ul>
         <li>Pragmatic Programmer – Andrew Hunt, Dave Thomas</li>
         <ul>
