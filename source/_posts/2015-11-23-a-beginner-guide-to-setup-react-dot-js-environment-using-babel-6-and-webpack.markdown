@@ -274,12 +274,14 @@ Then include it in the *index.jsx* file
 import AwesomeComponent from './AwesomeComponent.jsx';
 // ...
 class App extends React.Component {
-  return (
-      <div>
-        <p> Hello React!</p>
-        <AwesomeComponent />
-      </div>
+  render() {
+    return (
+        <div>
+          <p> Hello React!</p>
+          <AwesomeComponent />
+        </div>
     );
+  }
 }
 // ...
 ````
