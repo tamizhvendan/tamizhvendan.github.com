@@ -4,7 +4,7 @@
   <title><![CDATA[Category: react | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/react/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-04-09T15:05:52+05:30</updated>
+  <updated>2016-04-19T10:58:00+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -286,14 +286,16 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
 <span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="reserved">import</span> AwesomeComponent from <span class="string"><span class="delimiter">'</span><span class="content">./AwesomeComponent.jsx</span><span class="delimiter">'</span></span>;
 <span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="comment">// ...</span>
 <span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="reserved">class</span> App <span class="reserved">extends</span> React.Component {
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  <span class="keyword">return</span> (
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      <span class="tag">&lt;div&gt;</span>
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        <span class="tag">&lt;p&gt;</span> Hello React!<span class="tag">&lt;/p&gt;</span>
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        <span class="tag">&lt;AwesomeComponent</span> <span class="tag">/&gt;</span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      <span class="tag">&lt;/div&gt;</span>
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    );
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>}
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  render() {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span class="keyword">return</span> (
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        <span class="tag">&lt;div&gt;</span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>          <span class="tag">&lt;p&gt;</span> Hello React!<span class="tag">&lt;/p&gt;</span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>          <span class="tag">&lt;AwesomeComponent</span> <span class="tag">/&gt;</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>        <span class="tag">&lt;/div&gt;</span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    );
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  }
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span><span class="comment">// ...</span>
 </pre></div>
 </div>
 </div>

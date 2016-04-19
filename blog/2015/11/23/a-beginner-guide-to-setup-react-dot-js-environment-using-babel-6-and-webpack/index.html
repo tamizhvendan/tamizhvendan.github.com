@@ -465,16 +465,20 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
 <span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
 </pre></td><td class="code"><pre><code class="js"><span class="line"><span class="c1">// ...</span>
 </span><span class="line"><span class="kr">import</span> <span class="nx">AwesomeComponent</span> <span class="nx">from</span> <span class="s1">&#39;./AwesomeComponent.jsx&#39;</span><span class="p">;</span>
 </span><span class="line"><span class="c1">// ...</span>
 </span><span class="line"><span class="kr">class</span> <span class="nx">App</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
-</span><span class="line">  <span class="k">return</span> <span class="p">(</span>
-</span><span class="line">      <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-</span><span class="line">        <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span> <span class="nx">Hello</span> <span class="nx">React</span><span class="o">!&lt;</span><span class="err">/p&gt;</span>
-</span><span class="line">        <span class="o">&lt;</span><span class="nx">AwesomeComponent</span> <span class="o">/&gt;</span>
-</span><span class="line">      <span class="o">&lt;</span><span class="err">/div&gt;</span>
+</span><span class="line">  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="p">(</span>
+</span><span class="line">        <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+</span><span class="line">          <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span> <span class="nx">Hello</span> <span class="nx">React</span><span class="o">!&lt;</span><span class="err">/p&gt;</span>
+</span><span class="line">          <span class="o">&lt;</span><span class="nx">AwesomeComponent</span> <span class="o">/&gt;</span>
+</span><span class="line">        <span class="o">&lt;</span><span class="err">/div&gt;</span>
 </span><span class="line">    <span class="p">);</span>
+</span><span class="line">  <span class="p">}</span>
 </span><span class="line"><span class="p">}</span>
 </span><span class="line"><span class="c1">// ...</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
