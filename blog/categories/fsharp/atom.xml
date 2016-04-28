@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fsharp | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-04-28T20:18:23+05:30</updated>
+  <updated>2016-04-28T20:21:41+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -236,8 +236,12 @@
 <h2 id="summary">Summary</h2>
 
 <blockquote>
-  <p>F# is excellent at concisely expressing business and domain logic - <a href="https://www.thoughtworks.com/radar/languages-and-frameworks/f">ThoughtWorks Tech Radar 2012</a> </p>
+  <p>F# is excellent at concisely expressing business and domain logic - <a href="https://www.thoughtworks.com/radar/languages-and-frameworks/f">ThoughtWorks Tech Radar 2012</a></p>
 </blockquote>
+
+<h3 id="related-posts">Related Posts</h3>
+
+<p><a href="/blog/2015/04/02/step-10-refactoring-composition-root/">Refactoring Composition Root</a></p>
 ]]></content>
   </entry>
   
