@@ -1,0 +1,488 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Expressing Business Logic with F#'s Partial Active Patterns - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Expressing Business Logic With F#'s Partial Active Patterns Checking the state of the system and performing a requested action only if certain &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2016/04/28/expressing-business-logic-with-f-number-s-partial-active-patterns/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+  <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+
+  </style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<!-- Start of Leadin Embed -->
+  <script type="text/javascript" src="//js.leadin.com/js/v1/2177345.js" id="LeadinEmbed-2177345" crossorigin="use-credentials" async defer></script>
+<!-- End of Leadin Embed -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><!-- <div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div> -->
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About Me</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+<a href="http://www.codeproject.com" rel="tag" style="display:none">CodeProject</a>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<nav id="tag-cloud">
+	<section>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 102.85714285714286%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 145.71428571428572%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 102.85714285714286%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 111.42857142857143%'>c#</a> <a href='/blog/categories/cleancode' style='font-size: 102.85714285714286%'>cleancode</a> <a href='/blog/categories/craftsmanship' style='font-size: 117.14285714285714%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 108.57142857142857%'>data access</a> <a href='/blog/categories/devops' style='font-size: 102.85714285714286%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 102.85714285714286%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 114.28571428571429%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 102.85714285714286%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 102.85714285714286%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 102.85714285714286%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.42857142857143%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 105.71428571428571%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 105.71428571428571%'>node.js</a> <a href='/blog/categories/others' style='font-size: 102.85714285714286%'>others</a> <a href='/blog/categories/owin' style='font-size: 102.85714285714286%'>owin</a> <a href='/blog/categories/programming' style='font-size: 117.14285714285714%'>programming</a> <a href='/blog/categories/react' style='font-size: 102.85714285714286%'>react</a> <a href='/blog/categories/rop' style='font-size: 102.85714285714286%'>rop</a> <a href='/blog/categories/rx' style='font-size: 105.71428571428571%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 102.85714285714286%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 111.42857142857143%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 114.28571428571429%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.57142857142857%'>web-api</a> </span>
+</section>
+</nav>
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Expressing Business Logic With F#'s Partial Active Patterns</h1>
+	<div class="entry-content" itemprop="articleBody"><p>Checking the state of the system and performing a requested action only if certain conditions met, is an indispensable requirement in most of the software we write. Though it is a straightforward thing to do, things will get complex/messier when we need to check multiple conditions.</p>
+
+<p>Recently I encountered such a situation while developing a sample application for <a href="https://twitter.com/tamizhvendan/status/713365205871235072">my fsharp book</a>. Initially, I solved it with a typical nested <code>if else</code> and then I improved it by applying fsharp’s <a href="http://www.developerfusion.com/article/133772/pattern-matching-in-f-part-2-active-patterns/">Partial Active Patterns</a>.</p>
+
+<p>In this blog post , I will be sharing what exactly I did and how it can help you to write an elegant code in fsharp.</p>
+
+<h2 id="business-domain">Business Domain</h2>
+
+<p>Let’s start with a description of the problem domain that we are going to solve.</p>
+
+<p>When an individual visits a restaurant, he can place an order, specifying the list of foods he wants. The foods he ordered will be prepared by the chef and then it will be served.</p>
+
+<p>Preparing a food should satisfy the following conditions</p>
+
+<ul>
+  <li>The Food should be a part of the order</li>
+  <li>It should not be prepared already</li>
+  <li>It should not be served already</li>
+</ul>
+
+<p>Serving a food should satisfy the following conditions</p>
+
+<ul>
+  <li>The Food should be a part of the order</li>
+  <li>It should be prepared already</li>
+  <li>It should not be served already</li>
+</ul>
+
+<p>If serving a food completes the order, we should tell that the order is served otherwise we should tell that there are some other foods to be served.</p>
+
+<h2 id="starting-with-the-types">Starting with the types</h2>
+
+<p>Let’s start with the types that are needed to solve our problem. If you would like to know why we need to start with the types do check out <a href="http://tomasp.net/blog/type-first-development.aspx/">this wonderful blog post</a> by <a href="https://twitter.com/tomaspetricek">Tomas Petricek</a>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Food</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">MenuNumber</span> <span class="o">:</span> <span class="n">int</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">Order</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Foods</span> <span class="o">:</span> <span class="n">Food</span> <span class="kt">list</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">InProgressOrder</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">PlacedOrder</span> <span class="o">:</span> <span class="n">Order</span>
+</span><span class="line">  <span class="n">PreparedFoods</span> <span class="o">:</span> <span class="n">Food</span> <span class="kt">list</span>
+</span><span class="line">  <span class="n">ServedFoods</span> <span class="o">:</span> <span class="n">Food</span> <span class="kt">list</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The names of the types and its properties clearly describe what they represent, so let’s get to the crux of the problem straight</p>
+
+<h2 id="prepare-food">Prepare Food</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">prepareFood</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">if</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span><span class="o">.</span><span class="n">Foods</span>  <span class="k">then</span>
+</span><span class="line">    <span class="k">if</span> <span class="ow">not</span> <span class="o">(</span><span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">if</span> <span class="ow">not</span> <span class="o">(</span><span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">          <span class="n">printfn</span> <span class="s">&quot;Prepare Food&quot;</span>
+</span><span class="line">      <span class="k">else</span>
+</span><span class="line">        <span class="n">printfn</span> <span class="s">&quot;Can not prepare already served food&quot;</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">printfn</span> <span class="s">&quot;Can not prepare already prepared food&quot;</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not prepare non ordered food&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>if else</code> conditions represent the criteria mentioned in the business domain and for the sake of simplicity we are just writing the action in the console.</p>
+
+<h2 id="serve-food">Serve Food</h2>
+
+<p>Let’s move on to serving food</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">isServingFoodCompletesOrder</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">nonServedFoods</span> <span class="o">=</span>
+</span><span class="line">    <span class="nn">List</span><span class="p">.</span><span class="n">except</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span><span class="o">.</span><span class="n">Foods</span>
+</span><span class="line">  <span class="n">nonServedFoods</span> <span class="o">=</span> <span class="o">[</span><span class="n">food</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">serveFood</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">if</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span><span class="o">.</span><span class="n">Foods</span>  <span class="k">then</span>
+</span><span class="line">    <span class="k">if</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">if</span> <span class="ow">not</span> <span class="o">(</span><span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">isServingFoodCompletesOrder</span> <span class="n">food</span> <span class="n">ipo</span> <span class="k">then</span>
+</span><span class="line">          <span class="n">printfn</span> <span class="s">&quot;Order Served&quot;</span>
+</span><span class="line">        <span class="k">else</span>
+</span><span class="line">          <span class="n">printfn</span> <span class="s">&quot;Still some food(s) to serve&quot;</span>
+</span><span class="line">      <span class="k">else</span>
+</span><span class="line">        <span class="n">printfn</span> <span class="s">&quot;Can not serve already served food&quot;</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">printfn</span> <span class="s">&quot;Can not serve unprepared food&quot;</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not serve non ordered food&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This is called <a href="http://c2.com/cgi/wiki?ArrowAntiPattern">Arrow Anti Pattern</a> and it is obvious that this code is hard to understand and maintain.</p>
+
+<p>It can be improved by using the techniques mentioned <a href="http://programmers.stackexchange.com/questions/47789/how-would-you-refactor-nested-if-statements">in this StackExchange’s answers</a> and also by using the <a href="https://en.wikipedia.org/wiki/Specification_pattern">specification pattern</a> from the OO World.</p>
+
+<p>Though the specification pattern solves the problem, it has a lot of code! No offense here but it can be done in a better way.</p>
+
+<h2 id="f-active-patterns">F# Active Patterns</h2>
+
+<blockquote>
+  <p>Active Patterns allow programmers to wrap arbitrary values in a union-like data structure for easy pattern matching. For example, its possible wrap objects with an active pattern, so that you can use objects in pattern matching as easily as any other union type. - <a href="https://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns">F# Programming Wiki</a></p>
+</blockquote>
+
+<p>Let’s begin by defining a partial active pattern for <code>NonOrderedFood</code> and <code>UnPreparedFood</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">NonOrderedFood</span><span class="o">|_|)</span> <span class="n">order</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">order</span><span class="o">.</span><span class="n">Foods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">UnPreparedFood</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then for <code>AlreadyPreparedFood</code> and <code>AlreadyServedFood</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">AlreadyPreparedFood</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">AlreadyServedFood</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Finally,</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">CompletesOrder</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">nonServedFoods</span> <span class="o">=</span>
+</span><span class="line">    <span class="nn">List</span><span class="p">.</span><span class="n">except</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span><span class="o">.</span><span class="n">Foods</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">nonServedFoods</span> <span class="o">=</span> <span class="o">[</span><span class="n">food</span><span class="o">]</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>With this in place we can rewrite <code>serveFood</code> function as</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">serveFood</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">food</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">NonOrderedFood</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not serve non ordered food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">UnPreparedFood</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not serve unprepared food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">AlreadyServedFood</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not serve already served food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">CompletesOrder</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Order Served&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">printfn</span> <span class="s">&quot;Still some food(s) to serve&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>The goal is to have code that scrolls vertically a lot… but not so much horizontally. - <a href="http://blog.codinghorror.com/flattening-arrow-code/">Jeff Atwood</a></p>
+</blockquote>
+
+<p>Now the code expressing the business logic more clearly</p>
+
+<p>To refactor <code>prepareFood</code> to use the parial active patterns we need one more. So, let’s define it</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">PreparedFood</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now we all set to refactor <code>prepareFood</code> and here we go</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">prepareFood</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">food</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">NonOrderedFood</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not prepare non ordered food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">PreparedFood</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not prepare already prepared food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">AlreadyServedFood</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not prepare already served food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">printfn</span> <span class="s">&quot;Prepare Food&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Awesome!</p>
+
+<p>You can get the complete code in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/RefactoringIfElse/src">my github repository</a></p>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote>
+  <p>F# is excellent at concisely expressing business and domain logic - <a href="https://www.thoughtworks.com/radar/languages-and-frameworks/f">ThoughtWorks Tech Radar 2012</a> </p>
+</blockquote>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2016
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2016/04/28/expressing-business-logic-with-f-number-s-partial-active-patterns/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2016/04/28/expressing-business-logic-with-f-number-s-partial-active-patterns/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

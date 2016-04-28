@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Sep 26th, 2014 functional-programming Comments Verbs - Buried Abstraction in OO World In Object Oriented Programming, the problem domain is being &hellip;">
+	<meta name="description" content="Dec 10th, 2014 asp.net mvc, fsharp, functional-programming Comments Web Application Development in Fsharp Using ASP.NET MVC Introduction Fsharp is &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -107,7 +107,7 @@
 </nav>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 148.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 121.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.0%'>programming</a> <a href='/blog/categories/react' style='font-size: 103.0%'>react</a> <a href='/blog/categories/rop' style='font-size: 103.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 106.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.0%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 112.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 102.85714285714286%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 145.71428571428572%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 102.85714285714286%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 111.42857142857143%'>c#</a> <a href='/blog/categories/cleancode' style='font-size: 102.85714285714286%'>cleancode</a> <a href='/blog/categories/craftsmanship' style='font-size: 117.14285714285714%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 108.57142857142857%'>data access</a> <a href='/blog/categories/devops' style='font-size: 102.85714285714286%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 102.85714285714286%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 114.28571428571429%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 102.85714285714286%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 102.85714285714286%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 102.85714285714286%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.42857142857143%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 105.71428571428571%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 105.71428571428571%'>node.js</a> <a href='/blog/categories/others' style='font-size: 102.85714285714286%'>others</a> <a href='/blog/categories/owin' style='font-size: 102.85714285714286%'>owin</a> <a href='/blog/categories/programming' style='font-size: 117.14285714285714%'>programming</a> <a href='/blog/categories/react' style='font-size: 102.85714285714286%'>react</a> <a href='/blog/categories/rop' style='font-size: 102.85714285714286%'>rop</a> <a href='/blog/categories/rx' style='font-size: 105.71428571428571%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 102.85714285714286%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 111.42857142857143%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 114.28571428571429%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.57142857142857%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -120,6 +120,64 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-10T17:07:48+05:30" data-updated="true" itemprop="datePublished">Dec 10<sup>th</sup>, 2014</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/functional-programming/'>functional-programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/" itemprop="url">Web Application Development in Fsharp Using ASP.NET MVC</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<h3 id="introduction">Introduction</h3>
+
+<p>Fsharp is my new favorite language in recent times and I’ve been learning it for the last six months. I always believe the best way to learn a language / technology / framework is to create something using it and also learning from the mistakes while creating it. So, here is my attempt to create a sample web application in fsharp using ASP.NET MVC framework. In this series of blog posts I’m going to share my experience on creating “phone-cat” web application inspired from the <a href="https://github.com/angular/angular-phonecat">angular-phonecat</a>. </p>
+
+<p>As it is my maiden attempt to create a relatively large web application in fsharp, if you find something that can be improved, feel free to share <em>I’m willing to learn from you.</em></p>
+
+<h3 id="blog-series-links">Blog Series Links</h3>
+
+<ul>
+  <li><strong>Step 0</strong> - <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">Setting up the fsharp-phonecat Solution</a></li>
+  <li><strong>Step 1</strong> - <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Creating Web Api endpoints for fsharp-phonecat using Web Api 2</a></li>
+  <li><strong>Step 2</strong> - <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Creating ASP.NET MVC Razor Views for fsharp-phonecat</a></li>
+  <li><strong>Step 3</strong> - <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">PhoneCat Recommendation System using F# Agents, SignalR and Rx</a></li>
+  <li><strong>Step 4</strong> - <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">Build Automation using Fake</a></li>
+  <li><strong>Step 5</strong> - <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">Advanced Search DSL using FSParsec</a></li>
+  <li><strong>Step 6</strong> - <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Authentication using Owin and Asp.Net Identity</a></li>
+  <li><strong>Step 7</strong> - <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">Validation and Error handling using ROP</a></li>
+  <li><strong>Step 8</strong> - <a href="/blog/2015/03/20/step-8-adding-shopping-cart/">Adding Shopping Cart</a></li>
+  <li><strong>Step 9</strong> - <a href="/blog/2015/03/28/step-9-adding-checkout/">Adding Checkout</a></li>
+  <li><strong>Step 10</strong> - <a href="/blog/2015/04/02/step-10-refactoring-composition-root/">Refactoring Composition Root</a></li>
+  <li><strong>Conclusion</strong> - <a href="/blog/2015/04/25/my-takeaways/">My Takeaways</a></li>
+</ul>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -452,80 +510,6 @@ hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
 
 <h3>Summary</h3>
 <p>If you follow the idioms of f#, it will let you write a better code and even if do some logical error the compiler will come as a rescue!. You can check the source code live in <a href="http://www.tryfsharp.org/create/tamizhvendan/fever_diagnosis.fsx">tryfsharp</a> </p>
-</div>
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-06-01T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jun 1<sup>st</sup>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/node-dot-js/'>node.js</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/" itemprop="url">A Hybrid Application Using ASP.NET MVC3 and Node.js</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <div>
-        Each and every technology has its pros and cons and there is
-        <a href="http://people.eecs.ku.edu/~saiedian/Teaching/Sp08/816/Papers/Background-Papers/no-silver-bullet.pdf">no silver bullet!</a><br />
-
-        <br />If you would ask me what you have learnt in your profession so far, I would say the above line as the first one. One technology / platform / language is good at
-        solving one kind of problems and bad at solving other kind of problems. The key is leveraging existing <em>platforms</em> with <em>languages</em> targeted at
-        specific problems and applications to solve the business problems in hand.<br /><br />Three months ago I
-        have come across <a href="http://www.infoq.com/presentations/10-Ways-to-Better-Code-Neal-Ford">an excellent presentation</a> from Neil Ford “10 ways to improve your
-        code”. As a 8th way he talks about “Polyglot Programming”. Its about picking the right tool to do the right job. I am inspired by this presentation and started
-        exploring the “right tools”.<br /><br />In the pursuit of “Right tools”, I’ve come across the young awesome framework <a href="http://nodejs.org/">node.js</a> which is
-        really cool and perfect for real-time applications. On the other hand frameworks like <a href="http://www.asp.net/mvc">ASP.NET MVC3</a> is not meant for creating real-time
-        applications and they address different set of other problems. <br /><br />In this blog post, I going to share my recent exploration on leveraging node.js in an
-        ASP.NET MVC3 application using a “Chat” feature. Though we can achieve it using <a href="http://signalr.net/">SignalR</a>, I’ve preferred node.js as it is a right tool
-        for the chat feature IMO also I wanted to get my hands dirty in creating a hybrid application.<br /><strong><br /></strong><br /><strong>The Node.js Part</strong>
-        <br /><br /><a href="http://lh5.ggpht.com/-HLh-ldizDJ0/T8kHC3Ao5_I/AAAAAAAAAZA/vI0DypFIKh8/s1600-h/image%25255B4%25255D.png">
-                        <img src="http://lh6.ggpht.com/-rcbRWOlpeBc/T8kHHp32UJI/AAAAAAAAAZI/ypOCgUHMrN0/image_thumb%25255B2%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="589" />
-                    </a><br /><br />The chat server that we are going to use in the MVC3 application has been created using <a href="http://socket.io/">socket.io</a> which makes web-socket programming insanely easy!<br />Its listen for three events<br /><ul><li><em>join</em> – It will be triggered when a new user joined the chat and it broadcast the user name to all the connected users  </li><li><em>message</em> – It willed be triggered when an user send a message in the chat application and broadcast it to the other users  </li><li><em>disconnect</em>– It willed be triggered when an user closes the chat or closes the browser </li></ul>That’s it bang!<br /><strong><br /></strong><br /><strong>The ASP.NET MVC3 side</strong><br /><br /><a href="http://lh6.ggpht.com/-pQEJCXkjOuw/T8kHJFR0zVI/AAAAAAAAAZQ/FTqswQ8XvtY/s1600-h/image%25255B9%25255D.png"><img alt="image" border="0" height="197" src="http://lh6.ggpht.com/-TMmsX9z4rRc/T8kHLTRTuYI/AAAAAAAAAZY/MQurv3YzYIw/image_thumb%25255B5%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="387" /></a><br /><br />The controller side of Chat just renders the “Index view”. The index view has the following javascript code, and it completes the client side part of the chat application<br /><br /><a href="http://lh5.ggpht.com/-QnLwJvxMIR8/T8kHMoTx1qI/AAAAAAAAAZg/VYhVayPULm4/s1600-h/image%25255B14%25255D.png"><img alt="image" border="0" height="403" src="http://lh5.ggpht.com/-XxmqzAqX1i8/T8kHQ1J07tI/AAAAAAAAAZo/sMw8RevtD9k/image_thumb%25255B8%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="530" /></a><br /><strong><br /></strong><br />
-        <strong>Chat feature in Action</strong><br /><br />
-        <a href="http://lh3.ggpht.com/-OoM7_UDFHzQ/T8kHSZP8R8I/AAAAAAAAAZw/QcXNptcqe1I/s1600-h/image%25255B17%25255D.png">
-            <img src="http://lh5.ggpht.com/-B4IkFTFavZI/T8kHVZP234I/AAAAAAAAAZ4/IGC3r-10yBA/image_thumb%25255B9%25255D.png?imgmax=800" />
-        </a><br />
-        <a href="http://lh3.ggpht.com/-xWwrw06nVTk/T8kHW9r2X1I/AAAAAAAAAaA/-g8XAZDm-Qg/s1600-h/image%25255B21%25255D.png">
-                <img src="http://lh3.ggpht.com/-F7UPYcQXT14/T8kHZfq0W8I/AAAAAAAAAaI/hLP9g4s8QGA/image_thumb%25255B11%25255D.png?imgmax=800" />
-        </a><br />
-        <a href="http://lh6.ggpht.com/-OI01pFQYBEs/T8kHaT3_bmI/AAAAAAAAAaQ/GM-QdsQzTVU/s1600-h/image%25255B25%25255D.png">
-            <img src="http://lh4.ggpht.com/-VIPYKbYG-rs/T8kHbgnYkBI/AAAAAAAAAaY/24TJhDEHqA8/image_thumb%25255B13%25255D.png?imgmax=800" />
-        </a><br />
-        <a href="http://lh6.ggpht.com/-_jFs2OzmBx0/T8kHczZpZBI/AAAAAAAAAag/-FMnxb_cD9w/s1600-h/image%25255B29%25255D.png">
-            <img alt="image" src="http://lh4.ggpht.com/-KwvpW47kGxI/T8kHeUKp3BI/AAAAAAAAAao/GP4naqkNkvc/image_thumb%25255B15%25255D.png?imgmax=800" />
-        </a><br />
-        <a href="http://lh4.ggpht.com/-YNLo_UVoZf0/T8kHfwe76BI/AAAAAAAAAaw/dq8JfcSfYRE/s1600-h/image%25255B33%25255D.png">
-            <img alt="image" src="http://lh3.ggpht.com/-tcpQUHyW58I/T8kHhrerqxI/AAAAAAAAAa4/ZEJOJK8swnk/image_thumb%25255B17%25255D.png?imgmax=800" />
-        </a><br />
-        <a href="http://lh6.ggpht.com/-j4AUmiQEA5k/T8kHioICVWI/AAAAAAAAAbA/ZAuJNXh4oZ4/s1600-h/image%25255B37%25255D.png">
-            <img src="http://lh3.ggpht.com/-KoM6ka9qFxc/T8kHkUP0AGI/AAAAAAAAAbI/ZuGQ-d8KKS8/image_thumb%25255B19%25255D.png?imgmax=800" />
-        </a></div><strong><br /></strong><br /><strong>Summary</strong><br /><br />The objective behind this blog post is just to share the knowledge that I’ve gained in my recent exploration and its just a proof of concept of how to leverage node.js in an MVC3 application. The bottom-line is “Identify and pick the right tool to do the right job”. If you want to play with the source code, don’t forget to clone <a href="https://github.com/tamizhvendan/a-hybrid-app">the repository </a>
-    </div>
 </div>
 		
 		

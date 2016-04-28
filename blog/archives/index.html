@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="2016 Feb 1 craftsmanship Comments Keep it Simple 2015 Dec 29 fsharp, rx, suave Comments Implementing API Gateway in F# using Rx and Suave Nov 23 &hellip;">
+	<meta name="description" content="2016 Apr 28 cleancode, craftsmanship, fsharp Comments Expressing Business Logic with F#&#8217;s Partial Active Patterns Feb 1 craftsmanship Comments &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -107,7 +107,7 @@
 </nav>
 <nav id="tag-cloud">
 	<section>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 103.0%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 148.0%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 103.0%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 112.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 109.0%'>data access</a> <a href='/blog/categories/devops' style='font-size: 103.0%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 103.0%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 115.0%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 103.0%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 103.0%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 121.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 103.0%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 112.0%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 106.0%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 106.0%'>node.js</a> <a href='/blog/categories/others' style='font-size: 103.0%'>others</a> <a href='/blog/categories/owin' style='font-size: 103.0%'>owin</a> <a href='/blog/categories/programming' style='font-size: 118.0%'>programming</a> <a href='/blog/categories/react' style='font-size: 103.0%'>react</a> <a href='/blog/categories/rop' style='font-size: 103.0%'>rop</a> <a href='/blog/categories/rx' style='font-size: 106.0%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 103.0%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 112.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 115.0%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 109.0%'>web-api</a> </span>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net' style='font-size: 102.85714285714286%'>asp.net</a> <a href='/blog/categories/asp-dot-net-mvc' style='font-size: 145.71428571428572%'>asp.net mvc</a> <a href='/blog/categories/asp-dot-net-identity' style='font-size: 102.85714285714286%'>asp.net-identity</a> <a href='/blog/categories/c-number' style='font-size: 111.42857142857143%'>c#</a> <a href='/blog/categories/cleancode' style='font-size: 102.85714285714286%'>cleancode</a> <a href='/blog/categories/craftsmanship' style='font-size: 117.14285714285714%'>craftsmanship</a> <a href='/blog/categories/data-access' style='font-size: 108.57142857142857%'>data access</a> <a href='/blog/categories/devops' style='font-size: 102.85714285714286%'>devops</a> <a href='/blog/categories/dsl' style='font-size: 102.85714285714286%'>dsl</a> <a href='/blog/categories/entity-framework' style='font-size: 114.28571428571429%'>entity framework</a> <a href='/blog/categories/fake' style='font-size: 102.85714285714286%'>fake</a> <a href='/blog/categories/fparsec' style='font-size: 102.85714285714286%'>fparsec</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/goals' style='font-size: 102.85714285714286%'>goals</a> <a href='/blog/categories/javascript' style='font-size: 111.42857142857143%'>javascript</a> <a href='/blog/categories/jquery' style='font-size: 105.71428571428571%'>jquery</a> <a href='/blog/categories/node-dot-js' style='font-size: 105.71428571428571%'>node.js</a> <a href='/blog/categories/others' style='font-size: 102.85714285714286%'>others</a> <a href='/blog/categories/owin' style='font-size: 102.85714285714286%'>owin</a> <a href='/blog/categories/programming' style='font-size: 117.14285714285714%'>programming</a> <a href='/blog/categories/react' style='font-size: 102.85714285714286%'>react</a> <a href='/blog/categories/rop' style='font-size: 102.85714285714286%'>rop</a> <a href='/blog/categories/rx' style='font-size: 105.71428571428571%'>rx</a> <a href='/blog/categories/signalr' style='font-size: 102.85714285714286%'>signalr</a> <a href='/blog/categories/suave' style='font-size: 111.42857142857143%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 114.28571428571429%'>unit testing</a> <a href='/blog/categories/web-api' style='font-size: 108.57142857142857%'>web-api</a> </span>
 </section>
 </nav>
 </header>				
@@ -126,6 +126,27 @@
 	
 	
 	<section class="archives"><h1 class="year">2016</h1>
+
+<article itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<span class="date"><time datetime="2016-04-28T20:16:14+05:30" itemprop="datePublished">Apr 28</time></span>
+		<br>
+		<span class="tags">
+
+
+	<a class='category' href='/blog/categories/cleancode/'>cleancode</a>, <a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>
+
+
+</span>
+	    
+	    <span class="comments"><a href="/blog/2016/04/28/expressing-business-logic-with-f-number-s-partial-active-patterns/#disqus_thread">Comments</a></span>
+	    
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2016/04/28/expressing-business-logic-with-f-number-s-partial-active-patterns/">Expressing Business Logic with F#&#8217;s Partial Active Patterns</a></h1>
+</article>
+
+	
+
 
 <article itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
 	<div class="meta">
