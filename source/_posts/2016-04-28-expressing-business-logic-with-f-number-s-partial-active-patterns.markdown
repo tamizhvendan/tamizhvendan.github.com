@@ -201,4 +201,8 @@ You can get the complete code in [my github repository](https://github.com/tamiz
 
 ## Summary
 
->  F# is excellent at concisely expressing business and domain logic - [ThoughtWorks Tech Radar 2012](https://www.thoughtworks.com/radar/languages-and-frameworks/f) 
+>  F# is excellent at concisely expressing business and domain logic - [ThoughtWorks Tech Radar 2012](https://www.thoughtworks.com/radar/languages-and-frameworks/f)
+
+### Related Posts
+
+[Refactoring Composition Root]({% post_url 2015-04-02-step-10-refactoring-composition-root %})
