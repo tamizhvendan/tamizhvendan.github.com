@@ -10,6 +10,13 @@
 	</script>
 	{% endif %}
 </div> -->
+<style>
+@media (max-width: 600px) {
+  #book-cover, #tag-cloud {
+    display: none;
+  }
+}
+</style>
 {% include custom/header.html %}
 <nav id="main-nav">{% include navigation.html %}</nav>
 <nav id="sub-nav">
@@ -64,6 +71,13 @@
 		{% endif %}
 	</div>
 </nav>
+<nav id="book-cover" style="margin-top:32px">
+	<a href="http://products.tamizhvendan.in/fsharp-applied">
+	{% img center /images/fsharp_applied_cover.jpg 160 %}
+</a>
+</nav>
 <nav id="tag-cloud">
 	{% include custom/asides/tag_cloud.html %}
 </nav>
+
+
