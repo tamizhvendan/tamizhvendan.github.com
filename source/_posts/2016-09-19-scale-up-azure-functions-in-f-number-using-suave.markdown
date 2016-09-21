@@ -9,13 +9,15 @@ categories:
   - Azure-Functions
 ---
 
-Recently Microsoft Azure has made [F# as a first-class citizen](https://blogs.msdn.microsoft.com/appserviceteam/2016/09/01/azure-functions-0-5-release-august-portal-update/) to write [Azure Functions](https://azure.microsoft.com/en-in/services/functions/). As F# is a functional-first programming language, I feel Azure Functions and F# would be a match made in heaven. In this blog post you are going to experience a scaled up version of Azure Functions in F# using [Suave](https://suave.io)
+Recently Microsoft Azure has made [F# as a first-class citizen](https://blogs.msdn.microsoft.com/appserviceteam/2016/09/01/azure-functions-0-5-release-august-portal-update/) to write [Azure Functions](https://azure.microsoft.com/en-in/services/functions/). As F# is a functional-first programming language, I feel Azure Functions and F# would be a match made in heaven.
+
+In this blog post, you are going to experience a scaled up version of Azure Functions in F# using [Suave](https://suave.io)
 
 ## What's in the Function Signatures?
 
-In a functional programming language, we define small functions that do one thing well and then we compose them together to define the solution. To [compose functions](https://fsharpforfunandprofit.com/posts/function-composition/), we need to be thoughtful while defining a function.
+In a functional programming language, we define small functions that do one thing well and then we compose them together to represent the solution. To [compose functions](https://fsharpforfunandprofit.com/posts/function-composition/), we need to be thoughtful while designing the signature of a function.
 
-Let's see the function signature of an [Azure Function in F#](https://azure.microsoft.com/en-us/documentation/articles/functions-reference-fsharp/)
+Let's see the signature of an [Azure Function in F#](https://azure.microsoft.com/en-us/documentation/articles/functions-reference-fsharp/)
 
 ```fsharp
 // HttpRequestMessage -> HttpResponseMessage
@@ -23,13 +25,13 @@ let Run(req: HttpRequestMessage) =
   new HttpResponseMessage(HttpStatusCode.OK)
 ```
 
-The `Run` function takes a `HttpRequestMessage` and returns the `HttpResponseMessage`. This signature is simple but it has a limitation. The limitation has been showcased in the [templates](https://github.com/Azure/azure-webjobs-sdk-templates/tree/dev/Templates) directory of Azure Webjobs SDK
+The `Run` function takes a `HttpRequestMessage` and returns the `HttpResponseMessage`. This signature is simple, but it has a limitation. The limitation has been showcased in the [templates](https://github.com/Azure/azure-webjobs-sdk-templates/tree/dev/Templates) directory of Azure Webjobs SDK
 
 {% img center border /images/AzureFunctionsSuave/Azure_Functions_CRUD.png 250 250 %}
 
-My each `C`, `R`, `U`, `D` are in different functions. Well, there is nothing wrong here. These templates are meant for getting started with these things in Azure Functions. But what you will do if you have a requirement to expose `CRUD` of a resource as a Azure Functions?
+My each `C`, `R`, `U`, `D` are in different functions. Well, there is nothing wrong here. These templates are suitable for getting started in Azure Functions. But what will you do if you have a requirement to expose `CRUD` of a resource as an Azure Functions?
 
-One option is to define each part of the `CRUD` as separate Azure Functions (as defined by the templates). If you choose to go by this, you will be having four different endpoints and I am sure your client code will have hard time to consume these endpoints. In addition to this, you will also need to manage four things to satisfy your one requirement, exposing a `CRUD` operation as Azure Function.
+One option is to define each part of the `CRUD` as separate Azure Functions (as defined by the templates). If you choose to go by this, you will have four different endpoints and I am sure your client code will have a hard time to consume these endpoints. In addition to this, you will also need to manage four things to satisfy your one requirement.
 
 The other option is putting the `CRUD` inside a single function.
 
@@ -53,23 +55,25 @@ Though this approach solves the problem, it comes with another set of [challenge
 
 ## Revisiting Function Signature
 
-A request `handler` looks for some condition to be meet in the incoming HTTP request and if the condition succeed then it modify the HTTP response.
+A request `handler` looks for some condition to be meet in the incoming HTTP request, and if the predicate succeeds, it modifies the HTTP response.
 
-The signature of the `Run` function, `HttpRequestMessage -> HttpResponseMessage` is not reflecting the above specification.
+The signature of the `Run` function, `HttpRequestMessage -> HttpResponseMessage` is not completely reflecting the above specification.
 
 Let's have a look at the limitations of this signature
 
-* The `Run` function doesn't return the `HttpRequestMessage`. So if we have multiple `handler` we are constrained to use either `if else if` or Polymorphism.
+* The `Run` function doesn't return the `HttpRequestMessage`. So if we have multiple `handler`s we are constrained to use either `if else if` or Polymorphism.
 
-* It doesn't represent a handler that doesn't handle the HTTP request. i.e If the HTTP request is `GET`, the `handler` for HTTP `POST` will not modify the `HttpResponseMessage`
+* It doesn't represent a handler that doesn't handle the HTTP request. If the HTTP request is `GET`, the `handler` for HTTP `POST` will not modify the `HttpResponseMessage`
 
 The better signature would have the following to describe a handler in a better way
 
 * The handler has to be pure function that takes both `Request` and `Response` as it's parameters
 
-* If the handler is not handling the HTTP request it has return the unmodified `Request` and `Response` along with an indicator saying that it didn't handled the request.
+* If the handler is not handling the HTTP request, it has to return the unmodified `Request` and `Response` along with an indicator saying that it didn't handle the request.
 
-It's where the [Suave](https://suave.io) library shines. Suave defines a type called `WebPart` with the signature to model the `handler` with the above said expectations.
+
+
+It's where the [Suave](https://suave.io) library shines. Suave defines a type called `WebPart` with the signature to model the `handler` with the above-said expectations.
 
 ```fsharp
 type HttpContext = {
@@ -83,16 +87,16 @@ type WebPart = HttpContext -> Async<HttpContext option>
 
 > The `Async` represents that the `WebPart` function is a non-blocking asynchronous function and `option` type models the `WebPart` which doesn't handle the HTTP request
 
-The real power of Suave is its set of combinators to manipulate route flow and task composition. You can define an api in Suave that only handles HTTP `POST` requests and returns `Hello` as text without typing too much.
+The real power of Suave is its set of combinators to manipulate route flow and task composition. You can define an API in Suave that only handles HTTP `POST` requests and returns `Hello` as text without typing too much.
 
 ```fsharp
 // HttpContext -> Async<HttpContext option>
 let app = POST >=> OK "HelloSystem.Net.Http
 ```
 
-> You can learn more about the Suave combinators from my blog post on [Building REST API in suave]({% post_url 2015-06-11-building-rest-api-in-fsharp-using-suave  %})
+> To learn more about the Suave combinators refer my blog post on [Building REST API in suave]({% post_url 2015-06-11-building-rest-api-in-fsharp-using-suave  %})
 
-If you notice the binding `app` itself is a `WebPart` (which in turn a function) with the signature `HttpContext -> Async<HttpContext option>`. So, you can call this function in your application code and project the output the function to any output medium that you wish.
+If you notice the binding `app` itself is a `WebPart` (which in turn a function) with the signature `HttpContext -> Async<HttpContext option>`. So, you can call this function in your application code and project the output of the function to any output medium that you wish.
 
 ## The Difference
 
@@ -110,7 +114,7 @@ The adapter does the following
 
 * Transforms `HttpRequestMessage` from `System.Net.Http` to `HttpRequest` of `Suave.Http`
 
-* Then create an empty Suave's `HttpContext` with the above `HttpRequest` and then call the `WebPart` (that represents your system).
+* Then create an empty Suave's `HttpContext` with the above `HttpRequest` and call the `WebPart` (that represents your system).
 
 * The final step is converting the `HttpResult` of `Suave.Http` to `HttpResponseMessage` of `System.Net.Http`.
 
@@ -165,7 +169,7 @@ let SuaveRequest (req : HttpRequestMessage) = async {
 
 I hope that these functions are self-explanatory, so let's move on the next step.
 
-> To keep it simple, I've ignored other HTTP Methods like PATCH, HEAD etc.
+> To keep it simple, I've ignored other HTTP Methods like PATCH, HEAD, etc.
 
 The next step is creating Suave `HttpContext`
 
@@ -192,7 +196,9 @@ let NetHttpResponseMessage httpResult =
   | Bytes c -> c
   | _ -> Array.empty
   let res = new HttpResponseMessage()
-  res.Content <- new ByteArrayContent(content httpResult.content)
+  let content = new ByteArrayContent(content httpResult.content)
+  httpResult.headers |> List.iter content.Headers.Add  
+  res.Content <- content
   res.StatusCode <- NetStatusCode httpResult.status
   res
 ```
@@ -261,7 +267,7 @@ Then add the `Suave` dependency in `project.json`
 }
 ```
 
-Let's start simple by small system that handles different types of HTTP methods.
+Let's start simply by defining small API (system) that handles different types of HTTP methods.
 
 ```fsharp
 // app.fsx
@@ -278,7 +284,7 @@ let app =
       DELETE >=> OK "DELETE test"]
 ```
 
-The final step is referring the `SuaveAdapter.fsx` and the `app.fsx` files in the `run.fsx` and have fun!
+The final step is referring the `SuaveAdapter.fsx` & `app.fsx` files in the `run.fsx` and have fun!
 
 ```fsharp
 // run.fsx
@@ -303,9 +309,11 @@ Suave is rocking!
 
 ## Creating a REST API in Azure Functions
 
-We can extend the above example to expose a REST end point as in Suave term *a REST API* is a **function**.
+We can extend the above example to expose a REST end point!
 
-Create a new Azure Function `HelloREST` and add `Newtonsoft.Json` & `Suave` dependencies in `project.json`
+In Suave *a REST API* is a **function**.
+
+Create a new Azure Function `HelloREST` and add `NewtonSoft.Json` & `Suave` dependencies in `project.json`
 
 ```json
 {
@@ -320,7 +328,7 @@ Create a new Azure Function `HelloREST` and add `Newtonsoft.Json` & `Suave` depe
 }
 ```
 
-To return *JSON* responses let's add some combinators
+To handle *JSON* requests and responses, let's add some combinators
 
 ```fsharp
 // Suave.Newtonsoft.Json.fsx
@@ -400,11 +408,11 @@ let app =
     DELETE >=> pathScan "/people/%s" deletePersonById
   ]
 ```
-> To keep things simple, I am hard coding the values here. It can easily extended to talk to any data source
+> To keep things simple, I am hard coding the values here. It can easily be extended to talk to any data source
 
-Our `SuaveAdapter` has capable of handling different HTTP methods and but it hasn't been programmed to handle different paths.
+Our `SuaveAdapter` has capable of handling different HTTP methods and but it hasn't been programmed to deal with different paths.
 
-Here in this example we need to support two different paths
+Here in this example we need to support two separate paths
 
 ```
 GET /people
@@ -417,9 +425,9 @@ The HTTP endpoint to call an Azure function has the format
 https://{azure-function-app-name}.azurewebsites.net/api/{function-name}
 ```
 
-At this point of writing it doesn't support multiple paths. So, we need to find a work around to do it.
+At this point of writing it doesn't support multiple paths. So, we need to find a workaround to do it.
 
-One way achieving this is to pass the *url with the paths* in as a Header value. Let's name the Header key as `X-Suave-URL`. Upon receiving the request we can rewrite the url as
+One way achieving this is to pass the *paths* as a Header. Let's name the Header key as `X-Suave-URL`. Upon receiving the request we can rewrite the URL as
 
 ```
 https://{azure-function-app-name}.azurewebsites.net/{header-value-of-X-Suave-URL}
@@ -443,7 +451,7 @@ let RunWebPartWithPathAsync app httpRequest = async {
 }
 ```
 
-The final step is updating `run.fsx` to use this
+The final step is updating the `run.fsx` file to use this new function
 
 ```fsharp
 #load "SuaveAdapter.fsx"
@@ -458,9 +466,26 @@ let Run (req : HttpRequestMessage) =
   res
 ```
 
-Serverless REST API in Action!
+**Serverless REST API in Action**
 
-{% img center border /images/AzureFunctionsSuave/HelloRestRequests.png 750 500 %}
+{% img center border /images/AzureFunctionsSuave/HelloRestRequests.jpeg %}
+
+> This blog post is a proof of concept to use Suave in Azure Functions. There are a lot of improvements to be made to make it production ready. I am planning to publish this as a NuGet package based on the feedback from the community.
+
+## Summary
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">&quot;F# is a general purpose language, not just a science, or data science language.&quot; <a href="https://twitter.com/tomaspetricek">@tomaspetricek</a> <a href="https://twitter.com/hashtag/ndcoslo?src=hash">#ndcoslo</a> <a href="https://twitter.com/hashtag/fsharp?src=hash">#fsharp</a></p>&mdash; Bryan Hunter (@bryan_hunter) <a href="https://twitter.com/bryan_hunter/status/741164339747520514">June 10, 2016</a></blockquote>
+
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">*PLEASE* Microsoft, stop saying <a href="https://twitter.com/hashtag/fsharp?src=hash">#fsharp</a> is great for &quot;financial applications and stuff like that&quot;. It&#39;s a bloody general purpose language.</p>&mdash; Isaac Abraham (@isaac_abraham) <a href="https://twitter.com/isaac_abraham/status/740209486359605248">June 7, 2016</a></blockquote>
+
+The complete source code is available in [my GitHub repository](https://github.com/tamizhvendan/TamAzureFun).
+
+## Are you interested in learning more about F#?
+
+I’m delighted to share that I’m running a tutorial at [Progressive F# Tutorials 2016](https://skillsmatter.com/conferences/7431-progressive-f-sharp-tutorials-2016), London on Dec 5, 2016. I'm excited to share my experiences with Suave and help developers to understand this wonderful F# library.
+
+The Progressive F# Tutorials offer hands-on learning for every skill set and is led by some of the best experts in F# and functional programming
 
 
 
