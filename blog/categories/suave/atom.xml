@@ -4,7 +4,7 @@
   <title><![CDATA[Category: suave | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/suave/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-07-01T15:46:32+05:30</updated>
+  <updated>2016-09-21T16:58:51+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,548 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Scale Up Azure Functions in F# using Suave]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/"/>
+    <updated>2016-09-19T15:55:45+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave</id>
+    <content type="html"><![CDATA[<p>Recently Microsoft Azure has made <a href="https://blogs.msdn.microsoft.com/appserviceteam/2016/09/01/azure-functions-0-5-release-august-portal-update/">F# as a first-class citizen</a> to write <a href="https://azure.microsoft.com/en-in/services/functions/">Azure Functions</a>. As F# is a functional-first programming language, I feel Azure Functions and F# would be a match made in heaven.</p>
+
+<p>In this blog post, you are going to experience a scaled up version of Azure Functions in F# using <a href="https://suave.io">Suave</a></p>
+
+<h2 id="whats-in-the-function-signatures">What’s in the Function Signatures?</h2>
+
+<p>In a functional programming language, we define small functions that do one thing well and then we compose them together to represent the solution. To <a href="https://fsharpforfunandprofit.com/posts/function-composition/">compose functions</a>, we need to be thoughtful while designing the signature of a function.</p>
+
+<p>Let’s see the signature of an <a href="https://azure.microsoft.com/en-us/documentation/articles/functions-reference-fsharp/">Azure Function in F#</a></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// HttpRequestMessage -&gt; HttpResponseMessage
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let Run(req: HttpRequestMessage) =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  new HttpResponseMessage(HttpStatusCode.OK)
+</pre></div>
+</div>
+</div>
+
+<p>The <code>Run</code> function takes a <code>HttpRequestMessage</code> and returns the <code>HttpResponseMessage</code>. This signature is simple, but it has a limitation. The limitation has been showcased in the <a href="https://github.com/Azure/azure-webjobs-sdk-templates/tree/dev/Templates">templates</a> directory of Azure Webjobs SDK</p>
+
+<p><img class="center border" src="/images/AzureFunctionsSuave/Azure_Functions_CRUD.png" width="250" height="250"></p>
+
+<p>My each <code>C</code>, <code>R</code>, <code>U</code>, <code>D</code> are in different functions. Well, there is nothing wrong here. These templates are suitable for getting started in Azure Functions. But what will you do if you have a requirement to expose <code>CRUD</code> of a resource as an Azure Functions?</p>
+
+<p>One option is to define each part of the <code>CRUD</code> as separate Azure Functions (as defined by the templates). If you choose to go by this, you will have four different endpoints and I am sure your client code will have a hard time to consume these endpoints. In addition to this, you will also need to manage four things to satisfy your one requirement.</p>
+
+<p>The other option is putting the <code>CRUD</code> inside a single function.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let Run (req:HttpRequestMessage) =
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>    if req.Method = HttpMethod.Get then
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>        // ...
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    else if req.Method = HttpMethod.Post then
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        // ...
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    else if req.Method = HttpMethod.Put then
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        // ...
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    else if req.Method = HttpMethod.Delete then
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>        // ...
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    else
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>        // ...
+</pre></div>
+</div>
+</div>
+
+<p>Though this approach solves the problem, it comes with another set of <a href="http://stackoverflow.com/questions/126409/ways-to-eliminate-switch-in-code">challenges</a>. In Object Oriented  Programming, we typically use <a href="http://www.refactoring.com/catalog/replaceConditionalWithPolymorphism.html">Polymorphism</a> to replace the conditional logic.</p>
+
+<p><img class="center" src="http://scontent.cdninstagram.com/t51.2885-15/s480x480/e35/13391359_1083221395099569_1878773023_n.jpg?ig_cache_key=MTI3NTQ5MjQ4NzE4Mjk3MTIxOQ%3D%3D.2"></p>
+
+<h2 id="revisiting-function-signature">Revisiting Function Signature</h2>
+
+<p>A request <code>handler</code> looks for some condition to be meet in the incoming HTTP request, and if the predicate succeeds, it modifies the HTTP response.</p>
+
+<p>The signature of the <code>Run</code> function, <code>HttpRequestMessage -&gt; HttpResponseMessage</code> is not completely reflecting the above specification.</p>
+
+<p>Let’s have a look at the limitations of this signature</p>
+
+<ul>
+  <li>
+    <p>The <code>Run</code> function doesn’t return the <code>HttpRequestMessage</code>. So if we have multiple <code>handler</code>s we are constrained to use either <code>if else if</code> or Polymorphism.</p>
+  </li>
+  <li>
+    <p>It doesn’t represent a handler that doesn’t handle the HTTP request. If the HTTP request is <code>GET</code>, the <code>handler</code> for HTTP <code>POST</code> will not modify the <code>HttpResponseMessage</code></p>
+  </li>
+</ul>
+
+<p>The better signature would have the following to describe a handler in a better way</p>
+
+<ul>
+  <li>
+    <p>The handler has to be pure function that takes both <code>Request</code> and <code>Response</code> as it’s parameters</p>
+  </li>
+  <li>
+    <p>If the handler is not handling the HTTP request, it has to return the unmodified <code>Request</code> and <code>Response</code> along with an indicator saying that it didn’t handle the request.</p>
+  </li>
+</ul>
+
+<p>It’s where the <a href="https://suave.io">Suave</a> library shines. Suave defines a type called <code>WebPart</code> with the signature to model the <code>handler</code> with the above-said expectations.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type HttpContext = {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  request    : HttpRequest
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  response   : HttpResult
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  // ...
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>}
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>type WebPart = HttpContext -&gt; Async&lt;HttpContext option&gt;
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>The <code>Async</code> represents that the <code>WebPart</code> function is a non-blocking asynchronous function and <code>option</code> type models the <code>WebPart</code> which doesn’t handle the HTTP request</p>
+</blockquote>
+
+<p>The real power of Suave is its set of combinators to manipulate route flow and task composition. You can define an API in Suave that only handles HTTP <code>POST</code> requests and returns <code>Hello</code> as text without typing too much.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// HttpContext -&gt; Async&lt;HttpContext option&gt;
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let app = POST &gt;=&gt; OK &quot;HelloSystem.Net.Http
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>To learn more about the Suave combinators refer my blog post on <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">Building REST API in suave</a></p>
+</blockquote>
+
+<p>If you notice the binding <code>app</code> itself is a <code>WebPart</code> (which in turn a function) with the signature <code>HttpContext -&gt; Async&lt;HttpContext option&gt;</code>. So, you can call this function in your application code and project the output of the function to any output medium that you wish.</p>
+
+<h2 id="the-difference">The Difference</h2>
+
+<p>The Azure Functions do an incredible job in helping you to define <em>a part of your system</em> as <em>a function</em>. Suave takes it to the next level by helping you to define <em>your system</em> as <em>function</em>.</p>
+
+<p>In nutshell, Suave complements Azure Functions and helps you to define your system as a <em>Serverless Function</em></p>
+
+<h2 id="creating-a-suave-adapter">Creating a Suave Adapter</h2>
+
+<p>So, to scale up Azure Functions using Suave, all we need is an adapter.</p>
+
+<p><img class="center" src="http://images.freeimages.com/images/previews/c0d/adapter-1420487.jpg"></p>
+
+<p>The adapter does the following</p>
+
+<ul>
+  <li>
+    <p>Transforms <code>HttpRequestMessage</code> from <code>System.Net.Http</code> to <code>HttpRequest</code> of <code>Suave.Http</code></p>
+  </li>
+  <li>
+    <p>Then create an empty Suave’s <code>HttpContext</code> with the above <code>HttpRequest</code> and call the <code>WebPart</code> (that represents your system).</p>
+  </li>
+  <li>
+    <p>The final step is converting the <code>HttpResult</code> of <code>Suave.Http</code> to <code>HttpResponseMessage</code> of <code>System.Net.Http</code>.</p>
+  </li>
+</ul>
+
+<p>Let’s start from <code>HttpRequestMessage</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// SuaveAdapter.fsx
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let SuaveHttpMethod (httpMethod : System.Net.Http.HttpMethod) =
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  match httpMethod.Method with
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  | &quot;GET&quot; -&gt; HttpMethod.GET
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  | &quot;POST&quot; -&gt; HttpMethod.POST
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  | &quot;PUT&quot; -&gt; HttpMethod.PUT
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  | &quot;DELETE&quot; -&gt; HttpMethod.DELETE
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  | x -&gt; HttpMethod.OTHER x
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let SuaveHeaders (headers : HttpRequestHeaders) =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  headers
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  |&gt; Seq.map (fun h -&gt; (h.Key, h.Value |&gt; Seq.head))
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  |&gt; Seq.toList
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>let SuaveRawForm (content : System.Net.Http.HttpContent) = async {
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let! content = content.ReadAsByteArrayAsync() |&gt; Async.AwaitTask
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  return content
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>}
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>let SuaveRawQuery (requestUri : System.Uri) =
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  if requestUri.Query.Length &gt; 1 then
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>    requestUri.Query.Substring(1)
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>  else
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>      &quot;&quot;
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>let NetHeaderValue (headers : HttpRequestHeaders) key =
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>    headers
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>    |&gt; Seq.tryFind (fun h -&gt; h.Key = key)
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>    |&gt; Option.map (fun h -&gt; h.Value |&gt; Seq.head)
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>let SuaveRequest (req : HttpRequestMessage) = async {
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>  let! content = SuaveRawForm req.Content
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>  let host = defaultArg (NetHeaderValue req.Headers &quot;Host&quot;) &quot;&quot;
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>  return {HttpRequest.empty with
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>            url = req.RequestUri            
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>            ``method`` = SuaveHttpMethod req.Method
+<span class="line-numbers"><a href="#n37" name="n37">37</a></span>            headers = SuaveHeaders req.Headers
+<span class="line-numbers"><a href="#n38" name="n38">38</a></span>            rawForm = content
+<span class="line-numbers"><a href="#n39" name="n39">39</a></span>            rawQuery = SuaveRawQuery req.RequestUri
+<span class="line-numbers"><strong><a href="#n40" name="n40">40</a></strong></span>            host = host}
+<span class="line-numbers"><a href="#n41" name="n41">41</a></span>}
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>As a convention, I’ve used <code>Net</code> and <code>Suave</code> prefixes in the function name to represent the returning type of <code>System.Net.Http</code> and <code>Suave.Http</code> respectively.  </p>
+</blockquote>
+
+<p>I hope that these functions are self-explanatory, so let’s move on the next step.</p>
+
+<blockquote>
+  <p>To keep it simple, I’ve ignored other HTTP Methods like PATCH, HEAD, etc.</p>
+</blockquote>
+
+<p>The next step is creating Suave <code>HttpContext</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let SuaveContext httpRequest = async {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let! suaveReq = SuaveRequest httpRequest
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  return { HttpContext.empty with request = suaveReq}
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>}   
+</pre></div>
+</div>
+</div>
+
+<p>Then we need to convert <code>HttpResult</code> to <code>HttpResponseMessage</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let NetStatusCode = function
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>| HttpCode.HTTP_200 -&gt; HttpStatusCode.OK
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>| HttpCode.HTTP_201 -&gt; HttpStatusCode.Created
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>| HttpCode.HTTP_400 -&gt; HttpStatusCode.BadRequest
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>| HttpCode.HTTP_404 -&gt; HttpStatusCode.NotFound
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>| HttpCode.HTTP_202 -&gt; HttpStatusCode.Accepted
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>| _ -&gt; HttpStatusCode.Ambiguous
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let NetHttpResponseMessage httpResult =
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let content = function
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  | Bytes c -&gt; c
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  | _ -&gt; Array.empty
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  let res = new HttpResponseMessage()
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let content = new ByteArrayContent(content httpResult.content)
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  httpResult.headers |&gt; List.iter content.Headers.Add  
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  res.Content &lt;- content
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  res.StatusCode &lt;- NetStatusCode httpResult.status
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  res
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>To keep it simple, I’ve ignored other HTTP StatusCodes</p>
+</blockquote>
+
+<p>The final step is putting these functions together and run the <code>WebPart</code> function with the translated <code>HttpContext</code>.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let SuaveRunAsync app suaveContext = async {
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let! res = app suaveContext
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  match res with
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  | Some ctx -&gt;
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    return (NetHttpResponseMessage ctx.response, ctx)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  | _ -&gt;
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    let res = new HttpResponseMessage()
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    res.Content &lt;- new ByteArrayContent(Array.empty)
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    res.StatusCode &lt;- HttpStatusCode.NotFound
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    return res,suaveContext
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>}
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>let RunWebPartAsync app httpRequest = async {
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let! suaveContext = SuaveContext httpRequest
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  return! SuaveRunAsync app suaveContext
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>}
+</pre></div>
+</div>
+</div>
+
+<h2 id="suave-adapter-in-action">Suave Adapter In Action</h2>
+
+<p>Let’s see the Suave Adapter that we created in action.</p>
+
+<p>As already there are two great blog posts by <a href="http://gregshackles.com/getting-started-with-azure-functions-and-f/">Greg Shackles</a> and <a href="https://mnie.github.io/2016-09-08-AzureFunctions/">Michał Niegrzybowski</a>, I am diving directly into Azure functions in F#.</p>
+
+<p>Let me create a new Azure Function application in Azure with the name “TamAzureFun” and then define the first function <code>HelloSuave</code>.</p>
+
+<p>The <code>function.json</code> of <code>HelloSuave</code> has to be updated with the <code>methods</code> property to support different HTTP request methods.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>{
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>    <span class="key"><span class="delimiter">&quot;</span><span class="content">disabled</span><span class="delimiter">&quot;</span></span>: <span class="value">false</span>,
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    <span class="key"><span class="delimiter">&quot;</span><span class="content">bindings</span><span class="delimiter">&quot;</span></span>: [{
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">httpTrigger</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">req</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">methods</span><span class="delimiter">&quot;</span></span>: [<span class="string"><span class="delimiter">&quot;</span><span class="content">get</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">put</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">post</span><span class="delimiter">&quot;</span></span>,<span class="string"><span class="delimiter">&quot;</span><span class="content">delete</span><span class="delimiter">&quot;</span></span>],
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">authLevel</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">anonymous</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">direction</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">in</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    },{
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">type</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">http</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">res</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">direction</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">out</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    }]
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Then add the <code>Suave</code> dependency in <code>project.json</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>{
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  <span class="key"><span class="delimiter">&quot;</span><span class="content">frameworks</span><span class="delimiter">&quot;</span></span>: {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    <span class="key"><span class="delimiter">&quot;</span><span class="content">net46</span><span class="delimiter">&quot;</span></span>: {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">dependencies</span><span class="delimiter">&quot;</span></span>: {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        <span class="key"><span class="delimiter">&quot;</span><span class="content">Suave</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1.1.3</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      }
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    }
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  }
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Let’s start simply by defining small API (system) that handles different types of HTTP methods.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// app.fsx
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open Suave
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Suave.Successful
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.Operators
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Filters
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let app =
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  choose [
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      GET &gt;=&gt; OK &quot;GET test&quot;
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      POST &gt;=&gt; OK &quot;POST test&quot;
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      PUT &gt;=&gt; OK &quot;PUT test&quot;
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      DELETE &gt;=&gt; OK &quot;DELETE test&quot;]
+</pre></div>
+</div>
+</div>
+
+<p>The final step is referring the <code>SuaveAdapter.fsx</code> &amp; <code>app.fsx</code> files in the <code>run.fsx</code> and have fun!</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// run.fsx
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>#load &quot;SuaveAdapter.fsx&quot;
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>#load &quot;app.fsx&quot;
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open SuaveAdapter
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open App
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open System.Net.Http
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open Suave
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let Run (req : HttpRequestMessage) =
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let res, _ = RunWebPartAsync app req |&gt; Async.RunSynchronously
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  res
+</pre></div>
+</div>
+</div>
+
+<p>Let’s make some HTTP requests to test our implementation.</p>
+
+<p><img class="center border" src="/images/AzureFunctionsSuave/HelloSuaveRequests.png" width="700" height="500"></p>
+
+<p>Suave is rocking!</p>
+
+<h2 id="creating-a-rest-api-in-azure-functions">Creating a REST API in Azure Functions</h2>
+
+<p>We can extend the above example to expose a REST end point!</p>
+
+<p>In Suave <em>a REST API</em> is a <strong>function</strong>.</p>
+
+<p>Create a new Azure Function <code>HelloREST</code> and add <code>NewtonSoft.Json</code> &amp; <code>Suave</code> dependencies in <code>project.json</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>{
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  <span class="key"><span class="delimiter">&quot;</span><span class="content">frameworks</span><span class="delimiter">&quot;</span></span>: {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    <span class="key"><span class="delimiter">&quot;</span><span class="content">net46</span><span class="delimiter">&quot;</span></span>: {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      <span class="key"><span class="delimiter">&quot;</span><span class="content">dependencies</span><span class="delimiter">&quot;</span></span>: {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        <span class="key"><span class="delimiter">&quot;</span><span class="content">Suave</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1.1.3</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>        <span class="key"><span class="delimiter">&quot;</span><span class="content">NewtonSoft.Json</span><span class="delimiter">&quot;</span></span> : <span class="string"><span class="delimiter">&quot;</span><span class="content">9.0.1</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      }
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    }
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  }
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>}
+</pre></div>
+</div>
+</div>
+
+<p>To handle <em>JSON</em> requests and responses, let’s add some combinators</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.Newtonsoft.Json.fsx
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open Newtonsoft.Json
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Newtonsoft.Json.Serialization
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open System.Text
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Json
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open Suave.Http
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open Suave
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>open Suave.Operators
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let toJson&lt;'T&gt; (o: 'T) =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  let settings = new JsonSerializerSettings()
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  settings.ContractResolver &lt;- new CamelCasePropertyNamesContractResolver()
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  JsonConvert.SerializeObject(o, settings)
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  |&gt; Encoding.UTF8.GetBytes
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>let fromJson&lt;'T&gt; (bytes : byte []) =
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let json = Encoding.UTF8.GetString bytes
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  JsonConvert.DeserializeObject(json, typeof&lt;'T&gt;) :?&gt; 'T
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>let mapJsonWith&lt;'TIn, 'TOut&gt;
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  (deserializer:byte[] -&gt; 'TIn) (serializer:'TOut-&gt;byte[]) webpart f =
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  request(fun r -&gt;
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    f (deserializer r.rawForm)
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    |&gt; serializer
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    |&gt; webpart
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    &gt;=&gt; Writers.setMimeType &quot;application/json&quot;)
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>let MapJson&lt;'T1,'T2&gt; webpart =
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>  mapJsonWith&lt;'T1,'T2&gt; fromJson toJson webpart
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>let ToJson webpart x  =
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>  toJson x |&gt; webpart &gt;=&gt; Writers.setMimeType &quot;application/json&quot;   
+</pre></div>
+</div>
+</div>
+
+<p>Then define the REST api in <code>app.fsx</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>#load &quot;Suave.Newtonsoft.Json.fsx&quot;
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open Suave
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Suave.Successful
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.Operators
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Filters
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open System
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open Suave.Newtonsoft.Json
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>type Person = {
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  Id : Guid
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  Name : string
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  Email : string
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>let createPerson person =
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let newPerson = {person with Id = Guid.NewGuid()}
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  newPerson
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>let getPeople () = [
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  {Id = Guid.NewGuid(); Name = &quot;john&quot;; Email = &quot;j@g.co&quot;}
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  {Id = Guid.NewGuid(); Name = &quot;mark&quot;; Email = &quot;m@g.co&quot;}]
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>let getPersonById id =
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>  {Id = Guid.Parse(id); Name = &quot;john&quot;; Email = &quot;j@g.co&quot;}
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  |&gt; ToJson ok
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>let deletePersonById id =
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>  sprintf &quot;person %s deleted&quot; id |&gt; OK
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>let app =
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>  choose [
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>    path &quot;/people&quot; &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>      POST &gt;=&gt; MapJson created createPerson
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>      GET &gt;=&gt; ToJson ok (getPeople ())
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>      PUT &gt;=&gt; MapJson accepted id
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>    ]
+<span class="line-numbers"><a href="#n37" name="n37">37</a></span>    GET &gt;=&gt; pathScan &quot;/people/%s&quot; getPersonById
+<span class="line-numbers"><a href="#n38" name="n38">38</a></span>    DELETE &gt;=&gt; pathScan &quot;/people/%s&quot; deletePersonById
+<span class="line-numbers"><a href="#n39" name="n39">39</a></span>  ]
+</pre></div>
+</div>
+</div>
+<blockquote>
+  <p>To keep things simple, I am hard coding the values here. It can easily be extended to talk to any data source</p>
+</blockquote>
+
+<p>Our <code>SuaveAdapter</code> has capable of handling different HTTP methods and but it hasn’t been programmed to deal with different paths.</p>
+
+<p>Here in this example we need to support two separate paths</p>
+
+<pre><code>GET /people
+GET /people/feafa5b5-304d-455e-b7e7-13a5b3293f77
+</code></pre>
+
+<p>The HTTP endpoint to call an Azure function has the format</p>
+
+<pre><code>https://{azure-function-app-name}.azurewebsites.net/api/{function-name}
+</code></pre>
+
+<p>At this point of writing it doesn’t support multiple paths. So, we need to find a workaround to do it.</p>
+
+<p>One way achieving this is to pass the <em>paths</em> as a Header. Let’s name the Header key as <code>X-Suave-URL</code>. Upon receiving the request we can rewrite the URL as</p>
+
+<pre><code>https://{azure-function-app-name}.azurewebsites.net/{header-value-of-X-Suave-URL}
+</code></pre>
+
+<p>Let’s update <code>SuaveAdapter.fsx</code> to do this</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let RunWebPartWithPathAsync app httpRequest = async {
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let! suaveContext = SuaveContext httpRequest
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let netHeaderValue = NetHeaderValue httpRequest.Headers
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  match netHeaderValue &quot;X-Suave-URL&quot;, netHeaderValue &quot;Host&quot;  with
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  | Some suaveUrl, Some host -&gt;
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    let url = sprintf &quot;https://%s%s&quot; host suaveUrl |&gt; System.Uri
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    let ctx = {suaveContext with
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>                request = {suaveContext.request with
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>                            url = url
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>                            rawQuery = SuaveRawQuery url}}
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    return! SuaveRunAsync app ctx
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  | _ -&gt; return! SuaveRunAsync app suaveContext
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>The final step is updating the <code>run.fsx</code> file to use this new function</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>#load &quot;SuaveAdapter.fsx&quot;
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>#load &quot;app.fsx&quot;
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open SuaveAdapter
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open App
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open System.Net.Http
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open Suave
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>let Run (req : HttpRequestMessage) =
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let res, _ = RunWebPartWithPathAsync app req |&gt; Async.RunSynchronously
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  res
+</pre></div>
+</div>
+</div>
+
+<p><strong>Serverless REST API in Action</strong></p>
+
+<p><img class="center border" src="/images/AzureFunctionsSuave/HelloRestRequests.jpeg"></p>
+
+<blockquote>
+  <p>This blog post is a proof of concept to use Suave in Azure Functions. There are a lot of improvements to be made to make it production ready. I am planning to publish this as a NuGet package based on the feedback from the community.</p>
+</blockquote>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">&quot;F# is a general purpose language, not just a science, or data science language.&quot; <a href="https://twitter.com/tomaspetricek">@tomaspetricek</a> <a href="https://twitter.com/hashtag/ndcoslo?src=hash">#ndcoslo</a> <a href="https://twitter.com/hashtag/fsharp?src=hash">#fsharp</a></p>&mdash; Bryan Hunter (@bryan_hunter) <a href="https://twitter.com/bryan_hunter/status/741164339747520514">June 10, 2016</a></blockquote>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">*PLEASE* Microsoft, stop saying <a href="https://twitter.com/hashtag/fsharp?src=hash">#fsharp</a> is great for &quot;financial applications and stuff like that&quot;. It&#39;s a bloody general purpose language.</p>&mdash; Isaac Abraham (@isaac_abraham) <a href="https://twitter.com/isaac_abraham/status/740209486359605248">June 7, 2016</a></blockquote>
+
+<p>The complete source code is available in <a href="https://github.com/tamizhvendan/TamAzureFun">my GitHub repository</a>.</p>
+
+<h2 id="are-you-interested-in-learning-more-about-f">Are you interested in learning more about F#?</h2>
+
+<p>I’m delighted to share that I’m running a tutorial at <a href="https://skillsmatter.com/conferences/7431-progressive-f-sharp-tutorials-2016">Progressive F# Tutorials 2016</a>, London on Dec 5, 2016. I’m excited to share my experiences with Suave and help developers to understand this wonderful F# library.</p>
+
+<p>The Progressive F# Tutorials offer hands-on learning for every skill set and is led by some of the best experts in F# and functional programming</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Implementing API Gateway in F# using Rx and Suave]]></title>

@@ -1,0 +1,957 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Scale Up Azure Functions in F# using Suave - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Scale Up Azure Functions in F# Using Suave Recently Microsoft Azure has made F# as a first-class citizen to write Azure Functions. As F# is a &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+  <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+
+  </style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+	<!-- Start of Leadin Embed -->
+  <script type="text/javascript" src="//js.leadin.com/js/v1/2177345.js" id="LeadinEmbed-2177345" crossorigin="use-credentials" async defer></script>
+<!-- End of Leadin Embed -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><!-- <div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div> -->
+<style>
+@media (max-width: 600px) {
+  #book-cover, #tag-cloud {
+    display: none;
+  }
+}
+</style>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About Me</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<nav id="book-cover" style="margin-top:32px">
+	<a href="http://products.tamizhvendan.in/fsharp-applied">
+	<img class="center" src="/images/fsharp_applied_cover.jpg" width="160">
+</a>
+</nav>
+<nav id="tag-cloud">
+	<section>
+    <!-- <h3>Tag Cloud</h3>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 143.63636363636363%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.9090909090909%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.36363636363636%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 113.63636363636364%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 119.0909090909091%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.9090909090909%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 116.36363636363636%'>programming</a> <a href='/blog/categories/suave' style='font-size: 113.63636363636364%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 113.63636363636364%'>unit testing</a> </span> -->
+</section>
+</nav>
+
+
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Scale Up Azure Functions in F# Using Suave</h1>
+	<div class="entry-content" itemprop="articleBody"><p>Recently Microsoft Azure has made <a href="https://blogs.msdn.microsoft.com/appserviceteam/2016/09/01/azure-functions-0-5-release-august-portal-update/">F# as a first-class citizen</a> to write <a href="https://azure.microsoft.com/en-in/services/functions/">Azure Functions</a>. As F# is a functional-first programming language, I feel Azure Functions and F# would be a match made in heaven.</p>
+
+<p>In this blog post, you are going to experience a scaled up version of Azure Functions in F# using <a href="https://suave.io">Suave</a></p>
+
+<h2 id="whats-in-the-function-signatures">What’s in the Function Signatures?</h2>
+
+<p>In a functional programming language, we define small functions that do one thing well and then we compose them together to represent the solution. To <a href="https://fsharpforfunandprofit.com/posts/function-composition/">compose functions</a>, we need to be thoughtful while designing the signature of a function.</p>
+
+<p>Let’s see the signature of an <a href="https://azure.microsoft.com/en-us/documentation/articles/functions-reference-fsharp/">Azure Function in F#</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// HttpRequestMessage -&gt; HttpResponseMessage</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">Run</span><span class="o">(</span><span class="n">req</span><span class="o">:</span> <span class="n">HttpRequestMessage</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">new</span> <span class="n">HttpResponseMessage</span><span class="o">(</span><span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">OK</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>Run</code> function takes a <code>HttpRequestMessage</code> and returns the <code>HttpResponseMessage</code>. This signature is simple, but it has a limitation. The limitation has been showcased in the <a href="https://github.com/Azure/azure-webjobs-sdk-templates/tree/dev/Templates">templates</a> directory of Azure Webjobs SDK</p>
+
+<p><img class="center border" src="/images/AzureFunctionsSuave/Azure_Functions_CRUD.png" width="250" height="250" /></p>
+
+<p>My each <code>C</code>, <code>R</code>, <code>U</code>, <code>D</code> are in different functions. Well, there is nothing wrong here. These templates are suitable for getting started in Azure Functions. But what will you do if you have a requirement to expose <code>CRUD</code> of a resource as an Azure Functions?</p>
+
+<p>One option is to define each part of the <code>CRUD</code> as separate Azure Functions (as defined by the templates). If you choose to go by this, you will have four different endpoints and I am sure your client code will have a hard time to consume these endpoints. In addition to this, you will also need to manage four things to satisfy your one requirement.</p>
+
+<p>The other option is putting the <code>CRUD</code> inside a single function.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">Run</span> <span class="o">(</span><span class="n">req</span><span class="o">:</span><span class="n">HttpRequestMessage</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Method</span> <span class="o">=</span> <span class="nn">HttpMethod</span><span class="p">.</span><span class="n">Get</span> <span class="k">then</span>
+</span><span class="line">        <span class="c1">// ...</span>
+</span><span class="line">    <span class="k">else</span> <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Method</span> <span class="o">=</span> <span class="nn">HttpMethod</span><span class="p">.</span><span class="n">Post</span> <span class="k">then</span>
+</span><span class="line">        <span class="c1">// ...</span>
+</span><span class="line">    <span class="k">else</span> <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Method</span> <span class="o">=</span> <span class="nn">HttpMethod</span><span class="p">.</span><span class="n">Put</span> <span class="k">then</span>
+</span><span class="line">        <span class="c1">// ...</span>
+</span><span class="line">    <span class="k">else</span> <span class="k">if</span> <span class="n">req</span><span class="o">.</span><span class="n">Method</span> <span class="o">=</span> <span class="nn">HttpMethod</span><span class="p">.</span><span class="n">Delete</span> <span class="k">then</span>
+</span><span class="line">        <span class="c1">// ...</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">        <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Though this approach solves the problem, it comes with another set of <a href="http://stackoverflow.com/questions/126409/ways-to-eliminate-switch-in-code">challenges</a>. In Object Oriented  Programming, we typically use <a href="http://www.refactoring.com/catalog/replaceConditionalWithPolymorphism.html">Polymorphism</a> to replace the conditional logic.</p>
+
+<p><img class="center" src="http://scontent.cdninstagram.com/t51.2885-15/s480x480/e35/13391359_1083221395099569_1878773023_n.jpg?ig_cache_key=MTI3NTQ5MjQ4NzE4Mjk3MTIxOQ%3D%3D.2" /></p>
+
+<h2 id="revisiting-function-signature">Revisiting Function Signature</h2>
+
+<p>A request <code>handler</code> looks for some condition to be meet in the incoming HTTP request, and if the predicate succeeds, it modifies the HTTP response.</p>
+
+<p>The signature of the <code>Run</code> function, <code>HttpRequestMessage -&gt; HttpResponseMessage</code> is not completely reflecting the above specification.</p>
+
+<p>Let’s have a look at the limitations of this signature</p>
+
+<ul>
+  <li>
+    <p>The <code>Run</code> function doesn’t return the <code>HttpRequestMessage</code>. So if we have multiple <code>handler</code>s we are constrained to use either <code>if else if</code> or Polymorphism.</p>
+  </li>
+  <li>
+    <p>It doesn’t represent a handler that doesn’t handle the HTTP request. If the HTTP request is <code>GET</code>, the <code>handler</code> for HTTP <code>POST</code> will not modify the <code>HttpResponseMessage</code></p>
+  </li>
+</ul>
+
+<p>The better signature would have the following to describe a handler in a better way</p>
+
+<ul>
+  <li>
+    <p>The handler has to be pure function that takes both <code>Request</code> and <code>Response</code> as it’s parameters</p>
+  </li>
+  <li>
+    <p>If the handler is not handling the HTTP request, it has to return the unmodified <code>Request</code> and <code>Response</code> along with an indicator saying that it didn’t handle the request.</p>
+  </li>
+</ul>
+
+<p>It’s where the <a href="https://suave.io">Suave</a> library shines. Suave defines a type called <code>WebPart</code> with the signature to model the <code>handler</code> with the above-said expectations.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">HttpContext</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">request</span>    <span class="o">:</span> <span class="n">HttpRequest</span>
+</span><span class="line">  <span class="n">response</span>   <span class="o">:</span> <span class="n">HttpResult</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">WebPart</span> <span class="o">=</span> <span class="n">HttpContext</span> <span class="o">-&gt;</span> <span class="n">Async</span><span class="o">&lt;</span><span class="n">HttpContext</span> <span class="n">option</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>The <code>Async</code> represents that the <code>WebPart</code> function is a non-blocking asynchronous function and <code>option</code> type models the <code>WebPart</code> which doesn’t handle the HTTP request</p>
+</blockquote>
+
+<p>The real power of Suave is its set of combinators to manipulate route flow and task composition. You can define an API in Suave that only handles HTTP <code>POST</code> requests and returns <code>Hello</code> as text without typing too much.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// HttpContext -&gt; Async&lt;HttpContext option&gt;</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">OK</span> <span class="s">&quot;HelloSystem.Net.Http</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>To learn more about the Suave combinators refer my blog post on <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">Building REST API in suave</a></p>
+</blockquote>
+
+<p>If you notice the binding <code>app</code> itself is a <code>WebPart</code> (which in turn a function) with the signature <code>HttpContext -&gt; Async&lt;HttpContext option&gt;</code>. So, you can call this function in your application code and project the output of the function to any output medium that you wish.</p>
+
+<h2 id="the-difference">The Difference</h2>
+
+<p>The Azure Functions do an incredible job in helping you to define <em>a part of your system</em> as <em>a function</em>. Suave takes it to the next level by helping you to define <em>your system</em> as <em>function</em>.</p>
+
+<p>In nutshell, Suave complements Azure Functions and helps you to define your system as a <em>Serverless Function</em></p>
+
+<h2 id="creating-a-suave-adapter">Creating a Suave Adapter</h2>
+
+<p>So, to scale up Azure Functions using Suave, all we need is an adapter.</p>
+
+<p><img class="center" src="http://images.freeimages.com/images/previews/c0d/adapter-1420487.jpg" /></p>
+
+<p>The adapter does the following</p>
+
+<ul>
+  <li>
+    <p>Transforms <code>HttpRequestMessage</code> from <code>System.Net.Http</code> to <code>HttpRequest</code> of <code>Suave.Http</code></p>
+  </li>
+  <li>
+    <p>Then create an empty Suave’s <code>HttpContext</code> with the above <code>HttpRequest</code> and call the <code>WebPart</code> (that represents your system).</p>
+  </li>
+  <li>
+    <p>The final step is converting the <code>HttpResult</code> of <code>Suave.Http</code> to <code>HttpResponseMessage</code> of <code>System.Net.Http</code>.</p>
+  </li>
+</ul>
+
+<p>Let’s start from <code>HttpRequestMessage</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// SuaveAdapter.fsx</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">SuaveHttpMethod</span> <span class="o">(</span><span class="n">httpMethod</span> <span class="o">:</span> <span class="nn">System</span><span class="p">.</span><span class="nn">Net</span><span class="p">.</span><span class="nn">Http</span><span class="p">.</span><span class="n">HttpMethod</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">httpMethod</span><span class="o">.</span><span class="n">Method</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="s">&quot;GET&quot;</span> <span class="o">-&gt;</span> <span class="nn">HttpMethod</span><span class="p">.</span><span class="n">GET</span>
+</span><span class="line">  <span class="o">|</span> <span class="s">&quot;POST&quot;</span> <span class="o">-&gt;</span> <span class="nn">HttpMethod</span><span class="p">.</span><span class="n">POST</span>
+</span><span class="line">  <span class="o">|</span> <span class="s">&quot;PUT&quot;</span> <span class="o">-&gt;</span> <span class="nn">HttpMethod</span><span class="p">.</span><span class="n">PUT</span>
+</span><span class="line">  <span class="o">|</span> <span class="s">&quot;DELETE&quot;</span> <span class="o">-&gt;</span> <span class="nn">HttpMethod</span><span class="p">.</span><span class="n">DELETE</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="nn">HttpMethod</span><span class="p">.</span><span class="n">OTHER</span> <span class="n">x</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">SuaveHeaders</span> <span class="o">(</span><span class="n">headers</span> <span class="o">:</span> <span class="n">HttpRequestHeaders</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">headers</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">h</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">h</span><span class="o">.</span><span class="n">Key</span><span class="o">,</span> <span class="n">h</span><span class="o">.</span><span class="n">Value</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">head</span><span class="o">))</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">toList</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">SuaveRawForm</span> <span class="o">(</span><span class="n">content</span> <span class="o">:</span> <span class="nn">System</span><span class="p">.</span><span class="nn">Net</span><span class="p">.</span><span class="nn">Http</span><span class="p">.</span><span class="n">HttpContent</span><span class="o">)</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">let!</span> <span class="nv">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">ReadAsByteArrayAsync</span><span class="bp">()</span> <span class="o">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="n">AwaitTask</span>
+</span><span class="line">  <span class="k">return</span> <span class="n">content</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">SuaveRawQuery</span> <span class="o">(</span><span class="n">requestUri</span> <span class="o">:</span> <span class="nn">System</span><span class="p">.</span><span class="n">Uri</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">if</span> <span class="n">requestUri</span><span class="o">.</span><span class="n">Query</span><span class="o">.</span><span class="n">Length</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">then</span>
+</span><span class="line">    <span class="n">requestUri</span><span class="o">.</span><span class="n">Query</span><span class="o">.</span><span class="n">Substring</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">      <span class="s">&quot;&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">NetHeaderValue</span> <span class="o">(</span><span class="n">headers</span> <span class="o">:</span> <span class="n">HttpRequestHeaders</span><span class="o">)</span> <span class="n">key</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">headers</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">tryFind</span> <span class="o">(</span><span class="k">fun</span> <span class="n">h</span> <span class="o">-&gt;</span> <span class="n">h</span><span class="o">.</span><span class="n">Key</span> <span class="o">=</span> <span class="n">key</span><span class="o">)</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Option</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">h</span> <span class="o">-&gt;</span> <span class="n">h</span><span class="o">.</span><span class="n">Value</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">head</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">SuaveRequest</span> <span class="o">(</span><span class="n">req</span> <span class="o">:</span> <span class="n">HttpRequestMessage</span><span class="o">)</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">let!</span> <span class="nv">content</span> <span class="o">=</span> <span class="n">SuaveRawForm</span> <span class="n">req</span><span class="o">.</span><span class="n">Content</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">host</span> <span class="o">=</span> <span class="n">defaultArg</span> <span class="o">(</span><span class="n">NetHeaderValue</span> <span class="n">req</span><span class="o">.</span><span class="n">Headers</span> <span class="s">&quot;Host&quot;</span><span class="o">)</span> <span class="s">&quot;&quot;</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">{</span><span class="nn">HttpRequest</span><span class="p">.</span><span class="n">empty</span> <span class="k">with</span>
+</span><span class="line">            <span class="n">url</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">RequestUri</span>
+</span><span class="line">            <span class="o">``</span><span class="k">method</span><span class="o">``</span> <span class="o">=</span> <span class="n">SuaveHttpMethod</span> <span class="n">req</span><span class="o">.</span><span class="n">Method</span>
+</span><span class="line">            <span class="n">headers</span> <span class="o">=</span> <span class="n">SuaveHeaders</span> <span class="n">req</span><span class="o">.</span><span class="n">Headers</span>
+</span><span class="line">            <span class="n">rawForm</span> <span class="o">=</span> <span class="n">content</span>
+</span><span class="line">            <span class="n">rawQuery</span> <span class="o">=</span> <span class="n">SuaveRawQuery</span> <span class="n">req</span><span class="o">.</span><span class="n">RequestUri</span>
+</span><span class="line">            <span class="n">host</span> <span class="o">=</span> <span class="n">host</span><span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>As a convention, I’ve used <code>Net</code> and <code>Suave</code> prefixes in the function name to represent the returning type of <code>System.Net.Http</code> and <code>Suave.Http</code> respectively.  </p>
+</blockquote>
+
+<p>I hope that these functions are self-explanatory, so let’s move on the next step.</p>
+
+<blockquote>
+  <p>To keep it simple, I’ve ignored other HTTP Methods like PATCH, HEAD, etc.</p>
+</blockquote>
+
+<p>The next step is creating Suave <code>HttpContext</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">SuaveContext</span> <span class="n">httpRequest</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">let!</span> <span class="nv">suaveReq</span> <span class="o">=</span> <span class="n">SuaveRequest</span> <span class="n">httpRequest</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">{</span> <span class="nn">HttpContext</span><span class="p">.</span><span class="n">empty</span> <span class="k">with</span> <span class="n">request</span> <span class="o">=</span> <span class="n">suaveReq</span><span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then we need to convert <code>HttpResult</code> to <code>HttpResponseMessage</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">NetStatusCode</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_200</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">OK</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_201</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">Created</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_400</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">BadRequest</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_404</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">NotFound</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_202</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">Accepted</span>
+</span><span class="line"><span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">Ambiguous</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">NetHttpResponseMessage</span> <span class="n">httpResult</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">content</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Bytes</span> <span class="n">c</span> <span class="o">-&gt;</span> <span class="n">c</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="nn">Array</span><span class="p">.</span><span class="n">empty</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">res</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpResponseMessage</span><span class="bp">()</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">content</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayContent</span><span class="o">(</span><span class="n">content</span> <span class="n">httpResult</span><span class="o">.</span><span class="n">content</span><span class="o">)</span>
+</span><span class="line">  <span class="n">httpResult</span><span class="o">.</span><span class="n">headers</span> <span class="o">|&gt;</span> <span class="nn">List</span><span class="p">.</span><span class="n">iter</span> <span class="n">content</span><span class="o">.</span><span class="n">Headers</span><span class="o">.</span><span class="n">Add</span>
+</span><span class="line">  <span class="n">res</span><span class="o">.</span><span class="n">Content</span> <span class="o">&lt;-</span> <span class="n">content</span>
+</span><span class="line">  <span class="n">res</span><span class="o">.</span><span class="n">StatusCode</span> <span class="o">&lt;-</span> <span class="n">NetStatusCode</span> <span class="n">httpResult</span><span class="o">.</span><span class="n">status</span>
+</span><span class="line">  <span class="n">res</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>To keep it simple, I’ve ignored other HTTP StatusCodes</p>
+</blockquote>
+
+<p>The final step is putting these functions together and run the <code>WebPart</code> function with the translated <code>HttpContext</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">SuaveRunAsync</span> <span class="n">app</span> <span class="n">suaveContext</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">let!</span> <span class="nv">res</span> <span class="o">=</span> <span class="n">app</span> <span class="n">suaveContext</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">res</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">ctx</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="k">return</span> <span class="o">(</span><span class="n">NetHttpResponseMessage</span> <span class="n">ctx</span><span class="o">.</span><span class="n">response</span><span class="o">,</span> <span class="n">ctx</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">res</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpResponseMessage</span><span class="bp">()</span>
+</span><span class="line">    <span class="n">res</span><span class="o">.</span><span class="n">Content</span> <span class="o">&lt;-</span> <span class="k">new</span> <span class="n">ByteArrayContent</span><span class="o">(</span><span class="nn">Array</span><span class="p">.</span><span class="n">empty</span><span class="o">)</span>
+</span><span class="line">    <span class="n">res</span><span class="o">.</span><span class="n">StatusCode</span> <span class="o">&lt;-</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">NotFound</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">res</span><span class="o">,</span><span class="n">suaveContext</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">RunWebPartAsync</span> <span class="n">app</span> <span class="n">httpRequest</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">let!</span> <span class="nv">suaveContext</span> <span class="o">=</span> <span class="n">SuaveContext</span> <span class="n">httpRequest</span>
+</span><span class="line">  <span class="k">return</span><span class="o">!</span> <span class="n">SuaveRunAsync</span> <span class="n">app</span> <span class="n">suaveContext</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="suave-adapter-in-action">Suave Adapter In Action</h2>
+
+<p>Let’s see the Suave Adapter that we created in action.</p>
+
+<p>As already there are two great blog posts by <a href="http://gregshackles.com/getting-started-with-azure-functions-and-f/">Greg Shackles</a> and <a href="https://mnie.github.io/2016-09-08-AzureFunctions/">Michał Niegrzybowski</a>, I am diving directly into Azure functions in F#.</p>
+
+<p>Let me create a new Azure Function application in Azure with the name “TamAzureFun” and then define the first function <code>HelloSuave</code>.</p>
+
+<p>The <code>function.json</code> of <code>HelloSuave</code> has to be updated with the <code>methods</code> property to support different HTTP request methods.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="nt">&quot;disabled&quot;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;bindings&quot;</span><span class="p">:</span> <span class="p">[{</span>
+</span><span class="line">      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;httpTrigger&quot;</span><span class="p">,</span>
+</span><span class="line">      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;req&quot;</span><span class="p">,</span>
+</span><span class="line">      <span class="nt">&quot;methods&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;get&quot;</span><span class="p">,</span><span class="s2">&quot;put&quot;</span><span class="p">,</span><span class="s2">&quot;post&quot;</span><span class="p">,</span><span class="s2">&quot;delete&quot;</span><span class="p">],</span>
+</span><span class="line">      <span class="nt">&quot;authLevel&quot;</span><span class="p">:</span> <span class="s2">&quot;anonymous&quot;</span><span class="p">,</span>
+</span><span class="line">      <span class="nt">&quot;direction&quot;</span><span class="p">:</span> <span class="s2">&quot;in&quot;</span>
+</span><span class="line">    <span class="p">},{</span>
+</span><span class="line">      <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;http&quot;</span><span class="p">,</span>
+</span><span class="line">      <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;res&quot;</span><span class="p">,</span>
+</span><span class="line">      <span class="nt">&quot;direction&quot;</span><span class="p">:</span> <span class="s2">&quot;out&quot;</span>
+</span><span class="line">    <span class="p">}]</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then add the <code>Suave</code> dependency in <code>project.json</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;frameworks&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">    <span class="nt">&quot;net46&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">      <span class="nt">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">        <span class="nt">&quot;Suave&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.3&quot;</span>
+</span><span class="line">      <span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Let’s start simply by defining small API (system) that handles different types of HTTP methods.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// app.fsx</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Successful</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Filters</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">app</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">OK</span> <span class="s">&quot;GET test&quot;</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">OK</span> <span class="s">&quot;POST test&quot;</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span> <span class="n">OK</span> <span class="s">&quot;PUT test&quot;</span>
+</span><span class="line">      <span class="n">DELETE</span> <span class="o">&gt;=&gt;</span> <span class="n">OK</span> <span class="s">&quot;DELETE test&quot;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The final step is referring the <code>SuaveAdapter.fsx</code> &amp; <code>app.fsx</code> files in the <code>run.fsx</code> and have fun!</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// run.fsx</span>
+</span><span class="line"><span class="o">#</span><span class="n">load</span> <span class="s">&quot;SuaveAdapter.fsx&quot;</span>
+</span><span class="line"><span class="o">#</span><span class="n">load</span> <span class="s">&quot;app.fsx&quot;</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">SuaveAdapter</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">App</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Net.Http</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">Run</span> <span class="o">(</span><span class="n">req</span> <span class="o">:</span> <span class="n">HttpRequestMessage</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">res</span><span class="o">,</span> <span class="o">_</span> <span class="o">=</span> <span class="n">RunWebPartAsync</span> <span class="n">app</span> <span class="n">req</span> <span class="o">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="n">RunSynchronously</span>
+</span><span class="line">  <span class="n">res</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Let’s make some HTTP requests to test our implementation.</p>
+
+<p><img class="center border" src="/images/AzureFunctionsSuave/HelloSuaveRequests.png" width="700" height="500" /></p>
+
+<p>Suave is rocking!</p>
+
+<h2 id="creating-a-rest-api-in-azure-functions">Creating a REST API in Azure Functions</h2>
+
+<p>We can extend the above example to expose a REST end point!</p>
+
+<p>In Suave <em>a REST API</em> is a <strong>function</strong>.</p>
+
+<p>Create a new Azure Function <code>HelloREST</code> and add <code>NewtonSoft.Json</code> &amp; <code>Suave</code> dependencies in <code>project.json</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;frameworks&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">    <span class="nt">&quot;net46&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">      <span class="nt">&quot;dependencies&quot;</span><span class="p">:</span> <span class="p">{</span>
+</span><span class="line">        <span class="nt">&quot;Suave&quot;</span><span class="p">:</span> <span class="s2">&quot;1.1.3&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="nt">&quot;NewtonSoft.Json&quot;</span> <span class="p">:</span> <span class="s2">&quot;9.0.1&quot;</span>
+</span><span class="line">      <span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>To handle <em>JSON</em> requests and responses, let’s add some combinators</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.Newtonsoft.Json.fsx</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Newtonsoft.Json</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Newtonsoft.Json.Serialization</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Text</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Json</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Http</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">toJson</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">(</span><span class="n">o</span><span class="o">:</span> <span class="k">&#39;</span><span class="n">T</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">settings</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JsonSerializerSettings</span><span class="bp">()</span>
+</span><span class="line">  <span class="n">settings</span><span class="o">.</span><span class="n">ContractResolver</span> <span class="o">&lt;-</span> <span class="k">new</span> <span class="n">CamelCasePropertyNamesContractResolver</span><span class="bp">()</span>
+</span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">o</span><span class="o">,</span> <span class="n">settings</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Encoding</span><span class="p">.</span><span class="nn">UTF8</span><span class="p">.</span><span class="n">GetBytes</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">fromJson</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">(</span><span class="n">bytes</span> <span class="o">:</span> <span class="kt">byte</span> <span class="bp">[]</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">json</span> <span class="o">=</span> <span class="nn">Encoding</span><span class="p">.</span><span class="nn">UTF8</span><span class="p">.</span><span class="n">GetString</span> <span class="n">bytes</span>
+</span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">DeserializeObject</span><span class="o">(</span><span class="n">json</span><span class="o">,</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">T</span><span class="o">&gt;)</span> <span class="o">:?&gt;</span> <span class="k">&#39;</span><span class="n">T</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">mapJsonWith</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">TIn</span><span class="o">,</span> <span class="k">&#39;</span><span class="n">TOut</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="o">(</span><span class="n">deserializer</span><span class="o">:</span><span class="kt">byte</span><span class="bp">[]</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">TIn</span><span class="o">)</span> <span class="o">(</span><span class="n">serializer</span><span class="o">:</span><span class="k">&#39;</span><span class="n">TOut</span><span class="o">-&gt;</span><span class="kt">byte</span><span class="bp">[]</span><span class="o">)</span> <span class="n">webpart</span> <span class="n">f</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">request</span><span class="o">(</span><span class="k">fun</span> <span class="n">r</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">f</span> <span class="o">(</span><span class="n">deserializer</span> <span class="n">r</span><span class="o">.</span><span class="n">rawForm</span><span class="o">)</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">serializer</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">webpart</span>
+</span><span class="line">    <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">MapJson</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">T1</span><span class="o">,</span><span class="k">&#39;</span><span class="n">T2</span><span class="o">&gt;</span> <span class="n">webpart</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">mapJsonWith</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">T1</span><span class="o">,</span><span class="k">&#39;</span><span class="n">T2</span><span class="o">&gt;</span> <span class="n">fromJson</span> <span class="n">toJson</span> <span class="n">webpart</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">ToJson</span> <span class="n">webpart</span> <span class="n">x</span>  <span class="o">=</span>
+</span><span class="line">  <span class="n">toJson</span> <span class="n">x</span> <span class="o">|&gt;</span> <span class="n">webpart</span> <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then define the REST api in <code>app.fsx</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">load</span> <span class="s">&quot;Suave.Newtonsoft.Json.fsx&quot;</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Successful</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Filters</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Newtonsoft.Json</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">Person</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Id</span> <span class="o">:</span> <span class="n">Guid</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Email</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">createPerson</span> <span class="n">person</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">newPerson</span> <span class="o">=</span> <span class="o">{</span><span class="n">person</span> <span class="k">with</span> <span class="n">Id</span> <span class="o">=</span> <span class="nn">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="bp">()</span><span class="o">}</span>
+</span><span class="line">  <span class="n">newPerson</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getPeople</span> <span class="bp">()</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class="line">  <span class="o">{</span><span class="n">Id</span> <span class="o">=</span> <span class="nn">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="bp">()</span><span class="o">;</span> <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;john&quot;</span><span class="o">;</span> <span class="n">Email</span> <span class="o">=</span> <span class="s">&quot;j@g.co&quot;</span><span class="o">}</span>
+</span><span class="line">  <span class="o">{</span><span class="n">Id</span> <span class="o">=</span> <span class="nn">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="bp">()</span><span class="o">;</span> <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;mark&quot;</span><span class="o">;</span> <span class="n">Email</span> <span class="o">=</span> <span class="s">&quot;m@g.co&quot;</span><span class="o">}]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getPersonById</span> <span class="n">id</span> <span class="o">=</span>
+</span><span class="line">  <span class="o">{</span><span class="n">Id</span> <span class="o">=</span> <span class="nn">Guid</span><span class="p">.</span><span class="n">Parse</span><span class="o">(</span><span class="n">id</span><span class="o">);</span> <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;john&quot;</span><span class="o">;</span> <span class="n">Email</span> <span class="o">=</span> <span class="s">&quot;j@g.co&quot;</span><span class="o">}</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="n">ToJson</span> <span class="n">ok</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">deletePersonById</span> <span class="n">id</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">sprintf</span> <span class="s">&quot;person %s deleted&quot;</span> <span class="n">id</span> <span class="o">|&gt;</span> <span class="n">OK</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">app</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">path</span> <span class="s">&quot;/people&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">MapJson</span> <span class="n">created</span> <span class="n">createPerson</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">ToJson</span> <span class="n">ok</span> <span class="o">(</span><span class="n">getPeople</span> <span class="bp">()</span><span class="o">)</span>
+</span><span class="line">      <span class="n">PUT</span> <span class="o">&gt;=&gt;</span> <span class="n">MapJson</span> <span class="n">accepted</span> <span class="n">id</span>
+</span><span class="line">    <span class="o">]</span>
+</span><span class="line">    <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="s">&quot;/people/%s&quot;</span> <span class="n">getPersonById</span>
+</span><span class="line">    <span class="n">DELETE</span> <span class="o">&gt;=&gt;</span> <span class="n">pathScan</span> <span class="s">&quot;/people/%s&quot;</span> <span class="n">deletePersonById</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<blockquote>
+  <p>To keep things simple, I am hard coding the values here. It can easily be extended to talk to any data source</p>
+</blockquote>
+
+<p>Our <code>SuaveAdapter</code> has capable of handling different HTTP methods and but it hasn’t been programmed to deal with different paths.</p>
+
+<p>Here in this example we need to support two separate paths</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">GET</span> <span class="o">/</span><span class="n">people</span>
+</span><span class="line"><span class="n">GET</span> <span class="o">/</span><span class="n">people</span><span class="o">/</span><span class="n">feafa5b5</span><span class="o">-</span><span class="mi">304</span><span class="n">d</span><span class="o">-</span><span class="mi">455</span><span class="n">e</span><span class="o">-</span><span class="n">b7e7</span><span class="o">-</span><span class="mi">13</span><span class="n">a5b3293f77</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The HTTP endpoint to call an Azure function has the format</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">https</span><span class="o">:</span><span class="c1">//{azure-function-app-name}.azurewebsites.net/api/{function-name}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>At this point of writing it doesn’t support multiple paths. So, we need to find a workaround to do it.</p>
+
+<p>One way achieving this is to pass the <em>paths</em> as a Header. Let’s name the Header key as <code>X-Suave-URL</code>. Upon receiving the request we can rewrite the URL as</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">https</span><span class="o">:</span><span class="c1">//{azure-function-app-name}.azurewebsites.net/{header-value-of-X-Suave-URL}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Let’s update <code>SuaveAdapter.fsx</code> to do this</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">RunWebPartWithPathAsync</span> <span class="n">app</span> <span class="n">httpRequest</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">let!</span> <span class="nv">suaveContext</span> <span class="o">=</span> <span class="n">SuaveContext</span> <span class="n">httpRequest</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">netHeaderValue</span> <span class="o">=</span> <span class="n">NetHeaderValue</span> <span class="n">httpRequest</span><span class="o">.</span><span class="n">Headers</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">netHeaderValue</span> <span class="s">&quot;X-Suave-URL&quot;</span><span class="o">,</span> <span class="n">netHeaderValue</span> <span class="s">&quot;Host&quot;</span>  <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">suaveUrl</span><span class="o">,</span> <span class="n">Some</span> <span class="n">host</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="n">sprintf</span> <span class="s">&quot;https://%s%s&quot;</span> <span class="n">host</span> <span class="n">suaveUrl</span> <span class="o">|&gt;</span> <span class="nn">System</span><span class="p">.</span><span class="n">Uri</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">ctx</span> <span class="o">=</span> <span class="o">{</span><span class="n">suaveContext</span> <span class="k">with</span>
+</span><span class="line">                <span class="n">request</span> <span class="o">=</span> <span class="o">{</span><span class="n">suaveContext</span><span class="o">.</span><span class="n">request</span> <span class="k">with</span>
+</span><span class="line">                            <span class="n">url</span> <span class="o">=</span> <span class="n">url</span>
+</span><span class="line">                            <span class="n">rawQuery</span> <span class="o">=</span> <span class="n">SuaveRawQuery</span> <span class="n">url</span><span class="o">}}</span>
+</span><span class="line">    <span class="k">return</span><span class="o">!</span> <span class="n">SuaveRunAsync</span> <span class="n">app</span> <span class="n">ctx</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">SuaveRunAsync</span> <span class="n">app</span> <span class="n">suaveContext</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The final step is updating the <code>run.fsx</code> file to use this new function</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">load</span> <span class="s">&quot;SuaveAdapter.fsx&quot;</span>
+</span><span class="line"><span class="o">#</span><span class="n">load</span> <span class="s">&quot;app.fsx&quot;</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">SuaveAdapter</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">App</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Net.Http</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">Run</span> <span class="o">(</span><span class="n">req</span> <span class="o">:</span> <span class="n">HttpRequestMessage</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">res</span><span class="o">,</span> <span class="o">_</span> <span class="o">=</span> <span class="n">RunWebPartWithPathAsync</span> <span class="n">app</span> <span class="n">req</span> <span class="o">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="n">RunSynchronously</span>
+</span><span class="line">  <span class="n">res</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>Serverless REST API in Action</strong></p>
+
+<p><img class="center border" src="/images/AzureFunctionsSuave/HelloRestRequests.jpeg" /></p>
+
+<blockquote>
+  <p>This blog post is a proof of concept to use Suave in Azure Functions. There are a lot of improvements to be made to make it production ready. I am planning to publish this as a NuGet package based on the feedback from the community.</p>
+</blockquote>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">&quot;F# is a general purpose language, not just a science, or data science language.&quot; <a href="https://twitter.com/tomaspetricek">@tomaspetricek</a> <a href="https://twitter.com/hashtag/ndcoslo?src=hash">#ndcoslo</a> <a href="https://twitter.com/hashtag/fsharp?src=hash">#fsharp</a></p>&mdash; Bryan Hunter (@bryan_hunter) <a href="https://twitter.com/bryan_hunter/status/741164339747520514">June 10, 2016</a></blockquote>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">*PLEASE* Microsoft, stop saying <a href="https://twitter.com/hashtag/fsharp?src=hash">#fsharp</a> is great for &quot;financial applications and stuff like that&quot;. It&#39;s a bloody general purpose language.</p>&mdash; Isaac Abraham (@isaac_abraham) <a href="https://twitter.com/isaac_abraham/status/740209486359605248">June 7, 2016</a></blockquote>
+
+<p>The complete source code is available in <a href="https://github.com/tamizhvendan/TamAzureFun">my GitHub repository</a>.</p>
+
+<h2 id="are-you-interested-in-learning-more-about-f">Are you interested in learning more about F#?</h2>
+
+<p>I’m delighted to share that I’m running a tutorial at <a href="https://skillsmatter.com/conferences/7431-progressive-f-sharp-tutorials-2016">Progressive F# Tutorials 2016</a>, London on Dec 5, 2016. I’m excited to share my experiences with Suave and help developers to understand this wonderful F# library.</p>
+
+<p>The Progressive F# Tutorials offer hands-on learning for every skill set and is led by some of the best experts in F# and functional programming</p>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2016
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

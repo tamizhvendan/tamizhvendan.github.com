@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://blog.tamizhvendan.in/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/</loc>
+    <lastmod>2016-09-19T15:55:45+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.tamizhvendan.in/blog/2016/04/28/expressing-business-logic-with-f-number-s-partial-active-patterns/</loc>
     <lastmod>2016-04-28T20:16:14+05:30</lastmod>
     <priority>0.8</priority>
@@ -305,28 +311,28 @@
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/archives/</loc>
-    <lastmod>2016-07-01T15:46:32+05:30</lastmod>
+    <lastmod>2016-09-21T16:58:51+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/</loc>
-    <lastmod>2016-07-01T15:46:32+05:30</lastmod>
+    <lastmod>2016-09-21T16:58:51+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/categories/</loc>
-    <lastmod>2016-07-01T15:46:32+05:30</lastmod>
+    <lastmod>2016-09-21T16:58:51+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/open-source-contributions/</loc>
-    <lastmod>2016-07-01T15:46:32+05:30</lastmod>
+    <lastmod>2016-09-21T16:58:51+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Jan 18th, 2015 dsl, fparsec, fsharp Comments Step-5 Advanced Search DSL Using FParsec This is step 5 of my blog series on Web Application &hellip;">
+	<meta name="description" content="Feb 4th, 2015 asp.net-identity, fsharp, owin Comments Step-6 Authentication Using Owin Authentication Middleware and ASP.NET Identity This is step 6 &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -31,6 +31,7 @@
 
   </style>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 	<!-- Start of Leadin Embed -->
   <script type="text/javascript" src="//js.leadin.com/js/v1/2177345.js" id="LeadinEmbed-2177345" crossorigin="use-credentials" async defer></script>
 <!-- End of Leadin Embed -->
@@ -118,8 +119,8 @@
 </nav>
 <nav id="tag-cloud">
 	<section>
-    <h3>Tag Cloud</h3>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 145.71428571428572%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 111.42857142857143%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 117.14285714285714%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 114.28571428571429%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 111.42857142857143%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 117.14285714285714%'>programming</a> <a href='/blog/categories/suave' style='font-size: 111.42857142857143%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 114.28571428571429%'>unit testing</a> </span>
+    <!-- <h3>Tag Cloud</h3>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 143.63636363636363%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.9090909090909%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 116.36363636363636%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 113.63636363636364%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 119.0909090909091%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.9090909090909%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 116.36363636363636%'>programming</a> <a href='/blog/categories/suave' style='font-size: 113.63636363636364%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 113.63636363636364%'>unit testing</a> </span> -->
 </section>
 </nav>
 
@@ -134,6 +135,567 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-02-04T17:24:22+05:30" data-updated="true" itemprop="datePublished">Feb 4<sup>th</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-identity/'>asp.net-identity</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/owin/'>owin</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/" itemprop="url">Step-6 Authentication Using Owin Authentication Middleware and ASP.NET Identity</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote>
+  <p>This is step 6 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In the <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">last blog post</a> we have added an interactive feature to search phones and in this blog post we are going to add authentication to our PhoneCat application using Owin Authentication Middleware and ASP.NET identity.</p>
+
+<p>In the first half of this blog post we are going to see how to implement a new user registration workflow </p>
+
+<p><img src="/images/fsharp_phonecat/step_6/registration_workflow.png" /></p>
+
+<p>And in the second half, we are going to see how to do authentication using the registered login credentials</p>
+
+<p><img src="/images/fsharp_phonecat/step_6/login_workflow.png" /></p>
+
+<h3 id="owin-authentication-middleware-in-brief">Owin Authentication Middleware in brief</h3>
+
+<p>In the <a href="https://msdn.microsoft.com/en-us/magazine/dn451439.aspx">Owin Specification</a>, a middleware access the request before it reaches the underlying web framework. You can view the authentication middleware as gate keeper who checks the incoming request, if it is authenticated it let the request to go through the other middlewares in the pipeline else it bypasses the pipeline and take a different route (usually redirecting to the login page)</p>
+
+<p>In the blog post we are going to use cookie based authentication middleware which is similar to the <a href="https://msdn.microsoft.com/en-us/library/7t6b43z4%28v=vs.140%29.aspx">Asp.Net Forms Authentication</a> and it also supports <a href="https://msdn.microsoft.com/en-us/library/system.security.claims.claim(v=vs.110).aspx">Claims</a>.</p>
+
+<p>Another appreciable feature in Owin it is upto us on how to validate the incoming user credentials. We can plug it to any external authentication providers like Google, Facebook, etc., or using Active Directory or Asp.Net Identity. Here we are going to validate the user credentials using <a href="http://odetocode.com/blogs/scott/archive/2013/11/25/asp-net-core-identity.aspx">Asp.Net Identity framework</a> which provides the required interfaces for handling the authentication and <a href="http://odetocode.com/blogs/scott/archive/2014/01/03/asp-net-identity-with-the-entity-framework.aspx">Entity Framework Identity</a> which provides the concrete implementations for this Identity interfaces.</p>
+
+<h3 id="setting-up-the-infrastructure">Setting up the infrastructure</h3>
+
+<p>Create a new F# class library project with the name <code>Identity</code> and install the Microsoft <a href="https://www.nuget.org/packages/Microsoft.AspNet.Identity.EntityFramework/">AspNet.Identity.EntityFramework</a> nuget package which provides a pluggable data store for the user identity management using Entity Framework.</p>
+
+<p>Then add a source file in the <code>Identity</code> project with the name <code>User</code> and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">Microsoft.AspNet.Identity.EntityFramework</span>
+</span><span class="line">
+</span><span class="line"><span class="o">[&lt;</span><span class="n">AllowNullLiteral</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">type</span> <span class="nc">User</span><span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">IdentityUser</span><span class="bp">()</span>
+</span><span class="line">  <span class="k">member</span> <span class="k">val</span> <span class="n">Name</span> <span class="o">=</span> <span class="s">&quot;&quot;</span> <span class="k">with</span> <span class="n">get</span><span class="o">,</span> <span class="n">set</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">UserDbContext</span><span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">IdentityDbContext</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;(</span><span class="s">&quot;IdentityConnection&quot;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>IdentityUser</code> represents the default implementation of <a href="https://msdn.microsoft.com/en-us/library/microsoft.aspnet.identity.iuser%28v=vs.108%29.aspx">IUser</a> interface which provides the basic properties for a user. We can extend it by adding our custom properties. Here we have added a custom property called <code>Name</code> which represents the name of the user.</p>
+
+<p>The <a href="https://msdn.microsoft.com/en-us/library/ee353608.aspx">AllowNullLiteral</a> attribute is one of the feature in F# which explicitly make a type to allow null as one of its value. F# by default doesn’t support null value for its types and the beauty is you will get a compiler error if you assign null to an identifier! Pretty cool isn’t it? No Null Exception, <a href="http://www.infoq.com/presentations/Null-References-The-Billion-Dollar-Mistake-Tony-Hoare">No Billion Dollar Mistake</a>! Then why we are allowing it explicitly here. Well, it has been added here for a reason and I will reveal it later in this blog post</p>
+
+<p>The <code>IdentityDbContext</code> represents the data store abstraction of Identity entities like Users, Roles, Claims and Logins. The <code>UserDbContext</code> is just a subclass of <code>IdentityDbContext</code> which tells Entity Framework to use the connection string name <code>IdentityConnection</code></p>
+
+<h3 id="setting-up-user-registration">Setting up User Registration</h3>
+
+<p>With all the needed infrastructure in place its time to do the actual work and lets start with adding a provision for registering new user.</p>
+
+<p>In the <code>Web</code> project add the reference to the <code>Identity</code> project and install the following nuget packages</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="text"><span class="line">Microsoft.Owin.Security.Cookies
+</span><span class="line">Microsoft.Owin.Host.SystemWeb
+</span><span class="line">Microsoft.AspNet.Identity.EntityFramework
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Create a controller with the name <code>AuthenticationController</code> in the <code>Web</code> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">CLIMutable</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">type</span> <span class="nc">RegisterViewModel</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Email</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Password</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">AuthenticationController</span> <span class="o">(</span><span class="n">userManager</span> <span class="o">:</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">Controller</span><span class="bp">()</span>
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Register</span><span class="bp">()</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="bp">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>The <code>AuthenticationController</code> depends on <code>UserManager</code> to take care of managing users. <a href="https://msdn.microsoft.com/en-us/library/dn613290%28v=vs.108%29.aspx">UserManager</a> is an abstraction defined in the <strong>AspNet.Identity</strong> assembly. It provides various APIs to work with the underlying user datastore. </p>
+
+<p>As the name indicates <code>RegisterViewModel</code> represents the view model for Registration View. The <a href="https://msdn.microsoft.com/en-us/library/hh289724.aspx">CLIMutable</a> attribute creates a default constructor and “getters and setters” for all the properties of a record type when it is compiled to IL and here it makes the <code>RegisterViewModel</code> compatible with the Asp.Net <a href="https://msdn.microsoft.com/en-us/library/system.web.mvc.defaultmodelbinder(v=vs.118).aspx">DefaultModelBinder</a> which expects the types to have default constructor to bind the incoming request.</p>
+
+<p>The action method <code>Register</code> simply renders the Register View. This view not created yet so lets add it. Create a cshtml file with the name <em>Register.cshtml</em> in the directory <strong>Views/Authentication</strong>. </p>
+
+<p>This is a strongly typed view of type <code>RegisterViewModel</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="html"><span class="line">@model PhoneCat.Web.Controllers.RegisterViewModel
+</span><span class="line">
+</span><span class="line"><span class="nt">&lt;h3&gt;</span>Register New User<span class="nt">&lt;/h3&gt;</span>
+</span><span class="line">
+</span><span class="line">@using (Html.BeginForm(&quot;Register&quot;, &quot;Authentication&quot;, FormMethod.Post))
+</span><span class="line">{
+</span><span class="line">  @Html.AntiForgeryToken()
+</span><span class="line">  @Html.ValidationSummary()
+</span><span class="line">
+</span><span class="line">  @Html.TextBoxFor(m =&gt; m.Name)
+</span><span class="line">
+</span><span class="line">  @Html.TextBoxFor(m =&gt; m.Email)
+</span><span class="line">
+</span><span class="line">  @Html.PasswordFor(m =&gt; m.Password)
+</span><span class="line">
+</span><span class="line">  <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span> <span class="na">class=</span><span class="s">&quot;btn btn-primary&quot;</span><span class="nt">&gt;</span>Create<span class="nt">&lt;/button&gt;</span>
+</span><span class="line">}
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p><em>Note: I’ve intentionally ignored the bootstrap css form styles here to keep the code snippet less noisy</em></p>
+
+<p><img src="/images/fsharp_phonecat/step_6/new_user_registration.png" /></p>
+
+<p>It’s a typical razor view representing the registration screen. For the sake of simplicity I’ve ignored the retype password field. </p>
+
+<p>The next step is handling the new user registration POST request.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">HttpPost</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="o">[&lt;</span><span class="n">ValidateAntiForgeryToken</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Register</span><span class="o">(</span><span class="n">registerViewModel</span> <span class="o">:</span> <span class="n">RegisterViewModel</span><span class="o">)</span> <span class="o">:</span> <span class="n">ActionResult</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="o">(</span><span class="n">Name</span> <span class="o">=</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Name</span><span class="o">,</span>
+</span><span class="line">                      <span class="n">UserName</span> <span class="o">=</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Email</span> <span class="o">,</span>
+</span><span class="line">                      <span class="n">Email</span> <span class="o">=</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Email</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">userCreateResult</span> <span class="o">=</span> <span class="n">userManager</span><span class="o">.</span><span class="n">Create</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="n">registerViewModel</span><span class="o">.</span><span class="n">Password</span><span class="o">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="o">(</span><span class="n">userCreateResult</span><span class="o">.</span><span class="n">Succeeded</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">RedirectToAction</span><span class="o">(</span><span class="s">&quot;Index&quot;</span><span class="o">,</span> <span class="s">&quot;Home&quot;</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">ActionResult</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="n">userCreateResult</span><span class="o">.</span><span class="n">Errors</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">iter</span><span class="o">(</span><span class="k">fun</span> <span class="n">err</span> <span class="o">-&gt;</span> <span class="n">this</span><span class="o">.</span><span class="n">ModelState</span><span class="o">.</span><span class="n">AddModelError</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">,</span> <span class="n">err</span><span class="o">))</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="o">(</span><span class="n">registerViewModel</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">ActionResult</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Add the above action method in the <code>AuthenticationController</code> to create new user. It creates a <code>User</code> object from the <code>RegisterViewModel</code> and use it to create a new user via <code>UserManager</code>. We are using <code>Email</code> as the <code>UserName</code> in the above code snippet</p>
+
+<p>If the user creation is successful, we are redirecting the user to the home page else we are showing the error messages to the user. After we implemented the login we will modify the above logic to sign in after successful registration.</p>
+
+<p>The next task is creation of <code>AuthenticationController</code> instance. Open <code>MvcInfrastructure</code> that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/MvcInfrastructure.fs">created in the step-2</a> and update it as below.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">private</span> <span class="n">createUserManager</span> <span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">userManager</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;(</span><span class="k">new</span> <span class="n">UserStore</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;(</span><span class="k">new</span> <span class="n">UserDbContext</span><span class="bp">()</span><span class="o">))</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">userValidator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UserValidator</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;(</span><span class="n">userManager</span><span class="o">)</span>
+</span><span class="line">  <span class="n">userValidator</span><span class="o">.</span><span class="n">AllowOnlyAlphanumericUserNames</span> <span class="o">&lt;-</span> <span class="k">false</span>
+</span><span class="line">  <span class="n">userManager</span><span class="o">.</span><span class="n">UserValidator</span> <span class="o">&lt;-</span> <span class="n">userValidator</span>
+</span><span class="line">  <span class="n">userManager</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">DefaultControllerFactory</span><span class="bp">()</span> <span class="k">with</span>
+</span><span class="line">    <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetControllerInstance</span><span class="o">(</span><span class="n">requestContext</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">      <span class="c1">// ... Existing code ...</span>
+</span><span class="line">      <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">AuthenticationController</span><span class="o">&gt;</span> <span class="k">then</span>
+</span><span class="line">        <span class="k">let</span> <span class="nv">authenticationController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AuthenticationController</span><span class="o">(</span><span class="n">createUserManager</span><span class="bp">()</span><span class="o">)</span>
+</span><span class="line">        <span class="n">authenticationController</span> <span class="o">:&gt;</span> <span class="n">IController</span>
+</span><span class="line">      <span class="c1">// ... Existing code ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>As we are using email as username we need to change the user validator in the <code>UserManager</code> to allow the alphanumeric characters in the username.</p>
+
+<p>The final step is providing the connection string to access the identity database. Open the <strong>Web.config</strong> file and add the following</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;connectionStrings&gt;</span>
+</span><span class="line">    <span class="nt">&lt;add</span> <span class="na">name=</span><span class="s">&quot;IdentityConnection&quot;</span>
+</span><span class="line">      <span class="na">connectionString=</span><span class="s">&quot;Data Source=localhost;Initial Catalog=PhoneCatIdentity;Integrated Security=True&quot;</span>
+</span><span class="line">      <span class="na">providerName=</span><span class="s">&quot;System.Data.SqlClient&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line">  <span class="nt">&lt;/connectionStrings&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>As we are using Entity Framework’s Code First here, the schema will be generated dynamically when we run the code for the very first time.</p>
+
+<p>That’s it. We have wired up everything to create a new user!</p>
+
+<h3 id="setting-up-user-login">Setting up User Login</h3>
+
+<p>As we are going to use owin <a href="http://blogs.msdn.com/b/webdev/archive/2013/07/03/understanding-owin-forms-authentication-in-mvc-5.aspx">cookies based authentication</a> middleware, the first step to tell the application startup pipeline to use cookie authentication. </p>
+
+<p>Open <code>Startup</code> and update it to support authentication</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Startup</span><span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">configureAuthentication</span> <span class="o">(</span><span class="n">app</span> <span class="o">:</span> <span class="n">IAppBuilder</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">cookieAuthenticationOptions</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CookieAuthenticationOptions</span><span class="bp">()</span>
+</span><span class="line">    <span class="n">cookieAuthenticationOptions</span><span class="o">.</span><span class="n">AuthenticationType</span> <span class="o">&lt;-</span> <span class="nn">DefaultAuthenticationTypes</span><span class="p">.</span><span class="n">ApplicationCookie</span>
+</span><span class="line">    <span class="n">cookieAuthenticationOptions</span><span class="o">.</span><span class="n">LoginPath</span> <span class="o">&lt;-</span> <span class="k">new</span> <span class="n">PathString</span><span class="o">(</span><span class="s">&quot;/authentication/login&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="n">app</span><span class="o">.</span><span class="n">UseCookieAuthentication</span><span class="o">(</span><span class="n">cookieAuthenticationOptions</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">  <span class="k">member</span> <span class="n">x</span><span class="p">.</span><span class="nf">Configuration</span><span class="o">(</span><span class="n">app</span> <span class="o">:</span> <span class="n">IAppBuilder</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">app</span><span class="o">.</span><span class="n">MapSignalR</span><span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
+</span><span class="line">    <span class="n">configureAuthentication</span> <span class="n">app</span>
+</span><span class="line">    <span class="bp">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>The <code>AuthenticationType</code> is an identifier to distinguish between different authentication middlewares and the <code>LoginPath</code> is the url to the Login Page which will be used to redirect the unauthorized requests.</p>
+
+<p>After setting up cookie authentication, like we did for new user registration, we are going to create a view to enable the user to login.</p>
+
+<p>Add the <code>Login</code> action method in the <code>AuthenticationController</code> and also create <code>LoginViewModel</code> </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">CLIMutable</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">type</span> <span class="nc">LoginViewModel</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Email</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Password</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">AuthenticationController</span> <span class="o">(</span><span class="n">userManager</span> <span class="o">:</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">inherit</span> <span class="n">Controller</span><span class="bp">()</span>
+</span><span class="line">  <span class="c1">// ... Existing code ...  </span>
+</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Login</span><span class="bp">()</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="bp">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>and create <code>Login</code> view in the <strong>Authentication\Login</strong> directory</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="html"><span class="line">@model PhoneCat.Web.Controllers.LoginViewModel
+</span><span class="line">
+</span><span class="line"><span class="nt">&lt;h3&gt;</span>Login<span class="nt">&lt;/h3&gt;</span>
+</span><span class="line">@using (Html.BeginForm(&quot;Login&quot;, &quot;Authentication&quot;, FormMethod.Post))
+</span><span class="line">{
+</span><span class="line">  @Html.AntiForgeryToken()
+</span><span class="line">  @Html.ValidationSummary()
+</span><span class="line">
+</span><span class="line">  @Html.TextBoxFor(m =&gt; m.Email)
+</span><span class="line">
+</span><span class="line">  @Html.PasswordFor(m =&gt; m.Password)
+</span><span class="line">
+</span><span class="line">  <span class="nt">&lt;button</span> <span class="na">type=</span><span class="s">&quot;submit&quot;</span><span class="nt">&gt;</span>Log in<span class="nt">&lt;/button&gt;</span>
+</span><span class="line">}
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p><img src="/images/fsharp_phonecat/step_6/login.png" /></p>
+
+<p>The next step is the crux of this blog post. Challenging the incoming user login credentials against its corresponding registered one.</p>
+
+<p>We will be using <code>UserManager</code>’s following methods to achieve it.</p>
+
+<ul>
+  <li>
+    <p><a href="https://msdn.microsoft.com/en-us/library/dn497475(v=vs.108).aspx">Find</a> - Returns a user with the specified username and password or null if there is no match (C# needs <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option</a> type badly!). In the beginning of the blog post I’ve mentioned you that I will talk about why we are using <code>AllowNullLiteral</code> attribute for the <code>User</code> class. As you see here <code>Find</code> method returns <code>null</code> if the user is not available! So, As per this definition <code>null</code> is valid value for <code>User</code> class.</p>
+  </li>
+  <li>
+    <p><a href="https://msdn.microsoft.com/en-us/library/dn497467(v=vs.108).aspx">CreateIdentity</a> - Creates the Claim Identity representing the user. We need this claim identity to signin and also to pass around the claim details. </p>
+  </li>
+</ul>
+
+<p>Both of the above methods are having their async counterparts. But for the sake of simplicity I’m ignoring it. May be it can be a exercise for you to figure it out!</p>
+
+<p>Let’s add some utility function to handle finding the user and signing in</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">signin</span> <span class="o">(</span><span class="n">userManager</span> <span class="o">:</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;)</span> <span class="o">(</span><span class="n">request</span> <span class="o">:</span> <span class="n">HttpRequestBase</span><span class="o">)</span> <span class="n">user</span>  <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">identity</span> <span class="o">=</span> <span class="n">userManager</span><span class="o">.</span><span class="n">CreateIdentity</span><span class="o">(</span><span class="n">user</span><span class="o">,</span> <span class="nn">DefaultAuthenticationTypes</span><span class="p">.</span><span class="n">ApplicationCookie</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">authManager</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GetOwinContext</span><span class="bp">()</span><span class="o">.</span><span class="n">Authentication</span>
+</span><span class="line">  <span class="n">identity</span><span class="o">.</span><span class="n">AddClaim</span><span class="o">(</span><span class="k">new</span> <span class="n">Claim</span><span class="o">(</span><span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">GivenName</span><span class="o">,</span> <span class="n">user</span><span class="o">.</span><span class="n">Name</span><span class="o">))</span>
+</span><span class="line">  <span class="n">authManager</span><span class="o">.</span><span class="n">SignIn</span><span class="o">(</span><span class="n">identity</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">tryFindUser</span> <span class="o">(</span><span class="n">userManager</span> <span class="o">:</span> <span class="n">UserManager</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;)</span> <span class="n">email</span> <span class="n">password</span>  <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="n">userManager</span><span class="o">.</span><span class="n">Find</span><span class="o">(</span><span class="n">email</span><span class="o">,</span> <span class="n">password</span><span class="o">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="n">user</span> <span class="o">&lt;&gt;</span> <span class="k">null</span> <span class="k">then</span> <span class="n">Some</span> <span class="n">user</span> <span class="k">else</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Since we are using Email as the UserName here in this example, we need to have a specific claim to pass around the Name of the user. That’s what we are doing in the <code>signin</code> method. Later we will be using this claim to display the user name in the header of the page.</p>
+
+<p>Great! Now its time to handle handle Login POST request. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">HttpPost</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="o">[&lt;</span><span class="n">ValidateAntiForgeryToken</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Login</span><span class="o">(</span><span class="n">loginViewModel</span> <span class="o">:</span> <span class="n">LoginViewModel</span><span class="o">)</span> <span class="o">:</span> <span class="n">ActionResult</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">tryFindUser</span> <span class="n">userManager</span> <span class="n">loginViewModel</span><span class="o">.</span><span class="n">Email</span> <span class="n">loginViewModel</span><span class="o">.</span><span class="n">Password</span>  <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">ModelState</span><span class="o">.</span><span class="n">AddModelError</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">,</span> <span class="s">&quot;Invalid Email or Password&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="o">(</span><span class="n">loginViewModel</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">ActionResult</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">user</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">signin</span> <span class="n">userManager</span> <span class="k">base</span><span class="o">.</span><span class="n">Request</span> <span class="n">user</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">RedirectToAction</span><span class="o">(</span><span class="s">&quot;Index&quot;</span><span class="o">,</span> <span class="s">&quot;Home&quot;</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">ActionResult</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>Login</code> action method just tries to find the user using given credentials. If the user is available, signin to the application using his credentials and redirect to the home page else show login error to the user.</p>
+
+<p>We can add this same signin behavior after successful user registration too.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">HttpPost</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="o">[&lt;</span><span class="n">ValidateAntiForgeryToken</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Register</span><span class="o">(</span><span class="n">registerViewModel</span> <span class="o">:</span> <span class="n">RegisterViewModel</span><span class="o">)</span> <span class="o">:</span> <span class="n">ActionResult</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ... Existing Code ...</span>
+</span><span class="line">  <span class="k">if</span> <span class="o">(</span><span class="n">userCreateResult</span><span class="o">.</span><span class="n">Succeeded</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">    <span class="n">signin</span> <span class="n">userManager</span> <span class="k">base</span><span class="o">.</span><span class="n">Request</span> <span class="n">user</span>
+</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">RedirectToAction</span><span class="o">(</span><span class="s">&quot;Index&quot;</span><span class="o">,</span> <span class="s">&quot;Home&quot;</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">ActionResult</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="c1">// ... Existing Code ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Since <code>UserManager</code> is an <code>IDisposable</code>. It’s good practices to dispose it after using. So, Override <code>Dispose</code> method in <code>AuthenticationController</code> and dispose it. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">Dispose</span><span class="o">(</span><span class="n">disposing</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">if</span> <span class="n">disposing</span> <span class="k">then</span>
+</span><span class="line">    <span class="n">userManager</span><span class="o">.</span><span class="n">Dispose</span><span class="bp">()</span>
+</span><span class="line">  <span class="k">base</span><span class="o">.</span><span class="n">Dispose</span><span class="o">(</span><span class="n">disposing</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The final pending work is displaying the user name in the header after successful login. Open <strong>Layout.cshtml</strong> add the following lines</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+</pre></td><td class="code"><pre><code class="html"><span class="line"><span class="c">&lt;!-- ... Existing code ... --&gt;</span>
+</span><span class="line"><span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;nav navbar-nav navbar-right top-nav&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">
+</span><span class="line">  @if (Request.IsAuthenticated)
+</span><span class="line">  {
+</span><span class="line">    var identity = User.Identity as ClaimsIdentity;
+</span><span class="line">    var name = identity.FindFirst(ClaimTypes.GivenName).Value;
+</span><span class="line">    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;dropdown&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span> <span class="na">class=</span><span class="s">&quot;dropdown-toggle&quot;</span> <span class="na">data-toggle=</span><span class="s">&quot;dropdown&quot;</span> <span class="na">aria-expanded=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">        <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">&quot;fa fa-user&quot;</span><span class="nt">&gt;&lt;/i&gt;</span>@name
+</span><span class="line">      <span class="nt">&lt;/a&gt;</span>
+</span><span class="line">      <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;dropdown-menu&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">        <span class="nt">&lt;li&gt;</span>
+</span><span class="line">          <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;@Url.Action(&quot;</span><span class="na">Logout</span><span class="err">&quot;,&quot;</span><span class="na">Authentication</span><span class="err">&quot;)&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">            <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">&quot;fa fa-fw fa-power-off&quot;</span><span class="nt">&gt;&lt;/i&gt;</span> Log Out
+</span><span class="line">          <span class="nt">&lt;/a&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/li&gt;</span>
+</span><span class="line">      <span class="nt">&lt;/ul&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/li&gt;</span>
+</span><span class="line">  }
+</span><span class="line">  else
+</span><span class="line">  {
+</span><span class="line">    <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;dropdown&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;#&quot;</span> <span class="na">class=</span><span class="s">&quot;dropdown-toggle&quot;</span> <span class="na">data-toggle=</span><span class="s">&quot;dropdown&quot;</span> <span class="na">aria-expanded=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">        <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">&quot;fa fa-user&quot;</span><span class="nt">&gt;&lt;/i&gt;</span> Guest
+</span><span class="line">      <span class="nt">&lt;/a&gt;</span>
+</span><span class="line">      <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;dropdown-menu&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">        <span class="nt">&lt;li&gt;</span>
+</span><span class="line">          <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;@Url.Action(&quot;</span><span class="na">Login</span><span class="err">&quot;,&quot;</span><span class="na">Authentication</span><span class="err">&quot;)&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">            <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">&quot;fa fa-fw fa-bank&quot;</span><span class="nt">&gt;&lt;/i&gt;</span> Log In
+</span><span class="line">          <span class="nt">&lt;/a&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/li&gt;</span>
+</span><span class="line">        <span class="nt">&lt;li&gt;</span>
+</span><span class="line">          <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;@Url.Action(&quot;</span><span class="na">Register</span><span class="err">&quot;,&quot;</span><span class="na">Authentication</span><span class="err">&quot;)&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">            <span class="nt">&lt;i</span> <span class="na">class=</span><span class="s">&quot;fa fa-fw fa-laptop&quot;</span><span class="nt">&gt;&lt;/i&gt;</span>Register
+</span><span class="line">          <span class="nt">&lt;/a&gt;</span>
+</span><span class="line">        <span class="nt">&lt;/li&gt;</span>
+</span><span class="line">      <span class="nt">&lt;/ul&gt;</span>
+</span><span class="line">    <span class="nt">&lt;/li&gt;</span>
+</span><span class="line">  }
+</span><span class="line"><span class="nt">&lt;/ul&gt;</span>
+</span><span class="line"><span class="c">&lt;!-- ... Existing code ... --&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="adding-logout">Adding Logout</h3>
+
+<p>Adding logout is very simple and straight forward. All we need to do is just invoke the Owin Authentication Manager’s <code>SignOut</code> method. Create an action method in <code>AuthenticationController</code> to handle it</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Logout</span><span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">authManager</span> <span class="o">=</span> <span class="k">base</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">GetOwinContext</span><span class="bp">()</span><span class="o">.</span><span class="n">Authentication</span>
+</span><span class="line">  <span class="n">authManager</span><span class="o">.</span><span class="n">SignOut</span><span class="o">(</span><span class="nn">DefaultAuthenticationTypes</span><span class="p">.</span><span class="n">ApplicationCookie</span><span class="o">)</span>
+</span><span class="line">  <span class="n">this</span><span class="o">.</span><span class="n">RedirectToAction</span><span class="o">(</span><span class="s">&quot;Index&quot;</span><span class="o">,</span> <span class="s">&quot;Home&quot;</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="summary">Summary</h3>
+
+<p>The interoperability offered by F# to integrate with the existing C# libraries is very seamless and I hope you have got it too! You can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/6">github</a> as usual. In the next blog post We will see how to add validations in the User Registration. Stay tuned!</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -932,531 +1494,6 @@
 
 <p>Fake is just awesome. We can automate so much things with very few lines of code and the beauty is it can be used in <strong>any .net projects</strong>. If you are using MsBuild Xml scripts, do try Fake! It will make you super productive. You can find the source of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/4">fsharp-phonecat repository</a>. </p>
 
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-01-02T05:44:52+05:30" data-updated="true" itemprop="datePublished">Jan 2<sup>nd</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/functional-programming/'>functional-programming</a>, <a class='category' href='/blog/categories/rx/'>rx</a>, <a class='category' href='/blog/categories/signalr/'>signalr</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/" itemprop="url">Step-3 PhoneCat Recommendation System Using F# Agents, SignalR and Rx</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<blockquote>
-  <p>This is step 3 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In the last two steps we have seen how to create a <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">web apis</a> and <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
-
-<h3 id="a-small-flashback">A Small Flashback</h3>
-<p>I’ve actually planned to put this blog post for the great fsharp community initiative <a href="https://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/">F# Advent Calender</a>. Unfortunately it was not able to get through as I’ve <a href="http://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/#comment-4135">nominated myself</a> little late. I always believe there is an opportunity behind every adversity. I didn’t get hung up and I knew this is one of the great topic to blog about. When I decided to blog about it, I needed a sample web application. So, I was creating that sample application and it suddenly strikes! <em>How about a blog series on web application development in fsharp?</em> I’ve immediately started working on it and hence this blog series.</p>
-
-<h3 id="so-what-we-gonna-do-in-this-step">So what we gonna do in this step</h3>
-<p>In this blog post we are going to build a recommendation system which keeps track of what phones that the user is viewing, and based on his navigation history, we will be recommending a phone that he might be interested in</p>
-
-<p style="text-align:center"> <strong> User visits &#8220;Motorola XOOM™&#8221; </strong> </p>
-<p><img src="/images/fsharp_phonecat/step_3/Phone_1.png" /></p>
-
-<p style="text-align:center"> <strong> User visits &#8220;Motorola XOOM™ with Wi-Fi&#8221; </strong> </p>
-<p><img src="/images/fsharp_phonecat/step_3/Phone_2.png" /></p>
-
-<p>Let us start the implementation by defining two high level tasks</p>
-
-<ol>
-  <li>Tracking user navigation</li>
-  <li>Recommending a phone</li>
-</ol>
-
-<h3 id="tracking-user-navigation">1. Tracking user navigation</h3>
-
-<p><img class="center" src="/images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png" width="600" height="500" /></p>
-
-<p>The first two components has been already implemented as part of <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
-
-<p>Create a source file in the <strong>Web</strong> project and name it as <code>PhoneViewTracker</code>. Add a function <code>observePhonesViewed</code> which will be invoked when you a user visits a phone.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">PhoneViewTracker</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">observePhonesViewed</span> <span class="n">anonymousId</span> <span class="n">phoneIdBeingVisited</span> <span class="o">=</span>
-</span><span class="line">    <span class="nn">StorageAgent</span><span class="p">.</span><span class="n">Post</span> <span class="o">(</span><span class="n">SavePhoneVisit</span> <span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="n">phoneIdBeingVisited</span><span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>anonymousId</code> is a <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid%28v=vs.110%29.aspx">http property</a> which represents a unique identifier for the given user session</p>
-
-<p>Upon receiving the <code>anonymousId</code> and <code>phoneIdBeingVisited</code> we will be posting a message to the <code>StorageAgent</code> to save this visit. Both the agent and the message doesn’t exist now, so lets create them</p>
-
-<p>Create a source file in the <strong>Domain</strong> project and name it as <code>UserNavigationHistory</code> and add the following</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Domain</span>
-</span><span class="line">
-</span><span class="line"><span class="k">open</span> <span class="nn">System.Reactive.Subjects</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">System.Collections.Generic</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">Agent</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">=</span> <span class="n">MailboxProcessor</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">T</span><span class="o">&gt;</span>
-</span><span class="line">
-</span><span class="line"><span class="k">module</span> <span class="nn">UserNavigationHistory</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">StorageAgentMessage</span> <span class="o">=</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">SavePhoneVisit</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">*</span> <span class="kt">string</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">storageAgentFunc</span> <span class="o">(</span><span class="n">agent</span> <span class="o">:</span> <span class="n">Agent</span><span class="o">&lt;</span><span class="n">StorageAgentMessage</span><span class="o">&gt;)</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">let</span> <span class="nv">rec</span> <span class="n">loop</span> <span class="o">(</span><span class="n">dict</span> <span class="o">:</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="kt">list</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;&gt;)</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
-</span><span class="line">      <span class="k">let!</span> <span class="nv">storageAgentMessage</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">Receive</span><span class="bp">()</span>
-</span><span class="line">      <span class="k">match</span> <span class="n">storageAgentMessage</span> <span class="k">with</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">SavePhoneVisit</span> <span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="n">phoneIdBeingVisited</span><span class="o">)</span> <span class="o">-&gt;</span>
-</span><span class="line">          <span class="k">if</span> <span class="n">dict</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="k">then</span>
-</span><span class="line">            <span class="k">let</span> <span class="nv">phoneIdsVisited</span> <span class="o">=</span> <span class="n">phoneIdBeingVisited</span> <span class="o">::</span> <span class="n">dict</span><span class="o">.[</span><span class="n">anonymousId</span><span class="o">]</span>
-</span><span class="line">            <span class="n">dict</span><span class="o">.[</span><span class="n">anonymousId</span><span class="o">]</span> <span class="o">&lt;-</span> <span class="n">phoneIdsVisited</span>
-</span><span class="line">          <span class="k">else</span>
-</span><span class="line">            <span class="n">dict</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="o">[</span><span class="n">phoneIdBeingVisited</span><span class="o">])</span>
-</span><span class="line">      <span class="k">return</span><span class="o">!</span> <span class="n">loop</span> <span class="n">dict</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">loop</span> <span class="o">(</span><span class="k">new</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="kt">list</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;&gt;</span><span class="bp">()</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">StorageAgent</span> <span class="o">=</span> <span class="nn">Agent</span><span class="p">.</span><span class="n">Start</span><span class="o">(</span><span class="n">storageAgentFunc</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Storage Agent is an F# Agent which stores the user navigation history in an in-memory dictionary. It can be replaced by any key-value store like <a href="http://redis.io/">redis</a> but for experimentation I’ve preferred to use F# Agents.</p>
-
-<p>The <code>StorageAgentMessage</code> is a <a href="http://fsharpforfunandprofit.com/posts/discriminated-unions/">dicriminated union</a> represents possible messages that the <code>StorageAgent</code> can process. Right now it has only message <code>SavePhoneVisit</code> which takes a tuple representing the <code>anonymousId</code> and the <code>phoneIdBeingVisited</code></p>
-
-<p>The <code>StorageAgent</code> is a typical F# Agent which waits for the incoming <code>StorageAgentMessage</code> and upon receiving it stores the visit in the in-memory dictionary. </p>
-
-<p>The next step is wiring the <code>PhoneViewTracker.observePhonesViewed</code> function with the <code>PhoneController.Show</code> action method. We can call the function directly that will create a strongly coupled code. We can even directly post the message to the agent. But that also makes the code tightly coupled. </p>
-
-<p>What we are actually trying to implement here is a <strong>User Phone Visit Stream</strong>. Whenever the user visits a phone, we just want to notifiy somebody to keep track of it and move on. And its where <a href="http://msdn.microsoft.com/en-in/data/gg577609.aspx">Reactive Extensions aka Rx</a> comes into the picture. If you are new to Reactive Programming or Rx, I strongly recommend you to go through <a href="https://gist.github.com/staltz/868e7e9bc2a7b8c1f754">this excellent article</a> by <a href="http://staltz.com/">André Staltz</a></p>
-
-<p>Install the <a href="https://www.nuget.org/packages/Rx-Main/">Rx Nuget Package</a> in the <em>Web</em> project. With Rx in the kitty the next step is to make the User’s phone visit as event and subscribe this event with the <code>PhoneViewTracker</code></p>
-
-<p>The first step is to make the <code>PhoneController</code> as observable. Modify the already created <code>PhoneController</code> as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">PhoneController</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">inherit</span> <span class="n">Controller</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">subject</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Subject</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">interface</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;</span> <span class="k">with</span>
-</span><span class="line">    <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Subscribe</span> <span class="n">observer</span> <span class="o">=</span> <span class="n">subject</span><span class="o">.</span><span class="n">Subscribe</span> <span class="n">observer</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Show</span> <span class="o">(</span><span class="n">id</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">phone</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">find</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">Id</span> <span class="o">=</span> <span class="n">id</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="nn">PhoneViewModel</span><span class="p">.</span><span class="n">ToPhoneViewModel</span>
-</span><span class="line">    <span class="n">subject</span><span class="o">.</span><span class="n">OnNext</span> <span class="n">id</span>
-</span><span class="line">    <span class="n">this</span><span class="o">.</span><span class="n">View</span><span class="o">(</span><span class="n">phone</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">Dispose</span> <span class="n">disposing</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">if</span> <span class="n">disposing</span> <span class="k">then</span>
-</span><span class="line">      <span class="n">subject</span><span class="o">.</span><span class="n">OnCompleted</span><span class="bp">()</span>
-</span><span class="line">      <span class="n">subject</span><span class="o">.</span><span class="n">Dispose</span><span class="bp">()</span>
-</span><span class="line">    <span class="k">base</span><span class="o">.</span><span class="n">Dispose</span> <span class="n">disposing</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>One of the great feature of F# is its seamless interoperability with C# libraries. As you seen in the above code snippet we have just made the <code>PhoneController</code> into an observable by implementing the interface <a href="http://msdn.microsoft.com/en-us/library/dd990377%28v=vs.110%29.aspx">IObservable</a>. </p>
-
-<p>We have created a private <a href="http://msdn.microsoft.com/en-us/library/hh242970%28v=vs.103%29.aspx">Rx Subject</a> and made it responsible for pushing the notification which contains the phone id that is being visited.</p>
-
-<p>But wait how do we configure the subscription between this controller and the <code>PhoneViewTracker</code> ? Thanks to the CompositionRoot that we have <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/2/Web/Infrastructure.fs#L28-L32">created in the step-2</a>. As we have full control over the creation of controller its just a matter of two lines to achieve it.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span><span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="nn">PhoneTypeProvider</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">inherit</span> <span class="n">DefaultControllerFactory</span><span class="bp">()</span> <span class="k">with</span>
-</span><span class="line">      <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetControllerInstance</span><span class="o">(</span><span class="n">requestContext</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">        <span class="c1">// ...</span>
-</span><span class="line">        <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">PhoneController</span><span class="o">&gt;</span> <span class="k">then</span>
-</span><span class="line">          <span class="k">let</span> <span class="nv">phones</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToCatalogPhone</span>
-</span><span class="line">          <span class="k">let</span> <span class="nv">observer</span> <span class="o">=</span> <span class="nn">PhoneViewTracker</span><span class="p">.</span><span class="n">observePhonesViewed</span> <span class="o">(</span><span class="n">requestContext</span><span class="o">.</span><span class="n">HttpContext</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">AnonymousID</span><span class="o">)</span>
-</span><span class="line">          <span class="k">let</span> <span class="nv">phoneController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">PhoneController</span><span class="o">(</span><span class="n">phones&#39;</span><span class="o">)</span>
-</span><span class="line">          <span class="k">let</span> <span class="nv">subscription</span> <span class="o">=</span> <span class="n">phoneController</span><span class="o">.</span><span class="n">Subscribe</span> <span class="n">observer</span>
-</span><span class="line">          <span class="n">phoneController</span> <span class="o">:&gt;</span> <span class="n">IController</span>
-</span><span class="line">        <span class="c1">// ...</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>We are leveraging the ASP.NET’s <a href="http://msdn.microsoft.com/en-us/library/fsykd036.aspx">Anonymous Identification Module</a> which help us in creating a unique anonymous id for every user session. We can retrieve it from the <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid.aspx">HttpRequest</a> as mentioned in the above snippet</p>
-
-<p><a href="http://msdn.microsoft.com/en-in/library/91ka2e6a(v=vs.85).aspx">Anonymous identification of user session</a> are not enabled by default, so add the following entry in the <strong>Web.config</strong> file</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;configuration&gt;</span>
-</span><span class="line">  <span class="c">&lt;!-- Existing Code ignored for brevity ... --&gt;</span>
-</span><span class="line">  <span class="nt">&lt;system.web&gt;</span>
-</span><span class="line">    <span class="c">&lt;!-- Existing Code ignored for brevity... --&gt;</span>
-</span><span class="line">    <span class="nt">&lt;anonymousIdentification</span> <span class="na">enabled=</span><span class="s">&quot;true&quot;</span> <span class="nt">/&gt;</span>
-</span><span class="line">  <span class="nt">&lt;/system.web&gt;</span>
-</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>With the help of the partial application of functions as we did it in the previous steps, we have created a partial function called <code>observer</code> which has the signature <code>string -&gt; unit</code>. Then we have subscribed to <code>PhoneController</code> using the <code>Subscribe</code> method and with this we are done with saving an user visit. </p>
-
-<h3 id="recommending-a-phone">2. Recommending a phone</h3>
-
-<p><strong>Workflow</strong></p>
-
-<p><img class="center" src="/images/fsharp_phonecat/step_3/Phone_Recommendation_Workflow.png" width="600" height="500" /></p>
-
-<ol>
-  <li>User initiates the recommendation request using SignalR</li>
-  <li>Upon receiving it, Recommendation SignalR hub sends a recommendation request message to Storage Agent with the user Anonymous Id and SignlaR connection Id of the given user</li>
-  <li>Storage Agent then fetches the phone visit history of the given user based on the incoming anonymous id and pass it to the Recommendation Agent along with the SignalR connection id.</li>
-  <li>Recommendation Agent responds to this by computing the recommendation and publish the result (Either recommended phone id or none) in the Recommendation observable</li>
-  <li>Recommendation hub receives this recommendation result, send the response back to the corresponding SignalR client.</li>
-</ol>
-
-<p>The beauty of this entire workflow is all are message driven and asynchronous by default.  </p>
-
-<p>Let’s start from Recommendation SignalR hub. The first step is installing SingalR from <a href="https://www.nuget.org/packages/Microsoft.AspNet.SignalR/2.1.2">the nuget</a>.</p>
-
-<p>After installing create a source file in the <strong>Web</strong> project and name it as <code>Startup</code> then add the following code as per the SignalR convention.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">namespace</span> <span class="nn">PhoneCat</span><span class="p">.</span><span class="n">Web</span>
-</span><span class="line">
-</span><span class="line"><span class="k">open</span> <span class="nn">Owin</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">Startup</span><span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">member</span> <span class="n">x</span><span class="p">.</span><span class="nf">Configuration</span><span class="o">(</span><span class="n">app</span> <span class="o">:</span> <span class="n">IAppBuilder</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">app</span><span class="o">.</span><span class="n">MapSignalR</span><span class="bp">()</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
-</span><span class="line">    <span class="bp">()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Then add an app setting in the <em>Web.config</em> file and configure the SignalR to use this <code>Startup</code> class</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="nt">&lt;configuration&gt;</span>
-</span><span class="line">  <span class="nt">&lt;appSettings&gt;</span>
-</span><span class="line">    <span class="c">&lt;!-- Other keys.. --&gt;</span>
-</span><span class="line">    <span class="nt">&lt;add</span> <span class="na">key=</span><span class="s">&quot;owin:AppStartup&quot;</span> <span class="na">value=</span><span class="s">&quot;PhoneCat.Web.Startup&quot;</span> <span class="nt">/&gt;</span>
-</span><span class="line">  <span class="nt">&lt;/appSettings&gt;</span>
-</span><span class="line">  <span class="c">&lt;!-- other configuration items.. --&gt;</span>
-</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>With SignalR added to the system, the next step is to create <code>RecommendationHub</code>. Add a source file in <strong>Web</strong> project and name it as <code>Hubs</code>.</p>
-
-<p>Then create a <code>RecommendationHub</code> class with a public method <code>GetRecommendation</code> which will be invoked by the SignalR client to initiate recommendation process.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">RecommendationHub</span><span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">inherit</span> <span class="n">Hub</span> <span class="bp">()</span>
-</span><span class="line">    <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">GetRecommendation</span> <span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">encodedAnonymousId</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">Request</span><span class="o">.</span><span class="n">Cookies</span><span class="o">.[</span><span class="s">&quot;.ASPXANONYMOUS&quot;</span><span class="o">].</span><span class="n">Value</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">anonymousId</span> <span class="o">=</span> <span class="n">decode</span> <span class="n">encodedAnonymousId</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">connectionId</span> <span class="o">=</span> <span class="n">this</span><span class="o">.</span><span class="n">Context</span><span class="o">.</span><span class="n">ConnectionId</span>
-</span><span class="line">      <span class="nn">StorageAgent</span><span class="p">.</span><span class="n">Post</span> <span class="o">(</span><span class="n">GetRecommendation</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="n">connectionId</span><span class="o">))</span>
-</span><span class="line">      <span class="s">&quot;Recommendation initiated&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Then anonymous id of the user session is actually persisted in the <a href="http://msdn.microsoft.com/en-in/library/91ka2e6a%28v=vs.85%29.aspx">request cookies by Asp.Net</a> in an encoded format. In the <code>GetRecommendation</code> method we will be retrieving this encoded anonymous id from the cookie and decode it. Then we need to get the SignalR connection id which available in the base class <code>Hub</code>. After getting both the anonymous id and the connection id, send a <code>GetRecommendation</code> message to the <code>StorageAgent</code> with these information. Finally send a response to the SignalR client as “Recommendation initiated”.</p>
-
-<p>The <code>decode</code> function is not added yet so let’s add them. Thanks to <a href="http://stackoverflow.com/a/2481110/159850">this stackoverflow answer</a> we just need to convert the code from C# to F#</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">private</span> <span class="n">decode</span> <span class="n">encodedAnonymousId</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">decodeMethod</span> <span class="o">=</span>
-</span><span class="line">      <span class="n">typeof</span><span class="o">&lt;</span><span class="n">AnonymousIdentificationModule</span><span class="o">&gt;</span>
-</span><span class="line">        <span class="o">.</span><span class="n">GetMethod</span><span class="o">(</span><span class="s">&quot;GetDecodedValue&quot;</span><span class="o">,</span> <span class="nn">BindingFlags</span><span class="p">.</span><span class="n">Static</span> <span class="o">|||</span> <span class="nn">BindingFlags</span><span class="p">.</span><span class="n">NonPublic</span><span class="o">)</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">anonymousIdData</span> <span class="o">=</span> <span class="n">decodeMethod</span><span class="o">.</span><span class="n">Invoke</span><span class="o">(</span><span class="k">null</span><span class="o">,</span> <span class="o">[|</span> <span class="n">encodedAnonymousId</span> <span class="o">|]);</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">field</span> <span class="o">=</span>
-</span><span class="line">      <span class="n">anonymousIdData</span><span class="o">.</span><span class="n">GetType</span><span class="bp">()</span>
-</span><span class="line">        <span class="o">.</span><span class="n">GetField</span><span class="o">(</span><span class="s">&quot;AnonymousId&quot;</span><span class="o">,</span> <span class="nn">BindingFlags</span><span class="p">.</span><span class="n">Instance</span> <span class="o">|||</span> <span class="nn">BindingFlags</span><span class="p">.</span><span class="n">NonPublic</span><span class="o">);</span>
-</span><span class="line">    <span class="n">field</span><span class="o">.</span><span class="n">GetValue</span><span class="o">(</span><span class="n">anonymousIdData</span><span class="o">)</span> <span class="o">:?&gt;</span> <span class="kt">string</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>We have used a special F# operator here <code>:?&gt;</code> which is a dynamic down cast operator which casts a base class to a sub-class of it. You can read <a href="http://msdn.microsoft.com/en-us/library/dd233220.aspx">this msdn documentation</a> to know more about F# casting and conversions.</p>
-
-<p>The <code>GetRecommendation</code> message is not added yet, so let’s add them too. Modify <code>StorageAgentMessage</code> created before as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line">  <span class="k">type</span> <span class="nc">StorageAgentMessage</span> <span class="o">=</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">SavePhoneVisit</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">*</span> <span class="kt">string</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">GetRecommendation</span> <span class="k">of</span> <span class="kt">string</span> <span class="o">*</span> <span class="kt">string</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The final step of this pipeline is to Update the <code>StorageAgent</code> to handle this <code>GetRecommendation</code> message. Modify the <code>storageAgentFunc</code> in the <code>UserNavigationHistory</code> as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"> <span class="k">let</span> <span class="nv">private</span> <span class="n">storageAgentFunc</span> <span class="o">(</span><span class="n">agent</span> <span class="o">:</span> <span class="n">Agent</span><span class="o">&lt;</span><span class="n">StorageAgentMessage</span><span class="o">&gt;)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">rec</span> <span class="n">loop</span> <span class="o">(</span><span class="n">dict</span> <span class="o">:</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="kt">list</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;&gt;)</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
-</span><span class="line">      <span class="k">let!</span> <span class="nv">storageAgentMessage</span> <span class="o">=</span> <span class="n">agent</span><span class="o">.</span><span class="n">Receive</span><span class="bp">()</span>
-</span><span class="line">      <span class="k">match</span> <span class="n">storageAgentMessage</span> <span class="k">with</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">SavePhoneVisit</span> <span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="n">phoneIdBeingVisited</span><span class="o">)</span> <span class="o">-&gt;</span>
-</span><span class="line">          <span class="c1">// .. existing code ignored for brevity ..</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">GetRecommendation</span> <span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="n">connectionId</span><span class="o">)</span> <span class="o">-&gt;</span>
-</span><span class="line">          <span class="k">if</span> <span class="n">dict</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="k">then</span>
-</span><span class="line">            <span class="k">let</span> <span class="nv">phoneIdsVisited</span> <span class="o">=</span> <span class="n">dict</span><span class="o">.[</span><span class="n">anonymousId</span><span class="o">]</span>
-</span><span class="line">            <span class="nn">RecommendationAgent</span><span class="p">.</span><span class="n">Post</span> <span class="o">(</span><span class="n">connectionId</span><span class="o">,</span><span class="n">phoneIdsVisited</span><span class="o">)</span>
-</span><span class="line">      <span class="k">return</span><span class="o">!</span> <span class="n">loop</span> <span class="n">dict</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Handling of the <code>GetRecommendation</code> message is very straight forward. Just get the phone ids being visited by the given anonymous id from the in memory dictionary and send a message consists of connection id and this phone ids visited to the <code>RecommendationAgent</code> which we will be creating next.</p>
-
-<p>Create a source file with the name <code>Recommendations</code> in the <strong>Domain</strong> project and add the <code>RecommendationAgent</code> below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">AutoOpen</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">module</span> <span class="nn">Recommendation</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">recommendationAgentFunc</span> <span class="o">(</span><span class="n">inbox</span> <span class="o">:</span> <span class="n">Agent</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">*</span><span class="n">List</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;&gt;)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">rec</span> <span class="n">messageLoop</span> <span class="bp">()</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
-</span><span class="line">      <span class="k">let!</span> <span class="nv">connectionId</span><span class="o">,</span> <span class="n">visitedPhoneIds</span> <span class="o">=</span> <span class="n">inbox</span><span class="o">.</span><span class="n">Receive</span><span class="bp">()</span>
-</span><span class="line">      <span class="k">if</span> <span class="o">(</span><span class="nn">Seq</span><span class="p">.</span><span class="n">length</span> <span class="n">visitedPhoneIds</span><span class="o">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="k">then</span>
-</span><span class="line">        <span class="n">suggestRecommendation</span> <span class="n">connectionId</span> <span class="o">(</span><span class="n">visitedPhoneIds</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">take</span> <span class="mi">2</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">toList</span><span class="o">)</span>
-</span><span class="line">      <span class="k">return</span><span class="o">!</span> <span class="n">messageLoop</span><span class="bp">()</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">    <span class="n">messageLoop</span> <span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">RecommendationAgent</span> <span class="o">=</span> <span class="nn">Agent</span><span class="p">.</span><span class="n">Start</span> <span class="n">recommendationAgentFunc</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>In order to keep this blog post simple I’ve used my own ‘Hello World’ kind of algorithm which picks the latest two phone ids being visited and suggests recommendation based on it. In a real world you would be replacing this toddler algorithm with more sophisticated algorithms like <a href="http://en.wikipedia.org/wiki/Association_rule_learning">Association Rule Learning</a>. I am planning to implement this algorithm at later stages of this blog series.</p>
-
-<p>Then the next step is to implement the <code>suggestRecommendation</code> function which picks a hardcoded recommendation and publish the result using Rx. To do this add the <a href="https://www.nuget.org/packages/Rx-Main/">Rx Nuget Package</a> in the <strong>Domain</strong> project and add the  <code>suggestRecommendation</code> function in the <code>Recommendation</code> module</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">RecommendationPipe</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Subject</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">*</span><span class="kt">string</span> <span class="n">option</span><span class="o">&gt;</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">suggestRecommendation</span> <span class="n">connectionId</span> <span class="n">visitedPhoneIds</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">visitedPhoneIds</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="o">[</span><span class="s">&quot;motorola-xoom-with-wi-fi&quot;</span><span class="o">;</span> <span class="s">&quot;motorola-xoom&quot;</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="nn">RecommendationPipe</span><span class="p">.</span><span class="n">OnNext</span> <span class="o">(</span><span class="n">connectionId</span><span class="o">,</span> <span class="n">Some</span> <span class="s">&quot;motorola-atrix-4g&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="o">|</span> <span class="o">[</span><span class="s">&quot;dell-streak-7&quot;</span><span class="o">;</span> <span class="s">&quot;dell-venue&quot;</span><span class="o">]</span> <span class="o">-&gt;</span> <span class="nn">RecommendationPipe</span><span class="p">.</span><span class="n">OnNext</span> <span class="o">(</span><span class="n">connectionId</span><span class="o">,</span> <span class="n">Some</span> <span class="s">&quot;nexus-s&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="nn">RecommendationPipe</span><span class="p">.</span><span class="n">OnNext</span> <span class="o">(</span><span class="n">connectionId</span><span class="o">,</span> <span class="n">None</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The implementation is a very straight forward pattern matching. If last visited two items are (“motorola-xoom-with-wi-fi”, “motorola-xoom”), send the recommendation as “motorola-atrix-4g”, else if they are (“dell-streak-7”,”dell-venue”) then recommend “nexus-s”. If none of the condition matches then send none. Thanks to the <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">option type</a> which expresses this result in type safe manner.</p>
-
-<p>With all these infrastructure in place, all we need to do is to just subscribe to this <code>RecommendationPipe</code> and send the suggestion to the user via SignalR</p>
-
-<p>Let’s add a observer for this pipe in the <strong>Web</strong> project. Open <code>Hubs</code> module in the <strong>Web</strong> project and add the following code</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">private</span> <span class="n">getUrl</span> <span class="o">(</span><span class="n">phoneId</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="n">httpContext</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">routeValueDictionary</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RouteValueDictionary</span><span class="bp">()</span>
-</span><span class="line">    <span class="n">routeValueDictionary</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="s">&quot;controller&quot;</span><span class="o">,</span> <span class="s">&quot;Phone&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="n">routeValueDictionary</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="s">&quot;action&quot;</span><span class="o">,</span> <span class="s">&quot;Show&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="n">routeValueDictionary</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">,</span> <span class="n">phoneId</span><span class="o">)</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">requestContext</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RequestContext</span><span class="o">(</span><span class="k">new</span> <span class="n">HttpContextWrapper</span><span class="o">(</span><span class="n">httpContext</span><span class="o">),</span> <span class="k">new</span> <span class="n">RouteData</span><span class="bp">()</span><span class="o">);</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">virtualPathData</span> <span class="o">=</span> <span class="nn">RouteTable</span><span class="p">.</span><span class="nn">Routes</span><span class="p">.</span><span class="n">GetVirtualPath</span><span class="o">(</span><span class="n">requestContext</span><span class="o">,</span> <span class="n">routeValueDictionary</span><span class="o">);</span>
-</span><span class="line">    <span class="n">virtualPathData</span><span class="o">.</span><span class="n">VirtualPath</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">notifyRecommendation</span> <span class="n">httpContext</span> <span class="n">phones</span> <span class="o">(</span><span class="n">connectionId</span><span class="o">,</span> <span class="n">recommendedPhoneId</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">phones</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="nn">TypeProviders</span><span class="p">.</span><span class="n">ToPhone</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">recommendedPhoneId</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">phoneId</span> <span class="o">-&gt;</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">recommendedPhone</span> <span class="o">=</span> <span class="nn">Phones</span><span class="p">.</span><span class="n">getPhoneById</span> <span class="n">phones&#39;</span> <span class="n">phoneId</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">phoneUrl</span> <span class="o">=</span> <span class="n">getUrl</span> <span class="n">phoneId</span> <span class="n">httpContext</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">hubContext</span> <span class="o">=</span> <span class="nn">GlobalHost</span><span class="p">.</span><span class="nn">ConnectionManager</span><span class="p">.</span><span class="n">GetHubContext</span><span class="o">&lt;</span><span class="n">RecommendationHub</span><span class="o">&gt;</span><span class="bp">()</span>
-</span><span class="line">      <span class="n">hubContext</span><span class="o">.</span><span class="n">Clients</span><span class="o">.</span><span class="n">Client</span><span class="o">(</span><span class="n">connectionId</span><span class="o">)?</span><span class="n">showRecommendation</span><span class="o">(</span><span class="n">recommendedPhone</span><span class="o">,</span> <span class="n">phoneUrl</span><span class="o">)</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="bp">()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>notifyRecommendation</code> function checks whether the incoming recommendedPhoneId has value or not. If it has value, it just picks the <code>Phone</code> record corresponding to the given phoneId and get the url for the recommended phone. With all these data in place, we just need to send the response to the using via SignalR.</p>
-
-<p>You would have a noticed a weird <code>?</code> symbol which is actually part of the <a href="https://www.nuget.org/packages/ImpromptuInterface.FSharp/">ImpromptuInterface.FSharp</a>. This library adds provisions to use <a href="http://msdn.microsoft.com/en-IN/library/dd264736.aspx">C# dynamic types</a> in F#</p>
-
-<p>They are two missing pieces. One is <code>Phones.getPhoneById</code> which we are not having. Let’s add them. Open <code>Phones</code> module in <strong>Domain</strong> project and add it as mentioned below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getPhoneById</span> <span class="o">(</span><span class="n">phones</span> <span class="o">:</span> <span class="n">seq</span><span class="o">&lt;</span><span class="n">Phone</span><span class="o">&gt;)</span> <span class="n">phoneId</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">phones</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">find</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="n">p</span><span class="o">.</span><span class="n">Id</span> <span class="o">=</span> <span class="n">phoneId</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The final step is wiring the <code>RecommendationPipe</code> with the <code>notifyRecommendation</code>. Open <code>Global.asax.fs</code> and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Global</span><span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">  <span class="c1">// .. existing code ignore for brevity ..</span>
-</span><span class="line"> <span class="k">member</span> <span class="n">x</span><span class="p">.</span><span class="nf">Application_Start</span><span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">phones</span> <span class="o">=</span> <span class="nn">GitHubRepository</span><span class="p">.</span><span class="n">getPhones</span><span class="bp">()</span>
-</span><span class="line">    <span class="c1">// .. existing code ignore for brevity ..</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">notificationObserver</span> <span class="o">=</span> <span class="nn">Hubs</span><span class="p">.</span><span class="n">notifyRecommendation</span> <span class="nn">HttpContext</span><span class="p">.</span><span class="n">Current</span> <span class="n">phones</span>
-</span><span class="line">    <span class="nn">Recommendation</span><span class="p">.</span><span class="nn">RecommendationPipe</span><span class="p">.</span><span class="n">Subscribe</span> <span class="n">notificationObserver</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
-</span><span class="line">    <span class="bp">()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Partial application of function is a very handy thing which actually replaces its counterpart Dependency Injection in the OOP. We just provided the first two arguments of <code>notifyRecommendation</code> and created a new function with the signature <code>string * string option -&gt; unit</code> which is the expected observer signature for the <code>RecommendationPipe</code>.</p>
-
-<h4 id="the-front-end-ui">The Front End UI</h4>
-<p>The front end for this is a typical SignalR-Javascript client code which you can find it the <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/3/Web/Scripts/recommendation.js">github repository</a>. I’ve intentionally leaving the front-end part of this application as it would be extends the scope of the blog post. Moreover if you go through the source code in the github repository you can easily understand</p>
-
-<h3 id="summary">Summary</h3>
-<p>F# is just so awesome with so much expressive functional programming features. Rx, Agents and SignalR add more powers to it and enable you to create a scalable functional reactive architecture. I’d like give credits two incredible resources on this subject Mark Seemann’s Pluralsight course on <a href="http://www.pluralsight.com/courses/functional-architecture-fsharp">Functional Architecture with F#</a> and Kevin Ashton’s excellent blog post on <a href="http://namelessinteractive.com/blog/Full_Stack_FSharp_%E2%80%93_The_Long_Version_(Part_1)">Full Stack F#</a> which helped me a lot in coming out with this blog post.</p>
-
-<p>Last but not the least, Thanks to <a href="https://sergeytihon.wordpress.com">Sergey Tihon</a> for the words of encouragement to write the blog post on this topic.</p>
-
-<p>You can find the source code of this step in <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/3">the github repository</a>. </p>
 
 		
 		
