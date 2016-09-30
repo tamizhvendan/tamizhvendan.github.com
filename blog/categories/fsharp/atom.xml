@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fsharp | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-09-21T16:58:51+05:30</updated>
+  <updated>2016-09-30T23:28:16+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,216 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Leveraging Property Based Testing]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2016/09/30/leveraging-property-based-testing/"/>
+    <updated>2016-09-30T09:06:15+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2016/09/30/leveraging-property-based-testing</id>
+    <content type="html"><![CDATA[<p><a href="http://fsharpforfunandprofit.com/posts/property-based-testing/">Property-based testing</a> is one of the powerful technique to unit test the code. Unlike the example-based testing (where we <em>Arrange</em> a set of example inputs to <em>Assert</em> the system under test), Property based testing enable us to focus on what we wanted to test and liberate us from doing mundane work on coming up with sample inputs.</p>
+
+<p>Recently, I got a chance to use Property based testing in <a href="https://github.com/tamizhvendan/Suave.Azure.Functions">an open source library</a> that I am developing to use <a href="https://suave.io">Suave</a> in <a href="https://azure.microsoft.com/en-in/services/functions/">Azure Functions</a>. I felt very productive and it was a such a joy to write the unit tests.  </p>
+
+<p>In this blog post, you are going to learn how Property-based testing has helped me and why you need to consider using(or learning) it</p>
+
+<h2 id="use-case">Use Case</h2>
+
+<p>Let me start with the use case that I wanted to test. The library that I am working is an adapter between two HTTP protocol abstractions, <a href="https://msdn.microsoft.com/en-us/library/system.net.http.aspx">System.Net.Http</a> and <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs">Suave.Http</a></p>
+
+<p>The first task is to map <a href="https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode.aspx">HttpStatusCode</a> of <em>System.Net</em> to the <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L64-L71">HttpCode</a> of <em>Suave.Http</em> and the next task is doing the vice-versa.</p>
+
+<blockquote>
+  <p><em>HttpStatusCode</em> is an enum type and <em>HttpCode</em> is a discriminated union type. Refer this <a href="https://fsharpforfunandprofit.com/posts/enum-types/">blog post</a> to know more about this difference.</p>
+</blockquote>
+
+<h2 id="identifying-the-property">Identifying the Property</h2>
+
+<p>The first step is Property-based testing is identifying the property. In other words, it forces to think about the relationship between the <em>input</em> and the <em>output</em>.</p>
+
+<p>I believe this <em>thinking</em> will make a huge difference in the quality of the software that we deliver.</p>
+
+<p>In the first task that we are about to implement, the relationship is the <em>integer</em> representation of the HTTP status code is both <em>HttpStatusCode</em> and <em>HttpCode</em>.</p>
+
+<p>Programmatically, this can be asserted like</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// boolean condition
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>// In F# (=) operator represents the equality checking
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>LanguagePrimitives.EnumToValue httpStatusCode = httpCode.code
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>The <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/languageprimitives.enumtovalue%5B'enum,'t%5D-function-%5Bfsharp%5D">EnumToValue</a> returns the integer value associated with the enum, which is nothing but the integer representation of the HTTP status code it represents. The <code>code</code> is <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L73-L85">a member of</a> <em>HttpCode</em> that represents the same integer.</p>
+</blockquote>
+
+<p>If this property holds true for given set of inputs, then we can assert that the function that does the transformation is working correctly.</p>
+
+<h2 id="implementing-the-mapping-function-httpstatuscode">Implementing the mapping function <code>httpStatusCode</code></h2>
+
+<p>The initial implementation that I had in my mind was</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let NetStatusCode = function
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>| HttpCode.HTTP_200 -&gt; HttpStatusCode.OK
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>| HttpCode.HTTP_201 -&gt; HttpStatusCode.Created
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>| HttpCode.HTTP_400 -&gt; HttpStatusCode.BadRequest
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>| HttpCode.HTTP_404 -&gt; HttpStatusCode.NotFound
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>| HttpCode.HTTP_202 -&gt; HttpStatusCode.Accepted
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>| // ...
+</pre></div>
+</div>
+</div>
+<p>If I haven’t choosen to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in <a href="(/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/)">my last blog post</a> on using Suave in Azure Functions, I’ve used this same approach.</p>
+
+<p>While thinking regarding properties to assert the transformation, for the first time I came to know about the <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.languageprimitives-module-%5Bfsharp%5D">Language Primitives</a> module in F# and the <em>EnumToValue</em> function.</p>
+
+<p>There should be an another function <em>EnumOfValue</em> right?</p>
+
+<p>Yes!</p>
+
+<p>Let’s use this in the <code>httpStatusCode</code> function implementation</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let httpStatusCode (httpCode : HttpCode) : HttpStatusCode =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  LanguagePrimitives.EnumOfValue httpCode.code
+</pre></div>
+</div>
+</div>
+<p>Short and Sweet!</p>
+
+<p>Property-based testing made my day and helped me <a href="http://keysleft.com/">to save</a> a lot of keystrokes!</p>
+
+<h2 id="writing-our-first-property-based-unit-test">Writing Our First Property based Unit Test</h2>
+
+<p>In F# we can use the <a href="https://fscheck.github.io/FsCheck/">FsCheck</a> library to write the Property based unit tests. For this implementation, we will be using <em>FsCheck.Xunit</em> to run Property tests in <a href="http://xunit.github.io/">XUnit</a></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>open Suave.Http
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open System.Net
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open FsCheck
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open FsCheck.Xunit
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>[&lt;Property&gt;]
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let ``httpStatusCode maps Suave's HttpCode to System.Net's HttpStatusCode ``
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  (httpCode : HttpCode) =
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    let httpStatusCode = Response.httpStatusCode httpCode
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    LanguagePrimitives.EnumToValue httpStatusCode = httpCode.code
+</pre></div>
+</div>
+</div>
+
+<p>The magic here is the <code>Property</code> attribute. It makes our life easier by auto-populating the parameter <code>httpCode</code> with the all the possible values and runs the unit test against each value.</p>
+
+<p>As a convention, we need to return boolean by validating the property that we wanted to assert.</p>
+
+<blockquote>
+  <p>There is no Arrange step to setup the input parameter and FsCheck does that for you with 100% test coverage :-)</p>
+</blockquote>
+
+<h2 id="mapping-httpcode-to-httpstatuscode">Mapping HttpCode to HttpStatusCode</h2>
+
+<p>The next task in the use case is doing the reverse, mapping <em>HttpStatusCode</em> to <em>HttpCode</em>.</p>
+
+<p>Let’s start with the test first.</p>
+
+<p>The integer representation of HTTP status code property that we used on the previous task holds true for this mapping also.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>[&lt;Property&gt;]
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let ``suaveHttpCode maps System.Net's HttpStatusCode to Suave's HttpCode if exists``
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  (httpStatusCode : HttpStatusCode) =
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    let httpCode = suaveHttpCode httpStatusCode
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    let code = LanguagePrimitives.EnumToValue httpStatusCode
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    Option.isSome httpCode &amp;&amp; httpCode.Value.code = code
+</pre></div>
+</div>
+</div>
+
+<p>The <code>suaveHttpCode</code> function returns an <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option type</a> as Suave.Http.HttpCode’s <code>tryParse</code> function <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L184-L194">parses the integer HTTP status code</a> and returns the corresponding <code>HttpCode</code> if the parsing succeeds.</p>
+
+<p>The implementation of <code>suaveHttpCode</code> function is</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let suaveHttpCode (httpStatusCode : HttpStatusCode) =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let code =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    LanguagePrimitives.EnumToValue httpStatusCode
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    |&gt; HttpCode.tryParse
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  match code with
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  | Choice1Of2 httpCode -&gt; Some httpCode
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  | _ -&gt; None
+</pre></div>
+</div>
+</div>
+
+<p>Now if we run the unit tests, You will be getting the following error (if you are using Suave NuGet package version &lt;= 1.1.3)</p>
+
+<pre><code>Suave.Azure.Functions.Tests.suaveHttpCode maps System.Net's HttpStatusCode to Suave's HttpCode [FAIL]
+FsCheck.Xunit.PropertyFailedException :
+     Falsifiable, after 7 tests (0 shrinks) (StdGen (1629668181,296211181)):
+     Original:
+     Unused
+</code></pre>
+
+<p>The reason for this failure is Suave (up to v1.1.3) doesn’t have the HTTP status code <em>306 (UnUsed)</em>. The unit test that we wrote was exercised by the <em>FsCheck</em> for the all possible values of the <code>HttpStatusCode</code> enum till it encountered this failure case.</p>
+
+<p>Let’s patch our unit test to fix this failure.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let httpCode = Response.suaveHttpCode httpStatusCode
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let code = LanguagePrimitives.EnumToValue httpStatusCode
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let unSupportedSuaveHttpCodes = [306]
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  if List.contains code unSupportedSuaveHttpCodes then
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    Option.isNone httpCode
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  else
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>    Option.isSome httpCode &amp;&amp; httpCode.Value.code = code
+</pre></div>
+</div>
+</div>
+
+<p>If you run the unit test after this, you will get an another failure</p>
+
+<pre><code>Suave.Azure.Functions.Tests.suaveHttpCode maps System.Net's HttpStatusCode to Suave's HttpCode [FAIL]
+FsCheck.Xunit.PropertyFailedException :
+  Falsifiable, after 10 tests (0 shrinks) (StdGen (507658935,296211184)):
+  Original:
+  UpgradeRequired
+</code></pre>
+
+<p>Again, The reason is HTTP Status Code <code>426 (UpgradeRequired)</code> is not supported is Suave at this point of writing. Let’s patch this too by adding this to the list <code>unSupportedSuaveHttpCodes</code>.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// ...
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let unSupportedSuaveHttpCodes = [306;426]
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>// ...
+</pre></div>
+</div>
+</div>
+
+<p>After this FsCheck is happy and we too.</p>
+
+<blockquote>
+  <p>If I haven’t used Property based testing, for sure, I might have missed these two unsupported HTTP status codes.</p>
+</blockquote>
+
+<h2 id="the-spirit-of-open-source">The Spirit of Open Source</h2>
+
+<p>While looking at <code>Suave.Http</code> codebase to fix the unit test failures, this is what I saw in the code</p>
+
+<p><img class="center border" src="/images/leveraging_pbt/send_pr.png"></p>
+
+<p>This is the beauty of open source, and I am glad <a href="https://github.com/SuaveIO/suave/pull/512">to do it</a></p>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Writing tests first forces you to think about the problem you&#39;re solving. Writing property-based tests forces you to think way harder.</p>&mdash; Jessica Kerr (@jessitron) <a href="https://twitter.com/jessitron/status/327480330900611072">April 25, 2013</a></blockquote>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Scale Up Azure Functions in F# using Suave]]></title>
@@ -1470,656 +1680,6 @@ GET /people/feafa5b5-304d-455e-b7e7-13a5b3293f77
 <h2 id="summary">Summary</h2>
 
 <p>This work is inspired by Scott Wlaschin’s blog post series on <a href="http://fsharpforfunandprofit.com/series/low-risk-ways-to-use-fsharp-at-work.html">Low-risk ways to use F# at work</a>. I am glad to find one more low-risk way to use F# at work and I believe it would help you in future. You can find the sample code in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/GithubMockApiServer">blog-samples GitHub repository</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Securing APIs in Suave using JSON Web Token]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/"/>
-    <updated>2015-07-15T12:04:12+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/07/15/securing-apis-in-suave-using-json-web-token</id>
-    <content type="html"><![CDATA[<p>In the <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT).</p>
-
-<p>This blog post is based on <a href="http://bitoftech.net/">Taiseer’s</a> blog post on <a href="http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/">JSON Web Token in ASP.NET Web API 2 using Owin</a> and I will be covering how to implement the same in <a href="http://suave.io">Suave</a>. If you are interested in the theoretical background of JWT, kindly read his blog post before reading this.</p>
-
-<h2 id="workflow">Workflow</h2>
-
-<p>The typical workflow of JWT based application would look like this</p>
-
-<ol>
-  <li>New Audience (Resource Server) gets registered with Authorization Server.</li>
-  <li>Get the JWT access token from Authorization Server by passing Client Id of the resource server and login credentials</li>
-  <li>Use the access token obtained above to get access to the secured resources in the resource server</li>
-</ol>
-
-<p>We are going to see how to implement all these three steps in this blog post</p>
-
-<h2 id="project-setup">Project Setup</h2>
-
-<p>Create an empty visual studio solution and add new projects with the following name</p>
-
-<ul>
-  <li>SuaveJwt - A fsharp library project which contains all the JWT related things</li>
-  <li>SuaveJwt.AuthServerHost - A fsharp console application which is going to host the authorization server</li>
-  <li>Audience1 - A fsharp console application representing the resource server 1   </li>
-  <li>Audience2 - A fsharp console application representing the resource server 2   </li>
-</ul>
-
-<p>After creating, install the following NuGet packages</p>
-
-<ul>
-  <li><a href="https://www.nuget.org/packages/Suave/">Suave</a> in all the four projects</li>
-  <li><a href="https://www.nuget.org/packages/Newtonsoft.Json/">Newtonsoft.Json</a> and <a href="https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt/">JSON Web Token Handler</a> in <em>SuaveJwt</em></li>
-</ul>
-
-<p>Then add reference the .NET framework library <strong>System.IdentityModel</strong> in all the four projects from GAC and then add a reference to the <strong>SuaveJwt</strong> project library in all the other three projects.</p>
-
-<p><img class="center" src="/images/suave_jwt/project_structure.png"></p>
-
-<h2 id="new-audience-registration">New Audience Registration</h2>
-
-<p>As we have seen in the workflow, the first step is to enable an audience to register itself with the authorization server. Let’s begin by defining the business logic.</p>
-
-<p>Add a new source file <em>JwtToken.fs</em> in the <strong>SuaveJwt</strong> project and update it as follows</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type Audience = {
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  ClientId : string
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  Secret : Base64String
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Name : string
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>}
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>// string -&gt; Audience
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>let createAudience audienceName =
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let clientId = Guid.NewGuid().ToString(&quot;N&quot;)
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let data = Array.zeroCreate 32
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  RNGCryptoServiceProvider.Create().GetBytes(data)
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  let secret = data |&gt; Base64String.create
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  {ClientId = clientId; Secret = secret; Name =  audienceName}
-</pre></div>
-</div>
-</div>
-
-<p>The above snippet creates an audience record with a random client id and secret key. The secret key is of type <a href="https://en.wikipedia.org/wiki/Base64#URL_applications">base64 URL encoded</a> string. This type doesn’t exist, so let’s create it.</p>
-
-<p>Add a new source file <em>Encodings.fs</em> in the <strong>SuaveJwt</strong> project and add this type</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type Base64String = private Base64String of string with
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  static member decode (base64String : Base64String) =
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    let (Base64String text) = base64String
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    let pad text =
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      let padding = 3 - ((String.length text + 3) % 4)
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>      if padding = 0 then text else (text + new String('=', padding))
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    Convert.FromBase64String(pad(text.Replace('-', '+').Replace('_', '/')))
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  static member create data =
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    Convert.ToBase64String(data)
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      .TrimEnd('=')
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      .Replace('+', '-')
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      .Replace('/', '_') |&gt; Base64String;
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  static member fromString = Base64String
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  override this.ToString() =
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    let (Base64String str) = this
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>    str
-</pre></div>
-</div>
-</div>
-
-<p>To keep things simple, I haven’t added any validations here. The next step is to create a Suave <em>WebPart</em> to expose the audience create functionality.</p>
-
-<p>Add a new source file <em>AuthServer.fs</em> in the <strong>SuaveJwt</strong> project and update it as below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type AudienceCreateRequest = {
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  Name : string
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>}
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>type AudienceCreateResponse = {
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  ClientId : string
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  Base64Secret : string
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  Name : string
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>type Config = {
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  AddAudienceUrlPath : string  
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  SaveAudience : Audience -&gt; Async&lt;Audience&gt;
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>}
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>let audienceWebPart config =
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  let toAudienceCreateResponse (audience : Audience) = {
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    Base64Secret = audience.Secret.ToString()
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    ClientId = audience.ClientId        
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    Name = audience.Name
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  }
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>  let tryCreateAudience (ctx: HttpContext) =
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    match mapJsonPayload&lt;AudienceCreateRequest&gt; ctx.request with
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    | Some audienceCreateRequest -&gt;
-<span class="line-numbers"><a href="#n27" name="n27">27</a></span>        async {
-<span class="line-numbers"><a href="#n28" name="n28">28</a></span>          let! audience =
-<span class="line-numbers"><a href="#n29" name="n29">29</a></span>            audienceCreateRequest.Name |&gt; createAudience |&gt; config.SaveAudience                     
-<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>          let audienceCreateResponse = toAudienceCreateResponse audience
-<span class="line-numbers"><a href="#n31" name="n31">31</a></span>          return! JSON audienceCreateResponse ctx
-<span class="line-numbers"><a href="#n32" name="n32">32</a></span>        }
-<span class="line-numbers"><a href="#n33" name="n33">33</a></span>    | None -&gt; BAD_REQUEST &quot;Invalid Audience Create Request&quot; ctx
-<span class="line-numbers"><a href="#n34" name="n34">34</a></span>
-<span class="line-numbers"><a href="#n35" name="n35">35</a></span>  path config.AddAudienceUrlPath &gt;=&gt; POST &gt;=&gt; tryCreateAudience
-</pre></div>
-</div>
-</div>
-
-<p>The <code>audienceWebPart</code> function retrieves the <code>AudienceCreateRequest</code> from the JSON request payload and creates a new audience.<br />
-To make it independent of the host, we have externalized the hosting functionality using the <code>Config</code> record type.</p>
-
-<p>The <code>mapJsonPayload</code> and <code>JSON</code> functions serialize and deserialize JSON objects across the wire respectively. These functions are not part of Suave, so let’s add them</p>
-
-<p>Add a new source file <em>SuaveJson.fs</em> in the <strong>SuaveJwt</strong> project and add these functions</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let JSON v =     
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let jsonSerializerSettings = new JsonSerializerSettings()
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  jsonSerializerSettings.ContractResolver &lt;- new CamelCasePropertyNamesContractResolver()
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  JsonConvert.SerializeObject(v, jsonSerializerSettings)
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  |&gt; OK
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  &gt;=&gt; Writers.setMimeType &quot;application/json; charset=utf-8&quot;
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let mapJsonPayload&lt;'a&gt; (req : HttpRequest) =     
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let fromJson json =
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    try
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      let obj = JsonConvert.DeserializeObject(json, typeof&lt;'a&gt;) :?&gt; 'a    
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      Some obj
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    with
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    | _ -&gt; None
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let getString rawForm =
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    System.Text.Encoding.UTF8.GetString(rawForm)
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  req.rawForm |&gt; getString |&gt; fromJson
-</pre></div>
-</div>
-</div>
-
-<p>The next step is hosting this audience web part.</p>
-
-<p>Open the <em>Program.fs</em> file in the <strong>SuaveJwt.AuthServerHost</strong> project and update it as below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let authorizationServerConfig = {
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  AddAudienceUrlPath = &quot;/api/audience&quot;  
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  SaveAudience = AudienceStorage.saveAudience
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>}
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>let audienceWebPart' = audienceWebPart authorizationServerConfig
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>startWebServer defaultConfig audienceWebPart'
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>0 // return an integer exit code
-</pre></div>
-</div>
-</div>
-
-<p>It is a straight forward self-host suave server program which exposes the audience web part.</p>
-
-<p>The <em>AudienceStorage</em> is responsible for storing the created audiences and to add it create a new source file <em>AudienceStorage.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project and add these functions</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>module AudienceStorage
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let private audienceStorage
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  = new Dictionary&lt;string, Audience&gt;()
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>let saveAudience (audience : Audience) =      
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    audienceStorage.Add(audience.ClientId, audience)
-<span class="line-numbers"><a href="#n8" name="n8">8</a></span>    audience |&gt; async.Return
-</pre></div>
-</div>
-</div>
-<p>To keep this simple, we are using in-memory dictionary here and it can be easily replaced with any data store</p>
-
-<p>Now we have everything to create a new audience. So, let’s run the <strong>SuaveJwt.AuthServerHost</strong> application and verify</p>
-
-<p><img class="center" src="/images/suave_jwt/audience_create.png"></p>
-
-<p>Keep a note of this <em>clientId</em> and <em>base64Secret</em> as we will be using them while defining the resource server (“Audience1” in this case).</p>
-
-<h2 id="generating-access-token">Generating Access Token</h2>
-
-<p>After registering an audience with the authorization server, the next step is to get the access token to access the resources in the given resource server.</p>
-
-<p>Let’s begin by defining the business logic to create an access token.</p>
-
-<p><img class="center" src="/images/suave_jwt/createToken.png"></p>
-
-<p>Open <em>JwtToken.fs</em> and add the following types</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type TokenCreateRequest = {         
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  Issuer : string        
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  UserName : string
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Password : string        
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  TokenTimeSpan : TimeSpan
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>}
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>type IdentityStore = {
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  getClaims : string -&gt; Async&lt;Claim seq&gt;
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  isValidCredentials : string -&gt; string -&gt; Async&lt;bool&gt;
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  getSecurityKey : Base64String -&gt; SecurityKey
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  getSigningCredentials : SecurityKey -&gt; SigningCredentials
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>type Token = {
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  AccessToken : string        
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  ExpiresIn : float        
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>}
-</pre></div>
-</div>
-</div>
-
-<p>These types are generic abstractions which decouple the token creation part from the underlying host.</p>
-
-<p>The <code>TokenCreateRequest</code> models the underlying issuer and token lifetime.</p>
-
-<p>The <code>IdentityStore</code> represents a generic data store in which the identity information has been stored and it also provides the security key and the signing credentials to protect the access token from misuse.</p>
-
-<p>With these types in place let’s add the <code>createToken</code> function in the <em>SuaveJwt.fs</em> file</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let createToken tokenCreateRequest identityStore audience =
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  async {
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let! isValidCredentials =
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      identityStore.isValidCredentials tokenCreateRequest.UserName tokenCreateRequest.Password
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    if isValidCredentials then                            
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      let signingCredentials =
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        (identityStore.getSecurityKey &gt;&gt; identityStore.getSigningCredentials) audience.Secret
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      let issuedOn = Nullable DateTime.UtcNow
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      let expiresBy = Nullable (DateTime.UtcNow.Add(tokenCreateRequest.TokenTimeSpan))       
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      let! claims =  identityStore.getClaims tokenCreateRequest.UserName
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      let jwtSecurityToken =
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>        new JwtSecurityToken(tokenCreateRequest.Issuer, audience.ClientId, claims, issuedOn, expiresBy, signingCredentials)
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      let handler = new JwtSecurityTokenHandler()
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      let accessToken = handler.WriteToken(jwtSecurityToken)                
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      return Some {AccessToken = accessToken; ExpiresIn = tokenCreateRequest.TokenTimeSpan.TotalSeconds}
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    else return None
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  }
-</pre></div>
-</div>
-</div>
-
-<p>The <code>createToken</code> function checks the validness of the login credentials. If it is valid, then it get the claims associated with the given username and creates a <em>JwtToken</em> using the <a href="https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt/">JSON Web Token Handler</a> library, else it returns <code>None</code></p>
-
-<p>Now we have got the backend business logic ready, let’s expose it as a suave <em>WebPart</em></p>
-
-<p>Open <em>AuthServer.fs</em> and add a new record type for the incoming token create request and update <code>Config</code> and <code>audienceWebPart</code> as below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type TokenCreateCredentials = {
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  UserName : string
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  Password : string
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  ClientId : string
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>}
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>type Config = {
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  // ... existing fields ...
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  CreateTokenUrlPath : string  
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  GetAudience : string -&gt; Async&lt;Audience option&gt;
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  Issuer : string
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  TokenTimeSpan : TimeSpan
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>let audienceWebPart config identityStore =
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  // ... existing functions ...
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  let tryCreateToken (ctx: HttpContext) =
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    match mapJsonPayload&lt;TokenCreateCredentials&gt; ctx.request with
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    | Some tokenCreateCredentials -&gt;
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      async {
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>        let! audience = config.GetAudience tokenCreateCredentials.ClientId
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>        match audience with
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>        | Some audience -&gt;
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>            let tokenCreateRequest : TokenCreateRequest = {         
-<span class="line-numbers"><a href="#n27" name="n27">27</a></span>              Issuer = config.Issuer        
-<span class="line-numbers"><a href="#n28" name="n28">28</a></span>              UserName = tokenCreateCredentials.UserName
-<span class="line-numbers"><a href="#n29" name="n29">29</a></span>              Password = tokenCreateCredentials.Password        
-<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>              TokenTimeSpan = config.TokenTimeSpan
-<span class="line-numbers"><a href="#n31" name="n31">31</a></span>            }            
-<span class="line-numbers"><a href="#n32" name="n32">32</a></span>            let! token = createToken tokenCreateRequest identityStore audience
-<span class="line-numbers"><a href="#n33" name="n33">33</a></span>            match token with
-<span class="line-numbers"><a href="#n34" name="n34">34</a></span>            | Some token -&gt; return! JSON token ctx
-<span class="line-numbers"><a href="#n35" name="n35">35</a></span>            | None -&gt; return! BAD_REQUEST &quot;Invalid Login Credentials&quot; ctx
-<span class="line-numbers"><a href="#n36" name="n36">36</a></span>
-<span class="line-numbers"><a href="#n37" name="n37">37</a></span>        | None -&gt; return! BAD_REQUEST &quot;Invalid Client Id&quot; ctx
-<span class="line-numbers"><a href="#n38" name="n38">38</a></span>      }    
-<span class="line-numbers"><a href="#n39" name="n39">39</a></span>    | None -&gt; BAD_REQUEST &quot;Invalid Token Create Request&quot; ctx
-<span class="line-numbers"><strong><a href="#n40" name="n40">40</a></strong></span>
-<span class="line-numbers"><a href="#n41" name="n41">41</a></span>  choose [
-<span class="line-numbers"><a href="#n42" name="n42">42</a></span>    path config.AddAudienceUrlPath &gt;=&gt; POST &gt;=&gt; tryCreateAudience
-<span class="line-numbers"><a href="#n43" name="n43">43</a></span>    path config.CreateTokenUrlPath &gt;=&gt; POST &gt;=&gt; tryCreateToken
-<span class="line-numbers"><a href="#n44" name="n44">44</a></span>  ]
-</pre></div>
-</div>
-</div>
-
-<p>The <code>tryCreateToken</code> function checks whether the <code>ClientId</code> is a registered audience or not, if it exists, then this function creates a token using the <code>createToken</code> function defined above otherwise it returns the <code>BAD_REQUST</code> <em>WebPart</em> with the appropriate error message.</p>
-
-<p>The final change is modifying the <em>Program.fs</em> and <em>AudienceStorage.fs</em> files in the <strong>SuaveJwt.AuthServerHost</strong> to expose this <em>WebPart</em>.</p>
-
-<p><strong>Program.fs</strong></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let authorizationServerConfig = {
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  AddAudienceUrlPath = &quot;/api/audience&quot;
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  CreateTokenUrlPath = &quot;/oauth2/token&quot;
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  SaveAudience = AudienceStorage.saveAudience
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  GetAudience = AudienceStorage.getAudience
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  Issuer = &quot;http://localhost:8083/suave&quot;
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  TokenTimeSpan = TimeSpan.FromMinutes(1.)
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>}
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let identityStore = {
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  getClaims = IdentityStore.getClaims
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  isValidCredentials = IdentityStore.isValidCredentials
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  getSecurityKey = KeyStore.securityKey
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  getSigningCredentials = KeyStore.hmacSha256
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>}    
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>let audienceWebPart' = audienceWebPart authorizationServerConfig identityStore   
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>startWebServer defaultConfig audienceWebPart'
-</pre></div>
-</div>
-</div>
-
-<p><strong>AudienceStorage.fs</strong></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getAudience clientId =        
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  if audienceStorage.ContainsKey(clientId) then
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    Some audienceStorage.[clientId] |&gt; async.Return
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  else
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    None |&gt; async.Return
-</pre></div>
-</div>
-</div>
-
-<p>The <em>KeyStore</em> and <em>IdentityStore</em> do not exists, so let’s add them</p>
-
-<p>Add <em>KeyStore.fs</em> in the <strong>SuaveJwt</strong> project and it provide the in-memory symmetric security key based on <a href="https://en.wikipedia.org/wiki/Hash-based_message_authentication_code">HMAC</a></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module KeyStore
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open System.IdentityModel.Tokens
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Encodings
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>let securityKey sharedKey : SecurityKey =
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let symmetricKey = sharedKey |&gt; Base64String.decode
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  new InMemorySymmetricSecurityKey(symmetricKey) :&gt; SecurityKey
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let hmacSha256 secretKey =
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  new SigningCredentials(secretKey,SecurityAlgorithms.HmacSha256Signature, SecurityAlgorithms.Sha256Digest)
-</pre></div>
-</div>
-</div>
-
-<p>Then add <em>IdentityStore.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module IdentityStore
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open System.Security.Claims       
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>let getClaims userName =
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  seq {
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    yield (ClaimTypes.Name, userName)
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    if (userName = &quot;Admin&quot;) then
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>      yield (ClaimTypes.Role, &quot;Admin&quot;)
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    if (userName = &quot;Foo&quot;) then
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      yield (ClaimTypes.Role, &quot;SuperUser&quot;)            
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  } |&gt; Seq.map (fun x -&gt; new Claim(fst x, snd x)) |&gt; async.Return
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>let isValidCredentials username password =
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  username = password |&gt; async.Return
-</pre></div>
-</div>
-</div>
-
-<p>To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same.</p>
-
-<p>Let’s run the <strong>SuaveJwt.AuthServerHost</strong> and verify the token</p>
-
-<p><img class="center" src="/images/suave_jwt/audience_admin_token.png"></p>
-
-<h2 id="securing-the-resources">Securing the resources</h2>
-
-<p>Now we have come to the interesting part of securing the resources using the <em>access token</em> created in the above step</p>
-
-<p>The first step to achieving this to validate the incoming access token. Let’s add this validation logic in the <em>JwtToken.fs</em> file.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type TokenValidationRequest = {
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  Issuer : string
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  SecurityKey : SecurityKey
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  ClientId : string
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  AccessToken : string
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>}
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>let validate tokenValidationRequest =
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let tokenValidationParameters =
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    let validationParams = new TokenValidationParameters()
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    validationParams.ValidAudience &lt;- tokenValidationRequest.ClientId
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    validationParams.ValidIssuer &lt;- tokenValidationRequest.Issuer
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    validationParams.ValidateLifetime &lt;- true
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    validationParams.ValidateIssuerSigningKey &lt;- true
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    validationParams.IssuerSigningKey &lt;-  tokenValidationRequest.SecurityKey
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    validationParams
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  try
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    let handler = new JwtSecurityTokenHandler()
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    let principal =
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      handler.ValidateToken(tokenValidationRequest.AccessToken, tokenValidationParameters, ref null)
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    principal.Claims |&gt; Choice1Of2
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  with
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    | ex -&gt; ex.Message |&gt; Choice2Of2
-</pre></div>
-</div>
-</div>
-
-<p>The <code>validate</code> function returns a <code>Choice</code> type which contains either a sequence of <a href="https://msdn.microsoft.com/en-us/library/system.security.claims(v=vs.110).aspx">Claims</a> present in the token if the access token is valid or an error message describing what’s wrong with the access token</p>
-
-<p>The next step is using this function to secure a Suave <em>WebPart</em></p>
-
-<p>Create a new source file <em>Secure.fs</em> in the <strong>SuaveJwt</strong> project and add the following code</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type JwtConfig = {
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>    Issuer : string    
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    SecurityKey : SecurityKey
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    ClientId : string    
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>}
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let jwtAuthenticate jwtConfig webpart (ctx: HttpContext) =
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let updateContextWithClaims claims =
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    { ctx with userState = ctx.userState.Remove(&quot;Claims&quot;).Add(&quot;Claims&quot;, claims) }    
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  match ctx.request.header &quot;token&quot; with
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  | Choice1Of2 accessToken -&gt;
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      let tokenValidationRequest =  {
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>        Issuer = jwtConfig.Issuer
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>        SecurityKey = jwtConfig.SecurityKey
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>        ClientId = jwtConfig.ClientId
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>        AccessToken = accessToken
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      }
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      let validationResult = validate tokenValidationRequest
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>      match validationResult with
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      | Choice1Of2 claims -&gt; webpart (updateContextWithClaims claims)
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>      | Choice2Of2 err -&gt; FORBIDDEN err ctx                         
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  | _ -&gt; BAD_REQUEST &quot;Invalid Request. Provide both clientid and token&quot; ctx  
-</pre></div>
-</div>
-</div>
-
-<p>The <code>jwtAuthenticate</code> function validates the access token present in the request header and invokes the given <em>WebPart</em> if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the <em>WebPart</em>.</p>
-
-<p>Upon successful access token validation, the <code>jwtAuthenticate</code> function puts the claims in the <code>userState</code> map of incoming <code>HttpContext</code> so that subsequent <em>WebPart</em>s in the pipeline can use it.</p>
-
-<p>The <code>JwtConfig</code> record abstracts the underlying audience from the validation logic so that it can be reused across multiple audiences.</p>
-
-<p>Now we have a functionality secure a web part. Let’s create an audience and leverage this</p>
-
-<p>Update the <em>Program.fs</em> file in the <strong>Audience1</strong> project as mentioned below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv =
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let jwtConfig = {
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    Issuer = &quot;http://localhost:8083/suave&quot;
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    ClientId = &quot;7ff79ba3305c4e4f9d0ececeae70c78f&quot;
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    SecurityKey = KeyStore.securityKey (Base64String.fromString &quot;Op5EqjC70aLS2dx3gI0zADPIZGX2As6UEwjA4oyBjMo&quot;)       
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  }
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let sample1 = path &quot;/audience1/sample1&quot; &gt;=&gt; jwtAuthenticate jwtConfig (OK &quot;Sample 1&quot;)
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  let config = { defaultConfig with bindings = [HttpBinding.mkSimple HTTP &quot;127.0.0.1&quot; 8084] }
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  startWebServer config sample1
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  0
-</pre></div>
-</div>
-</div>
-
-<p>I’ve asked you to keep a note of the <em>clientId</em> and the <em>securityKey</em> while doing the registration of <strong>Audience1</strong>. We are using them here in the <code>jwtConfig</code> record.</p>
-
-<p>Let’s see it in action</p>
-
-<p><img class="center" src="/images/suave_jwt/audience_sample1_success.png"></p>
-
-<p>Hurray! We have made it. “/audience1/sample1” is a secured API now!</p>
-
-<p>What will happen if we mess with the access token? Well, we will get an HTTP error. Let’s change the character <code>Q</code> in the access token from upper case to lower case and here is the result of it.</p>
-
-<p><img class="center" src="/images/suave_jwt/audience_sample1_error.png"></p>
-
-<p>Cool, Isn’t it?</p>
-
-<p>Let’s add authorization based on the claims that we have obtained from the JWT token</p>
-
-<p>Open <em>Secure.fs</em> and update the authorization functionality</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type AuthorizationResult =
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  | Authorized
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  | UnAuthorized of string
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>let jwtAuthorize jwtConfig authorizeUser webpart  =
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  let getClaims (ctx: HttpContext) =
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    let userState = ctx.userState
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    if userState.ContainsKey(&quot;Claims&quot;) then
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      match userState.Item &quot;Claims&quot; with
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      | :? (Claim seq) as claims -&gt; Some claims             
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      | _ -&gt; None
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    else
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>        None
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let authorize httpContext =
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    match getClaims httpContext with
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    | Some claims -&gt;
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>        async {
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>          let! authorizationResult = authorizeUser claims          
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>          match authorizationResult with
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>          | Authorized -&gt; return! webpart httpContext
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>          | UnAuthorized err -&gt; return! FORBIDDEN err httpContext
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>        }
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    | None -&gt; FORBIDDEN &quot;Claims not found&quot; httpContext
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>
-<span class="line-numbers"><a href="#n27" name="n27">27</a></span>  jwtAuthenticate jwtConfig authorize
-</pre></div>
-</div>
-</div>
-
-<p>The <code>jwtConfig</code> function is very similar to the <code>jwtAuthenticate</code> function which provides authorization in addition to the authentication.</p>
-
-<p>The key here is the parameter <code>authorizeUser</code> which is a function that takes a sequence of claims and returns an <code>AuthorizationResult</code>.</p>
-
-<p>Like <code>jwtAuthenticate`` function, the</code>jwtConfig``` function is also abstracted from the underlying <em>Audience</em> so we can use it across multiple <em>Audience</em>s.</p>
-
-<p>Let’s use this in the <strong>Audience1</strong>.</p>
-
-<p><strong>Program.fs</strong></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv =
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  // ... existing code ...
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  // Claim Seq -&gt; Async&lt;AuthorizationResult&gt;
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  let authorizeAdmin (claims : Claim seq) =
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    match claims |&gt; Seq.tryFind (fun c -&gt; c.Type = ClaimTypes.Role &amp;&amp; c.Value = &quot;Admin&quot;) with
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    | Some _ -&gt; Authorized |&gt; async.Return
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    | None -&gt; UnAuthorized &quot;User is not an admin&quot; |&gt; async.Return
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  let sample2 = path &quot;/audience1/sample2&quot; &gt;=&gt; jwtAuthorize jwtConfig authorizeAdmin (OK &quot;Sample 2&quot;)
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  let app = choose [sample1;sample2]
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  startWebServer config app
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  0  
-</pre></div>
-</div>
-</div>
-
-<p>The <code>jwtAuthroize</code> function in action</p>
-
-<p><img class="center" src="/images/suave_jwt/audience1_sample2_error.png"></p>
-
-<p><em>Note: I’ve generated a new access token here to exercise this use case.</em></p>
-
-<p>That’s it we have successfully completed all the three steps mentioned at the beginning of this blog post.</p>
-
-<h2 id="a-supplement">A Supplement</h2>
-
-<p>One cool thing about the design of the <strong>SuaveJwt</strong> library is, it doesn’t have any assumption about the <em>Authorization Server</em> and the <em>Resource Server</em>. Because of it, we can easily extend it.</p>
-
-<p>Let’s prove it by updating the <em>Program.fs</em> file in the <strong>Audience2</strong> project.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv =
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let jwtConfig = {
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    Issuer = &quot;http://localhost:8083/suave&quot;
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    ClientId = &quot;ada9263885c440869fb484fe354de13d&quot;
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    SecurityKey = KeyStore.securityKey (Base64String.fromString &quot;0RWyzyttDmJtiaYkG9rph5cqxCTI8YAOsR7stq-P_5o&quot;)       
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  }
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let authorizeSuperUser (claims : Claim seq) =
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    match claims |&gt; Seq.tryFind (fun c -&gt; c.Type = ClaimTypes.Role &amp;&amp; c.Value = &quot;SuperUser&quot;) with
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    | Some _ -&gt; Authorized |&gt; async.Return
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    | None -&gt; UnAuthorized &quot;User is not a Super User&quot; |&gt; async.Return
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let authorize = jwtAuthorize jwtConfig
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  let sample1 = path &quot;/audience2/sample1&quot; &gt;=&gt; OK &quot;Sample 1&quot;
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  let sample2 = path &quot;/audience2/sample2&quot; &gt;=&gt; authorize authorizeSuperUser (OK &quot;Sample 2&quot;)      
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let config = { defaultConfig with bindings = [HttpBinding.mkSimple HTTP &quot;127.0.0.1&quot; 8085] }    
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  let app = choose [sample1;sample2]
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  startWebServer config app
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  0
-</pre></div>
-</div>
-</div>
-
-<p>Note that the <code>jwtConfig</code> values are different from that of <strong>Audience1</strong> and it is obtained from calling the <strong>AuthorizationServer</strong>’s audience registration API for <strong>Audience2</strong>.</p>
-
-<h2 id="summary">Summary</h2>
-
-<p>Suave provides a simple and elegant way of extending its core functionality. In this blog post, we have seen how to bend it to support JWT based authorization and I believe we can do a lot of other cool things too!</p>
-
-<p>You can find the complete source code of the sample application used in this blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveJwtSampleApplication">blog-samples</a> GitHub repository.    </p>
 ]]></content>
   </entry>
   

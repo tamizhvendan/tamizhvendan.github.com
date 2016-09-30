@@ -1,0 +1,454 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Leveraging Property Based Testing - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Leveraging Property Based Testing Property-based testing is one of the powerful technique to unit test the code. Unlike the example-based testing ( &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2016/09/30/leveraging-property-based-testing/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+  <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+
+  </style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+	<!-- Start of Leadin Embed -->
+  <script type="text/javascript" src="//js.leadin.com/js/v1/2177345.js" id="LeadinEmbed-2177345" crossorigin="use-credentials" async defer></script>
+<!-- End of Leadin Embed -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><!-- <div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div> -->
+<style>
+@media (max-width: 600px) {
+  #book-cover, #tag-cloud {
+    display: none;
+  }
+}
+</style>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About Me</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<nav id="book-cover" style="margin-top:32px">
+	<a href="http://products.tamizhvendan.in/fsharp-applied">
+	<img class="center" src="/images/fsharp_applied_cover.jpg" width="160">
+</a>
+</nav>
+<nav id="tag-cloud">
+	<section>
+    <!-- <h3>Tag Cloud</h3>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 141.73913043478262%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.43478260869566%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.65217391304348%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 113.04347826086956%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.86956521739131%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.43478260869566%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.65217391304348%'>programming</a> <a href='/blog/categories/suave' style='font-size: 113.04347826086956%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 113.04347826086956%'>unit testing</a> </span> -->
+</section>
+</nav>
+
+
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Leveraging Property Based Testing</h1>
+	<div class="entry-content" itemprop="articleBody"><p><a href="http://fsharpforfunandprofit.com/posts/property-based-testing/">Property-based testing</a> is one of the powerful technique to unit test the code. Unlike the example-based testing (where we <em>Arrange</em> a set of example inputs to <em>Assert</em> the system under test), Property based testing enable us to focus on what we wanted to test and liberate us from doing mundane work on coming up with sample inputs.</p>
+
+<p>Recently, I got a chance to use Property based testing in <a href="https://github.com/tamizhvendan/Suave.Azure.Functions">an open source library</a> that I am developing to use <a href="https://suave.io">Suave</a> in <a href="https://azure.microsoft.com/en-in/services/functions/">Azure Functions</a>. I felt very productive and it was a such a joy to write the unit tests.  </p>
+
+<p>In this blog post, you are going to learn how Property-based testing has helped me and why you need to consider using(or learning) it</p>
+
+<h2 id="use-case">Use Case</h2>
+
+<p>Let me start with the use case that I wanted to test. The library that I am working is an adapter between two HTTP protocol abstractions, <a href="https://msdn.microsoft.com/en-us/library/system.net.http.aspx">System.Net.Http</a> and <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs">Suave.Http</a></p>
+
+<p>The first task is to map <a href="https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode.aspx">HttpStatusCode</a> of <em>System.Net</em> to the <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L64-L71">HttpCode</a> of <em>Suave.Http</em> and the next task is doing the vice-versa.</p>
+
+<blockquote>
+  <p><em>HttpStatusCode</em> is an enum type and <em>HttpCode</em> is a discriminated union type. Refer this <a href="https://fsharpforfunandprofit.com/posts/enum-types/">blog post</a> to know more about this difference.</p>
+</blockquote>
+
+<h2 id="identifying-the-property">Identifying the Property</h2>
+
+<p>The first step is Property-based testing is identifying the property. In other words, it forces to think about the relationship between the <em>input</em> and the <em>output</em>.</p>
+
+<p>I believe this <em>thinking</em> will make a huge difference in the quality of the software that we deliver.</p>
+
+<p>In the first task that we are about to implement, the relationship is the <em>integer</em> representation of the HTTP status code is both <em>HttpStatusCode</em> and <em>HttpCode</em>.</p>
+
+<p>Programmatically, this can be asserted like</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// boolean condition</span>
+</span><span class="line"><span class="c1">// In F# (=) operator represents the equality checking</span>
+</span><span class="line"><span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span> <span class="o">=</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">code</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>The <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/languageprimitives.enumtovalue%5B'enum,'t%5D-function-%5Bfsharp%5D">EnumToValue</a> returns the integer value associated with the enum, which is nothing but the integer representation of the HTTP status code it represents. The <code>code</code> is <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L73-L85">a member of</a> <em>HttpCode</em> that represents the same integer.</p>
+</blockquote>
+
+<p>If this property holds true for given set of inputs, then we can assert that the function that does the transformation is working correctly.</p>
+
+<h2 id="implementing-the-mapping-function-httpstatuscode">Implementing the mapping function <code>httpStatusCode</code></h2>
+
+<p>The initial implementation that I had in my mind was</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">NetStatusCode</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_200</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">OK</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_201</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">Created</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_400</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">BadRequest</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_404</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">NotFound</span>
+</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_202</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">Accepted</span>
+</span><span class="line"><span class="o">|</span> <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>If I haven’t choosen to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in <a href="(/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/)">my last blog post</a> on using Suave in Azure Functions, I’ve used this same approach.</p>
+
+<p>While thinking regarding properties to assert the transformation, for the first time I came to know about the <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.languageprimitives-module-%5Bfsharp%5D">Language Primitives</a> module in F# and the <em>EnumToValue</em> function.</p>
+
+<p>There should be an another function <em>EnumOfValue</em> right?</p>
+
+<p>Yes!</p>
+
+<p>Let’s use this in the <code>httpStatusCode</code> function implementation</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">httpStatusCode</span> <span class="o">(</span><span class="n">httpCode</span> <span class="o">:</span> <span class="n">HttpCode</span><span class="o">)</span> <span class="o">:</span> <span class="n">HttpStatusCode</span> <span class="o">=</span>
+</span><span class="line">  <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumOfValue</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">code</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Short and Sweet!</p>
+
+<p>Property-based testing made my day and helped me <a href="http://keysleft.com/">to save</a> a lot of keystrokes!</p>
+
+<h2 id="writing-our-first-property-based-unit-test">Writing Our First Property based Unit Test</h2>
+
+<p>In F# we can use the <a href="https://fscheck.github.io/FsCheck/">FsCheck</a> library to write the Property based unit tests. For this implementation, we will be using <em>FsCheck.Xunit</em> to run Property tests in <a href="http://xunit.github.io/">XUnit</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">Suave.Http</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Net</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">FsCheck</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">FsCheck.Xunit</span>
+</span><span class="line">
+</span><span class="line"><span class="o">[&lt;</span><span class="n">Property</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="o">``</span><span class="n">httpStatusCode</span> <span class="n">maps</span> <span class="n">Suave&#39;s</span> <span class="n">HttpCode</span> <span class="k">to</span> <span class="nn">System</span><span class="p">.</span><span class="n">Net&#39;s</span> <span class="n">HttpStatusCode</span> <span class="o">``</span>
+</span><span class="line">  <span class="o">(</span><span class="n">httpCode</span> <span class="o">:</span> <span class="n">HttpCode</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">let</span> <span class="nv">httpStatusCode</span> <span class="o">=</span> <span class="nn">Response</span><span class="p">.</span><span class="n">httpStatusCode</span> <span class="n">httpCode</span>
+</span><span class="line">    <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span> <span class="o">=</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">code</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The magic here is the <code>Property</code> attribute. It makes our life easier by auto-populating the parameter <code>httpCode</code> with the all the possible values and runs the unit test against each value.</p>
+
+<p>As a convention, we need to return boolean by validating the property that we wanted to assert.</p>
+
+<blockquote>
+  <p>There is no Arrange step to setup the input parameter and FsCheck does that for you with 100% test coverage :-)</p>
+</blockquote>
+
+<h2 id="mapping-httpcode-to-httpstatuscode">Mapping HttpCode to HttpStatusCode</h2>
+
+<p>The next task in the use case is doing the reverse, mapping <em>HttpStatusCode</em> to <em>HttpCode</em>.</p>
+
+<p>Let’s start with the test first.</p>
+
+<p>The integer representation of HTTP status code property that we used on the previous task holds true for this mapping also.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">Property</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="o">``</span><span class="n">suaveHttpCode</span> <span class="n">maps</span> <span class="nn">System</span><span class="p">.</span><span class="n">Net&#39;s</span> <span class="n">HttpStatusCode</span> <span class="k">to</span> <span class="n">Suave&#39;s</span> <span class="n">HttpCode</span> <span class="k">if</span> <span class="n">exists</span><span class="o">``</span>
+</span><span class="line">  <span class="o">(</span><span class="n">httpStatusCode</span> <span class="o">:</span> <span class="n">HttpStatusCode</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">httpCode</span> <span class="o">=</span> <span class="n">suaveHttpCode</span> <span class="n">httpStatusCode</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">code</span> <span class="o">=</span> <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span>
+</span><span class="line">
+</span><span class="line">    <span class="nn">Option</span><span class="p">.</span><span class="n">isSome</span> <span class="n">httpCode</span> <span class="o">&amp;&amp;</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">Value</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>suaveHttpCode</code> function returns an <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option type</a> as Suave.Http.HttpCode’s <code>tryParse</code> function <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L184-L194">parses the integer HTTP status code</a> and returns the corresponding <code>HttpCode</code> if the parsing succeeds.</p>
+
+<p>The implementation of <code>suaveHttpCode</code> function is</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">suaveHttpCode</span> <span class="o">(</span><span class="n">httpStatusCode</span> <span class="o">:</span> <span class="n">HttpStatusCode</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">code</span> <span class="o">=</span>
+</span><span class="line">    <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">tryParse</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">code</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Choice1Of2</span> <span class="n">httpCode</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">httpCode</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now if we run the unit tests, You will be getting the following error (if you are using Suave NuGet package version &lt;= 1.1.3)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="nn">Suave</span><span class="p">.</span><span class="nn">Azure</span><span class="p">.</span><span class="nn">Functions</span><span class="p">.</span><span class="nn">Tests</span><span class="p">.</span><span class="n">suaveHttpCode</span> <span class="n">maps</span> <span class="nn">System</span><span class="p">.</span><span class="n">Net&#39;s</span> <span class="n">HttpStatusCode</span> <span class="k">to</span> <span class="n">Suave&#39;s</span> <span class="n">HttpCode</span> <span class="o">[</span><span class="n">FAIL</span><span class="o">]</span>
+</span><span class="line"><span class="nn">FsCheck</span><span class="p">.</span><span class="nn">Xunit</span><span class="p">.</span><span class="n">PropertyFailedException</span> <span class="o">:</span>
+</span><span class="line">     <span class="n">Falsifiable</span><span class="o">,</span> <span class="n">after</span> <span class="mi">7</span> <span class="n">tests</span> <span class="o">(</span><span class="mi">0</span> <span class="n">shrinks</span><span class="o">)</span> <span class="o">(</span><span class="n">StdGen</span> <span class="o">(</span><span class="mi">1629668181</span><span class="o">,</span><span class="mi">296211181</span><span class="o">)):</span>
+</span><span class="line">     <span class="n">Original</span><span class="o">:</span>
+</span><span class="line">     <span class="n">Unused</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The reason for this failure is Suave (up to v1.1.3) doesn’t have the HTTP status code <em>306 (UnUsed)</em>. The unit test that we wrote was exercised by the <em>FsCheck</em> for the all possible values of the <code>HttpStatusCode</code> enum till it encountered this failure case.</p>
+
+<p>Let’s patch our unit test to fix this failure.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">httpCode</span> <span class="o">=</span> <span class="nn">Response</span><span class="p">.</span><span class="n">suaveHttpCode</span> <span class="n">httpStatusCode</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">code</span> <span class="o">=</span> <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">unSupportedSuaveHttpCodes</span> <span class="o">=</span> <span class="o">[</span><span class="mi">306</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">if</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">code</span> <span class="n">unSupportedSuaveHttpCodes</span> <span class="k">then</span>
+</span><span class="line">    <span class="nn">Option</span><span class="p">.</span><span class="n">isNone</span> <span class="n">httpCode</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="nn">Option</span><span class="p">.</span><span class="n">isSome</span> <span class="n">httpCode</span> <span class="o">&amp;&amp;</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">Value</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>If you run the unit test after this, you will get an another failure</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="nn">Suave</span><span class="p">.</span><span class="nn">Azure</span><span class="p">.</span><span class="nn">Functions</span><span class="p">.</span><span class="nn">Tests</span><span class="p">.</span><span class="n">suaveHttpCode</span> <span class="n">maps</span> <span class="nn">System</span><span class="p">.</span><span class="n">Net&#39;s</span> <span class="n">HttpStatusCode</span> <span class="k">to</span> <span class="n">Suave&#39;s</span> <span class="n">HttpCode</span> <span class="o">[</span><span class="n">FAIL</span><span class="o">]</span>
+</span><span class="line"><span class="nn">FsCheck</span><span class="p">.</span><span class="nn">Xunit</span><span class="p">.</span><span class="n">PropertyFailedException</span> <span class="o">:</span>
+</span><span class="line">  <span class="n">Falsifiable</span><span class="o">,</span> <span class="n">after</span> <span class="mi">10</span> <span class="n">tests</span> <span class="o">(</span><span class="mi">0</span> <span class="n">shrinks</span><span class="o">)</span> <span class="o">(</span><span class="n">StdGen</span> <span class="o">(</span><span class="mi">507658935</span><span class="o">,</span><span class="mi">296211184</span><span class="o">)):</span>
+</span><span class="line">  <span class="n">Original</span><span class="o">:</span>
+</span><span class="line">  <span class="n">UpgradeRequired</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Again, The reason is HTTP Status Code <code>426 (UpgradeRequired)</code> is not supported is Suave at this point of writing. Let’s patch this too by adding this to the list <code>unSupportedSuaveHttpCodes</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">unSupportedSuaveHttpCodes</span> <span class="o">=</span> <span class="o">[</span><span class="mi">306</span><span class="o">;</span><span class="mi">426</span><span class="o">]</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>After this FsCheck is happy and we too.</p>
+
+<blockquote>
+  <p>If I haven’t used Property based testing, for sure, I might have missed these two unsupported HTTP status codes.</p>
+</blockquote>
+
+<h2 id="the-spirit-of-open-source">The Spirit of Open Source</h2>
+
+<p>While looking at <code>Suave.Http</code> codebase to fix the unit test failures, this is what I saw in the code</p>
+
+<p><img class="center border" src="/images/leveraging_pbt/send_pr.png" /></p>
+
+<p>This is the beauty of open source, and I am glad <a href="https://github.com/SuaveIO/suave/pull/512">to do it</a></p>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Writing tests first forces you to think about the problem you&#39;re solving. Writing property-based tests forces you to think way harder.</p>&mdash; Jessica Kerr (@jessitron) <a href="https://twitter.com/jessitron/status/327480330900611072">April 25, 2013</a></blockquote>
+
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2016
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2016/09/30/leveraging-property-based-testing/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2016/09/30/leveraging-property-based-testing/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

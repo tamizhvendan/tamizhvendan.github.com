@@ -4,7 +4,7 @@
   <title><![CDATA[Category: functional-programming | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/functional-programming/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-09-21T16:58:51+05:30</updated>
+  <updated>2016-09-30T23:28:16+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,216 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Leveraging Property Based Testing]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2016/09/30/leveraging-property-based-testing/"/>
+    <updated>2016-09-30T09:06:15+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2016/09/30/leveraging-property-based-testing</id>
+    <content type="html"><![CDATA[<p><a href="http://fsharpforfunandprofit.com/posts/property-based-testing/">Property-based testing</a> is one of the powerful technique to unit test the code. Unlike the example-based testing (where we <em>Arrange</em> a set of example inputs to <em>Assert</em> the system under test), Property based testing enable us to focus on what we wanted to test and liberate us from doing mundane work on coming up with sample inputs.</p>
+
+<p>Recently, I got a chance to use Property based testing in <a href="https://github.com/tamizhvendan/Suave.Azure.Functions">an open source library</a> that I am developing to use <a href="https://suave.io">Suave</a> in <a href="https://azure.microsoft.com/en-in/services/functions/">Azure Functions</a>. I felt very productive and it was a such a joy to write the unit tests.  </p>
+
+<p>In this blog post, you are going to learn how Property-based testing has helped me and why you need to consider using(or learning) it</p>
+
+<h2 id="use-case">Use Case</h2>
+
+<p>Let me start with the use case that I wanted to test. The library that I am working is an adapter between two HTTP protocol abstractions, <a href="https://msdn.microsoft.com/en-us/library/system.net.http.aspx">System.Net.Http</a> and <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs">Suave.Http</a></p>
+
+<p>The first task is to map <a href="https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode.aspx">HttpStatusCode</a> of <em>System.Net</em> to the <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L64-L71">HttpCode</a> of <em>Suave.Http</em> and the next task is doing the vice-versa.</p>
+
+<blockquote>
+  <p><em>HttpStatusCode</em> is an enum type and <em>HttpCode</em> is a discriminated union type. Refer this <a href="https://fsharpforfunandprofit.com/posts/enum-types/">blog post</a> to know more about this difference.</p>
+</blockquote>
+
+<h2 id="identifying-the-property">Identifying the Property</h2>
+
+<p>The first step is Property-based testing is identifying the property. In other words, it forces to think about the relationship between the <em>input</em> and the <em>output</em>.</p>
+
+<p>I believe this <em>thinking</em> will make a huge difference in the quality of the software that we deliver.</p>
+
+<p>In the first task that we are about to implement, the relationship is the <em>integer</em> representation of the HTTP status code is both <em>HttpStatusCode</em> and <em>HttpCode</em>.</p>
+
+<p>Programmatically, this can be asserted like</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// boolean condition
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>// In F# (=) operator represents the equality checking
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>LanguagePrimitives.EnumToValue httpStatusCode = httpCode.code
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>The <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/languageprimitives.enumtovalue%5B'enum,'t%5D-function-%5Bfsharp%5D">EnumToValue</a> returns the integer value associated with the enum, which is nothing but the integer representation of the HTTP status code it represents. The <code>code</code> is <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L73-L85">a member of</a> <em>HttpCode</em> that represents the same integer.</p>
+</blockquote>
+
+<p>If this property holds true for given set of inputs, then we can assert that the function that does the transformation is working correctly.</p>
+
+<h2 id="implementing-the-mapping-function-httpstatuscode">Implementing the mapping function <code>httpStatusCode</code></h2>
+
+<p>The initial implementation that I had in my mind was</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let NetStatusCode = function
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>| HttpCode.HTTP_200 -&gt; HttpStatusCode.OK
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>| HttpCode.HTTP_201 -&gt; HttpStatusCode.Created
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>| HttpCode.HTTP_400 -&gt; HttpStatusCode.BadRequest
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>| HttpCode.HTTP_404 -&gt; HttpStatusCode.NotFound
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>| HttpCode.HTTP_202 -&gt; HttpStatusCode.Accepted
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>| // ...
+</pre></div>
+</div>
+</div>
+<p>If I haven’t choosen to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in <a href="(/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/)">my last blog post</a> on using Suave in Azure Functions, I’ve used this same approach.</p>
+
+<p>While thinking regarding properties to assert the transformation, for the first time I came to know about the <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.languageprimitives-module-%5Bfsharp%5D">Language Primitives</a> module in F# and the <em>EnumToValue</em> function.</p>
+
+<p>There should be an another function <em>EnumOfValue</em> right?</p>
+
+<p>Yes!</p>
+
+<p>Let’s use this in the <code>httpStatusCode</code> function implementation</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let httpStatusCode (httpCode : HttpCode) : HttpStatusCode =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  LanguagePrimitives.EnumOfValue httpCode.code
+</pre></div>
+</div>
+</div>
+<p>Short and Sweet!</p>
+
+<p>Property-based testing made my day and helped me <a href="http://keysleft.com/">to save</a> a lot of keystrokes!</p>
+
+<h2 id="writing-our-first-property-based-unit-test">Writing Our First Property based Unit Test</h2>
+
+<p>In F# we can use the <a href="https://fscheck.github.io/FsCheck/">FsCheck</a> library to write the Property based unit tests. For this implementation, we will be using <em>FsCheck.Xunit</em> to run Property tests in <a href="http://xunit.github.io/">XUnit</a></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>open Suave.Http
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open System.Net
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open FsCheck
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open FsCheck.Xunit
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>[&lt;Property&gt;]
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let ``httpStatusCode maps Suave's HttpCode to System.Net's HttpStatusCode ``
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  (httpCode : HttpCode) =
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    let httpStatusCode = Response.httpStatusCode httpCode
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    LanguagePrimitives.EnumToValue httpStatusCode = httpCode.code
+</pre></div>
+</div>
+</div>
+
+<p>The magic here is the <code>Property</code> attribute. It makes our life easier by auto-populating the parameter <code>httpCode</code> with the all the possible values and runs the unit test against each value.</p>
+
+<p>As a convention, we need to return boolean by validating the property that we wanted to assert.</p>
+
+<blockquote>
+  <p>There is no Arrange step to setup the input parameter and FsCheck does that for you with 100% test coverage :-)</p>
+</blockquote>
+
+<h2 id="mapping-httpcode-to-httpstatuscode">Mapping HttpCode to HttpStatusCode</h2>
+
+<p>The next task in the use case is doing the reverse, mapping <em>HttpStatusCode</em> to <em>HttpCode</em>.</p>
+
+<p>Let’s start with the test first.</p>
+
+<p>The integer representation of HTTP status code property that we used on the previous task holds true for this mapping also.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>[&lt;Property&gt;]
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let ``suaveHttpCode maps System.Net's HttpStatusCode to Suave's HttpCode if exists``
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  (httpStatusCode : HttpStatusCode) =
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    let httpCode = suaveHttpCode httpStatusCode
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    let code = LanguagePrimitives.EnumToValue httpStatusCode
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    Option.isSome httpCode &amp;&amp; httpCode.Value.code = code
+</pre></div>
+</div>
+</div>
+
+<p>The <code>suaveHttpCode</code> function returns an <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option type</a> as Suave.Http.HttpCode’s <code>tryParse</code> function <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L184-L194">parses the integer HTTP status code</a> and returns the corresponding <code>HttpCode</code> if the parsing succeeds.</p>
+
+<p>The implementation of <code>suaveHttpCode</code> function is</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let suaveHttpCode (httpStatusCode : HttpStatusCode) =
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let code =
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    LanguagePrimitives.EnumToValue httpStatusCode
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    |&gt; HttpCode.tryParse
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  match code with
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  | Choice1Of2 httpCode -&gt; Some httpCode
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  | _ -&gt; None
+</pre></div>
+</div>
+</div>
+
+<p>Now if we run the unit tests, You will be getting the following error (if you are using Suave NuGet package version &lt;= 1.1.3)</p>
+
+<pre><code>Suave.Azure.Functions.Tests.suaveHttpCode maps System.Net's HttpStatusCode to Suave's HttpCode [FAIL]
+FsCheck.Xunit.PropertyFailedException :
+     Falsifiable, after 7 tests (0 shrinks) (StdGen (1629668181,296211181)):
+     Original:
+     Unused
+</code></pre>
+
+<p>The reason for this failure is Suave (up to v1.1.3) doesn’t have the HTTP status code <em>306 (UnUsed)</em>. The unit test that we wrote was exercised by the <em>FsCheck</em> for the all possible values of the <code>HttpStatusCode</code> enum till it encountered this failure case.</p>
+
+<p>Let’s patch our unit test to fix this failure.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let httpCode = Response.suaveHttpCode httpStatusCode
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let code = LanguagePrimitives.EnumToValue httpStatusCode
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let unSupportedSuaveHttpCodes = [306]
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  if List.contains code unSupportedSuaveHttpCodes then
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    Option.isNone httpCode
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  else
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>    Option.isSome httpCode &amp;&amp; httpCode.Value.code = code
+</pre></div>
+</div>
+</div>
+
+<p>If you run the unit test after this, you will get an another failure</p>
+
+<pre><code>Suave.Azure.Functions.Tests.suaveHttpCode maps System.Net's HttpStatusCode to Suave's HttpCode [FAIL]
+FsCheck.Xunit.PropertyFailedException :
+  Falsifiable, after 10 tests (0 shrinks) (StdGen (507658935,296211184)):
+  Original:
+  UpgradeRequired
+</code></pre>
+
+<p>Again, The reason is HTTP Status Code <code>426 (UpgradeRequired)</code> is not supported is Suave at this point of writing. Let’s patch this too by adding this to the list <code>unSupportedSuaveHttpCodes</code>.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// ...
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let unSupportedSuaveHttpCodes = [306;426]
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>// ...
+</pre></div>
+</div>
+</div>
+
+<p>After this FsCheck is happy and we too.</p>
+
+<blockquote>
+  <p>If I haven’t used Property based testing, for sure, I might have missed these two unsupported HTTP status codes.</p>
+</blockquote>
+
+<h2 id="the-spirit-of-open-source">The Spirit of Open Source</h2>
+
+<p>While looking at <code>Suave.Http</code> codebase to fix the unit test failures, this is what I saw in the code</p>
+
+<p><img class="center border" src="/images/leveraging_pbt/send_pr.png"></p>
+
+<p>This is the beauty of open source, and I am glad <a href="https://github.com/SuaveIO/suave/pull/512">to do it</a></p>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Writing tests first forces you to think about the problem you&#39;re solving. Writing property-based tests forces you to think way harder.</p>&mdash; Jessica Kerr (@jessitron) <a href="https://twitter.com/jessitron/status/327480330900611072">April 25, 2013</a></blockquote>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[My Takeaways]]></title>
@@ -1391,72 +1601,6 @@ but the controller expects the function with the signature <code>int -&gt; seq&l
 <h2 id="summary">Summary</h2>
 
 <p>We have covered a quite a large ground here by creating three web-api endpoints in fsharp using Web Api 2. In the later posts we will be adding error handling and making it robust. The source code for this step can be found in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/1">github repository</a></p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Step 0 - Setting up the fsharp-phonecat Solution]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/"/>
-    <updated>2014-12-10T22:15:50+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution</id>
-    <content type="html"><![CDATA[<blockquote>
-  <p>This is step 0 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In this blog post, we are going to set up the visual studio solution and create the high level project structure for the <em>fsharp-phonecat</em> application. </p>
-
-<p><strong>Let’s get started!</strong></p>
-
-<h4 id="setting-up-visual-studio-solution">Setting Up Visual Studio Solution</h4>
-
-<p>The first step is to create an blank visual studio solution and name it as <strong>PhoneCat</strong></p>
-
-<p><img class="center" src="/images/fsharp_phonecat/step_0/BlankSolution.png" width="700" height="700"></p>
-
-<p>After creating the blank solution create two fsharp class libraries and name it as <strong>Domain</strong> and <strong>DataAccess</strong> respectively.</p>
-
-<p><img class="center" src="/images/fsharp_phonecat/step_0/ClassLibrary.png" width="700" height="700"></p>
-
-<p>Do delete the sample fsharp files Domain1.fs, DataAccess1.fs and Script.fsx that are created by default while creating the class libraries</p>
-
-<p>Then create a ASP.NET MVC web project using <a href="https://visualstudiogallery.msdn.microsoft.com/39ae8dec-d11a-4ac9-974e-be0fdadec71b">F# MVC 5 template</a> and name it as <em>Web</em></p>
-
-<p><img class="center" src="/images/fsharp_phonecat/step_0/WebProject.png" width="700" height="700"></p>
-
-<p><img class="center" src="/images/fsharp_phonecat/step_0/MVC5.png"></p>
-
-<p>We are going to use TDD, so create test projects for each of the above projects created and name it as <strong>Domain.Tests</strong>, <strong>DataAccess.Tests</strong> and <strong>Web.Tests</strong> respectively.</p>
-
-<p>The final project structure would look like</p>
-
-<p><img class="center" src="/images/fsharp_phonecat/step_0/ProjectStructure.png"></p>
-
-<p>F# MVC 5 template comes with a default Bootstrap theme and we are going to extend it by using e-commerce theme from <a href="http://startbootstrap.com/template-overviews/shop-homepage/">Start Bootstrap</a>. Download the theme and add <em>shop-homepage.css</em> to the Content directory of <strong>Web</strong> project. After adding it update <em>Global.asax.fs</em> to include this css file while bundling.</p>
-
-<p>``` fsharp BundleConfig after adding shop-homepage.css<br />
-type BundleConfig() =<br />
-    static member RegisterBundles (bundles:BundleCollection) =<br />
-        bundles.Add(ScriptBundle(“~/bundles/jquery”)<br />
-            .Include([|”~/Scripts/jquery-{version}.js”|]))</p>
-
-<pre><code>    bundles.Add(ScriptBundle("~/bundles/modernizr")
-        .Include([|"~/Scripts/modernizr-*"|]))
-
-    bundles.Add(ScriptBundle("~/bundles/bootstrap")
-        .Include("~/Scripts/bootstrap.js", 
-                    "~/Scripts/respond.js"))
-
-    bundles.Add(StyleBundle("~/Content/css")
-        .Include("~/Content/bootstrap.css",
-                    "~/Content/site.css",
-                    "~/Content/shop-homepage.css")) ``` 
-</code></pre>
-
-<p>Now the stage is set for awesomeness. Update <strong>_Layout.cshtml</strong> and <strong>Index.cshtml</strong> as mentioned in the bootstrap theme and run the web project.</p>
-
-<p><img class="center" src="/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800"></p>
-
-<p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">next-post</a> we will be wiring up the backend. Stay tuned !</p>
 ]]></content>
   </entry>
   
