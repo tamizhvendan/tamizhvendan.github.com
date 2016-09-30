@@ -10,11 +10,11 @@ categories:
   - FsCheck
 ---
 
-[Property based testing](http://fsharpforfunandprofit.com/posts/property-based-testing/) is one of the powerful technique to unit test the code. Unlike the example based testing (where we *Arrange* an example input to *Assert* the system under test), Property based testing enable us to focus on what we wanted to test and liberate us from doing mundane work on coming up with sample inputs.
+[Property-based testing](http://fsharpforfunandprofit.com/posts/property-based-testing/) is one of the powerful technique to unit test the code. Unlike the example-based testing (where we *Arrange* a set of example inputs to *Assert* the system under test), Property based testing enable us to focus on what we wanted to test and liberate us from doing mundane work on coming up with sample inputs.
 
 Recently, I got a chance to use Property based testing in [an open source library](https://github.com/tamizhvendan/Suave.Azure.Functions) that I am developing to use [Suave](https://suave.io) in [Azure Functions](https://azure.microsoft.com/en-in/services/functions/). I felt very productive and it was a such a joy to write the unit tests.  
 
-In this blog post, you are going to learn how Property based has helped me and why you need to consider using(or learning) it
+In this blog post, you are going to learn how Property-based testing has helped me and why you need to consider using(or learning) it
 
 ## Use Case
 
@@ -26,7 +26,7 @@ The first task is to map [HttpStatusCode](https://msdn.microsoft.com/en-us/libra
 
 ## Identifying the Property
 
-The first step is Property based testing is identifying the property. In other words it forces to think about the relationship between the *input* and the *output*.
+The first step is Property-based testing is identifying the property. In other words, it forces to think about the relationship between the *input* and the *output*.
 
 I believe this *thinking* will make a huge difference in the quality of the software that we deliver.
 
@@ -35,10 +35,12 @@ In the first task that we are about to implement, the relationship is the *integ
 Programmatically, this can be asserted like
 
 ```fsharp
-LanguagePrimitives.EnumToValue httpStatusCode = httpCode.code // true or false?
+// boolean condition
+// In F# (=) operator represents the equality checking
+LanguagePrimitives.EnumToValue httpStatusCode = httpCode.code
 ```
 
-> The [EnumToValue](https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/languageprimitives.enumtovalue%5B'enum,'t%5D-function-%5Bfsharp%5D) returns the integer value associated with the enum value which is nothing but the integer representation of the HTTP status code it represents. The `code` is [a member of](https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L73-L85) *HttpCode* that represents the same integer code.
+> The [EnumToValue](https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/languageprimitives.enumtovalue%5B'enum,'t%5D-function-%5Bfsharp%5D) returns the integer value associated with the enum, which is nothing but the integer representation of the HTTP status code it represents. The `code` is [a member of](https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L73-L85) *HttpCode* that represents the same integer.
 
 If this property holds true for given set of inputs, then we can assert that the function that does the transformation is working correctly.
 
@@ -55,29 +57,27 @@ let NetStatusCode = function
 | HttpCode.HTTP_202 -> HttpStatusCode.Accepted
 | // ...
 ```
-If I haven't choose to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in [my last blog post](({% post_url 2016-09-19-scale-up-azure-functions-in-f-number-using-suave%})) on using Suave in Azure Functions, I've used this same approach.
+If I haven't choosen to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in [my last blog post](({% post_url 2016-09-19-scale-up-azure-functions-in-f-number-using-suave%})) on using Suave in Azure Functions, I've used this same approach.
 
-While thinking in terms of properties to assert the transformation, for the first time I came to know about the [Language Primitives](https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.languageprimitives-module-%5Bfsharp%5D) module in F# and the *EnumToValue* function.
+While thinking regarding properties to assert the transformation, for the first time I came to know about the [Language Primitives](https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.languageprimitives-module-%5Bfsharp%5D) module in F# and the *EnumToValue* function.
 
 There should be an another function *EnumOfValue* right?
 
-Yes, that's what the implementation is
+Yes!
+
+Let's use this in the `httpStatusCode` function implementation
 
 ```fsharp
 let httpStatusCode (httpCode : HttpCode) : HttpStatusCode =
   LanguagePrimitives.EnumOfValue httpCode.code
 ```
-> The corresponding code in C# to create the enum from value is
+Short and Sweet!
 
-```csharp
-var httpStatusCode = (HttpStatusCode) httpCode.code
-```
-
-Property based testing made my day and helped me [to save](http://keysleft.com/) a lot of keystrokes!
+Property-based testing made my day and helped me [to save](http://keysleft.com/) a lot of keystrokes!
 
 ## Writing Our First Property based Unit Test
 
-In F# we can use the [FsCheck](https://fscheck.github.io/FsCheck/) library to write the Property based unit tests. For this implementation we will be using *FsCheck.Xunit* to run Property tests in [XUnit](http://xunit.github.io/)
+In F# we can use the [FsCheck](https://fscheck.github.io/FsCheck/) library to write the Property based unit tests. For this implementation, we will be using *FsCheck.Xunit* to run Property tests in [XUnit](http://xunit.github.io/)
 
 ```fsharp
 open Suave.Http
@@ -93,15 +93,15 @@ let ``httpStatusCode maps Suave's HttpCode to System.Net's HttpStatusCode ``
     LanguagePrimitives.EnumToValue httpStatusCode = httpCode.code
 ```
 
-The magic here is the `Property` attribute. It makes our life easier by auto populating the parameter `httpCode` with the all the possible values and runs the unit test against each values.
+The magic here is the `Property` attribute. It makes our life easier by auto-populating the parameter `httpCode` with the all the possible values and runs the unit test against each value.
 
-As a convention, we need to return boolean by exercising the property that we wanted to assert.
+As a convention, we need to return boolean by validating the property that we wanted to assert.
 
-> There is no Arrange step to setup the input parameter and FsCheck does that for you :-)
+> There is no Arrange step to setup the input parameter and FsCheck does that for you with 100% test coverage :-)
 
 ## Mapping HttpCode to HttpStatusCode
 
-The next task in the use case is doing the reverse, mapping *HttpCode* to *HttpStatusCode*.
+The next task in the use case is doing the reverse, mapping *HttpStatusCode* to *HttpCode*.
 
 Let's start with the test first.
 
@@ -117,13 +117,16 @@ let ``suaveHttpCode maps System.Net's HttpStatusCode to Suave's HttpCode if exis
     Option.isSome httpCode && httpCode.Value.code = code
 ```
 
-The `suaveHttpCode` function returns an [Option type](http://fsharpforfunandprofit.com/posts/the-option-type/) as Suave.Http.HttpCode's `tryParse` function which [parses the integer HTTP status code](https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L184-L194) and returns the corresponding `HttpCode` if the parsing succeeds.
+The `suaveHttpCode` function returns an [Option type](http://fsharpforfunandprofit.com/posts/the-option-type/) as Suave.Http.HttpCode's `tryParse` function [parses the integer HTTP status code](https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L184-L194) and returns the corresponding `HttpCode` if the parsing succeeds.
 
 The implementation of `suaveHttpCode` function is
 
 ```fsharp
 let suaveHttpCode (httpStatusCode : HttpStatusCode) =
-  match LanguagePrimitives.EnumToValue httpStatusCode |> HttpCode.tryParse with
+  let code =
+    LanguagePrimitives.EnumToValue httpStatusCode
+    |> HttpCode.tryParse
+  match code with
   | Choice1Of2 httpCode -> Some httpCode
   | _ -> None
 ```
@@ -138,7 +141,7 @@ FsCheck.Xunit.PropertyFailedException :
      Unused
 ```
 
-The reason for this failure is Suave (upto v1.1.3) doesn't have the HTTP status code *306 (UnUsed)*. The unit test that we wrote was exercised by the *FsCheck* for the all possible values of the `HttpStatusCode` enum till it encountered this failure case.
+The reason for this failure is Suave (up to v1.1.3) doesn't have the HTTP status code *306 (UnUsed)*. The unit test that we wrote was exercised by the *FsCheck* for the all possible values of the `HttpStatusCode` enum till it encountered this failure case.
 
 Let's patch our unit test to fix this failure.
 
@@ -163,7 +166,7 @@ FsCheck.Xunit.PropertyFailedException :
   UpgradeRequired
 ```
 
-Again, The reason is HTTP Status Code `426 (UpgradeRequired)` is not supported is Suave at this point of writing. Let's patch this too by adding this to list `unSupportedSuaveHttpCodes`.
+Again, The reason is HTTP Status Code `426 (UpgradeRequired)` is not supported is Suave at this point of writing. Let's patch this too by adding this to the list `unSupportedSuaveHttpCodes`.
 
 ```fsharp
 // ...
@@ -171,17 +174,17 @@ let unSupportedSuaveHttpCodes = [306;426]
 // ...
 ```
 
-After this FsCheck is happy and me too
+After this FsCheck is happy and we too.
 
-If I haven't used Property based testing, for sure I'd be missed these two unsupported HTTP status codes.
+> If I haven't used Property based testing, for sure, I might have missed these two unsupported HTTP status codes.
 
-## The Sprit of Open Source
+## The Spirit of Open Source
 
 While looking at `Suave.Http` codebase to fix the unit test failures, this is what I saw in the code
 
 {% img center border /images/leveraging_pbt/send_pr.png %}
 
-This is the beauty of open source and I am glad [to do it](https://github.com/SuaveIO/suave/pull/512)
+This is the beauty of open source, and I am glad [to do it](https://github.com/SuaveIO/suave/pull/512)
 
 ## Summary
 
