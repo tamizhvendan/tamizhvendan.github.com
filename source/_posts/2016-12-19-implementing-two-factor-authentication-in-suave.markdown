@@ -12,8 +12,7 @@ Two-factor authentication is a type of [Multi-factor authentication](https://en.
 
 > A good example from everyday life is the withdrawing of money from a cash machine; only the correct combination of a bank card (something that the user possesses) and a PIN (personal identification number, something that the user knows) allows the transaction to be carried out. - [Wikipedia](https://en.wikipedia.org/wiki/Multi-factor_authentication)
 
-[Google Authenticator](https://en.wikipedia.org/wiki/Google_Authenticator) is one of the popular application that implements 
-two-factor authentication services. In this blog post we are going to learn how to implement Two-factor authentication in web appliactions developed using [suave](https://suave.io)
+[Google Authenticator](https://en.wikipedia.org/wiki/Google_Authenticator) is one of the popular application that implements two-factor authentication services. In this blog post we are going to learn how to implement Two-factor authentication in web appliactions developed using [suave](https://suave.io)
 
 > Disclaimer: The idea presented here is a naive implemention of Two-factor authentication. The objective here is to demonstrate how to implement it in a functional programming language, F#. Things like SSL/HTTPS, preventing CSRF and other attacks are ignored for brevity. 
 
@@ -33,24 +32,114 @@ We are going to use [Time based One-time Password(TOTP)](https://en.wikipedia.or
 
 We are going to build a tiny web appliaction that has an inbuilt user account with the username `foo` and the password `bar`
 
-{% img center border /images/suave_two_factor/Login.png %}
+{% img center border /images/suave_two_factor/Login.png 300 200 %}
 
-After successful login the browser will be redirected to the *Profile* page where the user sees his name with couple of buttons. One to enable *Two-factor authentication* and another one to *logout*
+After successful login the user will be redirected to the **Profile** page where the user sees his name with couple of buttons. One to enable *Two-factor authentication* and another one to *logout*
 
-{% img center border /images/suave_two_factor/Profile.png %}
+{% img center border /images/suave_two_factor/Profile.png 350 200 %}
 
-Upon clicking the `Enable Two Factor Authentication` button, the user will be redirected to the *Enable Two Factor Authentication* page where the user has to scan the QR Code with the Google Authenticator App (For [Android](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en) or [iPhone](https://itunes.apple.com/in/app/google-authenticator/id388497605?mt=8)). Then he needs to enter the verification code to enable two factor authentication for his account. 
+Upon clicking the *Enable Two Factor Authentication* button, the user will be redirected to the **Enable Two Factor Authentication** page where the user has to scan the QR Code with the Google Authenticator App (For [Android](https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en) or [iPhone](https://itunes.apple.com/in/app/google-authenticator/id388497605?mt=8)). Then he needs to enter the verification code to enable two factor authentication for his account. 
 
-{% img center border /images/suave_two_factor/Enable_Two_Factor.png %}
+{% img center border /images/suave_two_factor/Enable_Two_Factor.png 450 250 %}
 
 *Google Authenticator App*
-{% img center border /images/suave_two_factor/Google_Authenticator.png %}
 
-After successeful activation, the updated *Profile* page would look like 
-{% img center border /images/suave_two_factor/Profile_After_Two_Factor.png %}
+{% img center border /images/suave_two_factor/Google_Authenticator.png 200 400 %}
+
+If the verification code matches, the updated **Profile** page would look like 
+
+{% img center border /images/suave_two_factor/Profile_After_Two_Factor.png 350 200 %}
 
 Now if the user logout and login again, he will be prompted to enter the verification code 
-{% img center border /images/suave_two_factor/Auth_Code_Prompt.png %}
 
-Then the user will be redirected to his *Profile* page. 
+{% img center border /images/suave_two_factor/Auth_Code_Prompt.png 250 150 %}
 
+After entering the verification code from the Google Authenticator, the user will be redirected to his **Profile** page. 
+
+## Getting Started
+
+Create a new **F# Console Project** with then name *Suave.TwoFactorAuth* and use Paket to install the following dependencies. 
+
+*paket.dependencies*
+
+```
+nuget FSharp.Core
+nuget Suave
+nuget DotLiquid
+nuget Suave.DotLiquid
+nuget OtpSharp
+```
+
+Then reference them in the *Suave.TwoFactorAuth* project.
+
+*Suave.TwoFactorAuth/paket.references*
+
+```
+FSharp.Core
+Suave
+DotLiquid
+Suave.DotLiquid
+OtpSharp
+```
+
+The [OtpSharp](TODO) is a .NET library that we wil be using to generate keys and to verify the verification code from Google Authenticator app using the [TOTP](TODO) algorithm.
+
+## Initializing DotLiquid
+
+To use [DotLiquid](TODO) to render the views, we need to explicity set the templates directory. From this path, DotLiquid render the requested [liquid templates](TODO). 
+
+```fsharp
+// Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs
+module Suave.TwoFactorAuth.Main
+
+open Suave
+open System.IO
+open System.Reflection
+open Suave.DotLiquid
+
+let initializeDotLiquid () =
+  let currentDirectory =
+    let mainExeFileInfo = 
+      new FileInfo(Assembly.GetEntryAssembly().Location)
+    mainExeFileInfo.Directory
+  Path.Combine(currentDirectory.FullName, "views") 
+  |> setTemplatesDir
+
+[<EntryPoint>]
+let main argv =  
+  initializeDotLiquid ()
+  0
+```
+
+As a convention we are going to create a directory *views*. This *views* directory going to have all the liquid templates of our appliaction
+
+## Serving the Login Page
+
+### Creating Login Liquid Templates 
+
+The first page that we are going to develop is the login page. Let's start from the views
+
+The best practice to use liquid templates is to have a master template which provides the skeleton code with placeholders and the child templates fill the placeholders
+
+Create a new directory with the name *views* in the *Suave.TwoFactorAuth* project and add a new liquid template *page.liquid*. This *page.liquid* is the master template for our application
+
+{% img center border /images/suave_two_factor/page.png 300 300 %}
+
+After creating change the 'Copy to output' property of the *page.liquid* file to 'Copy if newer' so that the view files are copied to the build output directory. 
+
+> If you are using VS Code or atom editor, you need to do this property change manually by opening the *Suave.TwoFactorAuth.fsproj* file 
+
+```html
+<!-- .... -->
+<ItemGroup>
+  <Folder Include="views\" />
+</ItemGroup>
+<ItemGroup>
+  <None Include="views\page.liquid">
+    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+  </None>
+</ItemGroup>
+<!-- .... -->
+```
+
+Then create a new template file *login.liquid* in the *views* directory
