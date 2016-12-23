@@ -204,6 +204,212 @@ let main argv =
 
 ## Handling User Login
 
+To handle the login request from the user, we need to have some users in the appliaction. As it is a sample let's hardcode a user.
+
+```fsharp
+// Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs
+module Suave.TwoFactorAuth.User
+
+open System.Collections.Generic
+
+type User = {
+  Username : string
+  Password : string
+}
+
+let private users = new Dictionary<string, User>()
+
+users.Add("foo", {Username = "foo"; Password = "bar"})
+
+let getUser username = 
+  match users.TryGetValue username with
+  | true, user -> Some user
+  | _ -> None
+```
+
+Post successful login, to serve the subsequent requests we need to identify the user who logged in. We can achieve it by persisting the user in *Cookies* using `statefulForSession`. 
+
+Let's create some helper functions to do this. 
+
+```fsharp
+// Suave.TwoFactorAuth/Combinators.fs
+module Suave.TwoFactorAuth.Combinators
+
+open Suave.State.CookieStateStore
+open Suave.Cookie
+open Suave
+open Suave.Operators
+open Suave.Authentication
+
+let sessionSet failureF key value = 
+  statefulForSession
+  >=> context (fun ctx ->
+                match HttpContext.state ctx with
+                | Some state -> state.set key value
+                | _ -> failureF
+              )
+
+let sessionGet failureF key successF = 
+  statefulForSession 
+  >=> context (fun ctx ->
+                match HttpContext.state ctx with
+                | Some store -> 
+                  match store.get key with
+                  | Some value -> successF value
+                  | _ -> failureF
+                | _ -> failureF
+  )
+
+let clearSession = 
+  unsetPair SessionAuthCookie
+    >=> unsetPair StateCookie
+
+```
+
+The `sessionSet` function takes a webpart and a key value pair and tries to persist the value in the session state with the given key. If it fails it calls the WebPart. 
+
+The `sessionGet` function takes a succcess WebPart combinator, a failure WebPart and a key. If retriveing the value from session state is successful it calls the succcess WebPart combinator with the retrieved value. In case of retrival failure it calls the failure WebPart
+
+The `clearSession` function clears the state which will be used during *logout*
+
+Now we have all the building blocks for handling user login request and it's time to start its implementation
+
+```fsharp
+// Suave.TwoFactorAuth/Login.fs
+// ...
+open Suave.Redirection
+open Suave.Authentication
+open Suave.Cookie
+
+open Combinators
+open User
+// ...
+let userSessionKey = "loggedUser"
+
+let redirectToLogin = function
+  | Some errMsg -> FOUND (sprintf "%s?err=%s" loginPath errMsg)
+  | None -> FOUND loginPath
+
+let loginSucess failureW redirectPath username =
+  authenticated Cookie.CookieLife.Session false      
+    >=> sessionSet failureW userSessionKey username
+    >=> FOUND redirectPath
+
+let onLogin redirectPath (request : HttpRequest) = 
+  match request.["Username"], request.["Password"] with
+  | Some username, Some password -> 
+    match getUser username with
+    | Some user -> 
+      match user.Password = password with
+      | true -> loginSucess never redirectPath username
+      | _ -> redirectToLogin (Some "Password didn't match")
+    | _ -> redirectToLogin (Some "Invalid username")   
+  | _ -> redirectToLogin (Some "Invalid request")
+
+let secured webpart = 
+  let onFail = redirectToLogin (Some "sign-in to access")
+  sessionGet onFail userSessionKey webpart
+
+let loginWebPart redirectPath =
+  path loginPath >=> choose [
+      // ...
+      POST >=> request (onLogin redirectPath)]
+
+```
+
+The key function to note here is `secured` that takes a WebPart. It calls this WebPart only if the user has logged in. If he didn't the user will be redirected to the Login page
+
+After successful login we need to redirect the user to his profile page. Let's create a `profile.liquid` a view template for the Profile page
+
+{% img center border /images/suave_two_factor/profile_view.png 600 450 %}
+
+To render this profile page let's add some code 
+
+```fsharp
+// Suave.TwoFactorAuth/Profile.fs
+module Suave.TwoFactorAuth.Profile
+
+open Suave.DotLiquid
+open Suave.Redirection
+open Suave.Filters
+open Suave.Operators
+
+open User
+open Login
+
+type ProfileViewModel = {
+  Username: string
+  SecretKey : string
+  IsTwoFactorAuthEnabled : bool
+}
+with static member FromUser user =          
+        {
+          SecretKey = ""
+          IsTwoFactorAuthEnabled = false
+          Username = user.Username
+        }
+
+let profilePath = "/profile"
+
+let renderProfile notFoundPath username =
+  match getUser username with
+  | Some user -> 
+    user    
+    |> ProfileViewModel.FromUser
+    |> page "profile.liquid"
+  | _ -> FOUND notFoundPath
+
+let profileWebPart notFoundPath = 
+  path profilePath >=> secured (renderProfile notFoundPath)
+```
+
+The labels `IsTwoFactorAuthEnabled`, `SecretKey` are dummy right now and we will be using them while adding two-factor authentication
+
+Let's create a `notfound.liquid` page that is going to our fancy `404` page
+
+```html
+<!-- Suave.TwoFactorAuth/views/not_found.liquid -->
+Not Found :(
+```
+
+The final step is put these WebParts together
+
+```fsharp
+// Suave.TwoFactorAuth/Web.fs
+// ...
+open Profile
+open Suave.DotLiquid
+open Suave.Filters
+open Suave.Operators
+
+let notFoundPath = "/notfound"
+
+let app =   
+  choose [
+    loginWebPart profilePath
+    profileWebPart notFoundPath
+    path notFoundPath >=> page "not_found.liquid" ""    
+  ]
+```
+
+## Handling Logout
+
+Handling logout is a simpler task as we have all the infrasturcture already in place. 
+
+```fsharp
+// Suave.TwoFactorAuth/Web.fs
+// ...
+open Combinators
+open Login 
+// ...
+
+let app =   
+  choose [
+    // ...
+    path "/logout" >=> clearSession >=> redirectToLogin None  
+  ]
+```
+
 ## Enable Two-factor Authentication
 
 ## Login With Two-factor Authentication
