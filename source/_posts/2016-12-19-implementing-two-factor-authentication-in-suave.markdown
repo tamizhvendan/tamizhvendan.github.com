@@ -84,6 +84,9 @@ OtpSharp
 
 The [OtpSharp](TODO) is a .NET library that we wil be using to generate keys and to verify the verification code from Google Authenticator app using the [TOTP](TODO) algorithm.
 
+The reference to [DotLiquid](TODO) library is required to render the templates using [Suave.DotLiquid](TODO)
+
+
 ## Initializing DotLiquid
 
 To use [DotLiquid](TODO) to render the views, we need to explicity set the templates directory. From this path, DotLiquid render the requested [liquid templates](TODO). 
@@ -115,8 +118,6 @@ As a convention we are going to create a directory *views*. This *views* directo
 
 ## Serving the Login Page
 
-### Creating Login Liquid Templates 
-
 The first page that we are going to develop is the login page. Let's start from the views
 
 The best practice to use liquid templates is to have a master template which provides the skeleton code with placeholders and the child templates fill the placeholders
@@ -125,7 +126,7 @@ Create a new directory with the name *views* in the *Suave.TwoFactorAuth* projec
 
 {% img center border /images/suave_two_factor/page.png 300 300 %}
 
-After creating change the 'Copy to output' property of the *page.liquid* file to 'Copy if newer' so that the view files are copied to the build output directory. 
+After creating change the 'Copy to output' property of the *page.liquid* file to 'Copy if newer' so that the view files are copied to the build output directory. This step is applicable for all the other view templates that we will be adding later
 
 > If you are using VS Code or atom editor, you need to do this property change manually by opening the *Suave.TwoFactorAuth.fsproj* file 
 
@@ -142,4 +143,69 @@ After creating change the 'Copy to output' property of the *page.liquid* file to
 <!-- .... -->
 ```
 
-Then create a new template file *login.liquid* in the *views* directory
+Then create a new template file *login.liquid* in the *views* directory 
+
+{% img center border /images/suave_two_factor/login_view.png 500 300 %}
+
+The *login.liquid* view extends the *page.liquid* view and fill the placeholders for `head` and `content`.
+
+To display the error messages like *Password didn't match*, *login.liquid* view is bounded to the model of type `string`. 
+
+Now we have the view template for the login page ready, the next step is to render it upon receiving a HTTP request.
+
+Create a new fsharp source file *Login.fs* and update it as below
+
+```fsharp
+module Suave.TwoFactorAuth.Login
+
+open Suave
+open Suave.DotLiquid
+open Suave.Filters
+open Suave.Operators
+
+let loginPath = "/login"
+
+let renderLoginView (request : HttpRequest) =
+  let errMsg =
+    match request.["err"] with
+    | Some msg -> msg
+    | _ -> ""
+  page "login.liquid" errMsg
+
+let loginWebPart =
+  path loginPath >=> choose [
+      GET >=> request renderLoginView]
+```
+
+As a good practice let's create a new module `Web` which will be containing all the WebParts of the application
+
+```fsharp
+// Suave.TwoFactorAuth/Suave.Web.fs
+open Suave
+open Login
+
+let app =   
+  choose [
+    loginWebPart]
+```
+
+Then start the webserver
+
+```fsharp
+// Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs
+// ...
+open Web
+// ...
+let main argv =  
+  // ...
+  startWebServer defaultConfig app
+  0 
+```
+
+## Handling User Login
+
+## Enable Two-factor Authentication
+
+## Login With Two-factor Authentication
+
+## Summary
