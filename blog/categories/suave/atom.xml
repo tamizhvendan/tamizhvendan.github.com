@@ -4,7 +4,7 @@
   <title><![CDATA[Category: suave | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/suave/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2016-09-30T23:28:16+05:30</updated>
+  <updated>2016-12-26T15:25:13+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,732 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Implementing Two-Factor Authentication in Suave]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2016/12/26/implementing-two-factor-authentication-in-suave/"/>
+    <updated>2016-12-26T18:34:27+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2016/12/26/implementing-two-factor-authentication-in-suave</id>
+    <content type="html"><![CDATA[<p>Two-factor authentication is a type of <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">Multi-factor authentication</a> which adds an extra layer of security to the applications.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Google_Authenticator">Google Authenticator</a> is one of the popular application that implements two-factor authentication services. In this blog post, we are going to learn how to implement Two-factor authentication in web applications developed using <a href="https://suave.io">suave</a></p>
+
+<p>The idea presented here is a naive implementation of Two-factor authentication. The objective here is to demonstrate how to implement it in a functional programming language, F#. Things like TLS/HTTPS, preventing CSRF and other attacks are ignored for brevity. </p>
+
+<blockquote>
+  <p>This blog post is a part of <a href="https://sergeytihon.wordpress.com/2016/10/23/f-advent-calendar-in-english-2016/">fsharp advent calendar 2016</a>. </p>
+</blockquote>
+
+<h2 id="prerequisite">Prerequisite</h2>
+
+<p>This blog post assumes that you are familiar with the concept of Two-factor authentication and Google Authenticator. </p>
+
+<p>If you would like to know more about these, check out the below resources to get a picture of what it is all about.</p>
+
+<ul>
+  <li><a href="https://www.google.com/landing/2step">Two-step verification</a> by Google </li>
+  <li><a href="https://garbagecollected.org/2014/09/14/how-google-authenticator-works/">How Google Authenticator works</a></li>
+  <li><a href="https://security.stackexchange.com/questions/35157/how-does-google-authenticator-work">A Stack-Overflow Question</a></li>
+</ul>
+
+<p>We are going to use <a href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm">Time-based One-time Password(TOTP)</a> algorithm in this blog post</p>
+
+<h2 id="what-we-will-be-building">What we will be building</h2>
+
+<p>We are going to build a tiny web appliaction that has an inbuilt user account with the username <code>foo</code> and the password <code>bar</code></p>
+
+<p><img class="center border" src="/images/suave_two_factor/Login.png" width="300" height="200"></p>
+
+<p>After successful login, the user redirected to the <strong>Profile</strong> page where the user sees his name with a couple of buttons. One to enable <em>Two-factor authentication</em> and another one to <em>log out</em></p>
+
+<p><img class="center border" src="/images/suave_two_factor/Profile.png" width="350" height="200"></p>
+
+<p>Upon clicking the <em>Enable Two Factor Authentication</em> button, the user redirected to the <strong>Enable Two Factor Authentication</strong> page where the user has to scan the QR Code with the Google Authenticator App (For <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> or <a href="https://itunes.apple.com/in/app/google-authenticator/id388497605?mt=8">iPhone</a>). Then he needs to enter the verification code to enable Two-factor authentication for his account. </p>
+
+<p><img class="center border" src="/images/suave_two_factor/Enable_Two_Factor.png" width="450" height="250"></p>
+
+<p><em>Google Authenticator App</em></p>
+
+<p><img class="center border" src="/images/suave_two_factor/Google_Authenticator.png" width="200" height="400"></p>
+
+<p>If the verification code matches, the updated <strong>Profile</strong> page will look like </p>
+
+<p><img class="center border" src="/images/suave_two_factor/Profile_After_Two_Factor.png" width="350" height="200"></p>
+
+<p>Now if the user logout and login again, he will be prompted to enter the verification code </p>
+
+<p><img class="center border" src="/images/suave_two_factor/Auth_Code_Prompt.png" width="250" height="150"></p>
+
+<p>After entering the verification code from the Google Authenticator, the user will be redirected to his <strong>Profile</strong> page. </p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>Create a new <strong>F# Console Project</strong> with the name <em>Suave.TwoFactorAuth</em> and use Paket to install the following dependencies. </p>
+
+<p><em>paket.dependencies</em></p>
+
+<pre><code>nuget FSharp.Core
+nuget Suave
+nuget DotLiquid
+nuget Suave.DotLiquid
+nuget OtpSharp
+</code></pre>
+
+<p>Then reference them in the <em>Suave.TwoFactorAuth</em> project.</p>
+
+<p><em>Suave.TwoFactorAuth/paket.references</em></p>
+
+<pre><code>FSharp.Core
+Suave
+DotLiquid
+Suave.DotLiquid
+OtpSharp
+</code></pre>
+
+<p>The <a href="https://www.nuget.org/packages/OtpSharp/">OtpSharp</a> is an .NET library that we will be using to generate keys and to verify the verification code from Google Authenticator app using the <a href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm">TOTP</a> algorithm.</p>
+
+<p>The reference to <a href="https://www.nuget.org/packages/DotLiquid/">DotLiquid</a> library is required to render the templates using <a href="https://www.nuget.org/packages/Suave.DotLiquid/">Suave.DotLiquid</a></p>
+
+<h2 id="initializing-dotliquid">Initializing DotLiquid</h2>
+
+<p>To use <a href="https://github.com/Shopify/liquid/wiki/Liquid-for-Designers">DotLiquid</a> to render the views in Suave, we need to set the templates directory explicitly. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>module Suave.TwoFactorAuth.Main
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open System.IO
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open System.Reflection
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open Suave.DotLiquid
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>let initializeDotLiquid () =
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let currentDirectory =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    let mainExeFileInfo = 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      new FileInfo(Assembly.GetEntryAssembly().Location)
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    mainExeFileInfo.Directory
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  Path.Combine(currentDirectory.FullName, &quot;views&quot;) 
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  |&gt; setTemplatesDir
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>[&lt;EntryPoint&gt;]
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>let main argv =  
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  initializeDotLiquid ()
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  0
+</pre></div>
+</div>
+</div>
+
+<p>In this sample application we are going to create a directory <em>views</em>. This <em>views</em> directory will contain the liquid templates of our appliaction</p>
+
+<h2 id="serving-the-login-page">Serving the Login Page</h2>
+
+<p>Let’s start by serving the Login page. </p>
+
+<p>Create a new directory with the name <em>views</em> in the <em>Suave.TwoFactorAuth</em> project and add a new liquid template <em>page.liquid</em>. This <em>page.liquid</em> is the master template for our application</p>
+
+<p><img class="center border" src="/images/suave_two_factor/page.png" width="300" height="300"></p>
+
+<p>After creating, change the ‘Copy to output’ property of the <em>page.liquid</em> file to ‘Copy if newer’ so that the view files copied to the build output directory. </p>
+
+<p>This step is applicable for all the other view templates that we will be creating later</p>
+
+<blockquote>
+  <p>If you are using VS Code or atom editor, you need to do this property change manually by opening the <em>Suave.TwoFactorAuth.fsproj</em> file </p>
+</blockquote>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">&lt;!-- .... --&gt;</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="tag">&lt;ItemGroup&gt;</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  <span class="tag">&lt;Folder</span> <span class="attribute-name">Include</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">views\</span><span class="delimiter">&quot;</span></span> <span class="tag">/&gt;</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="tag">&lt;/ItemGroup&gt;</span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span><span class="tag">&lt;ItemGroup&gt;</span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  <span class="tag">&lt;None</span> <span class="attribute-name">Include</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">views\page.liquid</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    <span class="tag">&lt;CopyToOutputDirectory&gt;</span>PreserveNewest<span class="tag">&lt;/CopyToOutputDirectory&gt;</span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  <span class="tag">&lt;/None&gt;</span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span><span class="tag">&lt;/ItemGroup&gt;</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span><span class="comment">&lt;!-- .... --&gt;</span>
+</pre></div>
+</div>
+</div>
+
+<p>Then create a new template file <em>login.liquid</em> in the <em>views</em> directory </p>
+
+<p><img class="center border" src="/images/suave_two_factor/login_view.png" width="500" height="300"></p>
+
+<p>The <em>login.liquid</em> view extends the <em>page.liquid</em> view and fill the placeholders for <code>head</code> and <code>content</code>.</p>
+
+<p>To display the error messages like <em>Password didn’t match</em>, <em>login.liquid</em> view bounded to the model of type <code>string</code>. </p>
+
+<p>Now we have the view template for the login page ready and the next step is to render it upon receiving an HTTP request.</p>
+
+<p>Create a new fsharp source file <em>Login.fs</em> and update it as below</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Suave.TwoFactorAuth.Login
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Suave
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.DotLiquid
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Filters
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open Suave.Operators
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>let loginPath = &quot;/login&quot;
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let renderLoginView (request : HttpRequest) =
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  let errMsg =
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    match request.[&quot;err&quot;] with
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    | Some msg -&gt; msg
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    | _ -&gt; &quot;&quot;
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  page &quot;login.liquid&quot; errMsg
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>let loginWebPart =
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  path loginPath &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      GET &gt;=&gt; request renderLoginView]
+</pre></div>
+</div>
+</div>
+
+<p>As a good practice let’s create a new module <code>Web</code> which will be containing all the WebParts of the application</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Suave.Web.fs
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>open Suave
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>open Login
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>let app =   
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  choose [
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    loginWebPart]
+</pre></div>
+</div>
+</div>
+
+<p>Then start the Web Server</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>open Web
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>// ...
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>let main argv =  
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  // ...
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  startWebServer defaultConfig app
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  0 
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>Keeping all the Suave WebParts in a single place like we did in the <code>Web.fs</code> file, enable us to host Suave in <a href="https://www.nuget.org/packages/Suave.Azure.Functions">Azure Functions</a> or <a href="https://dusted.codes/running-suave-in-aspnet-core-and-on-top-of-kestrel">Asp.Net Core</a> without doing any significant changes. </p>
+</blockquote>
+
+<h2 id="handling-user-login">Handling User Login</h2>
+
+<p>To handle the login request from the user, we need to have some users in the application. Let’s hardcode a user account. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>module Suave.TwoFactorAuth.User
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open System.Collections.Generic
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>type User = {
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  Username : string
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  Password : string
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>let private users = new Dictionary&lt;string, User&gt;()
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>users.Add(&quot;foo&quot;, {Username = &quot;foo&quot;; Password = &quot;bar&quot;})
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>let getUser username = 
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  match users.TryGetValue username with
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  | true, user -&gt; Some user
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  | _ -&gt; None
+</pre></div>
+</div>
+</div>
+
+<p>Post successful login, to serve the subsequent requests we need to identify the user who logged in. We can achieve it Suave using <code>statefulForSession</code>, which initializes a user state for a browsing session. </p>
+
+<p>Let’s create some helper functions to do this. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Combinators.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>module Suave.TwoFactorAuth.Combinators
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.State.CookieStateStore
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Cookie
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open Suave
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open Suave.Operators
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>open Suave.Authentication
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let sessionSet failureF key value = 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  statefulForSession
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  &gt;=&gt; context (fun ctx -&gt;
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>                match HttpContext.state ctx with
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>                | Some state -&gt; state.set key value
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>                | _ -&gt; failureF
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>              )
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>let sessionGet failureF key successF = 
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  statefulForSession 
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  &gt;=&gt; context (fun ctx -&gt;
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>                match HttpContext.state ctx with
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>                | Some store -&gt; 
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>                  match store.get key with
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>                  | Some value -&gt; successF value
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>                  | _ -&gt; failureF
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>                | _ -&gt; failureF
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>  )
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>let clearSession = 
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>  unsetPair SessionAuthCookie
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>    &gt;=&gt; unsetPair StateCookie
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>
+</pre></div>
+</div>
+</div>
+
+<p>The <code>sessionSet</code> function takes a WebPart and a key value pair and tries to persist the value in the session state with the given key. If it fails, it calls the WebPart. </p>
+
+<p>The <code>sessionGet</code> function takes a success WebPart Combinator, a failure WebPart, and a key. If retrieving the value from session state is successful it calls the success WebPart combinator with the retrieved value. In case of retrieval failure it calls the failure WebPart</p>
+
+<p>The <code>clearSession</code> function clears the state. We will be using it while implementing <em>log out</em></p>
+
+<p>Now we have all the building blocks for handling user login request, and it’s time to start its implementation</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Login.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Suave.Redirection
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.Authentication
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Cookie
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open Combinators
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>open User
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>// ...
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let userSessionKey = &quot;loggedUser&quot;
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>let redirectToLogin = function
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  | Some errMsg -&gt; FOUND (sprintf &quot;%s?err=%s&quot; loginPath errMsg)
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  | None -&gt; FOUND loginPath
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>let loginSucess failureW redirectPath username =
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  authenticated Cookie.CookieLife.Session false      
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    &gt;=&gt; sessionSet failureW userSessionKey username
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    &gt;=&gt; FOUND redirectPath
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>let onLogin redirectPath (request : HttpRequest) = 
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  match request.[&quot;Username&quot;], request.[&quot;Password&quot;] with
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>  | Some username, Some password -&gt; 
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    match getUser username with
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    | Some user -&gt; 
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>      match user.Password = password with
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>      | true -&gt; loginSucess never redirectPath username
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>      | _ -&gt; redirectToLogin (Some &quot;Password didn't match&quot;)
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>    | _ -&gt; redirectToLogin (Some &quot;Invalid username&quot;)   
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>  | _ -&gt; redirectToLogin (Some &quot;Invalid request&quot;)
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>let secured webpart = 
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>  let onFail = redirectToLogin (Some &quot;sign-in to access&quot;)
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>  sessionGet onFail userSessionKey webpart
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>let loginWebPart redirectPath =
+<span class="line-numbers"><a href="#n37" name="n37">37</a></span>  path loginPath &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n38" name="n38">38</a></span>      // ...
+<span class="line-numbers"><a href="#n39" name="n39">39</a></span>      POST &gt;=&gt; request (onLogin redirectPath)]
+<span class="line-numbers"><strong><a href="#n40" name="n40">40</a></strong></span>
+</pre></div>
+</div>
+</div>
+
+<p>The key function to note here is <code>secured</code> that takes a WebPart. It calls this WebPart only if the user has logged in. If he didn’t the user will be redirected to the Login page</p>
+
+<p>After successful login, we need to redirect the user to his profile page. Let’s create a <code>profile.liquid</code> a view template for the Profile page</p>
+
+<p><img class="center border" src="/images/suave_two_factor/profile_view.png" width="600" height="450"></p>
+
+<p>To render this profile page let’s add some code </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Profile.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>module Suave.TwoFactorAuth.Profile
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.DotLiquid
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Redirection
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open Suave.Filters
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open Suave.Operators
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>open User
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>open Login
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>type ProfileViewModel = {
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  Username: string
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  SecretKey : string
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  IsTwoFactorAuthEnabled : bool
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>}
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>with static member FromUser user =          
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>        {
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>          SecretKey = &quot;&quot;
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>          IsTwoFactorAuthEnabled = false
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>          Username = user.Username
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>        }
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>let profilePath = &quot;/profile&quot;
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>let renderProfile notFoundPath username =
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>  match getUser username with
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>  | Some user -&gt; 
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>    user    
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>    |&gt; ProfileViewModel.FromUser
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>    |&gt; page &quot;profile.liquid&quot;
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>  | _ -&gt; FOUND notFoundPath
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>let profileWebPart notFoundPath = 
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>  path profilePath &gt;=&gt; secured (renderProfile notFoundPath)
+</pre></div>
+</div>
+</div>
+
+<p>The labels <code>IsTwoFactorAuthEnabled</code>, <code>SecretKey</code> are just blank right now, and we will be seeing them in action while adding two-factor authentication</p>
+
+<p>The <code>notfound.liquid</code> page that is going to our fancy <code>404</code> page</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="comment">&lt;!-- Suave.TwoFactorAuth/views/not_found.liquid --&gt;</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>Not Found :(
+</pre></div>
+</div>
+</div>
+
+<p>The final step is to put these WebParts together</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Web.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Profile
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.DotLiquid
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Filters
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open Suave.Operators
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>let notFoundPath = &quot;/notfound&quot;
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>let app =   
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  choose [
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    loginWebPart profilePath
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    profileWebPart notFoundPath
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    path notFoundPath &gt;=&gt; page &quot;not_found.liquid&quot; &quot;&quot;    
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  ]
+</pre></div>
+</div>
+</div>
+
+<h2 id="handling-logout">Handling Logout</h2>
+
+<p>Handling logout is a simpler task as we have all the infrastructure already in place. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Web.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Combinators
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Login 
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>// ...
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let app =   
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  choose [
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    // ...
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    path &quot;/logout&quot; &gt;=&gt; clearSession &gt;=&gt; redirectToLogin None  
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  ]
+</pre></div>
+</div>
+</div>
+
+<h2 id="enabling-two-factor-authentication">Enabling Two-factor Authentication</h2>
+
+<p>To enable Two-factor authentication, we need to change our <code>User</code> domain model first. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/User.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>type TwoFactorAuthentication =
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>| Enabled of SecretKey:string
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>| Disabled
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>type User = {
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  // ...
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  TwoFactorAuthentication : TwoFactorAuthentication
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>}
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>// ... 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>// Let's assume TwoFactorAuthentication is disabled by default 
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>users.Add(&quot;foo&quot;, {Username = &quot;foo&quot;; Password = &quot;bar&quot;; TwoFactorAuthentication = Disabled})
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>// ...
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>let enableTwoFactorAuth username key =
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  match getUser username with
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  | Some user -&gt;
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    users.[username] &lt;- {user with TwoFactorAuthentication = Enabled key}
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  | _ -&gt; ()
+</pre></div>
+</div>
+</div>
+
+<p>The next step is to define a liquid view template for the <code>enable_two_factor</code> page.</p>
+
+<p><img class="center border" src="/images/suave_two_factor/enable_two_factor_view.png" width="600" height="450"></p>
+
+<p>While enabling the Two-factor authentication, we need to generate a secret key for the user that will be required for both, one-time verification code generation as well as its verification.</p>
+
+<p>So, in the <em>enable_two_factor.liquid</em> template we pass the generated <code>SecretKey</code> as a <code>hidden</code> input which will then be used for the verification of the code. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">hidden</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">SecretKey</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content"></span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+</pre></div>
+</div>
+</div>
+
+<p>Now we need to render the <code>enable_two_factor</code> page in response to the <em>HTTP GET</em> request <code>/enable_two_factor</code></p>
+
+<p><img class="center border" src="/images/suave_two_factor/Enable_Two_Factor.png" width="450" height="250"></p>
+
+<p>Let’s create a new module <code>GoogleAuthenticator</code> to put the Two-factor authentication related functions together</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/GoogleAuthenticator.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>module Suave.TwoFactorAuth.GoogleAuthenticator
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>open Suave.Filters
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>open Suave.Operators
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>open Suave.DotLiquid
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>open Suave.Redirection
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>open OtpSharp
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>open Base32
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>open Login
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>open User
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>let enableTwoFactorAuthPath = &quot;/enable_two_factor&quot;
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>type EnableTwoFactorViewModel = {
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  Key : string
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>  Url : string
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  Err : string
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>}
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>with static member From username err =
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>      let secretKey = KeyGeneration.GenerateRandomKey(20)
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>      let appName = &quot;SuaveRocks&quot;
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>      let label = sprintf &quot;%s (%s.com/%s)&quot; appName appName username
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>      let keyUrl = KeyUrl.GetTotpUrl(secretKey, label)
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span>      { Url = sprintf &quot;https://qrcode.kaywa.com/img.php?s=4&amp;d=%s&amp;issuer=%s&quot; keyUrl appName 
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span>        Key = Base32Encoder.Encode(secretKey)
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span>        Err = err}
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>let renderEnableTwoFactorAuthView notFoundPath username ctx = async {
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>  match getUser username with
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>  | Some user -&gt; 
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>    let err =
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>      match ctx.request.[&quot;err&quot;] with
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>      | Some err -&gt; err 
+<span class="line-numbers"><a href="#n37" name="n37">37</a></span>      | _ -&gt; &quot;&quot;
+<span class="line-numbers"><a href="#n38" name="n38">38</a></span>    let vm = EnableTwoFactorViewModel.From username err
+<span class="line-numbers"><a href="#n39" name="n39">39</a></span>    return! page &quot;enable_two_factor.liquid&quot; vm ctx
+<span class="line-numbers"><strong><a href="#n40" name="n40">40</a></strong></span>  | _ -&gt; return! redirect notFoundPath ctx
+<span class="line-numbers"><a href="#n41" name="n41">41</a></span>}
+<span class="line-numbers"><a href="#n42" name="n42">42</a></span>
+<span class="line-numbers"><a href="#n43" name="n43">43</a></span>let googleAuthenticatorWebPart notFoundPath = 
+<span class="line-numbers"><a href="#n44" name="n44">44</a></span>  choose [
+<span class="line-numbers"><a href="#n45" name="n45">45</a></span>    path enableTwoFactorAuthPath &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n46" name="n46">46</a></span>      GET &gt;=&gt; secured (renderEnableTwoFactorAuthView notFoundPath)
+<span class="line-numbers"><a href="#n47" name="n47">47</a></span>    ]]
+</pre></div>
+</div>
+</div>
+
+<p>As we did in the login page, we are using the <code>err</code> query string in the request to pass the verification code mismatch errors. </p>
+
+<p>We are leveraging the <code>OtpSharp</code> library to generate the URL that is in turn represented as a QR Code. </p>
+
+<blockquote>
+  <p>If you would like to how Google Authenticator interprets the generated key and the issuer name from the URL embedded in the QR Code, check out the <a href="https://github.com/google/google-authenticator/wiki/Key-Uri-Format">UriFormat</a> documentation. </p>
+</blockquote>
+
+<p>The last step in rendering this page is adding the <code>googleAuthenticatorWebPart</code> in the <code>Web</code> module where we are putting all the WebParts together</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Web.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open GoogleAuthenticator
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>let app =   
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  choose [
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    // ...
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    googleAuthenticatorWebPart notFoundPath       
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  ]
+</pre></div>
+</div>
+</div>
+
+<p>While enabling Two-factor authentication, the user has to scan the QR-Code from his <em>Google Authenticator</em> app and he will be getting a one-time verification code like this upon adding</p>
+
+<p><img class="center border" src="/images/suave_two_factor/Google_Authenticator.png" width="200" height="400"></p>
+
+<p>Then he will be entering this in the <code>enable_two_factor</code> page and click <code>Enable</code>.</p>
+
+<p>Let’s handle this <em>POST</em> request. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/GoogleAuthenticator.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>let verifyOtp secretKey code =
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let otp = new Totp(Base32Encoder.Decode secretKey)
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  otp.VerifyTotp(code, ref 0L, new VerificationWindow(2, 2))
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let enableTwoFactorAuth redirectPath notFoundPath username ctx = async {
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  match ctx.request.[&quot;SecretKey&quot;], ctx.request.[&quot;Code&quot;] with
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  | Some secretKey, Some code -&gt;     
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    match verifyOtp secretKey code with
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    | true -&gt;
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      enableTwoFactorAuth username secretKey
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      return! redirect redirectPath ctx
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    | _ -&gt; 
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      let redirectTo =
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>        sprintf &quot;%s?err=code validation failed&quot; enableTwoFactorAuthPath 
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>      return! redirect redirectTo ctx
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  | _ -&gt; return! redirect notFoundPath ctx
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>}
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>let googleAuthenticatorWebPart redirectPath notFoundPath = 
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  choose [
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    path enableTwoFactorAuthPath &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>      // ...
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>      POST &gt;=&gt; secured (enableTwoFactorAuth redirectPath notFoundPath)
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    ]]
+</pre></div>
+</div>
+</div>
+
+<p>Thanks to the <em>OtpSharp</em> library for making our job simpler here. We just need to get the <code>SecretKey</code>, and the <code>Code</code> from the POST request and get it verified using <em>OtpSharp’s</em> <a href="https://bitbucket.org/devinmartin/otp-sharp/wiki/TOTP">VerifyTotp</a> function. </p>
+
+<p>If the verification is successful, we will be enabling the Two-factor authentication for the user in our in-memory backend using the <code>enableTwoFactorAuth</code> function and then redirect to the redirect path which in this case the <em>Profile</em> page.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Web.fs
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>let app =   
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  choose [
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    // ...
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    googleAuthenticatorWebPart profilePath notFoundPath       
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  ]
+</pre></div>
+</div>
+</div>
+
+<h2 id="login-with-two-factor-authentication">Login With Two-factor Authentication</h2>
+
+<p>The last step is to prompt for the verification code whenever the Two-factor Authentication enabled user tries to log in and verify the one-time verification code before granting the access. </p>
+
+<p>Let’s start by defining the liquid view template <code>auth_code.liquid</code> for getting the one-time verification code.</p>
+
+<p><img class="center border" src="/images/suave_two_factor/auth_code_view.png" width="450" height="350"></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/GoogleAuthenticator.fs
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let authCodePath = &quot;/authcode&quot;
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>let googleAuthenticatorWebPart redirectPath notFoundPath = 
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  choose [
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>    // ...
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>    path authCodePath &gt;=&gt; page &quot;auth_code.liquid&quot; &quot;&quot;]
+</pre></div>
+</div>
+</div>
+
+<p>After username and password verification, the user has to be redirected the <em>auth_code</em> page</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Login.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>let authCodeSessionKey = &quot;loginUser&quot;
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>let onLogin redirectPath authCodePath (request : HttpRequest) = 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  match request.[&quot;Username&quot;], request.[&quot;Password&quot;] with
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  | Some username, Some password -&gt; 
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    match getUser username with
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    | Some user -&gt; 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      match user.Password = password, user.TwoFactorAuthentication with
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      | true, Disabled -&gt; loginSucess never redirectPath username
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      | true, Enabled _ -&gt; 
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>          sessionSet never authCodeSessionKey username  
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>            &gt;=&gt; FOUND authCodePath
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      // ...
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>// ...
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>let loginWebPart redirectPath authCodePath =
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  path loginPath &gt;=&gt; choose [
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>      // ...
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      POST &gt;=&gt; request (onLogin redirectPath authCodePath)]
+</pre></div>
+</div>
+</div>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/Web.fs
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>let app =   
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  choose [
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    loginWebPart profilePath authCodePath
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    // ...
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  ]
+</pre></div>
+</div>
+</div>
+
+<p>We are using a separate session key <code>authCodeSessionKey</code> to hold the username of the user. </p>
+
+<p>The final step is verifying the one-time verification code (from the Google Authenticator app) entered by the user. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/GoogleAuthenticator.fs
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>// ...
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Combinators
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>// ...
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>let onAuthCodeVerification redirectPath (request : HttpRequest) username = 
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  match request.[&quot;Code&quot;], getUser username with
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  | Some code, Some user -&gt;
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    match user.TwoFactorAuthentication with
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    | Enabled secretKey -&gt; 
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      match verifyOtp secretKey code with
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      | true -&gt; loginSucess never redirectPath user.Username
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      | _ -&gt; redirectToLogin (Some &quot;invalid otp&quot;) 
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    | _ -&gt; redirectToLogin (Some &quot;invalid request&quot;) 
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  | _ -&gt; redirectToLogin (Some &quot;invalid request&quot;)
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>let onVerifyAuthCode redirectPath httpRequest =
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  let onFail = redirectToLogin (Some &quot;invalid request&quot;)
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  let onAuthCodeVerification = 
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    onAuthCodeVerification redirectPath httpRequest
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  sessionGet onFail authCodeSessionKey onAuthCodeVerification
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>let googleAuthenticatorWebPart redirectPath notFoundPath = 
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>  choose [
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    // ...
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    path &quot;/verify_auth_code&quot; &gt;=&gt; request (onVerifyAuthCode redirectPath)]
+</pre></div>
+</div>
+</div>
+
+<p>That’s it! We have successfully implemented Two-factor authentication. </p>
+
+<p>The complete source code is available in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveTwoFactorAuth">my GitHub repository</a></p>
+
+<h3 id="related-posts">Related Post(s)</h3>
+
+<ul>
+  <li><a href="/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/">Securing APIs in Suave using JSON Web Token</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Scale Up Azure Functions in F# using Suave]]></title>
@@ -537,6 +1263,8 @@ GET /people/feafa5b5-304d-455e-b7e7-13a5b3293f77
 <blockquote>
   <p>This blog post is a proof of concept to use Suave in Azure Functions. There are a lot of improvements to be made to make it production ready. I am planning to publish this as a NuGet package based on the feedback from the community.</p>
 </blockquote>
+
+<p><strong>Update</strong> : <a href="https://www.nuget.org/packages/Suave.Azure.Functions">Suave.Azure.Functions</a> is available now as a Nuget Package</p>
 
 <h2 id="summary">Summary</h2>
 
@@ -1888,644 +2616,6 @@ To make it independent of the host, we have externalized the hosting functionali
 <p>Suave provides a simple and elegant way of extending its core functionality. In this blog post, we have seen how to bend it to support JWT based authorization and I believe we can do a lot of other cool things too!</p>
 
 <p>You can find the complete source code of the sample application used in this blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveJwtSampleApplication">blog-samples</a> GitHub repository.    </p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Building REST Api in fsharp using Suave]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/"/>
-    <updated>2015-06-11T10:48:20+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/06/11/building-rest-api-in-fsharp-using-suave</id>
-    <content type="html"><![CDATA[<p>In the last one month lot of great things happening in fsharp world around <a href="suave.io">suave</a>, a simple web development fsharp library. Scott Hanselman <a href="http://www.hanselman.com/blog/RunningSuaveioAndFWithFAKEInAzureWebAppsWithGitAndTheDeployButton.aspx">blogged</a> about it, <a href="https://twitter.com/tomaspetricek">Tomas Petricek</a> kick-started an awesome <a href="https://skillsmatter.com/skillscasts/6381-suave-hands-on-with-tomas-petricek">hands on session</a> and followed up with a <a href="http://channel9.msdn.com/Blogs/Seth-Juarez/Deploying-an-F-Web-Application-with-Suave">great talk</a> on Channel 9. Last but not the least, <a href="https://twitter.com/theimowski">Tomasz Heimowski</a> authored a clear and crisp <a href="http://theimowski.gitbooks.io/suave-music-store/content/">book on Suave</a></p>
-
-<p>I got super excited after learning suave from these resources and started playing with it. One of the great things about the fsharp community is, if you want to improve any existing library all you need is just send a pull request with the feature you would like to have. Yes, it’s as simple as that! It <a href="https://github.com/SuaveIO/suave/pull/259">worked</a> for me and I am sure for you too, if you wish.</p>
-
-<p>In this blog post, you are going to learn how to build a REST api using suave. The REST api that we are going to create here follows the standard being used in the <a href="http://docs.strongloop.com/display/public/LB/Use+API+Explorer">StrongLoop</a>, a node.js REST api library. To keep things simple, we are not going to see validation and error handling as part of this post and I will be covering that in an another post.</p>
-
-<p>Let’s get started</p>
-
-<h2 id="setting-up-the-project">Setting up the project</h2>
-
-<p>Create a new “F# Console Application” project in Visual Studio with the name <code>SuaveRestApi</code> and rename <code>Program.fs</code> to <code>App.fs</code>. This file is going to contain the application bootstrap logic. Add two more files <code>Db.fs</code> and <code>RestFul.fs</code> which would contain database access and restful api implementation code respectively. Ensure these files are in the order as shown in below.</p>
-
-<p><img class="center" src="/images/sauve_rest_api/proj_structure.png"></p>
-
-<p>After creating, install the following nuget packages</p>
-
-<ul>
-  <li><a href="https://www.nuget.org/packages/suave">Suave</a></li>
-  <li><a href="">Newtonsoft.Json</a></li>
-</ul>
-
-<h2 id="webpart">WebPart</h2>
-
-<p>The basic building block of Suave is <a href="http://theimowski.gitbooks.io/suave-music-store/content/webpart.html">WebPart</a>. It is an alias of function type <code>HttpContext -&gt; Async&lt;HttpContext option&gt;</code>. This simple function type actually model whole set of Request and Response model of Http protocol. From the Tomasz Heimowski’s book here is the definition of the <code>WebPart</code></p>
-
-<blockquote>
-  <p>Based on the http context, we give you a promise (async) of optional resulting http context, where the resulting context is likely to have its response set with regards to the logic of the WebPart itself</p>
-</blockquote>
-
-<p>A <code>WebPart</code> represents a http request and response. Since it is a function, we can combine multiple <code>WebPart</code>s together and build a complex web application which handles multiple requests and responses. This is the beauty of functional programming. You just think in terms of one function at a time and make it work. Once you are done, all you need to do is just gluing them together. Solving problems using this functional abstraction will make things much easier and help you to write less code compare to its Object Oriented version.</p>
-
-<p>The <code>OK</code> webpart is a very simple one in Suave which takes a <code>string</code> and returns a http response with the status code <code>200</code> and the given string. Add the following code in the <code>App.fs</code> and run the console app.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>open Suave.Web
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>open Suave.Successful
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>let main argv =
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  startWebServer defaultConfig (OK &quot;Hello, Suave!&quot;)
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  0
-</pre></div>
-</div>
-</div>
-<p>The is the simplest Suave application that greets all visitors with the string “Hello, Suave!”. The <code>startWebServer</code> is a blocking function that takes a configuration (port number, ssl, etc.,) and starts a http web server in the port 8083 upon calling.</p>
-
-<p><img class="center border" src="/images/sauve_rest_api/hello_suave.png"></p>
-
-<p>The Rest Api that we are going to design here is a <code>WebPart</code> which will be replacing this <code>OK</code> webpart.</p>
-
-<h2 id="http-get">HTTP GET</h2>
-
-<p>Let’s begin by defining a record type representing a <em>restful</em> resource. Open <code>Restful.fs</code> and update it as below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>namespace SuaveRestApi.Rest
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>[&lt;AutoOpen&gt;]
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>module RestFul =  
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  type RestResource&lt;'a&gt; = {
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    GetAll : unit -&gt; 'a seq        
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  }
-</pre></div>
-</div>
-</div>
-
-<p>This <code>RestResource</code> is a container representing all the operations on a restful  resource. This record type abstracts the actual resource from the rest api web part. This enables the reuse of rest api web part across multiple resources.</p>
-
-<p>Let’s create a function in <code>RestFul.fs</code> which takes a resource name and this <code>RestResource</code> and returns a web part representing the restful api.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// string -&gt; RestResource&lt;'a&gt; -&gt; WebPart
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let rest resourceName resource =
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  // TODO
-</pre></div>
-</div>
-</div>
-
-<p>We are going to use the following building blocks of the suave library to implement the <code>rest</code> function.</p>
-
-<ul>
-  <li>
-    <p>The <code>path</code> is a function of type: <code>string -&gt; WebPart</code>. It means that if we give it a string it will return <code>WebPart</code>. Under the hood, the function looks at the incoming request and returns <code>Some</code> if the paths match, and <code>None</code> otherwise.</p>
-  </li>
-  <li>
-    <p>The <code>GET</code> is a static inbuilt <code>WebPart</code> which matches the HTTP GET requests.</p>
-  </li>
-  <li>
-    <p>The <code>&gt;=&gt;</code> operator composes two WebParts into one by first evaluating the <code>WebPart</code> on the left, and applying the WebPart on the right only if the first one returned <code>Some</code>.</p>
-  </li>
-</ul>
-
-<p>To return a json response we need to change the mime type to “application/json” of the response. There is an <a href="https://github.com/SuaveIO/suave/blob/master/src/Suave/Json.fs">inbuilt function</a> in suave to do this but it is using .Net’s <code>DataContractJsonSerializer</code>. I feel it’s not ideal to use as we need to write decorator attribute <code>DataMember</code> to serialize the types.</p>
-
-<p>As <a href="http://james.newtonking.com/archive/2014/04/30/json-net-6-0-release-3-serialize-all-the-f">Newtonsoft.Json</a> provides serialization support for fsharp types without any need of decorating attributes, we will be using them there.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// 'a -&gt; WebPart
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>let JSON v =     
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let jsonSerializerSettings = new JsonSerializerSettings()
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  jsonSerializerSettings.ContractResolver &lt;- new CamelCasePropertyNamesContractResolver()
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  JsonConvert.SerializeObject(v, jsonSerializerSettings)
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  |&gt; OK
-<span class="line-numbers"><a href="#n8" name="n8">8</a></span>  &gt;=&gt; Writers.setMimeType &quot;application/json; charset=utf-8&quot;
-</pre></div>
-</div>
-</div>
-<p>As the signature indicates <code>JSON</code> function takes a generic type, serialize it using <em>Newtonsoft.Json</em> and return the json response. <code>Writers.setMimeType</code> takes a mime type and a web part returns the web part with the given mime type.</p>
-
-<p>Now we have everything to implement the HTTP GET request</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let rest resourceName resource =
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let gellAll = resource.GetAll () |&gt; JSON
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;=&gt; GET &gt;=&gt; getAll
-</pre></div>
-</div>
-</div>
-
-<p>The one caveat here is the path resolution of Suave library. Based on the webpart given, the <code>startWebServer</code> function configures it’s internal routing table during the application startup and it is static after the application has been started. So, the <code>getAll</code> webpart will be created only during application startup. To avoid this, we need to wrap the <code>getAll</code> webpart with a <code>warbler</code> function which ensures that it is called only when the incoming request matches the given resource path.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let rest resourceName resource =
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;=&gt; GET &gt;=&gt; getAll
-</pre></div>
-</div>
-</div>
-
-<p>Now we have the middleware to create a web part. Let’s create other things and glue them together.</p>
-
-<p>Open <code>Db.fs</code> file and add the following code</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>namespace SuaveRestApi.Db
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open System.Collections.Generic
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>type Person = {
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Id : int
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Name : string
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  Age : int
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  Email : string
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>}
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>module Db =        
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let private peopleStorage = new Dictionary&lt;int, Person&gt;()
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  let getPeople () =
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    peopleStorage.Values |&gt; Seq.map (fun p -&gt; p)
-</pre></div>
-</div>
-</div>
-
-<p>Since it’s a sample application, I am just using an in memory dictionary to store the details of people. You can easily replace this with any data source. The <code>Person</code> type represents the <code>People</code> resource of the rest api.</p>
-
-<p>The next step is wiring the Restful web part with the application. Open <code>App.fs</code> and update it as below</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>open SuaveRestApi.Rest
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>open SuaveRestApi.Db
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>open Suave.Web
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>open Suave.Http.Successful
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>let main argv =
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  let personWebPart = rest &quot;people&quot; {
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    GetAll = Db.getPeople
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  }
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  startWebServer defaultConfig personWebPart
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  0
-</pre></div>
-</div>
-</div>
-
-<p>That’s it! Now we have the HTTP GET Request up and running</p>
-
-<p><img class="center border" src="/images/sauve_rest_api/http_get.png"></p>
-
-<p>Since we are having no people in our in-memory dictionary, we are getting an empty result here. Let’s add a new person using HTTP POST</p>
-
-<h2 id="http-post">HTTP POST</h2>
-
-<p>HTTP POST uses the same workflow as HTTP GET. To implement this, we are going to use the following features in Suave.</p>
-
-<ul>
-  <li>
-    <p>The <code>choose</code> function takes a list of WebParts, and chooses the first one that applies (i.e which returns <code>Some</code>), or if none WebPart applies, then choose will  return <code>None</code></p>
-  </li>
-  <li>
-    <p>The <code>request</code> function takes a function of type <code>HttpRequest -&gt; WebPart</code> and returns the <code>WebPart</code>. We will use this <code>HttpRequest</code> to get the POST content.</p>
-  </li>
-  <li>
-    <p>The <code>POST</code> is a static in-built <code>WebPart</code> which matches the HTTP POST requests.</p>
-  </li>
-</ul>
-
-<p>The first step in implementing POST request is updating the <code>RestResource</code>.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a        
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>}
-</pre></div>
-</div>
-</div>
-
-<p>Then add the following utility functions in <code>Restful.fs</code> to get the resource from the HttpRequest</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let fromJson&lt;'a&gt; json =
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  JsonConvert.DeserializeObject(json, typeof&lt;'a&gt;) :?&gt; 'a    
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>let getResourceFromReq&lt;'a&gt; (req : HttpRequest) =
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  let getString rawForm =
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    System.Text.Encoding.UTF8.GetString(rawForm)
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  req.rawForm |&gt; getString |&gt; fromJson&lt;'a&gt;
-</pre></div>
-</div>
-</div>
-
-<p>The <code>rawForm</code> field in the <code>HttpRequest</code> has the POST content as a byte array, we are just deserializing to a fsharp type.</p>
-
-<p>The next step is updating the <code>rest</code> function to support POST</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let rest resourceName resource =
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  path resourcePath &gt;=&gt; choose [
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    GET &gt;=&gt; getAll
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>    POST &gt;=&gt; request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  ]
-</pre></div>
-</div>
-</div>
-<p>Thanks to the awesome function composition feature, we have combined all these tiny functions and implemented a new request and response.  </p>
-
-<p>Then update <code>Db.fs</code> and <code>App.fs</code> respectively as follows</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Db =
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let createPerson person =
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    let id = peopleStorage.Values.Count + 1
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    let newPerson = {
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        Id = id
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>        Name = person.Name
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        Age = person.Age
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        Email = person.Email
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    }
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    peopleStorage.Add(id, newPerson)
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    newPerson
-</pre></div>
-</div>
-</div>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create = Db.createPerson
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>}
-</pre></div>
-</div>
-</div>
-
-<p>The HTTP POST function in action</p>
-
-<p><img class="center border" src="/images/sauve_rest_api/http_post.png"></p>
-
-<h2 id="http-put">HTTP PUT</h2>
-
-<p>As we did for GET &amp; POST we will be starting by updating the <code>RestResource</code></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option       
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>}
-</pre></div>
-</div>
-</div>
-<p>We have added a bit of error handling here. This <code>Update</code> function tries to update a resource and returns the updated resource if the resource exists. If it didn’t it returns <code>None</code></p>
-
-<p>To support HTTP PUT we will be using the following from suave library</p>
-
-<ul>
-  <li>
-    <p>The <code>BAD_REQUEST</code> function takes a string and returns a WebPart representing HTTP status code 400 response with given string as it response.</p>
-  </li>
-  <li>
-    <p>The <code>PUT</code> is a static in-built <code>WebPart</code> which matches the HTTP PUT requests.</p>
-  </li>
-</ul>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let rest resourceName resource =
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let resourcePath = &quot;/&quot; + resourceName
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let badRequest = BAD_REQUEST &quot;Resource not found&quot;
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let handleResource requestError = function
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    | Some r -&gt; r |&gt; JSON
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    | _ -&gt; requestError
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  path resourcePath &gt;=&gt;
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    choose [
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      GET &gt;=&gt; getAll
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      POST &gt;=&gt;
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      PUT &gt;=&gt;
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    ]
-</pre></div>
-</div>
-</div>
-<p>Then update <code>Db.fs</code> and <code>App.fs</code> as usual</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>module Db =   
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  let updatePersonById personId personToBeUpdated =
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    if peopleStorage.ContainsKey(personId) then
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>      let updatedPerson = {
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>        Id = personId
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>        Name = personToBeUpdated.Name
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>        Age = personToBeUpdated.Age
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>        Email = personToBeUpdated.Email
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      }
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>      peopleStorage.[personId] &lt;- updatedPerson            
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      Some updatedPerson
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    else
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      None
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let updatePerson personToBeUpdated =
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    updatePersonById personToBeUpdated.Id personToBeUpdated
-</pre></div>
-</div>
-</div>
-<p>We have created one more function here <code>updatePersonById</code> which will be used later.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create = Db.createPerson
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update = Db.updatePerson
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>}
-</pre></div>
-</div>
-</div>
-
-<p><strong>Updating an existing resource</strong></p>
-
-<p><img class="center border" src="/images/sauve_rest_api/http_put.png"></p>
-
-<p><strong>Updating a non-existing resource</strong></p>
-
-<p><img class="center border" src="/images/sauve_rest_api/http_put_error.png"></p>
-
-<h2 id="http-delete">HTTP DELETE</h2>
-
-<p>Let’s begin by updating the <code>RestResource</code></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit    
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>}
-</pre></div>
-</div>
-</div>
-<p>HTTP DELETE is little different from the other implemented requests as we will be retrieving the id of the resource to be deleted from the URL.</p>
-
-<p>For example, <strong>DELETE /people/1</strong> will delete a person with the id 1.  </p>
-
-<p>To retrieve the id from the url, we will be using the <code>pathScan</code> function in Suave. This function similar to <code>printf</code> which takes a <a href="">PrintfFormat</a> and a function which takes the output of the printfformat and returns the WebPart. You can get more details about it from the <a href="http://theimowski.gitbooks.io/suave-music-store/content/url_parameters.html">suave-music-store book</a>.</p>
-
-<p>In addition to this, we will be using the following from suave</p>
-
-<ul>
-  <li>The <code>NO_CONTENT</code> is a static <code>WebPart</code> represents the HTTP Response with the status code 204</li>
-  <li>The <code>DELETE</code> matches the HTTP request of type DELETE</li>
-</ul>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let rest resourceName resource =
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  let resourcePath = &quot;/&quot; + resourceName
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let resourceIdPath =
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    new PrintfFormat&lt;(int -&gt; string),unit,string,string,int&gt;(resourcePath + &quot;/%d&quot;)
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  let badRequest = BAD_REQUEST &quot;Resource not found&quot;
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  let gellAll = warbler (fun _ -&gt; resource.GetAll () |&gt; JSON)
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  let handleResource requestError = function
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    | Some r -&gt; r |&gt; JSON
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    | _ -&gt; requestError
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  let deleteResourceById id =
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    resource.Delete id
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    NO_CONTENT
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  choose [
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    path resourcePath &gt;=&gt; choose [
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      GET &gt;=&gt; getAll
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      POST &gt;=&gt;
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      PUT &gt;=&gt;
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    ]
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    DELETE &gt;=&gt; pathScan resourceIdPath deleteResourceById
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>  ]
-</pre></div>
-</div>
-</div>
-
-<p>One thing to notice here is we have wrapped the existing <code>choose</code> function with an another <code>choose</code> function. It may be little complex to understand but if you understand what each thing mean, it is easier. Here the inner <code>choose</code> function represents the handler functions for GET, POST &amp; PUT requests having the url “/{resourceName}” and the <code>DELETE</code> webpart represents the HTTP DELETE handler for the url “/{resourceName}/{resourceId}”.</p>
-
-<p>The outer <code>choose</code> function chooses one of these based on the incoming request.</p>
-
-<p><strong>Db.fs</strong></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let deletePerson personId =
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  peopleStorage.Remove(personId) |&gt; ignore
-</pre></div>
-</div>
-</div>
-
-<p><strong>App.fs</strong></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create = Db.createPerson
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update = Db.updatePerson
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete = Db.deletePerson
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>}
-</pre></div>
-</div>
-</div>
-<p><img class="center border" src="/images/sauve_rest_api/http_delete.png"></p>
-
-<h2 id="http-get--http-put-by-id">HTTP GET &amp; HTTP PUT by id</h2>
-
-<p>I hope by this time you know how to wire things up in Suave to create an API. Let’s add features for getting and updating resource by id.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  GetById : int -&gt; 'a option
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  UpdateById : int -&gt; 'a -&gt; 'a option   
-<span class="line-numbers"><a href="#n8" name="n8">8</a></span>}
-</pre></div>
-</div>
-</div>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let rest resourceName resource =
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  // .. Existing code ...
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let getResourceById =
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    resource.GetById &gt;&gt; handleResource (NOT_FOUND &quot;Resource not found&quot;)
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  let updateResourceById id =
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    request (getResourceFromReq &gt;&gt; (resource.UpdateById id) &gt;&gt; handleResource badRequest)
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  choose [
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    path resourcePath &gt;=&gt; choose [
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>      GET &gt;=&gt; getAll
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      POST &gt;=&gt;
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>      PUT &gt;=&gt;
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    ]
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    DELETE &gt;=&gt; pathScan resourceIdPath deleteResourceById
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    GET &gt;=&gt; pathScan resourceIdPath getResourceById
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    PUT &gt;=&gt; pathScan resourceIdPath updateResourceById
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  ]
-</pre></div>
-</div>
-</div>
-
-<p><strong>Db.fs</strong></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let getPerson id =
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  if peopleStorage.ContainsKey(id) then
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>    Some peopleStorage.[id]
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  else
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    None
-</pre></div>
-</div>
-</div>
-
-<p><strong>App.fs</strong></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
-<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
-<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Create = Db.createPerson
-<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Update = Db.updatePerson
-<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Delete = Db.deletePerson
-<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  GetById = Db.getPerson
-<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  UpdateById = Db.updatePersonById
-<span class="line-numbers"><a href="#n8" name="n8">8</a></span>}
-</pre></div>
-</div>
-</div>
-
-<p><img class="center border" src="/images/sauve_rest_api/http_get_id.png"><br />
-<img class="center border" src="/images/sauve_rest_api/http_put_id.png"></p>
-
-<h2 id="http-head">HTTP HEAD</h2>
-
-<p>Http HEAD request checks whether the request with the given id is there or not. Its implementation is straight forward.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>type RestResource&lt;'a&gt; = {
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  GetAll : unit -&gt; 'a seq
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  Create : 'a -&gt; 'a
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Update : 'a -&gt; 'a option
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Delete : int -&gt; unit
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  GetById : int -&gt; 'a option
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  UpdateById : int -&gt; 'a -&gt; 'a option
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  IsExists : int -&gt; bool
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>let rest resourceName resource =
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  // .. Existing code ...
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let isResourceExists id =
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    if resource.IsExists id then OK &quot;&quot; else NOT_FOUND &quot;&quot;
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  choose [
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    path resourcePath &gt;=&gt; choose [
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      GET &gt;=&gt; getAll
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>      POST &gt;=&gt;
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>        request (getResourceFromReq &gt;&gt; resource.Create &gt;&gt; JSON)
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      PUT &gt;=&gt;
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>        request (getResourceFromReq &gt;&gt; resource.Update &gt;&gt; handleResource badRequest)
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>    ]
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>    DELETE &gt;=&gt; pathScan resourceIdPath deleteResourceById
-<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    GET &gt;=&gt; pathScan resourceIdPath getResourceById
-<span class="line-numbers"><a href="#n27" name="n27">27</a></span>    PUT &gt;=&gt; pathScan resourceIdPath updateResourceById
-<span class="line-numbers"><a href="#n28" name="n28">28</a></span>    HEAD &gt;=&gt; pathScan resourceIdPath isResourceExists
-<span class="line-numbers"><a href="#n29" name="n29">29</a></span>  ]
-</pre></div>
-</div>
-</div>
-<p><strong>Db.fs</strong></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>let isPersonExists = peopleStorage.ContainsKey
-</pre></div>
-</div>
-</div>
-
-<p><strong>App.fs</strong></p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>let personWebPart = rest &quot;people&quot; {
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  GetAll = Db.getPeople
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  GetById = Db.getPerson
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Create = Db.createPerson
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Update = Db.updatePerson
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  UpdateById = Db.updatePersonById
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  Delete = Db.deletePerson
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  IsExists = Db.isPersonExists
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
-</pre></div>
-</div>
-</div>
-<p><img class="center border" src="/images/sauve_rest_api/head.png"></p>
-
-<p>That’s all.. We have successfully implemented a REST API using Suave</p>
-
-<h2 id="extending-with-a-new-resource">Extending with a new Resource</h2>
-
-<p>The beautiful aspect of this functional REST API design we can easily extend it to support other resources.</p>
-
-<p>Here is the rest API implementation of the <code>albums</code> resource in the <a href="http://theimowski.gitbooks.io/suave-music-store/content/database.html">music-store</a> application. You can find the source code of MusicStoreDb <a href="https://github.com/tamizhvendan/blog-samples/blob/master/SuaveRestApi/SuaveRestApi/MusicStoreDb.fs">here</a>.</p>
-
-<div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>[&lt;EntryPoint&gt;]
-<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>let main argv =    
-<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
-<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  let personWebPart = rest &quot;people&quot; {
-<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    GetAll = Db.getPeople
-<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    GetById = Db.getPerson
-<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    Create = Db.createPerson
-<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    Update = Db.updatePerson
-<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    UpdateById = Db.updatePersonById
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    Delete = Db.deletePerson
-<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    IsExists = Db.isPersonExists
-<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  }
-<span class="line-numbers"><a href="#n13" name="n13">13</a></span>
-<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  let albumWebPart = rest &quot;albums&quot; {
-<span class="line-numbers"><a href="#n15" name="n15">15</a></span>    GetAll = MusicStoreDb.getAlbums
-<span class="line-numbers"><a href="#n16" name="n16">16</a></span>    GetById = MusicStoreDb.getAlbumById
-<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    Create = MusicStoreDb.createAlbum
-<span class="line-numbers"><a href="#n18" name="n18">18</a></span>    Update = MusicStoreDb.updateAlbum
-<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    UpdateById = MusicStoreDb.updateAlbumById
-<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    Delete = MusicStoreDb.deleteAlbum
-<span class="line-numbers"><a href="#n21" name="n21">21</a></span>    IsExists = MusicStoreDb.isAlbumExists
-<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  }
-<span class="line-numbers"><a href="#n23" name="n23">23</a></span>
-<span class="line-numbers"><a href="#n24" name="n24">24</a></span>  startWebServer defaultConfig (choose [personWebPart;albumWebPart])
-<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  0
-</pre></div>
-</div>
-</div>
-
-<p><img class="center border" src="/images/sauve_rest_api/get_album_id.png"></p>
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>In the amazing presentation on <a href="https://skillsmatter.com/skillscasts/6120-functional-programming-design-patterns-with-scott-wlaschin">Functional Programming Design Patterns</a>, Scott Wlaschin had this slide</p>
-
-<p><img class="center border" src="/images/sauve_rest_api/fp_design_patterns_slide.png"></p>
-
-<p>I wondered how this can be applied in real-time. By creating a rest API using suave I’ve understood this.</p>
-
-<blockquote>
-  <p>Just create functions and combine it to build a bigger system.</p>
-</blockquote>
-
-<p>What a nice way to develop a system!</p>
-
-<p>You can get the source code associated with this blog post in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveRestApi">my GitHub repository</a>.</p>
 ]]></content>
   </entry>
   

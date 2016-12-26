@@ -1,0 +1,1263 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Implementing Two-Factor Authentication in Suave - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Implementing Two-Factor Authentication in Suave Two-factor authentication is a type of Multi-factor authentication which adds an extra layer of &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2016/12/26/implementing-two-factor-authentication-in-suave/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+  <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+
+  </style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+	<!-- Start of Leadin Embed -->
+  <script type="text/javascript" src="//js.leadin.com/js/v1/2177345.js" id="LeadinEmbed-2177345" crossorigin="use-credentials" async defer></script>
+<!-- End of Leadin Embed -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><!-- <div class="profilepic">
+	
+	<script src="/javascripts/md5.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.profilepic').append("<img src='http://www.gravatar.com/avatar/" + MD5("tamizh88@gmail.com") + "?s=160' alt='Profile Picture' style='width: 160px;' />");
+		});
+	</script>
+	
+</div> -->
+<style>
+@media (max-width: 600px) {
+  #book-cover, #tag-cloud {
+    display: none;
+  }
+}
+</style>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a href="http://about.me/tamizhvendan">About Me</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <li><a href="/open-source-contributions">Contributions</a></li>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<nav id="book-cover" style="margin-top:32px">
+	<a href="http://products.tamizhvendan.in/fsharp-applied">
+	<img class="center" src="/images/fsharp_applied_cover.jpg" width="160">
+</a>
+</nav>
+<nav id="tag-cloud">
+	<section>
+    <!-- <h3>Tag Cloud</h3>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
+</section>
+</nav>
+
+
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Implementing Two-Factor Authentication in Suave</h1>
+	<div class="entry-content" itemprop="articleBody"><p>Two-factor authentication is a type of <a href="https://en.wikipedia.org/wiki/Multi-factor_authentication">Multi-factor authentication</a> which adds an extra layer of security to the applications.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/Google_Authenticator">Google Authenticator</a> is one of the popular application that implements two-factor authentication services. In this blog post, we are going to learn how to implement Two-factor authentication in web applications developed using <a href="https://suave.io">suave</a></p>
+
+<p>The idea presented here is a naive implementation of Two-factor authentication. The objective here is to demonstrate how to implement it in a functional programming language, F#. Things like TLS/HTTPS, preventing CSRF and other attacks are ignored for brevity. </p>
+
+<blockquote>
+  <p>This blog post is a part of <a href="https://sergeytihon.wordpress.com/2016/10/23/f-advent-calendar-in-english-2016/">fsharp advent calendar 2016</a>. </p>
+</blockquote>
+
+<h2 id="prerequisite">Prerequisite</h2>
+
+<p>This blog post assumes that you are familiar with the concept of Two-factor authentication and Google Authenticator. </p>
+
+<p>If you would like to know more about these, check out the below resources to get a picture of what it is all about.</p>
+
+<ul>
+  <li><a href="https://www.google.com/landing/2step">Two-step verification</a> by Google </li>
+  <li><a href="https://garbagecollected.org/2014/09/14/how-google-authenticator-works/">How Google Authenticator works</a></li>
+  <li><a href="https://security.stackexchange.com/questions/35157/how-does-google-authenticator-work">A Stack-Overflow Question</a></li>
+</ul>
+
+<p>We are going to use <a href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm">Time-based One-time Password(TOTP)</a> algorithm in this blog post</p>
+
+<h2 id="what-we-will-be-building">What we will be building</h2>
+
+<p>We are going to build a tiny web appliaction that has an inbuilt user account with the username <code>foo</code> and the password <code>bar</code></p>
+
+<p><img class="center border" src="/images/suave_two_factor/Login.png" width="300" height="200" /></p>
+
+<p>After successful login, the user redirected to the <strong>Profile</strong> page where the user sees his name with a couple of buttons. One to enable <em>Two-factor authentication</em> and another one to <em>log out</em></p>
+
+<p><img class="center border" src="/images/suave_two_factor/Profile.png" width="350" height="200" /></p>
+
+<p>Upon clicking the <em>Enable Two Factor Authentication</em> button, the user redirected to the <strong>Enable Two Factor Authentication</strong> page where the user has to scan the QR Code with the Google Authenticator App (For <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> or <a href="https://itunes.apple.com/in/app/google-authenticator/id388497605?mt=8">iPhone</a>). Then he needs to enter the verification code to enable Two-factor authentication for his account. </p>
+
+<p><img class="center border" src="/images/suave_two_factor/Enable_Two_Factor.png" width="450" height="250" /></p>
+
+<p><em>Google Authenticator App</em></p>
+
+<p><img class="center border" src="/images/suave_two_factor/Google_Authenticator.png" width="200" height="400" /></p>
+
+<p>If the verification code matches, the updated <strong>Profile</strong> page will look like </p>
+
+<p><img class="center border" src="/images/suave_two_factor/Profile_After_Two_Factor.png" width="350" height="200" /></p>
+
+<p>Now if the user logout and login again, he will be prompted to enter the verification code </p>
+
+<p><img class="center border" src="/images/suave_two_factor/Auth_Code_Prompt.png" width="250" height="150" /></p>
+
+<p>After entering the verification code from the Google Authenticator, the user will be redirected to his <strong>Profile</strong> page. </p>
+
+<h2 id="getting-started">Getting Started</h2>
+
+<p>Create a new <strong>F# Console Project</strong> with the name <em>Suave.TwoFactorAuth</em> and use Paket to install the following dependencies. </p>
+
+<p><em>paket.dependencies</em></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">nuget FSharp.Core
+</span><span class="line">nuget Suave
+</span><span class="line">nuget DotLiquid
+</span><span class="line">nuget Suave.DotLiquid
+</span><span class="line">nuget OtpSharp</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then reference them in the <em>Suave.TwoFactorAuth</em> project.</p>
+
+<p><em>Suave.TwoFactorAuth/paket.references</em></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">FSharp.Core
+</span><span class="line">Suave
+</span><span class="line">DotLiquid
+</span><span class="line">Suave.DotLiquid
+</span><span class="line">OtpSharp</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <a href="https://www.nuget.org/packages/OtpSharp/">OtpSharp</a> is an .NET library that we will be using to generate keys and to verify the verification code from Google Authenticator app using the <a href="https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm">TOTP</a> algorithm.</p>
+
+<p>The reference to <a href="https://www.nuget.org/packages/DotLiquid/">DotLiquid</a> library is required to render the templates using <a href="https://www.nuget.org/packages/Suave.DotLiquid/">Suave.DotLiquid</a></p>
+
+<h2 id="initializing-dotliquid">Initializing DotLiquid</h2>
+
+<p>To use <a href="https://github.com/Shopify/liquid/wiki/Liquid-for-Designers">DotLiquid</a> to render the views in Suave, we need to set the templates directory explicitly. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs</span>
+</span><span class="line"><span class="k">module</span> <span class="nn">Suave.TwoFactorAuth.Main</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.IO</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Reflection</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.DotLiquid</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">initializeDotLiquid</span> <span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">currentDirectory</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">mainExeFileInfo</span> <span class="o">=</span>
+</span><span class="line">      <span class="k">new</span> <span class="n">FileInfo</span><span class="o">(</span><span class="nn">Assembly</span><span class="p">.</span><span class="n">GetEntryAssembly</span><span class="bp">()</span><span class="o">.</span><span class="n">Location</span><span class="o">)</span>
+</span><span class="line">    <span class="n">mainExeFileInfo</span><span class="o">.</span><span class="n">Directory</span>
+</span><span class="line">  <span class="nn">Path</span><span class="p">.</span><span class="n">Combine</span><span class="o">(</span><span class="n">currentDirectory</span><span class="o">.</span><span class="n">FullName</span><span class="o">,</span> <span class="s">&quot;views&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="n">setTemplatesDir</span>
+</span><span class="line">
+</span><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">initializeDotLiquid</span> <span class="bp">()</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>In this sample application we are going to create a directory <em>views</em>. This <em>views</em> directory will contain the liquid templates of our appliaction</p>
+
+<h2 id="serving-the-login-page">Serving the Login Page</h2>
+
+<p>Let’s start by serving the Login page. </p>
+
+<p>Create a new directory with the name <em>views</em> in the <em>Suave.TwoFactorAuth</em> project and add a new liquid template <em>page.liquid</em>. This <em>page.liquid</em> is the master template for our application</p>
+
+<p><img class="center border" src="/images/suave_two_factor/page.png" width="300" height="300" /></p>
+
+<p>After creating, change the ‘Copy to output’ property of the <em>page.liquid</em> file to ‘Copy if newer’ so that the view files copied to the build output directory. </p>
+
+<p>This step is applicable for all the other view templates that we will be creating later</p>
+
+<blockquote>
+  <p>If you are using VS Code or atom editor, you need to do this property change manually by opening the <em>Suave.TwoFactorAuth.fsproj</em> file </p>
+</blockquote>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="html"><span class="line"><span class="c">&lt;!-- .... --&gt;</span>
+</span><span class="line"><span class="nt">&lt;ItemGroup&gt;</span>
+</span><span class="line">  <span class="nt">&lt;Folder</span> <span class="na">Include=</span><span class="s">&quot;views\&quot;</span> <span class="nt">/&gt;</span>
+</span><span class="line"><span class="nt">&lt;/ItemGroup&gt;</span>
+</span><span class="line"><span class="nt">&lt;ItemGroup&gt;</span>
+</span><span class="line">  <span class="nt">&lt;None</span> <span class="na">Include=</span><span class="s">&quot;views\page.liquid&quot;</span><span class="nt">&gt;</span>
+</span><span class="line">    <span class="nt">&lt;CopyToOutputDirectory&gt;</span>PreserveNewest<span class="nt">&lt;/CopyToOutputDirectory&gt;</span>
+</span><span class="line">  <span class="nt">&lt;/None&gt;</span>
+</span><span class="line"><span class="nt">&lt;/ItemGroup&gt;</span>
+</span><span class="line"><span class="c">&lt;!-- .... --&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then create a new template file <em>login.liquid</em> in the <em>views</em> directory </p>
+
+<p><img class="center border" src="/images/suave_two_factor/login_view.png" width="500" height="300" /></p>
+
+<p>The <em>login.liquid</em> view extends the <em>page.liquid</em> view and fill the placeholders for <code>head</code> and <code>content</code>.</p>
+
+<p>To display the error messages like <em>Password didn’t match</em>, <em>login.liquid</em> view bounded to the model of type <code>string</code>. </p>
+
+<p>Now we have the view template for the login page ready and the next step is to render it upon receiving an HTTP request.</p>
+
+<p>Create a new fsharp source file <em>Login.fs</em> and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Suave.TwoFactorAuth.Login</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.DotLiquid</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Filters</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">loginPath</span> <span class="o">=</span> <span class="s">&quot;/login&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">renderLoginView</span> <span class="o">(</span><span class="n">request</span> <span class="o">:</span> <span class="n">HttpRequest</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">errMsg</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">request</span><span class="o">.[</span><span class="s">&quot;err&quot;</span><span class="o">]</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">msg</span> <span class="o">-&gt;</span> <span class="n">msg</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;&quot;</span>
+</span><span class="line">  <span class="n">page</span> <span class="s">&quot;login.liquid&quot;</span> <span class="n">errMsg</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">loginWebPart</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">loginPath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">request</span> <span class="n">renderLoginView</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>As a good practice let’s create a new module <code>Web</code> which will be containing all the WebParts of the application</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Suave.Web.fs</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Login</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">app</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">loginWebPart</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then start the Web Server</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Web</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">app</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>Keeping all the Suave WebParts in a single place like we did in the <code>Web.fs</code> file, enable us to host Suave in <a href="https://www.nuget.org/packages/Suave.Azure.Functions">Azure Functions</a> or <a href="https://dusted.codes/running-suave-in-aspnet-core-and-on-top-of-kestrel">Asp.Net Core</a> without doing any significant changes. </p>
+</blockquote>
+
+<h2 id="handling-user-login">Handling User Login</h2>
+
+<p>To handle the login request from the user, we need to have some users in the application. Let’s hardcode a user account. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs</span>
+</span><span class="line"><span class="k">module</span> <span class="nn">Suave.TwoFactorAuth.User</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Collections.Generic</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">User</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Username</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Password</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">private</span> <span class="n">users</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="n">User</span><span class="o">&gt;</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line"><span class="n">users</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">,</span> <span class="o">{</span><span class="n">Username</span> <span class="o">=</span> <span class="s">&quot;foo&quot;</span><span class="o">;</span> <span class="n">Password</span> <span class="o">=</span> <span class="s">&quot;bar&quot;</span><span class="o">})</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getUser</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">users</span><span class="o">.</span><span class="n">TryGetValue</span> <span class="n">username</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span><span class="o">,</span> <span class="n">user</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">user</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Post successful login, to serve the subsequent requests we need to identify the user who logged in. We can achieve it Suave using <code>statefulForSession</code>, which initializes a user state for a browsing session. </p>
+
+<p>Let’s create some helper functions to do this. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Combinators.fs</span>
+</span><span class="line"><span class="k">module</span> <span class="nn">Suave.TwoFactorAuth.Combinators</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.State.CookieStateStore</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Cookie</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Authentication</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">sessionSet</span> <span class="n">failureF</span> <span class="n">key</span> <span class="n">value</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">statefulForSession</span>
+</span><span class="line">  <span class="o">&gt;=&gt;</span> <span class="n">context</span> <span class="o">(</span><span class="k">fun</span> <span class="n">ctx</span> <span class="o">-&gt;</span>
+</span><span class="line">                <span class="k">match</span> <span class="nn">HttpContext</span><span class="p">.</span><span class="n">state</span> <span class="n">ctx</span> <span class="k">with</span>
+</span><span class="line">                <span class="o">|</span> <span class="n">Some</span> <span class="n">state</span> <span class="o">-&gt;</span> <span class="n">state</span><span class="o">.</span><span class="n">set</span> <span class="n">key</span> <span class="n">value</span>
+</span><span class="line">                <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">failureF</span>
+</span><span class="line">              <span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">sessionGet</span> <span class="n">failureF</span> <span class="n">key</span> <span class="n">successF</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">statefulForSession</span>
+</span><span class="line">  <span class="o">&gt;=&gt;</span> <span class="n">context</span> <span class="o">(</span><span class="k">fun</span> <span class="n">ctx</span> <span class="o">-&gt;</span>
+</span><span class="line">                <span class="k">match</span> <span class="nn">HttpContext</span><span class="p">.</span><span class="n">state</span> <span class="n">ctx</span> <span class="k">with</span>
+</span><span class="line">                <span class="o">|</span> <span class="n">Some</span> <span class="n">store</span> <span class="o">-&gt;</span>
+</span><span class="line">                  <span class="k">match</span> <span class="n">store</span><span class="o">.</span><span class="n">get</span> <span class="n">key</span> <span class="k">with</span>
+</span><span class="line">                  <span class="o">|</span> <span class="n">Some</span> <span class="n">value</span> <span class="o">-&gt;</span> <span class="n">successF</span> <span class="n">value</span>
+</span><span class="line">                  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">failureF</span>
+</span><span class="line">                <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">failureF</span>
+</span><span class="line">  <span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">clearSession</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">unsetPair</span> <span class="n">SessionAuthCookie</span>
+</span><span class="line">    <span class="o">&gt;=&gt;</span> <span class="n">unsetPair</span> <span class="n">StateCookie</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>sessionSet</code> function takes a WebPart and a key value pair and tries to persist the value in the session state with the given key. If it fails, it calls the WebPart. </p>
+
+<p>The <code>sessionGet</code> function takes a success WebPart Combinator, a failure WebPart, and a key. If retrieving the value from session state is successful it calls the success WebPart combinator with the retrieved value. In case of retrieval failure it calls the failure WebPart</p>
+
+<p>The <code>clearSession</code> function clears the state. We will be using it while implementing <em>log out</em></p>
+
+<p>Now we have all the building blocks for handling user login request, and it’s time to start its implementation</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Login.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Redirection</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Authentication</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Cookie</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">Combinators</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">User</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">userSessionKey</span> <span class="o">=</span> <span class="s">&quot;loggedUser&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">redirectToLogin</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">errMsg</span> <span class="o">-&gt;</span> <span class="n">FOUND</span> <span class="o">(</span><span class="n">sprintf</span> <span class="s">&quot;%s?err=%s&quot;</span> <span class="n">loginPath</span> <span class="n">errMsg</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">FOUND</span> <span class="n">loginPath</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">loginSucess</span> <span class="n">failureW</span> <span class="n">redirectPath</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">authenticated</span> <span class="nn">Cookie</span><span class="p">.</span><span class="nn">CookieLife</span><span class="p">.</span><span class="n">Session</span> <span class="k">false</span>
+</span><span class="line">    <span class="o">&gt;=&gt;</span> <span class="n">sessionSet</span> <span class="n">failureW</span> <span class="n">userSessionKey</span> <span class="n">username</span>
+</span><span class="line">    <span class="o">&gt;=&gt;</span> <span class="n">FOUND</span> <span class="n">redirectPath</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">onLogin</span> <span class="n">redirectPath</span> <span class="o">(</span><span class="n">request</span> <span class="o">:</span> <span class="n">HttpRequest</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">request</span><span class="o">.[</span><span class="s">&quot;Username&quot;</span><span class="o">],</span> <span class="n">request</span><span class="o">.[</span><span class="s">&quot;Password&quot;</span><span class="o">]</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">username</span><span class="o">,</span> <span class="n">Some</span> <span class="n">password</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">getUser</span> <span class="n">username</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">user</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">user</span><span class="o">.</span><span class="n">Password</span> <span class="o">=</span> <span class="n">password</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">loginSucess</span> <span class="n">never</span> <span class="n">redirectPath</span> <span class="n">username</span>
+</span><span class="line">      <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">redirectToLogin</span> <span class="o">(</span><span class="n">Some</span> <span class="s">&quot;Password didn&#39;t match&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">redirectToLogin</span> <span class="o">(</span><span class="n">Some</span> <span class="s">&quot;Invalid username&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">redirectToLogin</span> <span class="o">(</span><span class="n">Some</span> <span class="s">&quot;Invalid request&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">secured</span> <span class="n">webpart</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">onFail</span> <span class="o">=</span> <span class="n">redirectToLogin</span> <span class="o">(</span><span class="n">Some</span> <span class="s">&quot;sign-in to access&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="n">sessionGet</span> <span class="n">onFail</span> <span class="n">userSessionKey</span> <span class="n">webpart</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">loginWebPart</span> <span class="n">redirectPath</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">loginPath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="c1">// ...</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">request</span> <span class="o">(</span><span class="n">onLogin</span> <span class="n">redirectPath</span><span class="o">)]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The key function to note here is <code>secured</code> that takes a WebPart. It calls this WebPart only if the user has logged in. If he didn’t the user will be redirected to the Login page</p>
+
+<p>After successful login, we need to redirect the user to his profile page. Let’s create a <code>profile.liquid</code> a view template for the Profile page</p>
+
+<p><img class="center border" src="/images/suave_two_factor/profile_view.png" width="600" height="450" /></p>
+
+<p>To render this profile page let’s add some code </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Profile.fs</span>
+</span><span class="line"><span class="k">module</span> <span class="nn">Suave.TwoFactorAuth.Profile</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.DotLiquid</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Redirection</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Filters</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">User</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Login</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">ProfileViewModel</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Username</span><span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">SecretKey</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">IsTwoFactorAuthEnabled</span> <span class="o">:</span> <span class="kt">bool</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line"><span class="k">with</span> <span class="k">static</span> <span class="k">member</span> <span class="n">FromUser</span> <span class="n">user</span> <span class="o">=</span>
+</span><span class="line">        <span class="o">{</span>
+</span><span class="line">          <span class="n">SecretKey</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+</span><span class="line">          <span class="n">IsTwoFactorAuthEnabled</span> <span class="o">=</span> <span class="k">false</span>
+</span><span class="line">          <span class="n">Username</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">Username</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">profilePath</span> <span class="o">=</span> <span class="s">&quot;/profile&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">renderProfile</span> <span class="n">notFoundPath</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">getUser</span> <span class="n">username</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">user</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">user</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">ProfileViewModel</span><span class="p">.</span><span class="n">FromUser</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">page</span> <span class="s">&quot;profile.liquid&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">FOUND</span> <span class="n">notFoundPath</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">profileWebPart</span> <span class="n">notFoundPath</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">profilePath</span> <span class="o">&gt;=&gt;</span> <span class="n">secured</span> <span class="o">(</span><span class="n">renderProfile</span> <span class="n">notFoundPath</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The labels <code>IsTwoFactorAuthEnabled</code>, <code>SecretKey</code> are just blank right now, and we will be seeing them in action while adding two-factor authentication</p>
+
+<p>The <code>notfound.liquid</code> page that is going to our fancy <code>404</code> page</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="html"><span class="line"><span class="c">&lt;!-- Suave.TwoFactorAuth/views/not_found.liquid --&gt;</span>
+</span><span class="line">Not Found :(
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The final step is to put these WebParts together</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Web.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Profile</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.DotLiquid</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Filters</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">notFoundPath</span> <span class="o">=</span> <span class="s">&quot;/notfound&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">app</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">loginWebPart</span> <span class="n">profilePath</span>
+</span><span class="line">    <span class="n">profileWebPart</span> <span class="n">notFoundPath</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">notFoundPath</span> <span class="o">&gt;=&gt;</span> <span class="n">page</span> <span class="s">&quot;not_found.liquid&quot;</span> <span class="s">&quot;&quot;</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="handling-logout">Handling Logout</h2>
+
+<p>Handling logout is a simpler task as we have all the infrastructure already in place. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Web.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Combinators</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Login</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">app</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="c1">// ...</span>
+</span><span class="line">    <span class="n">path</span> <span class="s">&quot;/logout&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">clearSession</span> <span class="o">&gt;=&gt;</span> <span class="n">redirectToLogin</span> <span class="n">None</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="enabling-two-factor-authentication">Enabling Two-factor Authentication</h2>
+
+<p>To enable Two-factor authentication, we need to change our <code>User</code> domain model first. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/User.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">type</span> <span class="nc">TwoFactorAuthentication</span> <span class="o">=</span>
+</span><span class="line"><span class="o">|</span> <span class="n">Enabled</span> <span class="k">of</span> <span class="n">SecretKey</span><span class="o">:</span><span class="kt">string</span>
+</span><span class="line"><span class="o">|</span> <span class="n">Disabled</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">User</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="n">TwoFactorAuthentication</span> <span class="o">:</span> <span class="n">TwoFactorAuthentication</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line"><span class="c1">// ... </span>
+</span><span class="line"><span class="c1">// Let&#39;s assume TwoFactorAuthentication is disabled by default </span>
+</span><span class="line"><span class="n">users</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="s">&quot;foo&quot;</span><span class="o">,</span> <span class="o">{</span><span class="n">Username</span> <span class="o">=</span> <span class="s">&quot;foo&quot;</span><span class="o">;</span> <span class="n">Password</span> <span class="o">=</span> <span class="s">&quot;bar&quot;</span><span class="o">;</span> <span class="n">TwoFactorAuthentication</span> <span class="o">=</span> <span class="n">Disabled</span><span class="o">})</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">enableTwoFactorAuth</span> <span class="n">username</span> <span class="n">key</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">getUser</span> <span class="n">username</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">user</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">users</span><span class="o">.[</span><span class="n">username</span><span class="o">]</span> <span class="o">&lt;-</span> <span class="o">{</span><span class="n">user</span> <span class="k">with</span> <span class="n">TwoFactorAuthentication</span> <span class="o">=</span> <span class="n">Enabled</span> <span class="n">key</span><span class="o">}</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="bp">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The next step is to define a liquid view template for the <code>enable_two_factor</code> page.</p>
+
+<p><img class="center border" src="/images/suave_two_factor/enable_two_factor_view.png" width="600" height="450" /></p>
+
+<p>While enabling the Two-factor authentication, we need to generate a secret key for the user that will be required for both, one-time verification code generation as well as its verification.</p>
+
+<p>So, in the <em>enable_two_factor.liquid</em> template we pass the generated <code>SecretKey</code> as a <code>hidden</code> input which will then be used for the verification of the code. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="html"><span class="line"><span class="nt">&lt;input</span> <span class="na">type=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name=</span><span class="s">&quot;SecretKey&quot;</span> <span class="na">value=</span><span class="s">&quot;&quot;</span><span class="nt">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now we need to render the <code>enable_two_factor</code> page in response to the <em>HTTP GET</em> request <code>/enable_two_factor</code></p>
+
+<p><img class="center border" src="/images/suave_two_factor/Enable_Two_Factor.png" width="450" height="250" /></p>
+
+<p>Let’s create a new module <code>GoogleAuthenticator</code> to put the Two-factor authentication related functions together</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/GoogleAuthenticator.fs</span>
+</span><span class="line"><span class="k">module</span> <span class="nn">Suave.TwoFactorAuth.GoogleAuthenticator</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Filters</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.DotLiquid</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Redirection</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">OtpSharp</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Base32</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">Login</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">User</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">enableTwoFactorAuthPath</span> <span class="o">=</span> <span class="s">&quot;/enable_two_factor&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">EnableTwoFactorViewModel</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Key</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Url</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Err</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line"><span class="k">with</span> <span class="k">static</span> <span class="k">member</span> <span class="n">From</span> <span class="n">username</span> <span class="n">err</span> <span class="o">=</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">secretKey</span> <span class="o">=</span> <span class="nn">KeyGeneration</span><span class="p">.</span><span class="n">GenerateRandomKey</span><span class="o">(</span><span class="mi">20</span><span class="o">)</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">appName</span> <span class="o">=</span> <span class="s">&quot;SuaveRocks&quot;</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">label</span> <span class="o">=</span> <span class="n">sprintf</span> <span class="s">&quot;%s (%s.com/%s)&quot;</span> <span class="n">appName</span> <span class="n">appName</span> <span class="n">username</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">keyUrl</span> <span class="o">=</span> <span class="nn">KeyUrl</span><span class="p">.</span><span class="n">GetTotpUrl</span><span class="o">(</span><span class="n">secretKey</span><span class="o">,</span> <span class="n">label</span><span class="o">)</span>
+</span><span class="line">      <span class="o">{</span> <span class="n">Url</span> <span class="o">=</span> <span class="n">sprintf</span> <span class="s">&quot;https://qrcode.kaywa.com/img.php?s=4&amp;d=%s&amp;issuer=%s&quot;</span> <span class="n">keyUrl</span> <span class="n">appName</span>
+</span><span class="line">        <span class="n">Key</span> <span class="o">=</span> <span class="nn">Base32Encoder</span><span class="p">.</span><span class="n">Encode</span><span class="o">(</span><span class="n">secretKey</span><span class="o">)</span>
+</span><span class="line">        <span class="n">Err</span> <span class="o">=</span> <span class="n">err</span><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">renderEnableTwoFactorAuthView</span> <span class="n">notFoundPath</span> <span class="n">username</span> <span class="n">ctx</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">getUser</span> <span class="n">username</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">user</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">err</span> <span class="o">=</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">ctx</span><span class="o">.</span><span class="n">request</span><span class="o">.[</span><span class="s">&quot;err&quot;</span><span class="o">]</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="n">Some</span> <span class="n">err</span> <span class="o">-&gt;</span> <span class="n">err</span>
+</span><span class="line">      <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;&quot;</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">vm</span> <span class="o">=</span> <span class="nn">EnableTwoFactorViewModel</span><span class="p">.</span><span class="n">From</span> <span class="n">username</span> <span class="n">err</span>
+</span><span class="line">    <span class="k">return</span><span class="o">!</span> <span class="n">page</span> <span class="s">&quot;enable_two_factor.liquid&quot;</span> <span class="n">vm</span> <span class="n">ctx</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">redirect</span> <span class="n">notFoundPath</span> <span class="n">ctx</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">googleAuthenticatorWebPart</span> <span class="n">notFoundPath</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">enableTwoFactorAuthPath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="n">GET</span> <span class="o">&gt;=&gt;</span> <span class="n">secured</span> <span class="o">(</span><span class="n">renderEnableTwoFactorAuthView</span> <span class="n">notFoundPath</span><span class="o">)</span>
+</span><span class="line">    <span class="o">]]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>As we did in the login page, we are using the <code>err</code> query string in the request to pass the verification code mismatch errors. </p>
+
+<p>We are leveraging the <code>OtpSharp</code> library to generate the URL that is in turn represented as a QR Code. </p>
+
+<blockquote>
+  <p>If you would like to how Google Authenticator interprets the generated key and the issuer name from the URL embedded in the QR Code, check out the <a href="https://github.com/google/google-authenticator/wiki/Key-Uri-Format">UriFormat</a> documentation. </p>
+</blockquote>
+
+<p>The last step in rendering this page is adding the <code>googleAuthenticatorWebPart</code> in the <code>Web</code> module where we are putting all the WebParts together</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Web.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">GoogleAuthenticator</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">app</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="c1">// ...</span>
+</span><span class="line">    <span class="n">googleAuthenticatorWebPart</span> <span class="n">notFoundPath</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>While enabling Two-factor authentication, the user has to scan the QR-Code from his <em>Google Authenticator</em> app and he will be getting a one-time verification code like this upon adding</p>
+
+<p><img class="center border" src="/images/suave_two_factor/Google_Authenticator.png" width="200" height="400" /></p>
+
+<p>Then he will be entering this in the <code>enable_two_factor</code> page and click <code>Enable</code>.</p>
+
+<p>Let’s handle this <em>POST</em> request. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/GoogleAuthenticator.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">verifyOtp</span> <span class="n">secretKey</span> <span class="n">code</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">otp</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Totp</span><span class="o">(</span><span class="nn">Base32Encoder</span><span class="p">.</span><span class="n">Decode</span> <span class="n">secretKey</span><span class="o">)</span>
+</span><span class="line">  <span class="n">otp</span><span class="o">.</span><span class="n">VerifyTotp</span><span class="o">(</span><span class="n">code</span><span class="o">,</span> <span class="n">ref</span> <span class="mi">0L</span><span class="o">,</span> <span class="k">new</span> <span class="n">VerificationWindow</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="mi">2</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">enableTwoFactorAuth</span> <span class="n">redirectPath</span> <span class="n">notFoundPath</span> <span class="n">username</span> <span class="n">ctx</span> <span class="o">=</span> <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">ctx</span><span class="o">.</span><span class="n">request</span><span class="o">.[</span><span class="s">&quot;SecretKey&quot;</span><span class="o">],</span> <span class="n">ctx</span><span class="o">.</span><span class="n">request</span><span class="o">.[</span><span class="s">&quot;Code&quot;</span><span class="o">]</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">secretKey</span><span class="o">,</span> <span class="n">Some</span> <span class="n">code</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">verifyOtp</span> <span class="n">secretKey</span> <span class="n">code</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="n">enableTwoFactorAuth</span> <span class="n">username</span> <span class="n">secretKey</span>
+</span><span class="line">      <span class="k">return</span><span class="o">!</span> <span class="n">redirect</span> <span class="n">redirectPath</span> <span class="n">ctx</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">redirectTo</span> <span class="o">=</span>
+</span><span class="line">        <span class="n">sprintf</span> <span class="s">&quot;%s?err=code validation failed&quot;</span> <span class="n">enableTwoFactorAuthPath</span>
+</span><span class="line">      <span class="k">return</span><span class="o">!</span> <span class="n">redirect</span> <span class="n">redirectTo</span> <span class="n">ctx</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">redirect</span> <span class="n">notFoundPath</span> <span class="n">ctx</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">googleAuthenticatorWebPart</span> <span class="n">redirectPath</span> <span class="n">notFoundPath</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">enableTwoFactorAuthPath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="c1">// ...</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">secured</span> <span class="o">(</span><span class="n">enableTwoFactorAuth</span> <span class="n">redirectPath</span> <span class="n">notFoundPath</span><span class="o">)</span>
+</span><span class="line">    <span class="o">]]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Thanks to the <em>OtpSharp</em> library for making our job simpler here. We just need to get the <code>SecretKey</code>, and the <code>Code</code> from the POST request and get it verified using <em>OtpSharp’s</em> <a href="https://bitbucket.org/devinmartin/otp-sharp/wiki/TOTP">VerifyTotp</a> function. </p>
+
+<p>If the verification is successful, we will be enabling the Two-factor authentication for the user in our in-memory backend using the <code>enableTwoFactorAuth</code> function and then redirect to the redirect path which in this case the <em>Profile</em> page.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Web.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">app</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="c1">// ...</span>
+</span><span class="line">    <span class="n">googleAuthenticatorWebPart</span> <span class="n">profilePath</span> <span class="n">notFoundPath</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="login-with-two-factor-authentication">Login With Two-factor Authentication</h2>
+
+<p>The last step is to prompt for the verification code whenever the Two-factor Authentication enabled user tries to log in and verify the one-time verification code before granting the access. </p>
+
+<p>Let’s start by defining the liquid view template <code>auth_code.liquid</code> for getting the one-time verification code.</p>
+
+<p><img class="center border" src="/images/suave_two_factor/auth_code_view.png" width="450" height="350" /></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/GoogleAuthenticator.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">authCodePath</span> <span class="o">=</span> <span class="s">&quot;/authcode&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">googleAuthenticatorWebPart</span> <span class="n">redirectPath</span> <span class="n">notFoundPath</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="c1">// ...</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">authCodePath</span> <span class="o">&gt;=&gt;</span> <span class="n">page</span> <span class="s">&quot;auth_code.liquid&quot;</span> <span class="s">&quot;&quot;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>After username and password verification, the user has to be redirected the <em>auth_code</em> page</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Login.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">authCodeSessionKey</span> <span class="o">=</span> <span class="s">&quot;loginUser&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">onLogin</span> <span class="n">redirectPath</span> <span class="n">authCodePath</span> <span class="o">(</span><span class="n">request</span> <span class="o">:</span> <span class="n">HttpRequest</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">request</span><span class="o">.[</span><span class="s">&quot;Username&quot;</span><span class="o">],</span> <span class="n">request</span><span class="o">.[</span><span class="s">&quot;Password&quot;</span><span class="o">]</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">username</span><span class="o">,</span> <span class="n">Some</span> <span class="n">password</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">getUser</span> <span class="n">username</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">user</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">user</span><span class="o">.</span><span class="n">Password</span> <span class="o">=</span> <span class="n">password</span><span class="o">,</span> <span class="n">user</span><span class="o">.</span><span class="n">TwoFactorAuthentication</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="k">true</span><span class="o">,</span> <span class="n">Disabled</span> <span class="o">-&gt;</span> <span class="n">loginSucess</span> <span class="n">never</span> <span class="n">redirectPath</span> <span class="n">username</span>
+</span><span class="line">      <span class="o">|</span> <span class="k">true</span><span class="o">,</span> <span class="n">Enabled</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">          <span class="n">sessionSet</span> <span class="n">never</span> <span class="n">authCodeSessionKey</span> <span class="n">username</span>
+</span><span class="line">            <span class="o">&gt;=&gt;</span> <span class="n">FOUND</span> <span class="n">authCodePath</span>
+</span><span class="line">      <span class="c1">// ...</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">loginWebPart</span> <span class="n">redirectPath</span> <span class="n">authCodePath</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">path</span> <span class="n">loginPath</span> <span class="o">&gt;=&gt;</span> <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">      <span class="c1">// ...</span>
+</span><span class="line">      <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">request</span> <span class="o">(</span><span class="n">onLogin</span> <span class="n">redirectPath</span> <span class="n">authCodePath</span><span class="o">)]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/Web.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">app</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">loginWebPart</span> <span class="n">profilePath</span> <span class="n">authCodePath</span>
+</span><span class="line">    <span class="c1">// ...</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We are using a separate session key <code>authCodeSessionKey</code> to hold the username of the user. </p>
+
+<p>The final step is verifying the one-time verification code (from the Google Authenticator app) entered by the user. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// Suave.TwoFactorAuth/GoogleAuthenticator.fs</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Combinators</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">onAuthCodeVerification</span> <span class="n">redirectPath</span> <span class="o">(</span><span class="n">request</span> <span class="o">:</span> <span class="n">HttpRequest</span><span class="o">)</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">request</span><span class="o">.[</span><span class="s">&quot;Code&quot;</span><span class="o">],</span> <span class="n">getUser</span> <span class="n">username</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Some</span> <span class="n">code</span><span class="o">,</span> <span class="n">Some</span> <span class="n">user</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">user</span><span class="o">.</span><span class="n">TwoFactorAuthentication</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Enabled</span> <span class="n">secretKey</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">verifyOtp</span> <span class="n">secretKey</span> <span class="n">code</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">loginSucess</span> <span class="n">never</span> <span class="n">redirectPath</span> <span class="n">user</span><span class="o">.</span><span class="n">Username</span>
+</span><span class="line">      <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">redirectToLogin</span> <span class="o">(</span><span class="n">Some</span> <span class="s">&quot;invalid otp&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">redirectToLogin</span> <span class="o">(</span><span class="n">Some</span> <span class="s">&quot;invalid request&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">redirectToLogin</span> <span class="o">(</span><span class="n">Some</span> <span class="s">&quot;invalid request&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">onVerifyAuthCode</span> <span class="n">redirectPath</span> <span class="n">httpRequest</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">onFail</span> <span class="o">=</span> <span class="n">redirectToLogin</span> <span class="o">(</span><span class="n">Some</span> <span class="s">&quot;invalid request&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">onAuthCodeVerification</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">onAuthCodeVerification</span> <span class="n">redirectPath</span> <span class="n">httpRequest</span>
+</span><span class="line">  <span class="n">sessionGet</span> <span class="n">onFail</span> <span class="n">authCodeSessionKey</span> <span class="n">onAuthCodeVerification</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">googleAuthenticatorWebPart</span> <span class="n">redirectPath</span> <span class="n">notFoundPath</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="c1">// ...</span>
+</span><span class="line">    <span class="n">path</span> <span class="s">&quot;/verify_auth_code&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">request</span> <span class="o">(</span><span class="n">onVerifyAuthCode</span> <span class="n">redirectPath</span><span class="o">)]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That’s it! We have successfully implemented Two-factor authentication. </p>
+
+<p>The complete source code is available in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveTwoFactorAuth">my GitHub repository</a></p>
+
+<h3 id="related-posts">Related Post(s)</h3>
+
+<ul>
+  <li><a href="/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/">Securing APIs in Suave using JSON Web Token</a></li>
+</ul>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2016
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2016/12/26/implementing-two-factor-authentication-in-suave/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2016/12/26/implementing-two-factor-authentication-in-suave/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

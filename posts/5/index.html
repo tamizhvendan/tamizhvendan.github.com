@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Apr 2nd, 2015 fsharp Comments Step-10 Refactoring Composition Root This is step 10 of my blog series on Web Application Development in Fsharp using &hellip;">
+	<meta name="description" content="Apr 25th, 2015 fsharp, functional-programming Comments My Takeaways This is the concluding part of my blog series on Web Application Development in &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -120,7 +120,7 @@
 <nav id="tag-cloud">
 	<section>
     <!-- <h3>Tag Cloud</h3>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 141.73913043478262%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.43478260869566%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.65217391304348%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 113.04347826086956%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.86956521739131%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.43478260869566%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.65217391304348%'>programming</a> <a href='/blog/categories/suave' style='font-size: 113.04347826086956%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 113.04347826086956%'>unit testing</a> </span> -->
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
 </section>
 </nav>
 
@@ -135,6 +135,91 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-04-25T15:09:02+05:30" data-updated="true" itemprop="datePublished">Apr 25<sup>th</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/functional-programming/'>functional-programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/04/25/my-takeaways/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/04/25/my-takeaways/" itemprop="url">My Takeaways</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote>
+  <p>This is the concluding part of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">like this</a> before, so during this course, I was about to give up but the statement </p>
+
+<p style="text-align:center"> <strong> Finish what you started </strong> </p>
+
+<p>kept me going. Thank you John, I have learned a great lesson in my life from you.</p>
+
+<p>Back to the business, In this blog post I am going to share my key takeaways on developing a complete web application in fsharp using ASP.NET MVC</p>
+
+<h2 id="enterprise-application-development-in-fsharp">Enterprise application development in fsharp</h2>
+
+<p>As a learner of F#, I have spent lots of time in listening to <a href="https://vimeo.com/channels/c4fsharp">the great talks</a> by the vibrant <a href="http://c4fsharp.net/">fsharp community</a>. Though those talks are great, I was intrigued, how these individual pieces would work together in creating a complete enterprise application. Is it really possible? </p>
+
+<p>Developing this complete <a href="https://github.com/tamizhvendan/fsharp-phonecat">fsharp-phonecat</a> application answered my questions and I am sure it answered yours too. It may appear hard because of less sources and functional paradigm, but once you figured it out, it would be a cakewalk.</p>
+
+<p>The bottom line is <strong>we can create a complete enterprise application in fsharp</strong>. As a matter of fact, there is a book written on this subject, <a href="http://www.amazon.com/gp/product/1617291323/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=1617291323&amp;linkCode=as2&amp;tag=bor0b-20&amp;linkId=SYG2CSFARCGD5KUL">F# Deep Dives</a></p>
+
+<p>If you are not convinced yet, read <a href="http://fsharp.org/testimonials/">these testimonials</a> from the commercial users of F#. </p>
+
+<h2 id="leveraging-the-existing-net-ecosystem">Leveraging the existing .NET ecosystem</h2>
+
+<p>In my perspective F# is a <em>pragmatic functional programming language</em>. In addition to lot of elegant features of the language, it works seamlessly with the existing .NET libraries. This one characteristic I would say is a blessing. You can say, ‘This feature is really cool’, but at the end of the day it should help you to get the job done. F# is not only cool, It can help you too!</p>
+
+<p>In the sample application we have leveraged the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web Api 2</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor Views</a>, <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code <i class="emoji smile"></i>)</p>
+
+<h2 id="using-f-in-your-existing-c-codebase">Using F# in your existing C# Codebase</h2>
+
+<p>As F# is a <a href="http://en.wikipedia.org/wiki/List_of_CLI_languages#CLI_languages">CLI Language</a> it can be added to your existing C# solution. All you need to do just create a new F# project in the solution and this project can work seamlessly with the other projects in the solution. </p>
+
+<p>In the sample application, we have a <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
+
+<p>In the <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
+
+<h2 id="less-is-beautiful">Less is beautiful</h2>
+
+<p>Another cool aspect of F# is you will be writing less lines of code to achieve complex things. It took only <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/5/Domain/SearchParser.fs#L10-L44">35 lines of code</a> to create a parser for a DSL. </p>
+
+<p><a href="http://fsharpforfunandprofit.com/rop/">Railway Oriented Programming</a> by <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a> is an absolute gem. If you would like to know what F# brings to your plate, I strongly suggest you to listen his talk on <a href="http://fsharpforfunandprofit.com/fppatterns/">Functional Design Patterns</a>. The way you see programming will never be the same after you have seen this presentation. </p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In nutshell, F# is just an awesome programming language to create applications. I hope you would have enjoyed this series. If you have any suggestions, kindly leave a comment.</p>
+
+<p>I would like to conclude this post with the below formula</p>
+
+<p style="text-align:center"> <strong> Python + .NET = F# </strong> </p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -579,227 +664,6 @@
 <p>You can find the source code of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/9">fsharp-phonecat github repository</a></p>
 
 <p>Thanks for reading!</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-03-20T11:49:35+05:30" data-updated="true" itemprop="datePublished">Mar 20<sup>th</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/web-api/'>web-api</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/03/20/step-8-adding-shopping-cart/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/03/20/step-8-adding-shopping-cart/" itemprop="url">Step-8 Adding Shopping Cart</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<blockquote>
-  <p>This is step 8 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In the <a href="/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">last blog post</a> we have seen how to do validation and error handling in fsharp and in this blog post we are going to add shopping cart feature to the phone-cat application that we are developing in this blog series. To keep this blog post simple, we are going to see only adding an item to shopping cart. Remvoing an item from shopping cart is a straightforward implementation and I leave it to you as an exercise</p>
-
-<p><img src="/images/fsharp_phonecat/step_8/cart_intro.png" /></p>
-
-<h3 id="the-shopping-cart-domain">The Shopping Cart Domain</h3>
-
-<p>Let’s start with defining the domain model for handling shopping cart. Create a source file <code>ShoppingCart</code> in the <strong>Domain</strong> project and add the following code</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">ShoppingCart</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">ProductId</span> <span class="o">=</span> <span class="kt">string</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">Cart</span> <span class="o">=</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Empty</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Active</span> <span class="k">of</span> <span class="n">ProductId</span> <span class="n">List</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">addItem</span> <span class="n">cart</span> <span class="n">productId</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">cart</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Empty</span> <span class="o">-&gt;</span> <span class="n">Active</span> <span class="o">[</span><span class="n">productId</span><span class="o">]</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Active</span> <span class="n">items</span> <span class="o">-&gt;</span> <span class="n">Active</span> <span class="o">(</span><span class="n">productId</span> <span class="o">::</span> <span class="n">items</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>ProductId</code> is an alias of <code>string</code> type represents the id of the phone.</p>
-
-<p>The <code>Cart</code> is a <code>Sum</code> type represents the two possible states of Shopping Cart. The <code>Cart</code> would be either empty or contain product ids that has been added to the cart.</p>
-
-<p>We have added a function which adds a product id to the cart. It just checks the state of the cart and based on the state it either creates the cart with <code>Active</code> state or appends the product id to the existing list.</p>
-
-<p>Thanks to the strong fsharp type system, we have modeled the domain with less lines of code.</p>
-
-<h3 id="persisting-shopping-cart">Persisting Shopping Cart</h3>
-
-<p>Now we have the domain logic to represent the shopping cart and adding items to it. The next step is persisting the cart. We can persist it anywhere as the domain model is persistent ignorant. To keep things simple, we will be persisting it in-memory. </p>
-
-<p>As we did during the <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">recommendation step</a> we will be using a dictionary to store the cart with Asp.Net’s <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid%28v=vs.110%29.aspx">anonymousId</a> as the key. </p>
-
-<p>Create a source file <code>CartStorage</code> in the <strong>DataAccess</strong> project and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">CartStorage</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">inMemoryStorage</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">new</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="n">Cart</span><span class="o">&gt;</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">create</span> <span class="n">anonymousId</span> <span class="n">cart</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="n">cart</span><span class="o">)</span>
-</span><span class="line">    <span class="n">cart</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">update</span> <span class="n">anonymousId</span> <span class="n">cart</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">Remove</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
-</span><span class="line">    <span class="n">create</span> <span class="n">anonymousId</span> <span class="n">cart</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">get</span> <span class="n">anonymousId</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">inMemoryStorage</span><span class="o">.[</span><span class="n">anonymousId</span><span class="o">]</span>
-</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The code is very straight forward to understand. It contains typical CRUD operations of a shopping cart using an in-memory dictionary object.</p>
-
-<h3 id="shopping-cart-api">Shopping Cart Api</h3>
-
-<p>It’s time to code the api for the shopping cart. Let’s add a source file <code>ShoppingCartController</code> in the <strong>Web</strong> project and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">RoutePrefix</span><span class="o">(</span><span class="s">&quot;api/cart&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line"><span class="k">type</span> <span class="nc">ShoppingCartController</span>
-</span><span class="line">  <span class="o">(</span>
-</span><span class="line">    <span class="n">cart</span> <span class="o">:</span> <span class="n">Cart</span><span class="o">,</span>
-</span><span class="line">    <span class="n">updateCart</span> <span class="o">:</span> <span class="n">Cart</span> <span class="o">-&gt;</span> <span class="n">Cart</span>
-</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">inherit</span> <span class="n">ApiController</span> <span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Get</span><span class="bp">()</span> <span class="o">=</span> <span class="n">cart</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">HttpPost</span><span class="o">&gt;]</span>
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;add&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">AddItem</span><span class="o">([&lt;</span><span class="n">FromBody</span><span class="o">&gt;]</span><span class="n">productId</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">addItem</span> <span class="n">cart</span> <span class="n">productId</span> <span class="o">|&gt;</span> <span class="n">updateCart</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>ShoppingCartController</code> has two dependencies.<br />
-  1. <code>Cart</code> - Cart associated with the current session<br />
-  2. <code>updateCart</code> - a function to update the cart</p>
-
-<p>To keep it simple, I haven’t added error handling or validation here. The action method <code>Get</code> returns the cart and the action method <code>AddItem</code> adds the item to the cart and then update the cart in the storage.</p>
-
-<h3 id="wiring-things-up">Wiring things up</h3>
-
-<p>Now we have all the pieces to add shopping cart to our application and the final step is tying them together. As we did it in other steps we need to do it in the composition root. Open <code>Infrastructure</code> in the <strong>Web</strong> project and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span>
-</span><span class="line">  <span class="o">(</span>
-</span><span class="line">    <span class="c1">// ... Exisitng Code ...</span>
-</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">interface</span> <span class="n">IHttpControllerActivator</span> <span class="k">with</span>
-</span><span class="line">    <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Create</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">controllerDescriptor</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">      <span class="c1">// ... Exisiting Code ...</span>
-</span><span class="line">      <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">ShoppingCartController</span><span class="o">&gt;</span> <span class="k">then</span>
-</span><span class="line">        <span class="k">let</span> <span class="nv">anonymousID</span> <span class="o">=</span> <span class="nn">HttpContext</span><span class="p">.</span><span class="nn">Current</span><span class="p">.</span><span class="nn">Request</span><span class="p">.</span><span class="n">AnonymousID</span>
-</span><span class="line">        <span class="k">let</span> <span class="nv">shoppingCart</span> <span class="o">=</span>
-</span><span class="line">          <span class="k">match</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">get</span> <span class="n">anonymousID</span> <span class="k">with</span>
-</span><span class="line">          <span class="o">|</span> <span class="n">Some</span> <span class="n">cart</span> <span class="o">-&gt;</span> <span class="n">cart</span>
-</span><span class="line">          <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">create</span> <span class="n">anonymousID</span> <span class="nn">ShoppingCart</span><span class="p">.</span><span class="n">Empty</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">let</span> <span class="nv">shoppingCartController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ShoppingCartController</span><span class="o">(</span><span class="n">shoppingCart</span><span class="o">,</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">update</span> <span class="n">anonymousID</span><span class="o">)</span>
-</span><span class="line">        <span class="n">shoppingCartController</span> <span class="o">:&gt;</span> <span class="n">IHttpController</span>
-</span><span class="line">      <span class="c1">// ... Existing Code ...</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Here before the creating an instance of <code>ShoppingCartController</code> we retrieve the anonymous id from the incoming request and get the cart associated with the anonymous id from the storage. In case if the cart is not available, we are creating one. For the <code>update</code> function, we pass the partially applied <code>update</code> function of <code>CartStorage</code>.</p>
-
-<p>That’s it!!</p>
-
-<h3 id="the-front-end-code">The front-end code</h3>
-
-<p>In the front end, we just call the <code>ShoppingCartController</code> action methods using plain jQuery ajax methods and update the UI. Since it is out of the scope of this blog post I haven’t covered it here and you can find <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Scripts/site.js">the code here</a>.</p>
-
-<h3 id="summary">Summary</h3>
-
-<p>In this blog post we have seen how to implement shopping cart in a web application written in fsharp. I leave some exercises for you to extend it to use some other storage and also to add validation and error handling. You can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/8">github phonecat repository</a>.</p>
 
 		
 		

@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="May 19th, 2012 javascript, node.js Comments Jade Visualizer Using Node.js and Socket.io Hurrah! Finally I made it “None of my inventions came by &hellip;">
+	<meta name="description" content="Jun 1st, 2012 asp.net mvc, javascript, node.js Comments A Hybrid Application Using ASP.NET MVC3 and Node.js Each and every technology has its pros &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -120,7 +120,7 @@
 <nav id="tag-cloud">
 	<section>
     <!-- <h3>Tag Cloud</h3>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 141.73913043478262%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.43478260869566%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.65217391304348%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 113.04347826086956%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.86956521739131%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.43478260869566%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.65217391304348%'>programming</a> <a href='/blog/categories/suave' style='font-size: 113.04347826086956%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 113.04347826086956%'>unit testing</a> </span> -->
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
 </section>
 </nav>
 
@@ -135,6 +135,80 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-06-01T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jun 1<sup>st</sup>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/node-dot-js/'>node.js</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/06/01/hybrid-application-using-aspnet-mvc3/" itemprop="url">A Hybrid Application Using ASP.NET MVC3 and Node.js</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        Each and every technology has its pros and cons and there is
+        <a href="http://people.eecs.ku.edu/~saiedian/Teaching/Sp08/816/Papers/Background-Papers/no-silver-bullet.pdf">no silver bullet!</a><br />
+
+        <br />If you would ask me what you have learnt in your profession so far, I would say the above line as the first one. One technology / platform / language is good at
+        solving one kind of problems and bad at solving other kind of problems. The key is leveraging existing <em>platforms</em> with <em>languages</em> targeted at
+        specific problems and applications to solve the business problems in hand.<br /><br />Three months ago I
+        have come across <a href="http://www.infoq.com/presentations/10-Ways-to-Better-Code-Neal-Ford">an excellent presentation</a> from Neil Ford “10 ways to improve your
+        code”. As a 8th way he talks about “Polyglot Programming”. Its about picking the right tool to do the right job. I am inspired by this presentation and started
+        exploring the “right tools”.<br /><br />In the pursuit of “Right tools”, I’ve come across the young awesome framework <a href="http://nodejs.org/">node.js</a> which is
+        really cool and perfect for real-time applications. On the other hand frameworks like <a href="http://www.asp.net/mvc">ASP.NET MVC3</a> is not meant for creating real-time
+        applications and they address different set of other problems. <br /><br />In this blog post, I going to share my recent exploration on leveraging node.js in an
+        ASP.NET MVC3 application using a “Chat” feature. Though we can achieve it using <a href="http://signalr.net/">SignalR</a>, I’ve preferred node.js as it is a right tool
+        for the chat feature IMO also I wanted to get my hands dirty in creating a hybrid application.<br /><strong><br /></strong><br /><strong>The Node.js Part</strong>
+        <br /><br /><a href="http://lh5.ggpht.com/-HLh-ldizDJ0/T8kHC3Ao5_I/AAAAAAAAAZA/vI0DypFIKh8/s1600-h/image%25255B4%25255D.png">
+                        <img src="http://lh6.ggpht.com/-rcbRWOlpeBc/T8kHHp32UJI/AAAAAAAAAZI/ypOCgUHMrN0/image_thumb%25255B2%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="589" />
+                    </a><br /><br />The chat server that we are going to use in the MVC3 application has been created using <a href="http://socket.io/">socket.io</a> which makes web-socket programming insanely easy!<br />Its listen for three events<br /><ul><li><em>join</em> – It will be triggered when a new user joined the chat and it broadcast the user name to all the connected users  </li><li><em>message</em> – It willed be triggered when an user send a message in the chat application and broadcast it to the other users  </li><li><em>disconnect</em>– It willed be triggered when an user closes the chat or closes the browser </li></ul>That’s it bang!<br /><strong><br /></strong><br /><strong>The ASP.NET MVC3 side</strong><br /><br /><a href="http://lh6.ggpht.com/-pQEJCXkjOuw/T8kHJFR0zVI/AAAAAAAAAZQ/FTqswQ8XvtY/s1600-h/image%25255B9%25255D.png"><img alt="image" border="0" height="197" src="http://lh6.ggpht.com/-TMmsX9z4rRc/T8kHLTRTuYI/AAAAAAAAAZY/MQurv3YzYIw/image_thumb%25255B5%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="387" /></a><br /><br />The controller side of Chat just renders the “Index view”. The index view has the following javascript code, and it completes the client side part of the chat application<br /><br /><a href="http://lh5.ggpht.com/-QnLwJvxMIR8/T8kHMoTx1qI/AAAAAAAAAZg/VYhVayPULm4/s1600-h/image%25255B14%25255D.png"><img alt="image" border="0" height="403" src="http://lh5.ggpht.com/-XxmqzAqX1i8/T8kHQ1J07tI/AAAAAAAAAZo/sMw8RevtD9k/image_thumb%25255B8%25255D.png?imgmax=800" style="background-image: none; border-bottom-width: 0px; border-left-width: 0px; border-right-width: 0px; border-top-width: 0px; display: inline; padding-left: 0px; padding-right: 0px; padding-top: 0px;" title="image" width="530" /></a><br /><strong><br /></strong><br />
+        <strong>Chat feature in Action</strong><br /><br />
+        <a href="http://lh3.ggpht.com/-OoM7_UDFHzQ/T8kHSZP8R8I/AAAAAAAAAZw/QcXNptcqe1I/s1600-h/image%25255B17%25255D.png">
+            <img src="http://lh5.ggpht.com/-B4IkFTFavZI/T8kHVZP234I/AAAAAAAAAZ4/IGC3r-10yBA/image_thumb%25255B9%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh3.ggpht.com/-xWwrw06nVTk/T8kHW9r2X1I/AAAAAAAAAaA/-g8XAZDm-Qg/s1600-h/image%25255B21%25255D.png">
+                <img src="http://lh3.ggpht.com/-F7UPYcQXT14/T8kHZfq0W8I/AAAAAAAAAaI/hLP9g4s8QGA/image_thumb%25255B11%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-OI01pFQYBEs/T8kHaT3_bmI/AAAAAAAAAaQ/GM-QdsQzTVU/s1600-h/image%25255B25%25255D.png">
+            <img src="http://lh4.ggpht.com/-VIPYKbYG-rs/T8kHbgnYkBI/AAAAAAAAAaY/24TJhDEHqA8/image_thumb%25255B13%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-_jFs2OzmBx0/T8kHczZpZBI/AAAAAAAAAag/-FMnxb_cD9w/s1600-h/image%25255B29%25255D.png">
+            <img alt="image" src="http://lh4.ggpht.com/-KwvpW47kGxI/T8kHeUKp3BI/AAAAAAAAAao/GP4naqkNkvc/image_thumb%25255B15%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh4.ggpht.com/-YNLo_UVoZf0/T8kHfwe76BI/AAAAAAAAAaw/dq8JfcSfYRE/s1600-h/image%25255B33%25255D.png">
+            <img alt="image" src="http://lh3.ggpht.com/-tcpQUHyW58I/T8kHhrerqxI/AAAAAAAAAa4/ZEJOJK8swnk/image_thumb%25255B17%25255D.png?imgmax=800" />
+        </a><br />
+        <a href="http://lh6.ggpht.com/-j4AUmiQEA5k/T8kHioICVWI/AAAAAAAAAbA/ZAuJNXh4oZ4/s1600-h/image%25255B37%25255D.png">
+            <img src="http://lh3.ggpht.com/-KoM6ka9qFxc/T8kHkUP0AGI/AAAAAAAAAbI/ZuGQ-d8KKS8/image_thumb%25255B19%25255D.png?imgmax=800" />
+        </a></div><strong><br /></strong><br /><strong>Summary</strong><br /><br />The objective behind this blog post is just to share the knowledge that I’ve gained in my recent exploration and its just a proof of concept of how to leverage node.js in an MVC3 application. The bottom-line is “Identify and pick the right tool to do the right job”. If you want to play with the source code, don’t forget to clone <a href="https://github.com/tamizhvendan/a-hybrid-app">the repository </a>
+    </div>
+</div>
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -317,153 +391,6 @@
         binding problems. In my next blog post I would share my experiences in how to unit test this custom model binders. 
     You can download the source code that I have used in this blog post from <a href="http://www.box.com/s/16dbb662bb2f94babe27">here</a></p>
 </div>
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-03-04T00:00:00+05:30" data-updated="true" itemprop="datePublished">Mar 4<sup>th</sup>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/03/04/unit-testing-html-helpers-in-aspnet/" itemprop="url">Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <p>Would you like if your unit test have an assertion like this ?</p>
-    <div style="text-align: center;clear:both">
-        <img src="http://lh5.ggpht.com/-Z7XXVGQ3sX4/T1J73ct1gqI/AAAAAAAAASQ/qw-uSNrLoOE/image_thumb3.png?imgmax=800">
-    </div>
-    <p>
-        IMHO having a unit test assertion like this with a long magical string value would become a maintenance problem with additional logic being added.
-        It breaks with even minor changes like “adding an extra whitespace” though it is logically correct(Browsers ignores the whitespaces while rendering html)!.
-        It is harder to debug to!!
-    </p>
-    <p>
-        How can we get rid of this long string assertion ? Is there any better way to do assertion against this long magical string ejected from a
-        <a href="http://stephenwalther.com/blog/archive/2009/03/03/chapter-6-understanding-html-helpers.aspx">HtmlHelper</a> ? One thing which strikes on my mind when I come
-        across this problem is why don’t we parse the string as an xml and assert against the xml element instead. It might appear like laborious at the first sight,
-        but by making use of <a href="http://msdn.microsoft.com/en-us/library/system.xml.linq.xelement.aspx">XElement</a> and
-        <a href="http://msdn.microsoft.com/en-us/library/bb383977.aspx">extension methods</a> we can easily do that.
-    </p>
-
-    <p>In the blog post we are going to see how can we implement this in a more cleaner way. </p>
-
-    <p>Okay.. Enough texts.. Its time to see some code!!</p>
-
-    <p>
-        The first step is to convert the “html string” returned by the html helper to XElement. Generally most of the helpers returns
-        <a href="http://stackoverflow.com/questions/2293357/what-is-an-mvchtmlstring-and-when-should-i-use-it">MvcHtmlString</a>, So, we can easily achieve this
-        by writing an extension method called “ToXElement” on MvcHtmlString.
-    </p>
-
-    <div style="text-align: center;clear:both">
-        <img src="http://lh4.ggpht.com/-cwtnsV7pl2c/T1J763QmH1I/AAAAAAAAASg/6QKxAEGZ5uM/image_thumb%25255B2%25255D.png?imgmax=800">
-    </div>
-
-    <p>That’s it! All set to redefine the way custom html helpers are being tested. </p>
-
-    <p>Fine, Let us see it in action. We will start with a handy HtmlHelper method called “Button” which would render a “Html button tag” and here is the test to assert it.</p>
-
-    <div style="text-align: center;clear:both">
-        <img src="http://lh4.ggpht.com/-Zl-hH4zYH1A/T1J7_Y9Qr3I/AAAAAAAAASw/PyWZZJMadV0/image_thumb%25255B10%25255D.png?imgmax=800">
-    </div>
-    <p>
-        The first test uses the ToXElement extension method and assert against the XElement’s properties whereas the second test uses the
-        “magical string with tags added” to do the assertion. Now you may feel what’s wrong with this guy the second test look clean to me,
-        why he is making fuss about it. Yes you are correct, the second one looks clean. But it appears to be clean as the requirement in hand is very simple.
-    </p>
-    <p>IMHO the custom html helpers that we are building in our real world application won’t be as simple as having a button tag with just plain caption in it. </p>
-    <p>Fine, lets see the real world. Voice from your team lead <em></em></p>
-    <p>
-        <em>
-            Hey! the Button HtmlHelper you designed has did a tremendous job. Can you make a small change on it so that it would
-            <strong>generate a button with a class attribute having the value ‘appbutton’ by default</strong>.
-            We need it because it make the button styling consistent with rest of our application ”
-        </em>
-    </p>
-
-    <p>Let us implement the feature by starting with the test for it</p>
-    <p>
-        <a href="http://lh4.ggpht.com/-HScL-9YaD1s/T1J8Awk2YbI/AAAAAAAAAS4/Q3E6JlpRItM/s1600-h/image%25255B23%25255D.png">
-            <img src="http://lh5.ggpht.com/-MyHzxXBfdCM/T1J8DL_KgbI/AAAAAAAAATA/Vvt1j4k-KYo/image_thumb%25255B14%25255D.png?imgmax=800">
-        </a>
-    </p>
-    <p>
-        Now tell me is the second test clean ? I don’t think so. The generate html string is bit long now also having double quotes inside double quotes makes it hard to read.
-        At the same time the first test remains robust and clean.
-    </p>
-
-    <p>
-        Still not convinced, okay just go up and see the very first test that we have wrote to test the button caption.
-        Do you think the <strong>hard way test</strong> with the “<strong>long magical string</strong>” still pass ??
-    </p>
-
-    <p style="text-align: center; color: #ff0000; font-weight: bold">It would fail</p>
-
-    <p>Why ?? Here is the error message </p>
-    <p>
-        <a href="http://lh5.ggpht.com/-K6RjhSEMhLA/T1J8EpZAZ-I/AAAAAAAAATI/TUutsjz0XdE/s1600-h/image%25255B28%25255D.png">
-            <img src="http://lh4.ggpht.com/-SpmB-mDwffk/T1J8HO3Np4I/AAAAAAAAATQ/oKxboMdbr6I/image_thumb%25255B17%25255D.png?imgmax=800">
-        </a>
-    </p>
-    <p>Now what would you do, if you decided to persist with the “long magical string”, then your action would be editing the test as below</p>
-    <div style="text-align: center;clear:both">
-        <img src="http://lh6.ggpht.com/-RJKnvJ5K8dI/T1J8LTJG_iI/AAAAAAAAATg/TAKyOA5Ej9w/image_thumb%25255B21%25255D.png?imgmax=800">
-    </div>
-    <p>Nice job. Now tell me what is the difference between this one and the below one</p>
-    <div style="text-align: center;clear:both">
-        <a href="http://lh6.ggpht.com/-ps4dX_FO-B0/T1J8MhVBtwI/AAAAAAAAATo/u003U24qiBo/s1600-h/image%25255B42%25255D.png">
-            <img src="http://lh3.ggpht.com/-i5zAV0v0JfY/T1J8O7pNIiI/AAAAAAAAATw/Fuo_4WMsFzk/image_thumb%25255B27%25255D.png?imgmax=800">
-        </a>
-    </div>
-    <p>
-        Apart from the test method name everything is same. Is the test clean ? Is the test clearly saying what it is trying to assert ?
-        What would happen if we got the requirement to add one more attribute or even more? Think !!
-    </p>
-
-    <p>But at the same time the tests which written using XElement assertion would remain healthy and their test method name mean what it is testing </p>
-    <p>
-        <a href="http://lh6.ggpht.com/-t5GRHpUvWSI/T1J8Qh6dvqI/AAAAAAAAAT4/WaaIvzaEKCY/s1600-h/image%25255B47%25255D.png">
-            <img src="http://lh3.ggpht.com/-fQ_eFoBZqnE/T1J8TPZgtFI/AAAAAAAAAUA/1wGDDsT5J8Y/image_thumb%25255B30%25255D.png?imgmax=800">
-        </a>
-    </p>
-    <p>I leave it you to decide which one is cleaner. </p>
-    <h4>Summary</h4>
-    <p>Here is the implementation of “Button HtmlHelper” that we unit tested so far</p>
-    <div style="text-align: center;clear:both">
-        <img src="http://lh4.ggpht.com/-lg0jE79JCVI/T1J8Y3QGqOI/AAAAAAAAAUQ/gif78dMv6XI/image_thumb%25255B33%25255D.png?imgmax=800">
-    </div>
-    <p>
-        My humble request to the readers of this blog post, please take care of your “Unit tests” and give some more importance to it.
-        An hour spent upfront would save a day in future.
-    </p>
-    <p>“Beauty is in the eye of the beholder”, If you have a better idea to do the same, kindly leave a comment, I am open to learn from you.</p>
-</div>
-
 		
 		
 	</div>

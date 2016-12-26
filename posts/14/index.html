@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Aug 3rd, 2011 asp.net mvc Comments Using Ajax.BeginForm – ASP.NET MVC3 Ajax – Part III In my previous blog posts Part 1, Part 2 we have explored how &hellip;">
+	<meta name="description" content="Aug 4th, 2011 data access, entity framework Comments EF Code First 4.1 in Console Application Whenever I learn any new things in .Net or &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -120,7 +120,7 @@
 <nav id="tag-cloud">
 	<section>
     <!-- <h3>Tag Cloud</h3>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 141.73913043478262%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.43478260869566%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.65217391304348%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 113.04347826086956%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.86956521739131%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.43478260869566%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.65217391304348%'>programming</a> <a href='/blog/categories/suave' style='font-size: 113.04347826086956%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 113.04347826086956%'>unit testing</a> </span> -->
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
 </section>
 </nav>
 
@@ -135,6 +135,150 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-04T00:00:00+05:30" data-updated="true" itemprop="datePublished">Aug 4<sup>th</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/data-access/'>data access</a>, <a class='category' href='/blog/categories/entity-framework/'>entity framework</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/08/04/ef-code-first-41-in-console-application/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/08/04/ef-code-first-41-in-console-application/" itemprop="url">EF Code First 4.1 in Console Application</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+	<div>
+		<p>
+			Whenever I learn any new things in .Net or experimenting with something, I always prefer to use <em>Console Applications.</em>
+			I personally feel it helps me to concentrate more on what actually I am trying to learn or experiment without any sort of distractions. 
+			Moreover it keeps things simple.
+		</p>
+
+		<p>
+			I would like to do the same while learning EF Code First 4.1. 
+			Though most of articles in web explain EF with respect to ASP.NET MVC, 
+			I favor learning it through my own way using console application without creating any controllers and views!!
+		</p>
+
+		<h4>Following are the prerequisites to work with EF Code First 4.1</h4>
+		<ul>
+			<li>
+				<a href="http://weblogs.asp.net/scottgu/archive/2011/03/15/visual-studio-2010-sp1.aspx">Visual Studio 2010 SP1</a>
+			</li>
+			<li>
+				<a href="http://blogs.msdn.com/b/adonet/archive/2011/04/11/ef-4-1-released.aspx">Entity Framework 4.1</a>
+			</li>
+			<li>
+				<a href="http://weblogs.asp.net/scottgu/archive/2011/01/11/vs-2010-sp1-and-sql-ce.aspx">SQL CE</a> or 
+				SQL Express (SQL CE would be an ideal option for learning purpose)
+			</li>
+
+		</ul>
+
+		<h4>Show me the Code!</h4>
+		<p>After creating a console application project, the initial step would be adding references to the following assemblies.</p>
+		<ul>
+			<li>EntityFramework (Version 4.1)</li>
+			<li>System.Data.Entity</li>
+			<li>System.ComponentModel.DataAnnotations</li>
+		</ul>		
+
+		<p>Now it’s time to defining the model and the data context. To keep it simple, I am going to define only one model “User”.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-FxoouXlWKxw/TjqAva1qsWI/AAAAAAAAAJM/5PLCVnNFhDQ/s1600/User.PNG" alt="" />
+		</div>
+
+		<p>The data context would be as following.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://3.bp.blogspot.com/-2pLPCQePVKY/TjqAwJ-QD4I/AAAAAAAAAJU/X66hDdCw6eo/s1600/MyDataContext.PNG" alt="" />
+		</div>
+
+		<p>
+			This basic infrastructure is sufficient to run the console application. However as we are using the data context for learning purpose, 
+			we might change the model often and doing so will make it inconsistent with the database created automatically when you run the application for the first time.
+		</p>
+
+		<p>
+			We can circumvent this situation by creating new Data Context initialize class that inherits from <em>DropCreateDatabaseIfModelChanges</em>
+			&lt;TContext&gt; where TContext is the data context that you want to sync with the database always. 
+			This class also offers an override function <em>“Seed”</em> using which we can fill the database with some initial data.
+		</p>
+
+		<p>The finished code of DataContext initialize class will be like the following.</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://2.bp.blogspot.com/-fFqQJzPBGkY/TjqAwOW4nMI/AAAAAAAAAJY/DDY_VyYQHfI/s1600/MyDataContextInit.PNG" alt="" />
+		</div>
+
+		<p>
+			This datacontext initialize class would create the database whenever the database model changes and create two users by default. 
+			Now it’s time to code our Main method.
+		</p>
+		<p>
+			Here we go. Pay close attention to the first statement in the Main method that initializes the database with an instance of DataContextInit 
+			class that we have created.
+		</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-jl5r5Sk7m0Q/TjqAvdAJRPI/AAAAAAAAAJQ/elZcjzTNgEE/s1600/EFConsoleApp.PNG" alt="" />
+		</div>
+
+
+		<p>
+			Now you can run the application without any configurations. The default behavior of EF Code First will create the database 
+			with the same name as your data context name here “MyDataContext” in the SQL Express server installed in the local machine. 
+			If you wish to change this default behavior and wanted to use SQL CE instead of SQL Express just add an App.Config to 
+			the project and create a connection string with the name of your data context as follows.
+		</p>
+
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://4.bp.blogspot.com/-YUZyAGX2KyA/TjqAvBuEd4I/AAAAAAAAAJI/p_UjE-K_lR8/s1600/Configuration.PNG" alt="" />
+		</div>
+
+
+
+		<p>That’s it. “Ctrl+F5” and here is the output</p>
+		<div style="clear: both; text-align: center">
+            <br />
+			<img src="http://3.bp.blogspot.com/-l0IfgWCGZfQ/TjqAwX_8pnI/AAAAAAAAAJc/RLcjASqgaBo/s1600/Output.PNG" alt="" />
+		</div>
+
+
+		<h4>Summary</h4>
+		<p>
+			In this blog post we have explore the basic foundation on how to work with EF CodeFirst using console application. 
+			If you want to get your dirty with EF Code First without any distraction Console Application is a better one. 
+			You can download the sample code used in this blog post from <a href="http://www.box.net/shared/s0yu8b4sebp3dh9ru5gb">here.</a>
+	</div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -337,259 +481,6 @@ namespace UsingAjaxForms.Controllers
     <p>The stage has been setup. No one can ride bicycle by reading a book on “How to Ride Bicycle”. What books and blog posts would offer us is knowledge. In addition to knowledge to move further we need another thing called “Practice”. Yes get your hands dirty. Experiment, Research, Critique, Analyse, involve in healthy debates with your colleagues on various aspects of software craftsmanship, work and feel passionate about your work.</p>
     <p>I have pledged myself to follow the best practices in all my development works and no compromise on the quality of the code I write. In nutshell, I am going to care about my craft, think about my work and strive for excellence.</p>
     <p>I am in the very early stage of becoming a better programmer and looking forward to listen to your suggestions and inputs on this. When we grow older, we will be stronger. With all blessings and hope, the journey begins!</p>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-07-13T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jul 13<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/categories/programming/'>programming</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/07/13/observer-pattern-using-delegates-vs/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/07/13/observer-pattern-using-delegates-vs/" itemprop="url">Observer Pattern Using Delegates v/s Observer Pattern Using Events and Delegates</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-	<p>
-		Most of the articles and texts in C# demonstrate the observer pattern using events and delegates. When going through one such text, a thought come across my mind. Why we are going for events when we can easily achieve the multicasting using Delegates alone. After some R&amp;D, I found it out why and hence this blog post.
-	</p>
-	<p>I am going to explain this “why” using a Weather Station example. To keep things simple, the Weather Station that we are going to see will keep track of only the temperature. Whenever the temperature changes, it simplify notifies its subscribers with the new temperature. Flash News is one of the subscribers which show the temperature in flash news. News Feed, another subscriber which adds the temperature information to the news feed. Fine, enough theory! It’s time to see the code.</p>
-	<p>Here is the implementation of Observer Pattern using Delegates alone. </p>
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{
-    class WeatherStation
-    {
-        private int _temperature;
-        public TemperatureReporter Reporter { get; set; }
-
-        public int Temperature
-        {
-            get { return _temperature; }
-            set
-            {
-                if (Reporter != null)
-                {
-                    Reporter(value);
-                }
-                _tempearture = value;
-            }
-        }
-    }
-
-    class NewsFeed
-    {
-        WeatherStation weatherStation;
-
-        public void AddTemperatureInfoToFeed(int temperature)
-        {
-            Console.WriteLine(&quot;News Feed: New temperature &quot; + temperature + &quot; added to feed.&quot;);
-        }
-
-        public NewsFeed(WeatherStation weatherStation)
-        {
-            this.weatherStation = weatherStation;
-            weatherStation.Reporter += AddTemperatureInfoToFeed;
-        }
-    }
-
-    class FlashNews
-    {
-        WeatherStation weatherStation;
-
-        public void ShowTemperatureInfoInFlashNews(int temperature)
-        {
-            Console.WriteLine(&quot;Flash News: New temperature is &quot; + temperature + &quot;.&quot;);
-        }
-
-        public FlashNews(WeatherStation weatherStation)
-        {
-            this.weatherStation = weatherStation;
-            weatherStation.Reporter += ShowTemperatureInfoInFlashNews;
-        }
-    }
-}</code></pre></noscript></div>
-
-
-	<h4>The Main Program</h4>
-
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=Program.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{
-    public delegate void TemperatureReporter(int tempearture);
-
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            // Observer Pattern Using Delegates
-            WeatherStation weatherStation = new WeatherStation();
-            FlashNews flashNews = new FlashNews(weatherStation);
-            NewsFeed newsFeed = new NewsFeed(weatherStation);
-            weatherStation.Temperature = 30;
-            weatherStation.Temperature = 15;
-            weatherStation.Temperature = 45;
-        }
-    }
-}</code></pre></noscript></div>
-
-	<h4>The output</h4>
-	<div style="clear: both; text-align: center;">
-		<img src="http://1.bp.blogspot.com/-LjDx8rPsr50/Th0bSdtTyHI/AAAAAAAAAHk/dMBuF4GLgD0/s1600/delegates-output.PNG" /></div>
-	<p>Hurrah! It’s working as expected. Both subscribers are get notified. We can implement the observer pattern using delegates alone. Stop for a minute and go through the code, is the implementation robust? Kudos if you are able to find the shortcomings of this implementation. If not continue reading. </p>
-	<p>Think of a world where everyone is good. There is no need of police, no need of court either. But it is not the case. You may wonder why I am mentioning this here. This analogy holds true for the objective of this blog post too. There is no need of using events in the c# programming world if all the subscribers are good. Miserably, here also it is not the case. Hence we are going for events instead of using delegates alone. </p>
-	<h4>Drawbacks of using delegates alone</h4>
-	<ul>
-		<li>A subscriber can replace other subscribers by reassigning the delegate</li>
-		<li>A subscriber can clear all other subscribers also (by setting the delegate to null). </li>
-		<li>A subscriber can broadcast to other subscribers by invoking the delegate</li>
-	</ul>
-	Clearly all the above 3 drawbacks violates the Observer Pattern.Here is our evil subscriber code implementation. 
-<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{
-    class EvilSubscriber
-    {
-        WeatherStation weatherStation;
-
-        public void EvilMessage(int temperature)
-        {
-            Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
-        }
-
-        public EvilSubscriber(WeatherStation weatherStation)
-        {
-            this.weatherStation = weatherStation;
-
-            // Broadcast to all the subscriber
-            weatherStation.Reporter(60);
-
-            // Reassign the subscriber            
-            weatherStation.Reporter = EvilMessage;
-
-            // Replace all the subscribers            
-            weatherStation.Reporter = null;
-        }
-    }
-}</code></pre></noscript></div>
-
-
-	<p>Hope now you understand the need of a better implementation of observer pattern. Here comes the salvage. Event! Use event along with delegates. With event in place, compiler will not allow the evil subscriber to get compiled. </p>
-	<h4>Robust implementation of Weather Station using events</h4>
-
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=PubSub2.cs'></script>
-<noscript><pre><code>namespace DelegatesAndEvents
-{ 
-    class WeatherStation2 
-    { 
-        private int _tempearture; 
-        
-        public event TemperatureReporter Reporter; 
-        
-        public int Temperature 
-        { 
-            get 
-            { 
-                return _tempearture; 
-            } 
-            set 
-            { 
-                if (Reporter != null) 
-                { 
-                    Reporter(value); 
-                } 
-                _tempearture = value; 
-            } 
-        }
-    } 
-    
-    class NewsFeed2 
-    { 
-        WeatherStation2 weatherStation; 
-        
-        public void AddTemperatureInfoToFeed(int temperature) 
-        { 
-            Console.WriteLine(&quot;News Feed2: New temperature &quot; + temperature + &quot; added to feed.&quot;); 
-        } 
-        
-        public NewsFeed2(WeatherStation2 weatherStation) 
-        { 
-            this.weatherStation = weatherStation; 
-            weatherStation.Reporter += AddTemperatureInfoToFeed; 
-        } 
-    } 
-    
-    class FlashNews2 
-    { 
-        
-        WeatherStation2 weatherStation; 
-        
-        public void ShowTemperatureInfoInFlashNews(int temperature) 
-        { 
-            Console.WriteLine(&quot;Flash News2: New temperature is &quot; + temperature + &quot;.&quot;); 
-        } 
-        
-        public FlashNews2(WeatherStation2 weatherStation) 
-        { 
-            this.weatherStation = weatherStation; weatherStation.Reporter += ShowTemperatureInfoInFlashNews; 
-        } 
-    } 
-}    			</code></pre></noscript></div>
-
-
-	<p>The unfortunate evil subscriber no longer compiles with events!</p>
-	<div><script src='https://gist.github.com/fb9f64cd49646ddf8eba.js?file=EvilSubscriber2.cs'></script>
-<noscript><pre><code>class EvilSubscriber2
-{
-    WeatherStation2 weatherStation;
-
-    public void EvilMessage(int temperature)
-    {
-        Console.WriteLine(&quot;The temperature is &quot; + (temperature * 100));
-    }
-
-    public EvilSubscriber2(WeatherStation2 weatherStation)
-    {
-        this.weatherStation = weatherStation;
-
-        // Broadcast to all the subscriber         
-        weatherStation.Reporter(60); // Compiler Error                
-
-        // Reassign the subscriber                
-        weatherStation.Reporter = EvilMessage; // Compiler Error  
-
-        // Replace all the subscribers                 
-        weatherStation.Reporter = null; // Compiler Error    
-    }
-}</code></pre></noscript></div>
-
-	<br />
-	You&nbsp;can download the source code from <a href="http://www.box.net/shared/kunno1y9noj26qodstnz">here</a>
 </div>
 
 		
