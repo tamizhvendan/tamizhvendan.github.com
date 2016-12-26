@@ -14,13 +14,13 @@ Two-factor authentication is a type of [Multi-factor authentication](https://en.
 
 The idea presented here is a naive implementation of Two-factor authentication. The objective here is to demonstrate how to implement it in a functional programming language, F#. Things like TLS/HTTPS, preventing CSRF and other attacks are ignored for brevity. 
 
-> This blog post is my contribution towards [fsharp advent calendar 2016](https://sergeytihon.wordpress.com/2016/10/23/f-advent-calendar-in-english-2016/). Do check out other great fsharp posts!
+> This blog post is a part of [fsharp advent calendar 2016](https://sergeytihon.wordpress.com/2016/10/23/f-advent-calendar-in-english-2016/). 
 
 ## Prerequisite
 
-This blog post assumes that you are familiar with the concept of Two-factor authentication and know how Google Authenticator works. 
+This blog post assumes that you are familiar with the concept of Two-factor authentication and Google Authenticator. 
 
-If you are encountering this for the first time or not very much sure, then check out the below resources to get a picture of what it is all about.
+If you would like to know more about these, check out the below resources to get a picture of what it is all about.
 
 * [Two-step verification](https://www.google.com/landing/2step) by Google 
 * [How Google Authenticator works](https://garbagecollected.org/2014/09/14/how-google-authenticator-works/)
@@ -58,7 +58,7 @@ After entering the verification code from the Google Authenticator, the user wil
 
 ## Getting Started
 
-Create a new **F# Console Project** with then name *Suave.TwoFactorAuth* and use Paket to install the following dependencies. 
+Create a new **F# Console Project** with the name *Suave.TwoFactorAuth* and use Paket to install the following dependencies. 
 
 *paket.dependencies*
 
@@ -82,14 +82,14 @@ Suave.DotLiquid
 OtpSharp
 ```
 
-The [OtpSharp](TODO) is an .NET library that we will be using to generate keys and to verify the verification code from Google Authenticator app using the [TOTP](TODO) algorithm.
+The [OtpSharp](https://www.nuget.org/packages/OtpSharp/) is an .NET library that we will be using to generate keys and to verify the verification code from Google Authenticator app using the [TOTP](https://en.wikipedia.org/wiki/Time-based_One-time_Password_Algorithm) algorithm.
 
-The reference to [DotLiquid](TODO) library is required to render the templates using [Suave.DotLiquid](TODO)
+The reference to [DotLiquid](https://www.nuget.org/packages/DotLiquid/) library is required to render the templates using [Suave.DotLiquid](https://www.nuget.org/packages/Suave.DotLiquid/)
 
 
 ## Initializing DotLiquid
 
-To use [DotLiquid](TODO) to render the views in Suave, we need to set the templates directory explicitly. From this path, DotLiquid renders the requested [liquid templates](TODO). 
+To use [DotLiquid](https://github.com/Shopify/liquid/wiki/Liquid-for-Designers) to render the views in Suave, we need to set the templates directory explicitly. 
 
 ```fsharp
 // Suave.TwoFactorAuth/Suave.TwoFactorAuth.fs
@@ -114,19 +114,19 @@ let main argv =
   0
 ```
 
-As a convention we are going to create a directory *views*. This *views* directory going to have all the liquid templates of our appliaction
+In this sample application we are going to create a directory *views*. This *views* directory will contain the liquid templates of our appliaction
 
 ## Serving the Login Page
 
-The first page that we are going to develop is the login page. Let's start with the views
-
-The best practice to use liquid templates is to have a master template which provides the skeleton code with placeholders and the child templates fill the placeholders
+Let's start by serving the Login page. 
 
 Create a new directory with the name *views* in the *Suave.TwoFactorAuth* project and add a new liquid template *page.liquid*. This *page.liquid* is the master template for our application
 
 {% img center border /images/suave_two_factor/page.png 300 300 %}
 
-After creating change the 'Copy to output' property of the *page.liquid* file to 'Copy if newer' so that the view files copied to the build output directory. This step is applicable for all the other view templates that we will be adding later
+After creating, change the 'Copy to output' property of the *page.liquid* file to 'Copy if newer' so that the view files copied to the build output directory. 
+
+This step is applicable for all the other view templates that we will be creating later
 
 > If you are using VS Code or atom editor, you need to do this property change manually by opening the *Suave.TwoFactorAuth.fsproj* file 
 
@@ -202,7 +202,7 @@ let main argv =
   0 
 ```
 
-> Keeping all the Suave WebParts in a single place like we did in the `Web.fs` file, enable us to host Suave in Azure Functions and Asp.Net Core without doing any significant changes. 
+> Keeping all the Suave WebParts in a single place like we did in the `Web.fs` file, enable us to host Suave in [Azure Functions](https://www.nuget.org/packages/Suave.Azure.Functions) or [Asp.Net Core](https://dusted.codes/running-suave-in-aspnet-core-and-on-top-of-kestrel) without doing any significant changes. 
 
 ## Handling User Login
 
@@ -229,7 +229,7 @@ let getUser username =
   | _ -> None
 ```
 
-Post successful login, to serve the subsequent requests we need to identify the user who logged in. We can achieve it by persisting the user in *Cookies* using `statefulForSession`. 
+Post successful login, to serve the subsequent requests we need to identify the user who logged in. We can achieve it Suave using `statefulForSession`, which initializes a user state for a browsing session. 
 
 Let's create some helper functions to do this. 
 
@@ -272,7 +272,7 @@ The `sessionSet` function takes a WebPart and a key value pair and tries to pers
 
 The `sessionGet` function takes a success WebPart Combinator, a failure WebPart, and a key. If retrieving the value from session state is successful it calls the success WebPart combinator with the retrieved value. In case of retrieval failure it calls the failure WebPart
 
-The `clearSession` function clears the state which will be using while implementing *log out*
+The `clearSession` function clears the state. We will be using it while implementing *log out*
 
 Now we have all the building blocks for handling user login request, and it's time to start its implementation
 
@@ -414,7 +414,7 @@ let app =
 
 ## Enabling Two-factor Authentication
 
-To enable Two-factor authentication first, we need to change our `User` domain model. 
+To enable Two-factor authentication, we need to change our `User` domain model first. 
 
 ```fsharp
 // Suave.TwoFactorAuth/User.fs
@@ -445,6 +445,7 @@ The next step is to define a liquid view template for the `enable_two_factor` pa
 While enabling the Two-factor authentication, we need to generate a secret key for the user that will be required for both, one-time verification code generation as well as its verification.
 
 So, in the *enable_two_factor.liquid* template we pass the generated `SecretKey` as a `hidden` input which will then be used for the verification of the code. 
+
 ```html
 <input type="hidden" name="SecretKey" value="{{model.Key}}">
 ```
@@ -454,7 +455,7 @@ Now we need to render the `enable_two_factor` page in response to the *HTTP GET*
 
 {% img center border /images/suave_two_factor/Enable_Two_Factor.png 450 250 %}
 
-Let's create a new module `GoogleAuthenticator` to put all the Two-factor authentication related code
+Let's create a new module `GoogleAuthenticator` to put the Two-factor authentication related functions together
 
 ```fsharp
 // Suave.TwoFactorAuth/GoogleAuthenticator.fs
@@ -510,9 +511,9 @@ As we did in the login page, we are using the `err` query string in the request 
 
 We are leveraging the `OtpSharp` library to generate the URL that is in turn represented as a QR Code. 
 
-> If you would like to how Google Authenticator interprets the generated key and the issuer name from the URL embedded in the QR Code, check out the [UriFormat](TODO) documentation. 
+> If you would like to how Google Authenticator interprets the generated key and the issuer name from the URL embedded in the QR Code, check out the [UriFormat](https://github.com/google/google-authenticator/wiki/Key-Uri-Format) documentation. 
 
-The last step in rendering this page hooking the `googleAuthenticatorWebPart` in the `Web` module where we are putting all the WebParts together
+The last step in rendering this page is adding the `googleAuthenticatorWebPart` in the `Web` module where we are putting all the WebParts together
 
 ```fsharp
 // Suave.TwoFactorAuth/Web.fs
@@ -563,9 +564,9 @@ let googleAuthenticatorWebPart redirectPath notFoundPath =
     ]]
 ```
 
-Thanks to the `OtpSharp` library for making our job simpler here. We just need to get the `SecretKey`, and the `Code` from the POST request and get it verified using `OtpSharp`. 
+Thanks to the *OtpSharp* library for making our job simpler here. We just need to get the `SecretKey`, and the `Code` from the POST request and get it verified using *OtpSharp's* [VerifyTotp](https://bitbucket.org/devinmartin/otp-sharp/wiki/TOTP) function. 
 
-If the verification is successful, we will be enabling the Two-factor authentication for the user in our in-memory backend using the `enableTwoFactorAuth` and then redirect to the redirect path which in this case the *Profile* page.
+If the verification is successful, we will be enabling the Two-factor authentication for the user in our in-memory backend using the `enableTwoFactorAuth` function and then redirect to the redirect path which in this case the *Profile* page.
 
 ```fsharp
 // Suave.TwoFactorAuth/Web.fs
@@ -580,11 +581,9 @@ let app =
 
 ## Login With Two-factor Authentication
 
-The last step is to prompt for the verification code whenever the Two-factor Authentication user tries to log in and verify the one-time verification code before granting the access. 
+The last step is to prompt for the verification code whenever the Two-factor Authentication enabled user tries to log in and verify the one-time verification code before granting the access. 
 
 Let's start by defining the liquid view template `auth_code.liquid` for getting the one-time verification code.
-
-TODO - Change view title
 
 {% img center border /images/suave_two_factor/auth_code_view.png 450 350 %}
 
@@ -670,6 +669,8 @@ let googleAuthenticatorWebPart redirectPath notFoundPath =
 
 That's it! We have successfully implemented Two-factor authentication. 
 
-## Summary
+The complete source code is available in [my GitHub repository](https://github.com/tamizhvendan/blog-samples/tree/master/SuaveTwoFactorAuth)
 
-The complete source code is available in [my GitHub repository](TODO)
+### Related Post(s)
+
+* [Securing APIs in Suave using JSON Web Token]({% post_url 2015-07-15-securing-apis-in-suave-using-json-web-token %})
