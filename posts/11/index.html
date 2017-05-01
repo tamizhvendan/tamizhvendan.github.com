@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Mar 4th, 2012 asp.net mvc, craftsmanship, unit testing Comments Unit Testing Html Helpers in ASP.NET MVC3–The Cleaner Way Would you like if your &hellip;">
+	<meta name="description" content="Apr 13th, 2012 asp.net mvc, craftsmanship, programming Comments An Interesting JSON Model Binding Behaviour in ASP.NET MVC3 Introduction Model &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -124,6 +124,149 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-04-13T00:00:00+05:30" data-updated="true" itemprop="datePublished">Apr 13<sup>th</sup>, 2012</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/categories/programming/'>programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2012/04/13/interesting-json-model-binding/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2012/04/13/interesting-json-model-binding/" itemprop="url">An Interesting JSON Model Binding Behaviour in ASP.NET MVC3</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <h3>Introduction</h3>
+    <p>
+        <a href="http://msdn.microsoft.com/en-us/library/dd410405.aspx">Model Binding</a> is one of the coolest feature in ASP.NET MVC3.
+        Like a magic wand, your form element values, <a href="http://www.json.org/">JSON values</a>, also query string values automatically get converted to the equivalent C# object and
+        makes the life of the developer easier.
+    </p> <p>
+        The default behaviour of MVC3 model binding works well in more common scenarios.
+        But in certain cases it wont work as expected, and in such situations we need to <a href="http://odetocode.com/blogs/scott/archive/2009/04/27/6-tips-for-asp-net-mvc-model-binding.aspx">
+            write
+            custom model binders
+        </a>. Two weeks before while I was working with model binding on JSON values, I’ve encountered an interesting behaviour of JSON model binding.
+    </p>
+
+    <p>
+        If a JSON property contains a string, it get bind to a string property of the equivalent C# object. But if that same JSON property contains a empty string, while model binding,
+        the equivalent C# object’s property is assigned to null and not to empty string! The same happened with arrays. If it contains elements, it get bind without any problems.
+        But if the array is empty it get bind to null!!
+    </p> <p>
+        In this blog post, we are going to get rid of this intriguing behaviour by writing a Custom JSON model binder.
+        Hope it would be useful and save you some hairs <i class='emoji smile'></i>
+
+        <h3>The Sample Application – “MyMobileStore”</h3>
+    <p>
+        In this blog post we are going to see a small application called “MyMobileStore”. This sample app has two features. One will help you to search the mobiles
+        in the “MyMobileStore” by using the company name and the mobile types. An another feature will help you to find out the sales details of the mobiles from a given
+        company for the specified mobile types.
+    </p>
+
+    <h3>Show me the code</h3>
+    <p>Core classes</p>
+    <p><img class="center" src="/images/JsonModelBinding/CoreClasses.png" title="" ></p>
+    <p>As mentioned earlier, the two features of “MyMobileStore” are exposed as controller action methods as below</p>
+    <p>
+    <p><img class="center" src="/images/JsonModelBinding/MobileController.png" title="" ></p>
+    <p>
+        Both action methods uses a parameter of type “MobileFilter” which actually holds the filter criteria for finding out the mobiles. It has two properties,
+        the companyname of the mobile and the collection of mobile types (Normal, DualSim or SmartPhone)
+    </p>
+    <p>
+    <p><img class="center" src="/images/JsonModelBinding/MobileFilter.png" title="" ></p>
+    </p> <p>
+        The SearchMobiles action method retrieves all the mobiles from the repository and filter it first by the company name and then by the mobile types.
+        One small tweak, if the mobile types count is more than 3, it would take only the first 3 types (Added for demo purpose). I just left the logic of SalesDetails
+        action method blank to keep it simple. Both actions returns a JSON result to make them consumed by ajax.
+    </p>
+
+    <p><em>(Note: I’ve violated some design principles in the sample code as I just wanted to make this blog post as simple as possible) </em></p>
+
+    <h3>The Problem (Opportunity in my language)</h3>
+    <p>
+        In a good world, if the user selected either or both the company name and the mobiles types to be filtered, then our controller in “MyMobileStore”
+        will happily accepts them as a parameter and continue its work without any mishaps.
+    </p>
+
+    <p><img class="center" src="/images/JsonModelBinding/Problem.png" title="" ></p>
+    <p>
+        But in the bad world, if the user missed out either the company names or the mobiles types or both, ASP.NET MVC3 treat them as nulls which might cause null
+        reference exception and breaks the functionality!!
+    </p>
+    <p><img class="center" src="/images/JsonModelBinding/BadWorld.png" title="" ></p>
+    <p><img class="center" src="/images/JsonModelBinding/NullException.png" title="" ></p>
+
+    <p>
+        <em>
+            (Now you might have understood why I added a tweak in the number of mobile types
+            <i class='emoji smile'></i>)
+        </em>
+    </p>
+    <h3>Possible Solutions</h3>
+    <ol>
+        <li>Perform null check inside the “SearchMobiles” action method and assign empty array.</li>
+        <li>Write a Custom Model Binder for “MobileFilter” and perform the null check inside the model binding logic</li>
+    </ol>
+    <p>
+        Though the option 1 is a simple and straightforward thing, what would you do if the “SalesDetails” action method works with the mobile types collection.
+        You certainly need to duplicate the null checking inside it also. Let us assume that we have some more action methods in our “MyMobileStore” which has “MobileFilter”
+        as their parameter. Do you still duplicate the null check there ?. Think!!
+    </p>
+    <p>
+        If you do so, I am sorry my dear friend, you are violating the <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">DRY</a> principle and creating
+        <a href="http://pragprog.com/the-pragmatic-programmer/extracts/software-entropy">a broken window</a> in your codebase! So, lets go ahead and write
+        <a href="http://www.amazon.com/Clean-Code-Handbook-Software-Craftsmanship/dp/0132350882">clean code</a> by making use of Custom Model Binder for our “MobileFilter”.
+    </p>
+
+    <h3>The Pragmatic Solution – MobileFilterModelBinder</h3>
+    <p>
+        <img class="center" src="/images/JsonModelBinding/MobileFilterModelBinder.png" title="" >
+    </p>
+
+    <p>
+        Our custom model binder is very simple, it just makes use of Default Model binding behaviour. After the default behaviour has been done,
+        it checks for null values using <a href="http://msdn.microsoft.com/en-us/library/ms173224.aspx">Null-Coalescing operator</a> and assign empty values if
+        the values are null.
+    </p> <p>Don’t forget add the custom model binder in the Global.asax.cs file.</p>
+
+    <p>
+        <img class="center" src="/images/JsonModelBinding/Global.png" title="" >
+    </p>
+    <p>Now our “MyAppStore” is robust enough to tackle the bad world!!</p>
+    <p>
+        <img class="center" src="/images/JsonModelBinding/NoMoreBadWorld.png" title="" >
+    </p> 
+    <h3>Conclusion</h3> 
+    <p>In this blog post you have seen an exciting problematic behaviour of JSON model binding in ASP.NET MVC3 and a simple way to get rid of the default model 
+        binding problems. In my next blog post I would share my experiences in how to unit test this custom model binders. 
+    You can download the source code that I have used in this blog post from <a href="http://www.box.com/s/16dbb662bb2f94babe27">here</a></p>
+</div>
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -331,113 +474,6 @@
     <p>Here is the complete implementation of Test fixture class which unit test the CartModelBinder class that we have seen in the <a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/">previous post</a> using the mocking library <a href="http://code.google.com/p/moq/">Moq</a>.</p>
     <br /><img class="center" src="/images/UnitTesting_ModelBinders/UnitTest.png">      
 
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2012-02-02T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 2<sup>nd</sup>, 2012</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/unit-testing/'>unit testing</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2012/02/02/unit-testing-with-sessions-in-aspnet/" itemprop="url">Unit Testing With Sessions in ASP.NET MVC3</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-    <h3>Introduction</h3>
-        
-        <p>While talking to my friend regarding his project, he told me about how he is doing unit testing which involves sessions in ASP.NET MVC3. 
-            His team is actually using a “HttpSimulator” which simulates the web request and then the do unit test by verifying the session by interacting 
-            with the simulator. When digging further I have come to know that this way of unit testing session objects are influenced 
-            from the “ASP.NET Webforms”. It reminds me the talk of <a href="http://www.infoq.com/presentations/Functional-Thinking">Neil Ford on 
-                Function Thinking</a>. In that video he talks about an analogy called “Axe and Chain Saw” to explain our way of thinking as
-        </p>
-        <blockquote>When we give a chain saw to people who were cutting trees by axe, they would tend to use chain saw in the same way as the use Axe. 
-            Which is obviously inefficient. So we should understand at the capabilities of the tool in our hand before we using it</blockquote>
-       
-        <p>ASP.NET MVC3 is far better than Web Forms when it comes to unit testing. We don’t need to use a simulator to test against our sessions. 
-            There is a better way to do this MVC3 and in this blog post we are going to explore it.<p/>
-       
-        <h4>Time for Code</h4>       
-        <p>Shopping Cart is the first thing that strikes our mind when we want to quote an example for using Http session. 
-        So, I am going to show an app called “MyShop” a mini shopping site through which I am going to explain the concepts involved. 
-        The application flow would be as follows</p>
-        
-            <img class="center" src="/images/UnitTesting_With_Session/Cart.png">
-            <img class="center" src="/images/UnitTesting_With_Session/Cart2.png">       
-        
-
-        <h4>Models</h4>
-        
-        <p>The models are simple, straight forward and self explanatory.</p>
-    <img class="center" src="/images/UnitTesting_With_Session/model.png">  
-    <img class="center" src="/images/UnitTesting_With_Session/CartCsharp.png">    
-        <p>I’ve tried my level best to keep the model as simple as possible. 
-        So, Cart in MyShop will have only two public methods. One to add a product to the Cart’s Line and another one to retrieve all the 
-        products inside the Cart’s line.</p>
-        
-        <h4>The CartController Version 1.0</h4>
-        <img class="center" src="/images/UnitTesting_With_Session/CartController.png"> 
-        <p>In this CartController version 1.0 we have two public methods Index and AddToCart which are dependent on HttpSession object. 
-            This dependency inside the methods is actually preventing us from unit testing the CartController in simple way and we have no 
-            choice other than implementing a “Http Simulator” to unit test these two methods. As I said before there is better to do is! Here we go!!</p>
-        
-        <h4>The CartController Version 2.0</h4>
-        <img class="center" src="/images/UnitTesting_With_Session/CartController2.png"> 
-    <p>No more Sessions!!.. Yeah.. We have got rid of the dependency on the session object by adding a new parameter called cart. Now you can use easily unit test the CartController as follows</p>
-        <img class="center" src="/images/UnitTesting_With_Session/UnitTest.png"> 
-        <p>Okay we made it easy for unit testing by moving the dependency out of the method and introduced the cart as the parameter. But how does my MVC3 framework will know the cart parameter should come from session object ?… Good Catch!! and here comes the magic called custom ModelBinder</p>
-       
-        <h4>ModelBinder – A brief background</h4>
-        <p>Model binding is an exciting feature in MVC3 framework which automatically creates the C# objects directly from Http request and 
-            pass it to the Action methods in controller as parameter values. It uses a default model binder which looks at the form values, 
-            query string values that are submitted with the Http Request and create the model object.</p>
-        <h4>CartModelBinder</h4>
-        
-        <p>In our case, we need to have a object of Cart which is populated from the Session object and not from the HttpRequest. 
-            The default model binder used by MVC3 has no idea about session object. So, Its our responsibility to tell to the MVC3 framework
-        </p>
-        
-        <p>“<em>Hey! If there is any parameter of type Cart in controller action method, then use my own custom model binder called CartModelBinder to create the object</em>”</p>
-        <p>There are two steps to do the above said operation</p>
-        <p>1. Creating the custom model binder by inheriting the IModelBinder interface</p>
-        <img class="center" src="/images/UnitTesting_With_Session/CartModelBinder.png"> 
-        <p>2. Registering our custom model binder in the Global.asax.cs file</p>
-        <img class="center" src="/images/UnitTesting_With_Session/AppStart.png"> 
-        <p>
-        That’s all.. MVC3 takes care of rest</p>
-        
-        <h4>Summary</h4>
-        <p>In this blog post we have explored how we can get rid of “Http Simulator” to unit test the controllers which involves Session objects using 
-            custom model binder. You can download the working example of “MyShop” showcased in this blog post 
-            from <a href="http://www.box.com/s/b9lf2heukyivh68921jj">here</a>. 
-            Refer <a href="/blog/2012/02/11/unit-testing-custom-model-binders-in/">my next blog post</a> to check out how to do 
-            unit testing with the custom model binder itself.</p>
 </div>
 
 		

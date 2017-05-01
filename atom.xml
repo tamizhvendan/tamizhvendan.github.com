@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-04-27T12:32:50+05:30</updated>
+  <updated>2017-05-01T23:13:07+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,199 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Using Golang in Production - My Experiences]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2017/05/01/using-golang-in-production-my-experiences/"/>
+    <updated>2017-05-01T07:50:32+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2017/05/01/using-golang-in-production-my-experiences</id>
+    <content type="html"><![CDATA[<p>For the last one year, I was working with the development team of a leading media entertainment company in India and developed a cloud platform to distribute the <a href="https://en.wikipedia.org/wiki/Digital_Cinema_Package">DCPs</a> across the globe in a uniform, scalable and cost-effective manner.</p>
+
+<p>We built the entire platform using <a href="https://golang.org/">golang</a> and <a href="https://www.nginx.com/blog/event-driven-data-management-microservices/">event-driven microservices architecture</a>. It was an exciting journey, and this blog post summarizes my experiences of using golang in this project.</p>
+
+<h2 id="the-learning-curve">The Learning Curve</h2>
+
+<p>Golang is <a href="https://www.youtube.com/watch?v=rFejpH_tAHM">a simple language</a> to learn. Any developer who has some good experience in any programming language can pick it in a month. It took me two weeks to understand the language. </p>
+
+<p>I’ve also learned a lot from the code review comments from the other developers of my team who are already familiar with the language. </p>
+
+<p>The official golang site has done an excellent job in coming up two important learning resources for the beginners.</p>
+
+<ul>
+  <li><a href="https://tour.golang.org">A Tour of Go</a> - Through a series of in-browser hands-on tutorials you can get a good feel of the language in few hours. </li>
+  <li><a href="https://golang.org/doc/effective_go.html">Effective Go</a> - It is one the best introduction as well as best practices documentation of a programming language that I have read. Right from package naming convention to how to do state sharing, this documentation will provide all it required to write an idiomatic golang code. </li>
+</ul>
+
+<p>In addition to these resources, I recommend the <a href="https://golang.org/doc/faq">Golang FAQs</a> and the <a href="https://gobyexample.com/">GoByExample</a> for the beginners. </p>
+
+<h2 id="go-routines-channels-and-select">Go Routines, Channels and Select</h2>
+
+<p>In my perspective, go routines, channels and select are the sweet spots of golang. These <a href="https://talks.golang.org/2015/simplicity-is-complicated.slide#21">abstractions</a> are elegant and enable you to write concurrent programs without any hassles.</p>
+
+<p>We have made substantial use of golang concurrency whenever it made sense, and the benefits were incredible. The blog post on <a href="https://blog.golang.org/pipelines">Go Concurrency Patterns</a> is an excellent read to get a feel of it.</p>
+
+<h2 id="interfaces-in-golang">Interfaces in golang</h2>
+
+<p>My favorite feature in golang is its support for <a href="https://gobyexample.com/interfaces">interfaces</a>. </p>
+
+<p>Unlike C# or Java, you don’t need to specify the name of the interface when a type implements an interface. Because of this, the package in which the type present, doesn’t need to refer the package in which the interface has been declared.</p>
+
+<p>Yan Cui has written a great <a href="https://hackernoon.com/why-i-like-gos-interfaces-2891adf2803c">blog post</a> about its elegance.</p>
+
+<blockquote>
+  <p>The design for Go’s interface stems from the observation that <strong>patterns and abstractions only become apparent after we’ve seen it a few times</strong>. So rather than locking us in with abstractions at the start of a project when we’re at the point of our greatest ignorance, we can define these abstractions as and when they become apparent to us. - <em>Yan Cui</em></p>
+</blockquote>
+
+<h2 id="the-go-proverbs">The Go Proverbs</h2>
+
+<p>The <a href="https://go-proverbs.github.io/">Go Proverbs</a> provides a set of principles and guidelines while developing software in golang. </p>
+
+<p>Though certain principles <em>(A little copying is better than a little dependency.)</em> look weird, they have profound meaning behind it. </p>
+
+<p>Like the saying, <em>“You need to spend time crawling alone through shadows to truly appreciate what it is to stand in the sun.”</em>, to appreciate these proverbs you need to spend a decent amount time in developing software in go.</p>
+
+<h2 id="golang-standard-library">Golang Standard Library</h2>
+
+<p>The golang <a href="https://golang.org/pkg/">standard library</a> is futuristic. It has pretty much all that is required for solving the general problems efficiently. </p>
+
+<p>The surprising factor for me is treating <a href="https://golang.org/pkg/encoding/json/">JSON</a> as a first class citizen in the standard library. </p>
+
+<p>Most of the languages rely on an open source library to deal with JSON. Having JSON handling as part of the standard library shows how much thought and care has been put in.</p>
+
+<h2 id="declared-and-not-used-compiler-error">Declared and Not used Compiler Error</h2>
+
+<p>Another good thing that golang got it right is showing compiler errors for unused variables and packages. </p>
+
+<p>The software which we write evolve along with its business requirements. Continuous refactoring, feature addition or deletion, changing the architecture to meet the new demands are some the stuff that we do during the evolution of the software. During these activities often we miss removing the unused code and the packages that we were using before.</p>
+
+<p>Through this compiler error, golang forces the developer to write better code. The biggest advantage is while reading the code written by someone, you can be sure that the variables and the packages are always being used.</p>
+
+<p>Also removing unused packages results in smaller binary size.</p>
+
+<h2 id="go-command-command-line-interface-and-go-tools">go Command (Command Line Interface) and go tools</h2>
+
+<p>The <a href="https://golang.org/cmd/go/">go command</a> is an another well thought out feature in golang which comes by default with the installation. </p>
+
+<p>Using <code>go command</code>, you can compile &amp; build the code, download and install external packages, run the tests and lot more without relying on any other external tools. The <code>go test</code> command is incredibly fast and it made our job easier while doing Test-Driven development. </p>
+
+<p>The <a href="https://golang.org/cmd/gofmt/">gofmt</a> command enabled our team to follow a consistent formatting of golang source files. Thanks to this awesome tool we hardly had code review comments on the format of the code.</p>
+
+<p>The <a href="https://godoc.org/golang.org/x/tools">golang tools</a>, especially <a href="https://godoc.org/golang.org/x/tools/cmd/goimports">goimports</a> and <a href="https://godoc.org/golang.org/x/tools/cmd/gorename">gorename</a> has been extremely useful </p>
+
+<h2 id="go-install-and-single-executable-binary">go install and Single executable binary</h2>
+
+<p>The command which I loved the most in golang is the <code>go install</code> command. It takes care of compiling the code and produces a stand alone executable binary. Due to caching of intermediary packages, it builds the executable binary incredibly fast.</p>
+
+<p>To run this resulted binary file, we don’t have to install anything on the target machine <em>(Like JVM, .NET)</em>.</p>
+
+<p>It enabled us to share the microservice as an executable file with the other team members to create <a href="http://www.extremeprogramming.org/rules/spike.html">spikes</a>, develop and locally test other dependent microservices. </p>
+
+<blockquote>
+  <p>Just like bundling the front-end assets into single javascript file and serving them via CDNs, we can even do continuous deployment of golang codebase by serving the binaries from a content provider like Amazon S3, if it makes sense!</p>
+</blockquote>
+
+<p>We can also do <a href="https://dave.cheney.net/2015/08/22/cross-compilation-with-go-1-5">cross-compilation</a> of your golang code for different OSes and Architectures using <code>go build</code> command. </p>
+
+<h2 id="open-source-libraries-in-golang">Open Source Libraries in golang</h2>
+
+<p>Golang has a thriving open source community, and it houses a vast collection of <a href="https://github.com/avelino/awesome-go">open source libraries and frameworks</a>. Here is the list of some of the things that we have used heavily</p>
+
+<ul>
+  <li><a href="https://github.com/streadway/amqp">AMQP</a> - To interact with RabbitMQ</li>
+  <li><a href="https://github.com/jinzhu/gorm">GORM</a> - To perform database operations in PostgreSQL</li>
+  <li><a href="https://github.com/satori/go.uuid">go-uuid</a> - To generate and use UUIDs</li>
+  <li><a href="https://github.com/mattes/migrate">migrate</a> - For database migrations</li>
+  <li><a href="https://github.com/kelseyhightower/envconfig">envconfig</a> - For managing configuration data from environment variables</li>
+  <li><a href="https://github.com/urfave/negroni">negroni</a> - To write HTTP middlewares</li>
+  <li><a href="http://github.com/julienschmidt/httprouter">httprouter</a> - For handling HTTP routes. We have used this along with golang’s <a href="https://golang.org/doc/articles/wiki/">standard HTTP handlers</a> </li>
+  <li><a href="http://github.com/sirupsen/logrus">logrus</a> - Simple and powerful library for logging</li>
+  <li><a href="https://github.com/stretchr/testify">testify</a> - For unit test assertions</li>
+</ul>
+
+<p>For most of the common things that you’d like to do in your project, you can always find an off the shelf open source library</p>
+
+<h2 id="private-methods-functions-and-struct-fields">Private methods, functions and struct fields</h2>
+
+<p>I was admired when I came to know that just by using <a href="https://golang.org/ref/spec#Exported_identifiers">a naming convention</a>, I can specify public and private methods, functions and struct fields. </p>
+
+<p>It is a smart feature in the language. If you want to expose them as public, start with an upper case letter and start with a lower case letter if you want to them to be used only inside a package or a struct. </p>
+
+<h2 id="not-so-good-features-in-golang">Not So Good Features in Golang</h2>
+
+<p>So far in this blog post, I’ve shared the features that I liked very much in golang. In the rest of the post, I am about to share the not so good features in golang. The heading was intentionally started with “Not So Good” as the things that I am about to share are not bad ones according to the golang language design principles and the go proverbs that we have seen earlier.</p>
+
+<p>IMHO there is no perfect programming language, and there is no silver bullet. All languages shine in certain areas and not so good in some other areas. At the end of the day, a programming language is just a tool which we use to solve the business problems. We need to pick an appropriate language that solves the problem in hand. </p>
+
+<blockquote>
+  <p>Disclaimer: The intention of this blog post is to share my experiences and provide honest feedback to the people who is evaluating golang. </p>
+</blockquote>
+
+<h2 id="the-golang-way-of-handling-errors">The Golang way of handling errors</h2>
+
+<p>The imperative way of handling errors is one of the <a href="http://stackoverflow.com/questions/18771569/avoid-checking-if-error-is-nil-repetition">common complaint raised</a> by many people.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">foobar1</span><span class="p">()</span>
+</span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line"> <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">foobar2</span><span class="p">()</span>
+</span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line"> <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">foobar3</span><span class="p">()</span>
+</span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line"> <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="c1">// and so on</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Rob Pike addresses this concern in a detailed blog post, <a href="https://blog.golang.org/errors-are-values">Errors are values</a> and quotes a pattern using <code>errWriter</code> to avoid the repetition. It is a good design and elegantly wraps the <code>nil</code> check on the <code>error</code>. The downside of this approach is we need to write an extra wrapper for every new type to get rid of the repetitiveness. The wrapper approach may get complex if the <code>foobar1</code>, <code>foobar2</code>, and <code>foobar3</code> are addressing different concerns. </p>
+
+<p>For people who is coming from typed functional programming languages (F#, Haskell, Scala) background, like me, this may look little awkward to write it in this way. There is a <a href="https://github.com/golang/go/issues/19991">proposal</a> to include Result type in golang but I feel it may not be incorporated.</p>
+
+<h2 id="treating-nil-as-value">Treating nil as value</h2>
+
+<p>While other languages are moving away from dealing with null values and replacing it with option types, golang is taking a backward step by treating <code>nil</code> (equivalent for <code>null</code> in Go) as a valid value. So we need to be cautious while using the nil value. Lack of discipline may result in runtime exceptions (panic in go vocabulary)</p>
+
+<p>This problem can be avoided to some degree by having a function/method to return two values, the actual value to be returned and the error, and ensuring that the actual value will never be <code>nil</code>, if the error is <code>nil</code> and vice versa. Unfortunately, this approach leads to the repetition concern that we just saw.</p>
+
+<h2 id="absence-of-generics">Absence of generics</h2>
+
+<p>This also an another typical critic in golang. There is an answer of for this question in <a href="https://golang.org/doc/faq#generics">golang FAQ</a> saying, it is in the pipeline but my opinion is it may not be in the near future.</p>
+
+<p>There are some workarounds like using <a href="https://tour.golang.org/methods/14">an empty interface</a> and casting it to appropriate types using <a href="https://tour.golang.org/methods/15">type assertion</a>. </p>
+
+<p>The real concern is trying to do map, filter, reduce operations over collections. Again there are workarounds by using <a href="http://bouk.co/blog/idiomatic-generics-in-go/">templating and reflection</a>, but it has its own cost (performance and boilerplate code). After fiddling around with different options, We went back to the classic way of iterating through <code>for loop</code>.</p>
+
+<h2 id="mutable-variables-and-imperative-coding">Mutable variables and imperative coding</h2>
+
+<p>For developers who is coming from the functional programming background, the mutable variables and imperative way of writing code are speed breakers in the golang journey.</p>
+
+<p>Though golang has some <a href="https://golang.org/doc/codewalk/functions/">good support</a> for doing functional programming, the presence of mutable variables and imperative way doing certain things, hinder the progress.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Apart from these few concerns, I’ve liked golang and enjoyed using it.</p>
+
+<p>The language design principles of golang are my important takeaways. I strongly recommend watching the <a href="http://go-lang.cat-v.org/talks/">talks of Rob Pike</a> on golang design; even you are not going to use golang.</p>
+
+<p>I’d consider using golang in an another project in future for sure if it is an appropriate language for the problem at hand.</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Implementing Two-Factor Authentication in Suave]]></title>
@@ -7988,243 +8181,6 @@ To make it independent of the host, we have externalized the hosting functionali
 <h2 id="summary">Summary</h2>
 
 <p>Its a little longer post than I expected and I am glad that you have read it this far. I’d like give credit to this <a href="http://blog.fogcreek.com/fparsec/">blog post</a> by <a href="http://haolian.org/">Hao Lian</a> which I’ve used as a reference to come up with this implementation. As usual you can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/5">phonecat github repository</a>.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Step-4 Build automation using FAKE]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake/"/>
-    <updated>2015-01-06T05:22:32+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake</id>
-    <content type="html"><![CDATA[<blockquote>
-  <p>This is step 4 of my blog series on <a href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In the last three steps, we have seen how to build an web application in fsharp by leveraging <a href="http://blog.tamizhvendan.in/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web-Api</a>, <a href="http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor</a> and <a href="http://blog.tamizhvendan.in/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">SignalR</a>. In this step for a change we are going to take the <a href="http://en.wikipedia.org/wiki/DevOps">DevOps</a> side of the application and going to add the build automation capabilities for the application. Let’s get stated!</p>
-
-<h2 id="fake---an-awesome-build-automation-library">Fake - An awesome build automation library</h2>
-
-<p><a href="http://fsharp.github.io/FAKE/">Fake</a> is a F# version of very successful and widely used build automation libraries <a href="http://www.gnu.org/software/make/">Make</a> and <a href="http://en.wikipedia.org/wiki/Rake_%28software%29">Rake</a>. The combination of <a href="http://fsharp.org/testimonials/">fsharp’s expressiveness</a> and the <a href="http://fsharp.github.io/FAKE/gettingstarted.html">Fake’s DSL</a> is a visual treat to the eyes and especially if you are someone who is using <a href="http://en.wikipedia.org/wiki/MSBuild">MsBuild</a> xml files for doing build automation you will definitely appreciate it.</p>
-
-<h3 id="adding-nugetexe-to-nuget-folder">Adding nuget.exe to .nuget folder</h3>
-
-<p>As we are going to drive the nuget packages installation from the fsharp script file, we will be needing a <a href="nuget.org/nuget.exe">command line version of nuget</a>. Download it and place it inside the <strong>.nuget</strong> folder</p>
-
-<p>Also its a good practice to add a <a href="http://docs.nuget.org/docs/reference/nuget-config-settings">Nuget.config file</a>. Add it too under <strong>.nuget</strong> folder. </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="xml"><span class="line"><span class="cp">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span>
-</span><span class="line"><span class="nt">&lt;configuration&gt;</span>
-</span><span class="line">  <span class="nt">&lt;packageSources&gt;</span>
-</span><span class="line">    <span class="nt">&lt;add</span> <span class="na">key=</span><span class="s">&quot;nuget.org&quot;</span> <span class="na">value=</span><span class="s">&quot;https://www.nuget.org/api/v2/&quot;</span> <span class="nt">/&gt;</span>
-</span><span class="line">  <span class="nt">&lt;/packageSources&gt;</span>
-</span><span class="line"><span class="nt">&lt;/configuration&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="adding-buildbat-file">Adding build.bat file</h3>
-
-<p>Create a batch file <strong>build.bat</strong> in the root directory of the solution. It is going act as bootstrap file which initiates the entire build process.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="p">@</span><span class="k">echo</span> <span class="k">off</span>
-</span><span class="line"><span class="k">cls</span>
-</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;FAKE&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
-</span><span class="line"><span class="s2">&quot;tools\FAKE\tools\Fake.exe&quot;</span> build.fsx
-</span><span class="line"><span class="k">pause</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>It just download the Fake nuget package using the nuget.exe that we added earlier and call the fake.exe with the fsharp build script <strong>build.fsx</strong>.</p>
-
-<h3 id="adding-buildfsx-file">Adding build.fsx file</h3>
-
-<p>Create a <a href="http://blogs.msdn.com/b/chrsmith/archive/2008/09/12/scripting-in-f.aspx">fsharp script file</a> with the name <strong>build.fsx</strong> in the root directory. This script is going to implement all our build automation tasks by using fake library.</p>
-
-<h3 id="cleaning-the-build-directory">Cleaning the build directory</h3>
-
-<p>Just a like any other build process, the first step is to clear the build directory. Fake follows the same convention of MsBuild’s <a href="http://msdn.microsoft.com/en-us/library/ms171462.aspx">Targets</a>. Defining targets in Fake is less verbose compare to its MsBuild’s counterpart. As a matter of fact, it is a fsharp function that take two parameters, the name of the target and a function which defines the target. </p>
-
-<p>Since it is a script file we need to add reference to the <strong>FakeLib.dll</strong> before writing the actual code.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">r</span> <span class="s">&quot;tools/FAKE/tools/FakeLib.dll&quot;</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Fake</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">buildDir</span> <span class="o">=</span> <span class="s">&quot;./build&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">Target</span> <span class="s">&quot;Clean&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">CleanDir</span> <span class="n">buildDir</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Less verbose, Isn’t it ?</p>
-
-<p>The <code>CleanDir</code> is a predefined function in Fake library which clean up this build directory. If the directory doesn’t exist it creates the directory. </p>
-
-<h3 id="build-the-solution">Build the solution</h3>
-
-<p>After cleaning the build directory the next step is to carrying out the actual build process. Before building the application we need to resolve the nuget packages being referred in the application. It’s so simple in Fake. All you need to do is just call predefined function <code>RestorePackages</code>.    </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Build&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">RestorePackages</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">!!</span> <span class="s">&quot;./PhoneCat.sln&quot;</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="n">MSBuildRelease</span> <span class="n">buildDir</span> <span class="s">&quot;Build&quot;</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="n">Log</span> <span class="s">&quot;Build-Output: &quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>The <code>!!</code> is a function which takes a file path and returns <a href="http://fsharp.github.io/FAKE/apidocs/fake-filesystem-fileincludes.html">FileIncludes</a> which is Fake’s internal representation of a file set.</p>
-
-<p>FileIncludes <a href="https://github.com/fsharp/FAKE/blob/master/src/app/FakeLib/Globbing/FileSystem.fs#L95-l117">implements</a> <code>IEnumerable&lt;string&gt;</code> so it can be used wherever we need an <code>IEnumerable&lt;string&gt;</code>. </p>
-
-<p>The <code>MsBuildRelease</code> is also a predefined function in Fake which builds the given solution (which is piped from the <code>!!</code>). The first two parameters are the output build directory path and the target names which should be run by MsBuild. Fake offers lot of functional wrappers on top of MsBuild and you can find more about it in this <a href="http://fsharp.github.io/FAKE/apidocs/fake-msbuildhelper.html">api documentation.</a>. </p>
-
-<p>The last line just pipes the log result from the <code>MsBuildRelease</code> function to the log output.</p>
-
-<h3 id="running-unit-tests-using-nunitrunner">Running unit tests using Nunit.Runner</h3>
-
-<p>Now we have built the solution and the next step is running the unit test cases. Since I’ve written the test cases using Nunit and we are going to see how to run nunit tests using Fake. Fake also supports <a href="http://fsharp.github.io/FAKE/apidocs/fake-xunithelper.html">XUnit</a> and <a href="http://fsharp.github.io/FAKE/apidocs/fake-mstest.html">MsTest</a>. Porting the below code to other unit testing framework is very straight forward.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Test&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
-</span><span class="line">  <span class="o">!!</span> <span class="o">(</span><span class="n">buildDir</span> <span class="o">+</span> <span class="s">&quot;/*.Tests.dll&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="n">NUnit</span> <span class="o">(</span><span class="k">fun</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">p</span> <span class="k">with</span> <span class="n">ToolPath</span> <span class="o">=</span> <span class="s">&quot;./tools/NUnit.Runners/tools&quot;</span> <span class="o">})</span>
-</span><span class="line"><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>As we did it in the build target, the <code>!!</code> function picks all the unit test files (I’ve used a convention of naming the unit tests projects with the <strong>.Tests</strong> suffix) in the build directory and transform them to FileIncludes. </p>
-
-<p>The <code>NUnit</code> is yet another <a href="http://fsharp.github.io/FAKE/apidocs/fake-nunitsequential.html">inbuilt function of Fake</a> which runs nunit on the given group of assemblies.</p>
-
-<p>It takes two parameter, a function that returns the modified default <code>NUnitParams</code> value and a sequence of assembly paths. We have modified the default <code>ToolPath</code> property which specifies the file path of <strong>NUnit Runner</strong> </p>
-
-<p>As we did for Fake we have to modify the batch file as below to install the Nunit Runner nuget package before running the actual script.  </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="p">@</span><span class="k">echo</span> <span class="k">off</span>
-</span><span class="line"><span class="k">cls</span>
-</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;FAKE&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
-</span><span class="line"><span class="s2">&quot;.nuget\NuGet.exe&quot;</span> <span class="s2">&quot;Install&quot;</span> <span class="s2">&quot;NUnit.Runners&quot;</span> <span class="s2">&quot;-OutputDirectory&quot;</span> <span class="s2">&quot;tools&quot;</span> <span class="s2">&quot;-ExcludeVersion&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="s2">&quot;tools\FAKE\tools\Fake.exe&quot;</span> build.fsx
-</span><span class="line"><span class="k">pause</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="deploy-the-application-in-iis">Deploy the application in IIS</h3>
-
-<p>Well, now we are at the final step of the build process which deploy the application in the local IIS server. </p>
-
-<p>Deploying an application in IIS is super easy using Fake. All you need to do is just input necessary things like site name, virtual directory name, etc., and call the <code>IIS</code> function in <strong>Fake.IIS</strong> library which is installed as part of Fake.</p>
-
-<p>To begin with we need to add reference in the beginning <strong>build.fsx</strong> to include the <strong>Fake.IIS</strong> library. </p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">#</span><span class="n">r</span> <span class="s">&quot;tools/FAKE/tools/Fake.IIS.dll&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>This <strong>Fake.IIS</strong> makes heavy use of <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.servermanager(v=vs.90).aspx">ServerManager</a> which helps to dynamically configure IIS 7.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">Target</span> <span class="s">&quot;Deploy&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">siteName</span> <span class="o">=</span> <span class="s">&quot;fsharp&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">appPool</span> <span class="o">=</span> <span class="s">&quot;fsharp.appPool&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">port</span> <span class="o">=</span> <span class="s">&quot;:9999:&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">vdir</span> <span class="o">=</span> <span class="s">&quot;/phonecat&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">webBuildPath</span> <span class="o">=</span> <span class="n">buildDir</span> <span class="o">+</span> <span class="s">&quot;/_PublishedWebsites/Web&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">sitePhysicalPath</span> <span class="o">=</span> <span class="s">@&quot;c:\inetpub\wwwroot\phonecat&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">XCopy</span> <span class="n">webBuildPath</span> <span class="n">sitePhysicalPath</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">(</span><span class="n">IIS</span>
-</span><span class="line">    <span class="o">(</span><span class="n">Site</span> <span class="n">siteName</span> <span class="s">&quot;http&quot;</span> <span class="n">port</span> <span class="s">@&quot;C:\inetpub\wwwroot&quot;</span> <span class="n">appPool</span><span class="o">)</span>
-</span><span class="line">    <span class="o">(</span><span class="n">ApplicationPool</span> <span class="n">appPool</span> <span class="k">true</span> <span class="s">&quot;v4.0&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="o">(</span><span class="n">Some</span><span class="o">(</span><span class="n">Application</span> <span class="n">vdir</span> <span class="n">sitePhysicalPath</span><span class="o">)))</span>
-</span><span class="line"><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>When we build a web project using MsBuild in release mode, it creates a deployable directory which can be accessed using the path <em>/_PublishedWebsites/Web</em> in the build directory. So, after building the application we just need to copy this deployable directory to the <strong>intepub\wwwroot</strong> directory using the XCopy function in Fake.</p>
-
-<p>The <code>IIS</code> function takes three parameters</p>
-
-<ul>
-  <li>site - A function with the signature <code>ServerManager -&gt; Site</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.site(v=vs.90).aspx">Site</a> with the given site settings. </li>
-  <li>appPool - A function with the signature <code>ServerManager -&gt; ApplicationPool</code> which takes an instance of ServerManager and returns a <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.applicationpool(v=vs.90).aspx">AppPool</a> with the given appPool settings.  </li>
-  <li>app - An option type with the signature <code>(Site -&gt; ServerManager -&gt; Application) option</code> provides the <a href="http://msdn.microsoft.com/en-us/library/microsoft.web.administration.application(v=vs.90).aspx">Application</a>  </li>
-</ul>
-
-<p>Fake’s IIS helper library has in-built function for Site, ApplicationPool and Application which takes the necessary inputs need for its creation and returns the associated instances. All of these function creates Site, ApplicationPool and Application respectively if they are not available in the IIS. </p>
-
-<h3 id="running-the-targets">Running the Targets</h3>
-
-<p>In the above steps we just defined various Fake targets. These targets doesn’t execute on its own and we need to explicitly define the order of its execution and initiate.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="s">&quot;Clean&quot;</span>
-</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Build&quot;</span>
-</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Test&quot;</span>
-</span><span class="line">  <span class="o">==&gt;</span> <span class="s">&quot;Deploy&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">RunTargetOrDefault</span> <span class="s">&quot;Deploy&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>==&gt;</code> is one of <a href="http://fsharp.github.io/FAKE/apidocs/fake-additionalsyntax.html">the DSL in Fake</a> which is actually a function that defines the target execution order.</p>
-
-<p>The <code>RunTargetOrDefault</code> function runs the target specified in the parameter or executes the default target.</p>
-
-<h3 id="summary">Summary</h3>
-
-<p>Fake is just awesome. We can automate so much things with very few lines of code and the beauty is it can be used in <strong>any .net projects</strong>. If you are using MsBuild Xml scripts, do try Fake! It will make you super productive. You can find the source of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/4">fsharp-phonecat repository</a>. </p>
-
 ]]></content>
   </entry>
   

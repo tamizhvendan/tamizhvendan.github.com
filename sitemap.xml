@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://blog.tamizhvendan.in/blog/2017/05/01/using-golang-in-production-my-experiences/</loc>
+    <lastmod>2017-05-01T07:50:32+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.tamizhvendan.in/blog/2016/12/26/implementing-two-factor-authentication-in-suave/</loc>
     <lastmod>2016-12-26T18:34:27+05:30</lastmod>
     <priority>0.8</priority>
@@ -323,28 +329,28 @@
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/archives/</loc>
-    <lastmod>2017-04-27T12:32:50+05:30</lastmod>
+    <lastmod>2017-05-01T23:13:07+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/</loc>
-    <lastmod>2017-04-27T12:32:50+05:30</lastmod>
+    <lastmod>2017-05-01T23:13:07+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/categories/</loc>
-    <lastmod>2017-04-27T12:32:50+05:30</lastmod>
+    <lastmod>2017-05-01T23:13:07+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/open-source-contributions/</loc>
-    <lastmod>2017-04-27T12:32:50+05:30</lastmod>
+    <lastmod>2017-05-01T23:13:07+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

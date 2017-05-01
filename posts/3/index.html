@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Nov 23rd, 2015 javascript, react Comments A Beginner&#8217;s Guide to Setup React.js Environment Using Npm, Babel 6 and Webpack Facebook has really &hellip;">
+	<meta name="description" content="Dec 29th, 2015 fsharp, rx, suave Comments Implementing API Gateway in F# Using Rx and Suave One of the impressive aspects of functional programming &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -124,6 +124,831 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-12-29T09:22:49+05:30" data-updated="true" itemprop="datePublished">Dec 29<sup>th</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/rx/'>rx</a>, <a class='category' href='/blog/categories/suave/'>suave</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/12/29/implementing-api-gateway-in-f-number-using-rx-and-suave/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/12/29/implementing-api-gateway-in-f-number-using-rx-and-suave/" itemprop="url">Implementing API Gateway in F# Using Rx and Suave</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>One of the impressive aspects of functional programming is that it will enable you to write simple and expressive code to solve  complex problems. If you are wondering, how is it possible? Well, It is because, Functional Programming provides a lot of higher level abstractions to solve the problem in hand and avoids the need of writing lot of boilerplate &amp; plumbing code. As a developer, you will be more productive and deliver the solution faster.</p>
+
+<p>In this blog post, we are going to see the application of the above statements by implementing an <a href="https://www.nginx.com/blog/building-microservices-using-an-api-gateway">API Gateway Pattern</a> in F# using <a href="http://reactivex.io/">Rx</a> and <a href="https://suave.io/">Suave</a>.  </p>
+
+<blockquote>
+  <p>This blog post is my contribution towards <a href="https://sergeytihon.wordpress.com/2015/10/25/f-advent-calendar-in-english-2015/">fsharp advent calendar 2015</a>. Do check out other great fsharp posts there</p>
+</blockquote>
+
+<h2 id="api-gateway-pattern">API Gateway Pattern</h2>
+<p>Let’s assume that you are asked to build the backend for the below GitHub user profile screen.</p>
+
+<p><img src="http://res.cloudinary.com/tamizhvendan/image/upload/v1450769741/Profile.png" alt="Github Profile" /></p>
+
+<p>This profile screen has 3 components</p>
+
+<ol>
+  <li>
+    <p>User - Username and Avatar</p>
+  </li>
+  <li>
+    <p>Popular Repos - Top 3 Repos of the Given User (determined by the number of stars)</p>
+  </li>
+  <li>
+    <p>Languages being used in the corresponding repos</p>
+  </li>
+</ol>
+
+<p>Now as a developer, you have two options</p>
+
+<ul>
+  <li>
+    <p>Build the Profile completely in client side by calling their corresponding GitHub APIs
+<img src="http://res.cloudinary.com/tamizhvendan/image/upload/v1450769816/Profile_With_API_Calls.png" alt="Profile with URLs" /></p>
+
+    <p>This approach makes the client side complex as it involves five HTTP requests to create the complete profile screen. It has a lot of drawbacks as mentioned in <a href="http://techblog.netflix.com/2013/01/optimizing-netflix-api.html">this blog post</a> by Netflix.</p>
+  </li>
+  <li>
+    <p>Create a Facade API which takes care of the heavy lifting and hides the complexity of calling multiple services by  exposing a single endpoint which returns all the data required to create the profile screen in one API call
+<img src="http://res.cloudinary.com/tamizhvendan/image/upload/v1450775641/API_Gateway.png" alt="API Gateway" /></p>
+
+    <p>This approach is called API Gateway. It is one of the commonly used <a href="http://microservices.io/patterns/apigateway.html">patterns in the microservices</a> world.</p>
+  </li>
+</ul>
+
+<h2 id="rx">Rx</h2>
+
+<p>API Gateway is normally implemented using <a href="http://reactivex.io/">Rx</a>. Rx, an implementation of <a href="https://gist.github.com/staltz/868e7e9bc2a7b8c1f754">Functional Reactive Programming</a>, makes it easy to implement this kind of problems by enable us to think each asynchronous operation as streams (aka Observables). These streams offer a declarative API to work with the asynchronous operations.</p>
+
+<p>In the implementation that we are going to see, we will be using <a href="http://fsprojects.github.io/FSharp.Control.Reactive/">FSharp.Control.Reactive</a>, an extension and wrapper for using the Reactive Extensions (Rx) with F#</p>
+
+<h2 id="project-structure">Project Structure</h2>
+
+<p>Create a new F# Console Application Project with the name <code>RxFsharp</code> and then create the files mentioned below in the given order</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">RxFsharp
+</span><span class="line">|--Http.fs --&gt; Abstraction to make http requests
+</span><span class="line">|--GitHub.fs --&gt; Define data types, transforming &amp; parsing of responses from GitHub
+</span><span class="line">|--ObservableExtensions.fs --&gt; Some Util methods over Rx Observable
+</span><span class="line">|--Profile.fs --&gt; Implemention of API Gateway using Rx
+</span><span class="line">|--ApiGateway.fs --&gt; Suave API
+</span><span class="line">|--Program.fs --&gt; Entry Point
+</span><span class="line">|--user.json --&gt; Sample response of GitHub user API
+</span><span class="line">|--repos.json --&gt; Sample response of GitHub repos API
+</span><span class="line">|--App.config
+</span><span class="line">|--packages.config</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then install the following NuGet packages</p>
+
+<ul>
+  <li><a href="https://www.nuget.org/packages/FSharp.Control.Reactive">FSharp.Control.Reactive</a></li>
+  <li><a href="https://www.nuget.org/packages/Http.fs">Http.fs</a></li>
+  <li><a href="https://www.nuget.org/packages/Suave">Suave</a></li>
+  <li><a href="https://www.nuget.org/packages/Newtonsoft.Json">Newtonsoft.Json</a></li>
+  <li><a href="https://www.nuget.org/packages/FSharp.Data">FSharp.Data</a></li>
+</ul>
+
+<h2 id="modeling-http-request--response-as-stream">Modeling Http Request &amp; Response as Stream</h2>
+
+<p>In Functional Reactive Programming(FRP) every action is treated as stream. So, first step in implementing an API Gateway is modeling each HTTP request&amp;response as stream.</p>
+
+<p>Open <code>Http.fs</code> file and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">Http</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">HttpClient</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">FSharp.Control.Reactive</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">HttpResponse</span> <span class="o">=</span>
+</span><span class="line"><span class="o">|</span> <span class="n">Ok</span> <span class="k">of</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">|</span> <span class="n">Error</span> <span class="k">of</span> <span class="n">int</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getResponseAsync</span> <span class="n">url</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">let!</span> <span class="nv">response</span> <span class="o">=</span>
+</span><span class="line">      <span class="n">createRequest</span> <span class="n">Get</span> <span class="n">url</span>
+</span><span class="line">      <span class="o">|&gt;</span> <span class="n">withHeader</span> <span class="o">(</span><span class="n">UserAgent</span> <span class="s">&quot;FsharpRx&quot;</span><span class="o">)</span>
+</span><span class="line">      <span class="o">|&gt;</span> <span class="nn">HttpClient</span><span class="p">.</span><span class="n">getResponseAsync</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">httpResponse</span> <span class="o">=</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">response</span><span class="o">.</span><span class="n">StatusCode</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="mi">200</span> <span class="o">-&gt;</span> <span class="n">response</span><span class="o">.</span><span class="n">EntityBody</span><span class="o">.</span><span class="n">Value</span> <span class="o">|&gt;</span> <span class="n">Ok</span>
+</span><span class="line">      <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">response</span><span class="o">.</span><span class="n">StatusCode</span> <span class="o">|&gt;</span> <span class="n">Error</span>
+</span><span class="line">    <span class="k">return</span> <span class="n">httpResponse</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">asyncResponseToObservable</span> <span class="o">=</span> <span class="n">getResponseAsync</span> <span class="o">&gt;&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">ofAsync</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>getResponseAsync</code> function makes use of <a href="https://github.com/relentless/Http.fs">Http.fs</a>, an HTTP Client library for F#, to fire the HTTP GET request and returns the HTTP response asynchronously.</p>
+
+<p>The HTTP response has been modeled as either <code>Ok</code> with the response content for all the responses with the status code <code>200</code> and everything else is treated as <code>Error</code> for simplicity.</p>
+
+<p>In the final line, we create a stream (aka Observable) from asynchronous response using the function <code>Observable.ofAsync</code> from <a href="https://github.com/fsprojects/FSharp.Control.Reactive">FSharp.Control.Reactive</a></p>
+
+<p>As all the GitHub API <a href="https://developer.github.com/v3/#user-agent-required">requests require user agent</a>, we are adding one before firing the request.</p>
+
+<h2 id="parsing-and-transforming-github-api-responses">Parsing and Transforming GitHub API Responses</h2>
+
+<p>Upon successful response from GitHub, the next step is parsing the JSON response and transforming the parsed response as per the Profile screen requirements.</p>
+
+<p>To parse the response, we are going to leverage the powerful tool of FSharp called <a href="http://fsharp.github.io/FSharp.Data/library/JsonProvider.html">JsonTypeProvider</a></p>
+
+<p>The JSON Type Provider provides statically typed access to JSON documents. It takes a sample document as an input. Here in our case, it is user.json and repos.json</p>
+
+<p>Get the sample response from GitHub using its <a href="https://api.github.com/users/tamizhvendan">User API</a> and <a href="https://api.github.com/users/tamizhvendan/repos">Repos API</a> and save the response in user.json and repos.json respectively.</p>
+
+<p>With the help of JsonTypeProvider, we can now easily parse the raw JSON response to its equivalent types in just a few lines of code in <code>GitHub.fs</code>!</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">GitHub</span>
+</span><span class="line">
+</span><span class="line"><span class="k">open</span> <span class="nn">Http</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">FSharp.Data</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">GitHubUser</span> <span class="o">=</span> <span class="n">JsonProvider</span><span class="o">&lt;</span><span class="s">&quot;user.json&quot;</span><span class="o">&gt;</span>
+</span><span class="line"><span class="k">type</span> <span class="nc">GitHubUserRepos</span> <span class="o">=</span> <span class="n">JsonProvider</span><span class="o">&lt;</span><span class="s">&quot;repos.json&quot;</span><span class="o">&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">parseUser</span> <span class="o">=</span> <span class="nn">GitHubUser</span><span class="p">.</span><span class="n">Parse</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">parseUserRepos</span> <span class="o">=</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Parse</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>As <code>GitHub.fs</code> is an abstraction of GitHub let’s put their URLs also here in the same file</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">host</span> <span class="o">=</span> <span class="s">&quot;https://api.github.com&quot;</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">userUrl</span> <span class="o">=</span> <span class="n">sprintf</span> <span class="s">&quot;%s/users/%s&quot;</span> <span class="n">host</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">reposUrl</span> <span class="o">=</span> <span class="n">sprintf</span> <span class="s">&quot;%s/users/%s/repos&quot;</span> <span class="n">host</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">languagesUrl</span> <span class="n">repoName</span> <span class="n">userName</span> <span class="o">=</span> <span class="n">sprintf</span> <span class="s">&quot;%s/repos/%s/%s/languages&quot;</span> <span class="n">host</span> <span class="n">userName</span> <span class="n">repoName</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>We have used <a href="http://fsharpforfunandprofit.com/posts/partial-application">partial application</a> of function <code>sprintf</code> in the <code>userUrl</code> and <code>reposUrl</code> function here, so both of these functions take username as its parameter implicitly</p>
+
+<p>The JSON response of <a href="https://api.github.com/repos/tamizhvendan/fsharp-phonecat/languages">languages</a> API is little tricky to parse as its keys are dynamic. The type provider will work only if the underlying response has a fixed schema. So, we can’t use the type provider directly to parse the response of languages API.</p>
+
+<p>We are going to use the inbuilt <a href="http://fsharp.github.io/FSharp.Data/library/JsonValue.html">JSON Parser</a> available with JsonTypeProvider to parse the languages response</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">parseLanguages</span> <span class="n">languagesJson</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">languagesJson</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">JsonValue</span><span class="p">.</span><span class="n">Parse</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">JsonExtensions</span><span class="p">.</span><span class="n">Properties</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Array</span><span class="p">.</span><span class="n">map</span> <span class="n">fst</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>JsonValue.Parse</code> parses the raw string JSON to a type called <code>JsonValue</code> and the <code>JsonExtensions.Properties</code> function takes a <code>JsonValue</code> and returns the key and value pairs of all the properties in the JSON as tuples. As we are interested only in the Keys here, we just pluck that value alone using the function <code>fst</code></p>
+
+<p>Great! Now we are done with parsing the JSON response of all the three APIs and creating it’s equivalent types. The next step is doing some business transformation</p>
+
+<p>One of the requirements of the Profile Screen is that we need to show only the top 3 popular repositories based on the stars received by the repository. Let’s implement it</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">popularRepos</span> <span class="o">(</span><span class="n">repos</span> <span class="o">:</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="bp">[]</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">ownRepos</span> <span class="o">=</span> <span class="n">repos</span> <span class="o">|&gt;</span> <span class="nn">Array</span><span class="p">.</span><span class="n">filter</span> <span class="o">(</span><span class="k">fun</span> <span class="n">repo</span> <span class="o">-&gt;</span> <span class="ow">not</span> <span class="n">repo</span><span class="o">.</span><span class="n">Fork</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">takeCount</span> <span class="o">=</span> <span class="k">if</span> <span class="n">ownRepos</span><span class="o">.</span><span class="n">Length</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="k">then</span> <span class="mi">3</span> <span class="k">else</span> <span class="n">repos</span><span class="o">.</span><span class="n">Length</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">ownRepos</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Array</span><span class="p">.</span><span class="n">sortBy</span> <span class="o">(</span><span class="k">fun</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="o">-</span><span class="n">r</span><span class="o">.</span><span class="n">StargazersCount</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Array</span><span class="p">.</span><span class="n">toSeq</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">take</span> <span class="n">takeCount</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">toArray</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>In the <code>Http.fs</code> file, we defined how to get the raw JSON response using Stream as <code>HttpResponse</code> (<code>Ok</code> &amp; <code>Error</code>) and in this <code>GitHub.fs</code>, we have defined how to parse this raw JSON response and transform them its equivalent strongly types.</p>
+
+<p>The final step is integrating both these logic and return the Output record type needed by the Profile Screen</p>
+
+<p>let’s start by defining the Profile type</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Profile</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">AvatarUrl</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">PopularRepositories</span> <span class="o">:</span> <span class="n">Repository</span> <span class="n">seq</span>
+</span><span class="line"><span class="o">}</span> <span class="ow">and</span> <span class="n">Repository</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Stars</span> <span class="o">:</span> <span class="n">int</span>
+</span><span class="line">  <span class="n">Languages</span> <span class="o">:</span> <span class="kt">string</span><span class="bp">[]</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>Then write functions to get the value from <code>HttpResponse</code> and create this profile output.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">reposResponseToPopularRepos</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">  <span class="o">|</span><span class="n">Ok</span><span class="o">(</span><span class="n">r</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">r</span> <span class="o">|&gt;</span> <span class="n">parseUserRepos</span> <span class="o">|&gt;</span> <span class="n">popularRepos</span>
+</span><span class="line">  <span class="o">|_</span> <span class="o">-&gt;</span> <span class="o">[||]</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// Languages always associated with a repository</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">languageResponseToRepoWithLanguages</span> <span class="o">(</span><span class="n">repo</span> <span class="o">:</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span><span class="o">)</span> <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">  <span class="o">|</span><span class="n">Ok</span><span class="o">(</span><span class="n">l</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">Name</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span> <span class="n">Languages</span> <span class="o">=</span> <span class="o">(</span><span class="n">parseLanguages</span> <span class="n">l</span><span class="o">);</span> <span class="n">Stars</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">StargazersCount</span><span class="o">}</span>
+</span><span class="line">  <span class="o">|_</span> <span class="o">-&gt;</span> <span class="o">{</span><span class="n">Name</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span> <span class="n">Languages</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">empty</span><span class="o">;</span> <span class="n">Stars</span> <span class="o">=</span> <span class="n">repo</span><span class="o">.</span><span class="n">StargazersCount</span><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">toProfile</span>  <span class="o">=</span> <span class="k">function</span>
+</span><span class="line">  <span class="o">|</span><span class="n">Ok</span><span class="o">(</span><span class="n">u</span><span class="o">),</span> <span class="n">repos</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="n">parseUser</span> <span class="n">u</span>
+</span><span class="line">      <span class="o">{</span><span class="n">Name</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">Name</span><span class="o">;</span> <span class="n">PopularRepositories</span> <span class="o">=</span> <span class="n">repos</span><span class="o">;</span> <span class="n">AvatarUrl</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">AvatarUrl</span><span class="o">}</span> <span class="o">|&gt;</span> <span class="n">Some</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>All the above functions except <code>toProfile</code> take <code>HttpResponse</code> as its last parameter implicitly.</p>
+
+<p>In <code>reposResponseToPopularRepos</code> function, if the repos API request is successful, we parse the response to its equivalent type and then pick only three of them based on star count and in the case of an error we just return an empty array.</p>
+
+<p>The <code>languageResponseToRepoWithLanguages</code> function handles the response from the Languages API request which takes its associated repository as its first parameter. If the response is successful, then it creates the <code>Repository</code> record with the returned languages else it just the <code>Repository</code> record with an empty array for languages.</p>
+
+<p>The last function <code>toProfile</code> is a merge function which takes a tuple of <code>HttpResponse</code> (of User API request) and <code>Repository []</code> and creates a <code>Profile</code> record if the response is successful. In case of an error, it just returns <code>None</code></p>
+
+<p><em>Note: To keep this blog post simple, I am handling the errors using empty arrays and None. It can be extended using <a href="http://fsharpforfunandprofit.com/rop/">ROP</a></em></p>
+
+<h2 id="implementing-api-gateway">Implementing API Gateway</h2>
+
+<p>Let me quickly summarize what we have done so far. We have created two abstractions.</p>
+
+<ul>
+  <li><code>Http</code> - Responsible for firing the HTTP GET request with the given URL and give the response as a Rx Stream</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">URL</span>
+</span><span class="line">  <span class="err">\</span>
+</span><span class="line"><span class="o">----------</span><span class="n">Response</span><span class="o">--|</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li><code>GitHub</code> - Takes care of parsing the JSON response from GitHub API and does some business logic (finding top 3 popular repositories). Then returns the output in the format that the Client needs.</li>
+</ul>
+
+<p>With the help of these abstractions now we are going to build the API Gateway to get the profile object.</p>
+
+<p>Open <code>Gateway.fs</code> and add the <code>getProfile</code> function</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">//string -&gt; Async&lt;Profile&gt;</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">    <span class="c1">// TODO</span>
+</span><span class="line">    <span class="k">return</span><span class="o">!</span> <span class="n">profile</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>It is just a skeleton which just describes the what function does. Let’s start its implementation.</p>
+
+<p>In Rx world, everything is a stream. So, the first step is converting GitHub User API request to stream</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">userStream</span> <span class="o">=</span> <span class="n">username</span> <span class="o">|&gt;</span> <span class="n">userUrl</span> <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We have created the <code>userStream</code> using the <code>userUrl</code> and <code>asyncResponseToObservable</code> function defined earlier.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">userURL</span>
+</span><span class="line">  <span class="err">\</span>
+</span><span class="line"><span class="o">-----------</span><span class="n">UJ</span><span class="o">--|</span>              <span class="c1">// UJ - GitHub User Response in JSON format</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then we need top three popular repositories as a stream</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">popularReposStream</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">reposUrl</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">reposResponseToPopularRepos</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Except the last line, everything is same as that of creating <code>userStream</code>. If you check <a href="https://api.github.com/users/tamizhvendan/repos">GitHub repos API</a> it just returns all the repos associated with the given username. But what we need is only top three of them based on the number of stars it has received.</p>
+
+<p>We already have a function <code>reposResponseToPopularRepos</code> in <code>GitHub.fs</code> which does the job of picking the top three repos from the raw JSON. As the response is in the form Rx stream, we need to get the value from the stream and then we need to apply this function and that’s what the <code>Observable.map</code> does. It is very similar to <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/map">Array.map</a> and <a href="https://msdn.microsoft.com/en-us/library/system.linq.enumerable.select(v=vs.100).aspx">LINQ Select</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="n">reposURL</span>
+</span><span class="line">  <span class="err">\</span>
+</span><span class="line"><span class="o">----------</span><span class="n">RJ</span><span class="o">---|</span>                          <span class="c1">// RJ - GitHub user repos in JSON format</span>
+</span><span class="line">          <span class="o">|</span> <span class="n">MAP</span> <span class="k">function</span> <span class="o">(</span><span class="n">RJ</span> <span class="o">-&gt;</span> <span class="n">PR</span><span class="o">)</span>       <span class="c1">// PR - Popular Repos</span>
+</span><span class="line">          <span class="n">V</span>
+</span><span class="line"><span class="o">--------------</span><span class="n">PR</span><span class="o">---|</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The next operation is a little complex. i.e. finding out the programming languages being used in these popular repositories. To get this GitHub API, we need to fire three separate requests to the <a href="https://developer.github.com/v3/repos/#list-languages">Languages API</a> for each repository and then merge the results back with the corresponding repository.</p>
+
+<p>To implement this with the help of Rx streams, we need to understand the <code>flatMap</code> <a href="http://reactivex.io/documentation/operators/flatmap.html">function of Rx</a>.</p>
+
+<p>It is similar to the <code>map</code> function that we have seen before with a difference that it takes a function that returns a new item stream instead of a new item.</p>
+
+<h3 id="map">Map</h3>
+
+<p><img src="http://reactivex.io/documentation/operators/images/map.c.png" alt="Map" /></p>
+
+<p>The <code>map</code> function has the following signature</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="k">&#39;</span><span class="n">b</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="flatmap">FlatMap</h3>
+
+<p><img src="http://reactivex.io/documentation/operators/images/flatMap.c.png" alt="FlatMap" /></p>
+
+<p>The <code>flatMap</code> function has the following signature</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span><span class="o">&gt;)</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This function is also called as <code>bind</code> function in the functional programming world. If you would like to know further on this topic, I strongly recommend <a href="http://fsharpforfunandprofit.com/posts/elevated-world">this blog series</a> by the fsharp great, <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a></p>
+
+<p>Back to the problem in hand, we need to fire three HTTP GET Requests to get back the languages associated with the each of the top three popular repos. In terms of the <code>flatMap</code> function, it boils down to three functions of the following syntax</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="n">Repostiory</span><span class="o">&gt;)</span>
+</span><span class="line">  <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="n">Repostiory</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We can implement the solution using three <code>flatMap</code> functions using the above syntax. But, we can make it more granular by creating a new variant of <code>flatMap</code> function to achieve this in a more straightforward way.</p>
+
+<p>The ideal function that we are looking for in this <code>flatMap</code> variant holds the following signature</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="k">&#39;</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span><span class="o">&gt;)</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span> <span class="bp">[]</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">b</span> <span class="bp">[]</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>i.e three <code>flatMap</code> can be rewritten as</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">(</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="n">Repostiory</span><span class="o">&gt;)</span>
+</span><span class="line">  <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="bp">[]</span><span class="o">&gt;</span> <span class="o">-&gt;</span> <span class="n">IObservable</span><span class="o">&lt;</span><span class="n">Repostiory</span> <span class="bp">[]</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Let’s name it as <code>flatMap2</code> and add the implementation of it in the file <code>ObservableExtensions.fs</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">ObservableExtensions</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">FSharp.Control.Reactive</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">flatmap2</span> <span class="n">f</span> <span class="n">observable</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">observable</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">flatmap</span> <span class="o">(</span><span class="nn">Array</span><span class="p">.</span><span class="n">map</span> <span class="n">f</span> <span class="o">&gt;&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">mergeArray</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">toArray</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Here is the representation of what this function does</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-----</span><span class="n">X</span><span class="o">[</span><span class="n">n</span><span class="o">]--------------------------|-&gt;</span>
+</span><span class="line">      <span class="err">\</span>   <span class="n">flatMap</span> <span class="n">on</span> <span class="n">each</span> <span class="n">item</span> <span class="k">in</span> <span class="n">X</span> <span class="n">which</span> <span class="k">yield</span> <span class="n">the</span> <span class="n">stream</span> <span class="k">of</span> <span class="n">R</span>
+</span><span class="line"><span class="o">-------</span><span class="n">R1</span><span class="o">-------------------------|-&gt;</span>
+</span><span class="line"><span class="o">----------</span><span class="n">R2</span><span class="o">----------------------|-&gt;</span>
+</span><span class="line">          <span class="o">......</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span><span class="line">          <span class="o">||</span>  <span class="n">mergeArray</span> <span class="o">-&gt;</span> <span class="n">merge</span> <span class="n">array</span> <span class="k">of</span> <span class="n">R</span> <span class="n">streams</span> <span class="n">into</span> <span class="n">one</span> <span class="n">stream</span>
+</span><span class="line">          <span class="n">VV</span>
+</span><span class="line"><span class="o">------</span><span class="n">R1</span><span class="o">-</span><span class="n">R2</span><span class="o">--</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span><span class="line">              <span class="err">\</span> <span class="n">toArray</span> <span class="o">-&gt;</span> <span class="n">Creates</span> <span class="n">an</span> <span class="n">array</span> <span class="n">from</span> <span class="n">an</span> <span class="n">observable</span> <span class="n">sequence</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">R</span><span class="o">[</span><span class="n">n</span><span class="o">]-----------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>It’s hard to get it right in a single shot. So, let’s see it in detail step by step by applying it to our use case here</p>
+
+<ul>
+  <li>We have the stream of three popular repos (i.e array of repos)</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-----</span><span class="n">X</span><span class="o">[</span><span class="n">n</span><span class="o">]--------------------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<ul>
+  <li>To get the languages associated with the each repo we need to call the languages API for every repo item in the above step</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-----</span><span class="n">X</span><span class="o">[</span><span class="n">n</span><span class="o">]--------------------------|-&gt;</span>
+</span><span class="line">      <span class="err">\</span>   <span class="n">flatMap</span> <span class="n">on</span> <span class="n">each</span> <span class="n">item</span> <span class="k">in</span> <span class="n">X</span> <span class="n">which</span> <span class="k">yield</span> <span class="n">the</span> <span class="n">n</span> <span class="n">streams</span> <span class="k">of</span> <span class="n">R</span>
+</span><span class="line"><span class="o">-------</span><span class="n">R1</span><span class="o">-------------------------|-&gt;</span>
+</span><span class="line"><span class="o">----------</span><span class="n">R2</span><span class="o">----------------------|-&gt;</span>
+</span><span class="line">          <span class="o">......</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<ul>
+  <li>After we received the response from each languages API call, we need to merge them into one stream</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-------</span><span class="n">R1</span><span class="o">-------------------------|-&gt;</span>
+</span><span class="line"><span class="o">----------</span><span class="n">R2</span><span class="o">----------------------|-&gt;</span>
+</span><span class="line">          <span class="o">......</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span><span class="line">          <span class="o">|</span>  <span class="n">mergeArray</span> <span class="o">-&gt;</span> <span class="n">merge</span> <span class="n">array</span> <span class="k">of</span> <span class="n">R</span> <span class="n">streams</span> <span class="n">into</span> <span class="n">one</span> <span class="n">stream</span>
+</span><span class="line">          <span class="n">V</span>
+</span><span class="line"><span class="o">------</span><span class="n">R1</span><span class="o">-</span><span class="n">R2</span><span class="o">--</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>To integrate this with the expected application response, we need all the responses in a single go</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">------</span><span class="n">R1</span><span class="o">-</span><span class="n">R2</span><span class="o">--</span><span class="n">Rn</span><span class="o">-------------------|-&gt;</span>
+</span><span class="line">              <span class="err">\</span> <span class="n">toArray</span> <span class="o">-&gt;</span> <span class="n">Creates</span> <span class="n">an</span> <span class="n">array</span> <span class="n">from</span> <span class="n">an</span> <span class="n">observable</span> <span class="n">sequence</span>
+</span><span class="line"><span class="o">-------------</span><span class="n">R</span><span class="o">[</span><span class="n">n</span><span class="o">]-----------------|-&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Great! You got it right!!</p>
+
+<p>Let’s use this <code>flatMap2</code> function and complete the implementation of profile API gateway.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">toRepoWithLanguagesStream</span> <span class="o">(</span><span class="n">repo</span> <span class="o">:</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">languagesUrl</span> <span class="n">repo</span><span class="o">.</span><span class="n">Name</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="n">languageResponseToRepoWithLanguages</span> <span class="n">repo</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">popularReposStream</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">reposUrl</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">reposResponseToPopularRepos</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">flatmap2</span> <span class="n">toRepoWithLanguagesStream</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>flatmap2</code> function takes the function <code>toRepoWithLanguagesStream</code> which converts the <code>GitHubUserRepos.Root</code> type to <code>IObservable&lt;Repository&gt;</code> to find out the languages associated with the given popular repositories.</p>
+
+<p>The <code>toRepoWithLanguagesStream</code> function does the following</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span>
+</span><span class="line">  <span class="err">\</span> <span class="n">create</span> <span class="n">a</span> <span class="n">languages</span> <span class="n">GitHub</span> <span class="n">API</span> <span class="n">stream</span> <span class="n">using</span> <span class="n">the</span> <span class="n">repo</span> <span class="n">name</span> <span class="n">from</span> <span class="n">the</span> <span class="n">input</span>
+</span><span class="line"><span class="o">-------</span><span class="n">LR</span><span class="o">----------|</span>              <span class="c1">// LR - languages GitHub API response</span>
+</span><span class="line">        <span class="err">\</span> <span class="n">MAP</span> <span class="k">function</span> <span class="o">(</span><span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span> <span class="o">-&gt;</span> <span class="n">LR</span> <span class="o">-&gt;</span> <span class="n">R</span><span class="o">)</span>
+</span><span class="line"><span class="o">------------</span><span class="n">R</span><span class="o">------|</span>              <span class="c1">// R - Repository type that defined earlier</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>The <code>Observable.map</code> function takes only one input, but here we need to two inputs. So, With the help of <a href="http://fsharpforfunandprofit.com/posts/partial-application/">partial application</a>, we created an intermediate function by partially applying the first parameter alone</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="n">languageResponseToRepoWithLanguages</span> <span class="n">repo</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>languageResponseToRepoWithLanguages</code> function has been already defined in the <code>GitHub.fs</code> file.</p>
+
+<p>The last step of the <code>getProfile</code> function is combining this <code>popularReposStream</code> with the <code>userStream</code> created earlier and return the <code>Profile</code> type asynchronously.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">return</span><span class="o">!</span> <span class="n">popularReposStream</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">zip</span> <span class="n">userStream</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">toProfile</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">TaskObservableExtensions</span><span class="p">.</span><span class="n">ToTask</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="n">AwaitTask</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>Observable.zip</code> function takes two streams as its input, then merges the output of each stream and return the output as a tuple. From this tuple, we have used <code>Observable.map</code> function to map it a <code>Profile</code> type using the <code>toProfile</code> function created earlier in <code>GitHub.fs</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">-----</span><span class="n">UR</span><span class="o">-------------|</span>     <span class="c1">// UR - GitHub User API Response</span>
+</span><span class="line"><span class="o">--------</span><span class="n">PR</span><span class="o">----------|</span>     <span class="c1">// PR - Popular Repos</span>
+</span><span class="line">        <span class="err">\</span> <span class="n">ZIP</span> <span class="k">function</span> <span class="o">(</span><span class="n">UR</span> <span class="o">-&gt;</span> <span class="n">PR</span> <span class="o">-&gt;</span> <span class="o">(</span><span class="n">UR</span><span class="o">,</span><span class="n">PR</span><span class="o">))</span>
+</span><span class="line"><span class="o">---------(</span><span class="n">UR</span><span class="o">,</span><span class="n">PR</span><span class="o">)----|</span>
+</span><span class="line">          <span class="err">\</span> <span class="n">MAP</span> <span class="o">(</span> <span class="o">(</span><span class="n">UR</span><span class="o">,</span><span class="n">PR</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="n">P</span> <span class="o">)</span>  <span class="c1">// P - Profile</span>
+</span><span class="line"><span class="o">----------</span><span class="n">P</span><span class="o">---------|</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The last functions <code>TaskObservableExtensions.ToTask</code> and <code>Async.AwaitTask</code> does the conversion of <code>IObservable</code> to <code>async</code> by converting it to a <code>Task</code> first and then the <code>Task</code> to <code>async</code></p>
+
+<p>The final <code>getProfile</code> function will be like</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">username</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">userStream</span> <span class="o">=</span> <span class="n">username</span> <span class="o">|&gt;</span> <span class="n">userUrl</span> <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">toRepoWithLanguagesStream</span> <span class="o">(</span><span class="n">repo</span> <span class="o">:</span> <span class="nn">GitHubUserRepos</span><span class="p">.</span><span class="n">Root</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">languagesUrl</span> <span class="n">repo</span><span class="o">.</span><span class="n">Name</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="n">languageResponseToRepoWithLanguages</span> <span class="n">repo</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">popularReposStream</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">username</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">reposUrl</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">asyncResponseToObservable</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">reposResponseToPopularRepos</span>
+</span><span class="line">    <span class="o">|&gt;</span> <span class="n">flatmap2</span> <span class="n">toRepoWithLanguagesStream</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">return</span><span class="o">!</span> <span class="n">popularReposStream</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">zip</span> <span class="n">userStream</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Observable</span><span class="p">.</span><span class="n">map</span> <span class="n">toProfile</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">TaskObservableExtensions</span><span class="p">.</span><span class="n">ToTask</span>
+</span><span class="line">            <span class="o">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="n">AwaitTask</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This function is a testimonial on <em>How functional programming helps to write less, robust, and readable code to solve a complex problem</em></p>
+
+<p>We have handled all the five HTTP requests asynchronously, did some error handling (by returning empty types), and finally efficiently combined outputs of these five HTTP requests and created a type to send back to the client. Everything is asynchronous!</p>
+
+<p>Pretty awesome isn’t it?</p>
+
+<h2 id="exposing-the-api">Exposing the API</h2>
+
+<p>The final step is exposing what we have done so far as an API to the outside world. We are going to implement this using <a href="https://suave.io/">Suave</a></p>
+
+<p>Open <code>ApiGateway.fs</code> file and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">JSON</span> <span class="n">v</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">jsonSerializerSettings</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JsonSerializerSettings</span><span class="bp">()</span>
+</span><span class="line">  <span class="n">jsonSerializerSettings</span><span class="o">.</span><span class="n">ContractResolver</span> <span class="o">&lt;-</span> <span class="k">new</span> <span class="n">CamelCasePropertyNamesContractResolver</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">jsonSerializerSettings</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="n">OK</span>
+</span><span class="line">  <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getProfile</span> <span class="n">userName</span> <span class="o">(</span><span class="n">httpContext</span> <span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">   <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">let!</span> <span class="nv">profile</span> <span class="o">=</span> <span class="n">getProfile</span> <span class="n">userName</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">profile</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="n">Some</span> <span class="n">p</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">JSON</span> <span class="n">p</span> <span class="n">httpContext</span>
+</span><span class="line">      <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">NOT_FOUND</span> <span class="o">(</span><span class="n">sprintf</span> <span class="s">&quot;Username %s not found&quot;</span> <span class="n">userName</span><span class="o">)</span> <span class="n">httpContext</span>
+</span><span class="line">   <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>JSON</code> is a utility function (WebPart in the world of Suave) which takes any type, serialize it to JSON format and return it as JSON HTTP response.</p>
+
+<p>The <code>getProfile</code> function is the API WebPart which calls our backend API gateway implementation and pass the received response to the <code>JSON</code> WebPart defined before.</p>
+
+<p>In case if there is no profile available (Remember? we return empty types in case of errors), we just return <code>404</code> with the message that the given username is not found.</p>
+
+<p>Then update the <code>Program.fs</code> to write the web server code</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">webpart</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/api/profile/%s&quot;</span> <span class="nn">ApiGateway</span><span class="p">.</span><span class="n">getProfile</span>
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">webpart</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Thanks to <code>Suave</code> for it’s lightweight and low-ceremony offerings in creating an API. We just exposed it in two lines!</p>
+
+<p>Hit <code>F5</code> and access the API at <code>http://localhost:8083/api/profile/{github-username}</code> Bingo!!</p>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote>
+  <p>A language that doesn’t affect the way you think about programming is not worth knowing - Alan Perils</p>
+</blockquote>
+
+<p>The above quote summarizes the gist of this blog post. Functional Programming will help you think better. You can get the source code associated with the blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/RxFsharp">blog-samples GitHub repository</a></p>
+
+<p>Wish you a happy and prosperous new year</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -643,985 +1468,6 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
 <h2 id="summary">Summary</h2>
 
 <p>This work is inspired by Scott Wlaschin’s blog post series on <a href="http://fsharpforfunandprofit.com/series/low-risk-ways-to-use-fsharp-at-work.html">Low-risk ways to use F# at work</a>. I am glad to find one more low-risk way to use F# at work and I believe it would help you in future. You can find the sample code in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/GithubMockApiServer">blog-samples GitHub repository</a>.</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-07-15T12:04:12+05:30" data-updated="true" itemprop="datePublished">Jul 15<sup>th</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/suave/'>suave</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/" itemprop="url">Securing APIs in Suave Using JSON Web Token</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>In the <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT).</p>
-
-<p>This blog post is based on <a href="http://bitoftech.net/">Taiseer’s</a> blog post on <a href="http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/">JSON Web Token in ASP.NET Web API 2 using Owin</a> and I will be covering how to implement the same in <a href="http://suave.io">Suave</a>. If you are interested in the theoretical background of JWT, kindly read his blog post before reading this.</p>
-
-<h2 id="workflow">Workflow</h2>
-
-<p>The typical workflow of JWT based application would look like this</p>
-
-<ol>
-  <li>New Audience (Resource Server) gets registered with Authorization Server.</li>
-  <li>Get the JWT access token from Authorization Server by passing Client Id of the resource server and login credentials</li>
-  <li>Use the access token obtained above to get access to the secured resources in the resource server</li>
-</ol>
-
-<p>We are going to see how to implement all these three steps in this blog post</p>
-
-<h2 id="project-setup">Project Setup</h2>
-
-<p>Create an empty visual studio solution and add new projects with the following name</p>
-
-<ul>
-  <li>SuaveJwt - A fsharp library project which contains all the JWT related things</li>
-  <li>SuaveJwt.AuthServerHost - A fsharp console application which is going to host the authorization server</li>
-  <li>Audience1 - A fsharp console application representing the resource server 1   </li>
-  <li>Audience2 - A fsharp console application representing the resource server 2   </li>
-</ul>
-
-<p>After creating, install the following NuGet packages</p>
-
-<ul>
-  <li><a href="https://www.nuget.org/packages/Suave/">Suave</a> in all the four projects</li>
-  <li><a href="https://www.nuget.org/packages/Newtonsoft.Json/">Newtonsoft.Json</a> and <a href="https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt/">JSON Web Token Handler</a> in <em>SuaveJwt</em></li>
-</ul>
-
-<p>Then add reference the .NET framework library <strong>System.IdentityModel</strong> in all the four projects from GAC and then add a reference to the <strong>SuaveJwt</strong> project library in all the other three projects.</p>
-
-<p><img class="center" src="/images/suave_jwt/project_structure.png" /></p>
-
-<h2 id="new-audience-registration">New Audience Registration</h2>
-
-<p>As we have seen in the workflow, the first step is to enable an audience to register itself with the authorization server. Let’s begin by defining the business logic.</p>
-
-<p>Add a new source file <em>JwtToken.fs</em> in the <strong>SuaveJwt</strong> project and update it as follows</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Audience</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">Secret</span> <span class="o">:</span> <span class="n">Base64String</span>
-</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="c1">// string -&gt; Audience</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">createAudience</span> <span class="n">audienceName</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">clientId</span> <span class="o">=</span> <span class="nn">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="bp">()</span><span class="o">.</span><span class="n">ToString</span><span class="o">(</span><span class="s">&quot;N&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">data</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">zeroCreate</span> <span class="mi">32</span>
-</span><span class="line">  <span class="nn">RNGCryptoServiceProvider</span><span class="p">.</span><span class="n">Create</span><span class="bp">()</span><span class="o">.</span><span class="n">GetBytes</span><span class="o">(</span><span class="n">data</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">secret</span> <span class="o">=</span> <span class="n">data</span> <span class="o">|&gt;</span> <span class="nn">Base64String</span><span class="p">.</span><span class="n">create</span>
-</span><span class="line">  <span class="o">{</span><span class="n">ClientId</span> <span class="o">=</span> <span class="n">clientId</span><span class="o">;</span> <span class="n">Secret</span> <span class="o">=</span> <span class="n">secret</span><span class="o">;</span> <span class="n">Name</span> <span class="o">=</span>  <span class="n">audienceName</span><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The above snippet creates an audience record with a random client id and secret key. The secret key is of type <a href="https://en.wikipedia.org/wiki/Base64#URL_applications">base64 URL encoded</a> string. This type doesn’t exist, so let’s create it.</p>
-
-<p>Add a new source file <em>Encodings.fs</em> in the <strong>SuaveJwt</strong> project and add this type</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Base64String</span> <span class="o">=</span> <span class="k">private</span> <span class="n">Base64String</span> <span class="k">of</span> <span class="kt">string</span> <span class="k">with</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">static</span> <span class="k">member</span> <span class="n">decode</span> <span class="o">(</span><span class="n">base64String</span> <span class="o">:</span> <span class="n">Base64String</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="o">(</span><span class="n">Base64String</span> <span class="n">text</span><span class="o">)</span> <span class="o">=</span> <span class="n">base64String</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">pad</span> <span class="n">text</span> <span class="o">=</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">padding</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">-</span> <span class="o">((</span><span class="nn">String</span><span class="p">.</span><span class="n">length</span> <span class="n">text</span> <span class="o">+</span> <span class="mi">3</span><span class="o">)</span> <span class="o">%</span> <span class="mi">4</span><span class="o">)</span>
-</span><span class="line">      <span class="k">if</span> <span class="n">padding</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">text</span> <span class="k">else</span> <span class="o">(</span><span class="n">text</span> <span class="o">+</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="sc">&#39;=&#39;</span><span class="o">,</span> <span class="n">padding</span><span class="o">))</span>
-</span><span class="line">
-</span><span class="line">    <span class="nn">Convert</span><span class="p">.</span><span class="n">FromBase64String</span><span class="o">(</span><span class="n">pad</span><span class="o">(</span><span class="n">text</span><span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="sc">&#39;-&#39;</span><span class="o">,</span> <span class="sc">&#39;+&#39;</span><span class="o">).</span><span class="n">Replace</span><span class="o">(</span><span class="sc">&#39;_&#39;</span><span class="o">,</span> <span class="sc">&#39;/&#39;</span><span class="o">)))</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">static</span> <span class="k">member</span> <span class="n">create</span> <span class="n">data</span> <span class="o">=</span>
-</span><span class="line">    <span class="nn">Convert</span><span class="p">.</span><span class="n">ToBase64String</span><span class="o">(</span><span class="n">data</span><span class="o">)</span>
-</span><span class="line">      <span class="o">.</span><span class="n">TrimEnd</span><span class="o">(</span><span class="sc">&#39;=&#39;</span><span class="o">)</span>
-</span><span class="line">      <span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="sc">&#39;+&#39;</span><span class="o">,</span> <span class="sc">&#39;-&#39;</span><span class="o">)</span>
-</span><span class="line">      <span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="sc">&#39;/&#39;</span><span class="o">,</span> <span class="sc">&#39;_&#39;</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="n">Base64String</span><span class="o">;</span>
-</span><span class="line">
-</span><span class="line">
-</span><span class="line">  <span class="k">static</span> <span class="k">member</span> <span class="n">fromString</span> <span class="o">=</span> <span class="n">Base64String</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">ToString</span><span class="bp">()</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="o">(</span><span class="n">Base64String</span> <span class="n">str</span><span class="o">)</span> <span class="o">=</span> <span class="n">this</span>
-</span><span class="line">    <span class="n">str</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>To keep things simple, I haven’t added any validations here. The next step is to create a Suave <em>WebPart</em> to expose the audience create functionality.</p>
-
-<p>Add a new source file <em>AuthServer.fs</em> in the <strong>SuaveJwt</strong> project and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-<span class="line-number">35</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">AudienceCreateRequest</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">AudienceCreateResponse</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">Base64Secret</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">Config</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">AddAudienceUrlPath</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">SaveAudience</span> <span class="o">:</span> <span class="n">Audience</span> <span class="o">-&gt;</span> <span class="n">Async</span><span class="o">&lt;</span><span class="n">Audience</span><span class="o">&gt;</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">audienceWebPart</span> <span class="n">config</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">toAudienceCreateResponse</span> <span class="o">(</span><span class="n">audience</span> <span class="o">:</span> <span class="n">Audience</span><span class="o">)</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">Base64Secret</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="n">Secret</span><span class="o">.</span><span class="n">ToString</span><span class="bp">()</span>
-</span><span class="line">    <span class="n">ClientId</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="n">ClientId</span>
-</span><span class="line">    <span class="n">Name</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="n">Name</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">tryCreateAudience</span> <span class="o">(</span><span class="n">ctx</span><span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">mapJsonPayload</span><span class="o">&lt;</span><span class="n">AudienceCreateRequest</span><span class="o">&gt;</span> <span class="n">ctx</span><span class="o">.</span><span class="n">request</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">audienceCreateRequest</span> <span class="o">-&gt;</span>
-</span><span class="line">        <span class="n">async</span> <span class="o">{</span>
-</span><span class="line">          <span class="k">let!</span> <span class="nv">audience</span> <span class="o">=</span>
-</span><span class="line">            <span class="n">audienceCreateRequest</span><span class="o">.</span><span class="n">Name</span> <span class="o">|&gt;</span> <span class="n">createAudience</span> <span class="o">|&gt;</span> <span class="n">config</span><span class="o">.</span><span class="n">SaveAudience</span>
-</span><span class="line">          <span class="k">let</span> <span class="nv">audienceCreateResponse</span> <span class="o">=</span> <span class="n">toAudienceCreateResponse</span> <span class="n">audience</span>
-</span><span class="line">          <span class="k">return</span><span class="o">!</span> <span class="n">JSON</span> <span class="n">audienceCreateResponse</span> <span class="n">ctx</span>
-</span><span class="line">        <span class="o">}</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Audience Create Request&quot;</span> <span class="n">ctx</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateAudience</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>audienceWebPart</code> function retrieves the <code>AudienceCreateRequest</code> from the JSON request payload and creates a new audience.<br />
-To make it independent of the host, we have externalized the hosting functionality using the <code>Config</code> record type.</p>
-
-<p>The <code>mapJsonPayload</code> and <code>JSON</code> functions serialize and deserialize JSON objects across the wire respectively. These functions are not part of Suave, so let’s add them</p>
-
-<p>Add a new source file <em>SuaveJson.fs</em> in the <strong>SuaveJwt</strong> project and add these functions</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">JSON</span> <span class="n">v</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">jsonSerializerSettings</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JsonSerializerSettings</span><span class="bp">()</span>
-</span><span class="line">  <span class="n">jsonSerializerSettings</span><span class="o">.</span><span class="n">ContractResolver</span> <span class="o">&lt;-</span> <span class="k">new</span> <span class="n">CamelCasePropertyNamesContractResolver</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">jsonSerializerSettings</span><span class="o">)</span>
-</span><span class="line">  <span class="o">|&gt;</span> <span class="n">OK</span>
-</span><span class="line">  <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">mapJsonPayload</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">(</span><span class="n">req</span> <span class="o">:</span> <span class="n">HttpRequest</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">fromJson</span> <span class="n">json</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">try</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">obj</span> <span class="o">=</span> <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">DeserializeObject</span><span class="o">(</span><span class="n">json</span><span class="o">,</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;)</span> <span class="o">:?&gt;</span> <span class="k">&#39;</span><span class="n">a</span>
-</span><span class="line">      <span class="n">Some</span> <span class="kt">obj</span>
-</span><span class="line">    <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">getString</span> <span class="n">rawForm</span> <span class="o">=</span>
-</span><span class="line">    <span class="nn">System</span><span class="p">.</span><span class="nn">Text</span><span class="p">.</span><span class="nn">Encoding</span><span class="p">.</span><span class="nn">UTF8</span><span class="p">.</span><span class="n">GetString</span><span class="o">(</span><span class="n">rawForm</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">req</span><span class="o">.</span><span class="n">rawForm</span> <span class="o">|&gt;</span> <span class="n">getString</span> <span class="o">|&gt;</span> <span class="n">fromJson</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The next step is hosting this audience web part.</p>
-
-<p>Open the <em>Program.fs</em> file in the <strong>SuaveJwt.AuthServerHost</strong> project and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">authorizationServerConfig</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">AddAudienceUrlPath</span> <span class="o">=</span> <span class="s">&quot;/api/audience&quot;</span>
-</span><span class="line">  <span class="n">SaveAudience</span> <span class="o">=</span> <span class="nn">AudienceStorage</span><span class="p">.</span><span class="n">saveAudience</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">audienceWebPart</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">audienceWebPart</span> <span class="n">authorizationServerConfig</span>
-</span><span class="line"><span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">audienceWebPart&#39;</span>
-</span><span class="line"><span class="mi">0</span> <span class="c1">// return an integer exit code</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>It is a straight forward self-host suave server program which exposes the audience web part.</p>
-
-<p>The <em>AudienceStorage</em> is responsible for storing the created audiences and to add it create a new source file <em>AudienceStorage.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project and add these functions</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">AudienceStorage</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">private</span> <span class="n">audienceStorage</span>
-</span><span class="line">  <span class="o">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="n">Audience</span><span class="o">&gt;</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">saveAudience</span> <span class="o">(</span><span class="n">audience</span> <span class="o">:</span> <span class="n">Audience</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">audienceStorage</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">audience</span><span class="o">.</span><span class="n">ClientId</span><span class="o">,</span> <span class="n">audience</span><span class="o">)</span>
-</span><span class="line">    <span class="n">audience</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>To keep this simple, we are using in-memory dictionary here and it can be easily replaced with any data store</p>
-
-<p>Now we have everything to create a new audience. So, let’s run the <strong>SuaveJwt.AuthServerHost</strong> application and verify</p>
-
-<p><img class="center" src="/images/suave_jwt/audience_create.png" /></p>
-
-<p>Keep a note of this <em>clientId</em> and <em>base64Secret</em> as we will be using them while defining the resource server (“Audience1” in this case).</p>
-
-<h2 id="generating-access-token">Generating Access Token</h2>
-
-<p>After registering an audience with the authorization server, the next step is to get the access token to access the resources in the given resource server.</p>
-
-<p>Let’s begin by defining the business logic to create an access token.</p>
-
-<p><img class="center" src="/images/suave_jwt/createToken.png" /></p>
-
-<p>Open <em>JwtToken.fs</em> and add the following types</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">TokenCreateRequest</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">Issuer</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">UserName</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">Password</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">TokenTimeSpan</span> <span class="o">:</span> <span class="n">TimeSpan</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">IdentityStore</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">getClaims</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">Async</span><span class="o">&lt;</span><span class="n">Claim</span> <span class="n">seq</span><span class="o">&gt;</span>
-</span><span class="line">  <span class="n">isValidCredentials</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">Async</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span>
-</span><span class="line">  <span class="n">getSecurityKey</span> <span class="o">:</span> <span class="n">Base64String</span> <span class="o">-&gt;</span> <span class="n">SecurityKey</span>
-</span><span class="line">  <span class="n">getSigningCredentials</span> <span class="o">:</span> <span class="n">SecurityKey</span> <span class="o">-&gt;</span> <span class="n">SigningCredentials</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">Token</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">AccessToken</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">ExpiresIn</span> <span class="o">:</span> <span class="kt">float</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>These types are generic abstractions which decouple the token creation part from the underlying host.</p>
-
-<p>The <code>TokenCreateRequest</code> models the underlying issuer and token lifetime.</p>
-
-<p>The <code>IdentityStore</code> represents a generic data store in which the identity information has been stored and it also provides the security key and the signing credentials to protect the access token from misuse.</p>
-
-<p>With these types in place let’s add the <code>createToken</code> function in the <em>SuaveJwt.fs</em> file</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">createToken</span> <span class="n">tokenCreateRequest</span> <span class="n">identityStore</span> <span class="n">audience</span> <span class="o">=</span>
-</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
-</span><span class="line">    <span class="k">let!</span> <span class="nv">isValidCredentials</span> <span class="o">=</span>
-</span><span class="line">      <span class="n">identityStore</span><span class="o">.</span><span class="n">isValidCredentials</span> <span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">UserName</span> <span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">Password</span>
-</span><span class="line">    <span class="k">if</span> <span class="n">isValidCredentials</span> <span class="k">then</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">signingCredentials</span> <span class="o">=</span>
-</span><span class="line">        <span class="o">(</span><span class="n">identityStore</span><span class="o">.</span><span class="n">getSecurityKey</span> <span class="o">&gt;&gt;</span> <span class="n">identityStore</span><span class="o">.</span><span class="n">getSigningCredentials</span><span class="o">)</span> <span class="n">audience</span><span class="o">.</span><span class="n">Secret</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">issuedOn</span> <span class="o">=</span> <span class="n">Nullable</span> <span class="nn">DateTime</span><span class="p">.</span><span class="n">UtcNow</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">expiresBy</span> <span class="o">=</span> <span class="n">Nullable</span> <span class="o">(</span><span class="nn">DateTime</span><span class="p">.</span><span class="nn">UtcNow</span><span class="p">.</span><span class="n">Add</span><span class="o">(</span><span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">TokenTimeSpan</span><span class="o">))</span>
-</span><span class="line">      <span class="k">let!</span> <span class="nv">claims</span> <span class="o">=</span>  <span class="n">identityStore</span><span class="o">.</span><span class="n">getClaims</span> <span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">UserName</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">jwtSecurityToken</span> <span class="o">=</span>
-</span><span class="line">        <span class="k">new</span> <span class="n">JwtSecurityToken</span><span class="o">(</span><span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">Issuer</span><span class="o">,</span> <span class="n">audience</span><span class="o">.</span><span class="n">ClientId</span><span class="o">,</span> <span class="n">claims</span><span class="o">,</span> <span class="n">issuedOn</span><span class="o">,</span> <span class="n">expiresBy</span><span class="o">,</span> <span class="n">signingCredentials</span><span class="o">)</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">handler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JwtSecurityTokenHandler</span><span class="bp">()</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">accessToken</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">WriteToken</span><span class="o">(</span><span class="n">jwtSecurityToken</span><span class="o">)</span>
-</span><span class="line">      <span class="k">return</span> <span class="n">Some</span> <span class="o">{</span><span class="n">AccessToken</span> <span class="o">=</span> <span class="n">accessToken</span><span class="o">;</span> <span class="n">ExpiresIn</span> <span class="o">=</span> <span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">TokenTimeSpan</span><span class="o">.</span><span class="n">TotalSeconds</span><span class="o">}</span>
-</span><span class="line">    <span class="k">else</span> <span class="k">return</span> <span class="n">None</span>
-</span><span class="line">  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>createToken</code> function checks the validness of the login credentials. If it is valid, then it get the claims associated with the given username and creates a <em>JwtToken</em> using the <a href="https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt/">JSON Web Token Handler</a> library, else it returns <code>None</code></p>
-
-<p>Now we have got the backend business logic ready, let’s expose it as a suave <em>WebPart</em></p>
-
-<p>Open <em>AuthServer.fs</em> and add a new record type for the incoming token create request and update <code>Config</code> and <code>audienceWebPart</code> as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-<span class="line-number">35</span>
-<span class="line-number">36</span>
-<span class="line-number">37</span>
-<span class="line-number">38</span>
-<span class="line-number">39</span>
-<span class="line-number">40</span>
-<span class="line-number">41</span>
-<span class="line-number">42</span>
-<span class="line-number">43</span>
-<span class="line-number">44</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">TokenCreateCredentials</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">UserName</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">Password</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">type</span> <span class="nc">Config</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="c1">// ... existing fields ...</span>
-</span><span class="line">  <span class="n">CreateTokenUrlPath</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">GetAudience</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">Async</span><span class="o">&lt;</span><span class="n">Audience</span> <span class="n">option</span><span class="o">&gt;</span>
-</span><span class="line">  <span class="n">Issuer</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">TokenTimeSpan</span> <span class="o">:</span> <span class="n">TimeSpan</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">audienceWebPart</span> <span class="n">config</span> <span class="n">identityStore</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// ... existing functions ...</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">tryCreateToken</span> <span class="o">(</span><span class="n">ctx</span><span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">mapJsonPayload</span><span class="o">&lt;</span><span class="n">TokenCreateCredentials</span><span class="o">&gt;</span> <span class="n">ctx</span><span class="o">.</span><span class="n">request</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">tokenCreateCredentials</span> <span class="o">-&gt;</span>
-</span><span class="line">      <span class="n">async</span> <span class="o">{</span>
-</span><span class="line">        <span class="k">let!</span> <span class="nv">audience</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">GetAudience</span> <span class="n">tokenCreateCredentials</span><span class="o">.</span><span class="n">ClientId</span>
-</span><span class="line">        <span class="k">match</span> <span class="n">audience</span> <span class="k">with</span>
-</span><span class="line">        <span class="o">|</span> <span class="n">Some</span> <span class="n">audience</span> <span class="o">-&gt;</span>
-</span><span class="line">            <span class="k">let</span> <span class="nv">tokenCreateRequest</span> <span class="o">:</span> <span class="n">TokenCreateRequest</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">              <span class="n">Issuer</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">Issuer</span>
-</span><span class="line">              <span class="n">UserName</span> <span class="o">=</span> <span class="n">tokenCreateCredentials</span><span class="o">.</span><span class="n">UserName</span>
-</span><span class="line">              <span class="n">Password</span> <span class="o">=</span> <span class="n">tokenCreateCredentials</span><span class="o">.</span><span class="n">Password</span>
-</span><span class="line">              <span class="n">TokenTimeSpan</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">TokenTimeSpan</span>
-</span><span class="line">            <span class="o">}</span>
-</span><span class="line">            <span class="k">let!</span> <span class="nv">token</span> <span class="o">=</span> <span class="n">createToken</span> <span class="n">tokenCreateRequest</span> <span class="n">identityStore</span> <span class="n">audience</span>
-</span><span class="line">            <span class="k">match</span> <span class="n">token</span> <span class="k">with</span>
-</span><span class="line">            <span class="o">|</span> <span class="n">Some</span> <span class="n">token</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">JSON</span> <span class="n">token</span> <span class="n">ctx</span>
-</span><span class="line">            <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Login Credentials&quot;</span> <span class="n">ctx</span>
-</span><span class="line">
-</span><span class="line">        <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Client Id&quot;</span> <span class="n">ctx</span>
-</span><span class="line">      <span class="o">}</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Token Create Request&quot;</span> <span class="n">ctx</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateAudience</span>
-</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">CreateTokenUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateToken</span>
-</span><span class="line">  <span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>tryCreateToken</code> function checks whether the <code>ClientId</code> is a registered audience or not, if it exists, then this function creates a token using the <code>createToken</code> function defined above otherwise it returns the <code>BAD_REQUST</code> <em>WebPart</em> with the appropriate error message.</p>
-
-<p>The final change is modifying the <em>Program.fs</em> and <em>AudienceStorage.fs</em> files in the <strong>SuaveJwt.AuthServerHost</strong> to expose this <em>WebPart</em>.</p>
-
-<p><strong>Program.fs</strong></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">authorizationServerConfig</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">AddAudienceUrlPath</span> <span class="o">=</span> <span class="s">&quot;/api/audience&quot;</span>
-</span><span class="line">  <span class="n">CreateTokenUrlPath</span> <span class="o">=</span> <span class="s">&quot;/oauth2/token&quot;</span>
-</span><span class="line">  <span class="n">SaveAudience</span> <span class="o">=</span> <span class="nn">AudienceStorage</span><span class="p">.</span><span class="n">saveAudience</span>
-</span><span class="line">  <span class="n">GetAudience</span> <span class="o">=</span> <span class="nn">AudienceStorage</span><span class="p">.</span><span class="n">getAudience</span>
-</span><span class="line">  <span class="n">Issuer</span> <span class="o">=</span> <span class="s">&quot;http://localhost:8083/suave&quot;</span>
-</span><span class="line">  <span class="n">TokenTimeSpan</span> <span class="o">=</span> <span class="nn">TimeSpan</span><span class="p">.</span><span class="n">FromMinutes</span><span class="o">(</span><span class="mi">1</span><span class="o">.)</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">identityStore</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">getClaims</span> <span class="o">=</span> <span class="nn">IdentityStore</span><span class="p">.</span><span class="n">getClaims</span>
-</span><span class="line">  <span class="n">isValidCredentials</span> <span class="o">=</span> <span class="nn">IdentityStore</span><span class="p">.</span><span class="n">isValidCredentials</span>
-</span><span class="line">  <span class="n">getSecurityKey</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">securityKey</span>
-</span><span class="line">  <span class="n">getSigningCredentials</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">hmacSha256</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">audienceWebPart</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">audienceWebPart</span> <span class="n">authorizationServerConfig</span> <span class="n">identityStore</span>
-</span><span class="line">
-</span><span class="line"><span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">audienceWebPart&#39;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p><strong>AudienceStorage.fs</strong></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getAudience</span> <span class="n">clientId</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">if</span> <span class="n">audienceStorage</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">clientId</span><span class="o">)</span> <span class="k">then</span>
-</span><span class="line">    <span class="n">Some</span> <span class="n">audienceStorage</span><span class="o">.[</span><span class="n">clientId</span><span class="o">]</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
-</span><span class="line">  <span class="k">else</span>
-</span><span class="line">    <span class="n">None</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <em>KeyStore</em> and <em>IdentityStore</em> do not exists, so let’s add them</p>
-
-<p>Add <em>KeyStore.fs</em> in the <strong>SuaveJwt</strong> project and it provide the in-memory symmetric security key based on <a href="https://en.wikipedia.org/wiki/Hash-based_message_authentication_code">HMAC</a></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">KeyStore</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">System.IdentityModel.Tokens</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Encodings</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">securityKey</span> <span class="n">sharedKey</span> <span class="o">:</span> <span class="n">SecurityKey</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">symmetricKey</span> <span class="o">=</span> <span class="n">sharedKey</span> <span class="o">|&gt;</span> <span class="nn">Base64String</span><span class="p">.</span><span class="n">decode</span>
-</span><span class="line">  <span class="k">new</span> <span class="n">InMemorySymmetricSecurityKey</span><span class="o">(</span><span class="n">symmetricKey</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">SecurityKey</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">hmacSha256</span> <span class="n">secretKey</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">new</span> <span class="n">SigningCredentials</span><span class="o">(</span><span class="n">secretKey</span><span class="o">,</span><span class="nn">SecurityAlgorithms</span><span class="p">.</span><span class="n">HmacSha256Signature</span><span class="o">,</span> <span class="nn">SecurityAlgorithms</span><span class="p">.</span><span class="n">Sha256Digest</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Then add <em>IdentityStore.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">IdentityStore</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">System.Security.Claims</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">getClaims</span> <span class="n">userName</span> <span class="o">=</span>
-</span><span class="line">  <span class="n">seq</span> <span class="o">{</span>
-</span><span class="line">    <span class="k">yield</span> <span class="o">(</span><span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Name</span><span class="o">,</span> <span class="n">userName</span><span class="o">)</span>
-</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">userName</span> <span class="o">=</span> <span class="s">&quot;Admin&quot;</span><span class="o">)</span> <span class="k">then</span>
-</span><span class="line">      <span class="k">yield</span> <span class="o">(</span><span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Role</span><span class="o">,</span> <span class="s">&quot;Admin&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">userName</span> <span class="o">=</span> <span class="s">&quot;Foo&quot;</span><span class="o">)</span> <span class="k">then</span>
-</span><span class="line">      <span class="k">yield</span> <span class="o">(</span><span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Role</span><span class="o">,</span> <span class="s">&quot;SuperUser&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="o">}</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">Claim</span><span class="o">(</span><span class="n">fst</span> <span class="n">x</span><span class="o">,</span> <span class="n">snd</span> <span class="n">x</span><span class="o">))</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">isValidCredentials</span> <span class="n">username</span> <span class="n">password</span> <span class="o">=</span>
-</span><span class="line">  <span class="n">username</span> <span class="o">=</span> <span class="n">password</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same.</p>
-
-<p>Let’s run the <strong>SuaveJwt.AuthServerHost</strong> and verify the token</p>
-
-<p><img class="center" src="/images/suave_jwt/audience_admin_token.png" /></p>
-
-<h2 id="securing-the-resources">Securing the resources</h2>
-
-<p>Now we have come to the interesting part of securing the resources using the <em>access token</em> created in the above step</p>
-
-<p>The first step to achieving this to validate the incoming access token. Let’s add this validation logic in the <em>JwtToken.fs</em> file.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">TokenValidationRequest</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">Issuer</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">SecurityKey</span> <span class="o">:</span> <span class="n">SecurityKey</span>
-</span><span class="line">  <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">  <span class="n">AccessToken</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">validate</span> <span class="n">tokenValidationRequest</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">tokenValidationParameters</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">validationParams</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TokenValidationParameters</span><span class="bp">()</span>
-</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">ValidAudience</span> <span class="o">&lt;-</span> <span class="n">tokenValidationRequest</span><span class="o">.</span><span class="n">ClientId</span>
-</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">ValidIssuer</span> <span class="o">&lt;-</span> <span class="n">tokenValidationRequest</span><span class="o">.</span><span class="n">Issuer</span>
-</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">ValidateLifetime</span> <span class="o">&lt;-</span> <span class="k">true</span>
-</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">ValidateIssuerSigningKey</span> <span class="o">&lt;-</span> <span class="k">true</span>
-</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">IssuerSigningKey</span> <span class="o">&lt;-</span>  <span class="n">tokenValidationRequest</span><span class="o">.</span><span class="n">SecurityKey</span>
-</span><span class="line">    <span class="n">validationParams</span>
-</span><span class="line">  <span class="k">try</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">handler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JwtSecurityTokenHandler</span><span class="bp">()</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">principal</span> <span class="o">=</span>
-</span><span class="line">      <span class="n">handler</span><span class="o">.</span><span class="n">ValidateToken</span><span class="o">(</span><span class="n">tokenValidationRequest</span><span class="o">.</span><span class="n">AccessToken</span><span class="o">,</span> <span class="n">tokenValidationParameters</span><span class="o">,</span> <span class="n">ref</span> <span class="k">null</span><span class="o">)</span>
-</span><span class="line">    <span class="n">principal</span><span class="o">.</span><span class="n">Claims</span> <span class="o">|&gt;</span> <span class="n">Choice1Of2</span>
-</span><span class="line">  <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">ex</span> <span class="o">-&gt;</span> <span class="n">ex</span><span class="o">.</span><span class="n">Message</span> <span class="o">|&gt;</span> <span class="n">Choice2Of2</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>validate</code> function returns a <code>Choice</code> type which contains either a sequence of <a href="https://msdn.microsoft.com/en-us/library/system.security.claims(v=vs.110).aspx">Claims</a> present in the token if the access token is valid or an error message describing what’s wrong with the access token</p>
-
-<p>The next step is using this function to secure a Suave <em>WebPart</em></p>
-
-<p>Create a new source file <em>Secure.fs</em> in the <strong>SuaveJwt</strong> project and add the following code</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">JwtConfig</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">Issuer</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line">    <span class="n">SecurityKey</span> <span class="o">:</span> <span class="n">SecurityKey</span>
-</span><span class="line">    <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="n">webpart</span> <span class="o">(</span><span class="n">ctx</span><span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">updateContextWithClaims</span> <span class="n">claims</span> <span class="o">=</span>
-</span><span class="line">    <span class="o">{</span> <span class="n">ctx</span> <span class="k">with</span> <span class="n">userState</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">userState</span><span class="o">.</span><span class="n">Remove</span><span class="o">(</span><span class="s">&quot;Claims&quot;</span><span class="o">).</span><span class="n">Add</span><span class="o">(</span><span class="s">&quot;Claims&quot;</span><span class="o">,</span> <span class="n">claims</span><span class="o">)</span> <span class="o">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">match</span> <span class="n">ctx</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">header</span> <span class="s">&quot;token&quot;</span> <span class="k">with</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Choice1Of2</span> <span class="n">accessToken</span> <span class="o">-&gt;</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">tokenValidationRequest</span> <span class="o">=</span>  <span class="o">{</span>
-</span><span class="line">        <span class="n">Issuer</span> <span class="o">=</span> <span class="n">jwtConfig</span><span class="o">.</span><span class="n">Issuer</span>
-</span><span class="line">        <span class="n">SecurityKey</span> <span class="o">=</span> <span class="n">jwtConfig</span><span class="o">.</span><span class="n">SecurityKey</span>
-</span><span class="line">        <span class="n">ClientId</span> <span class="o">=</span> <span class="n">jwtConfig</span><span class="o">.</span><span class="n">ClientId</span>
-</span><span class="line">        <span class="n">AccessToken</span> <span class="o">=</span> <span class="n">accessToken</span>
-</span><span class="line">      <span class="o">}</span>
-</span><span class="line">      <span class="k">let</span> <span class="nv">validationResult</span> <span class="o">=</span> <span class="n">validate</span> <span class="n">tokenValidationRequest</span>
-</span><span class="line">      <span class="k">match</span> <span class="n">validationResult</span> <span class="k">with</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">Choice1Of2</span> <span class="n">claims</span> <span class="o">-&gt;</span> <span class="n">webpart</span> <span class="o">(</span><span class="n">updateContextWithClaims</span> <span class="n">claims</span><span class="o">)</span>
-</span><span class="line">      <span class="o">|</span> <span class="n">Choice2Of2</span> <span class="n">err</span> <span class="o">-&gt;</span> <span class="n">FORBIDDEN</span> <span class="n">err</span> <span class="n">ctx</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Request. Provide both clientid and token&quot;</span> <span class="n">ctx</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>jwtAuthenticate</code> function validates the access token present in the request header and invokes the given <em>WebPart</em> if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the <em>WebPart</em>.</p>
-
-<p>Upon successful access token validation, the <code>jwtAuthenticate</code> function puts the claims in the <code>userState</code> map of incoming <code>HttpContext</code> so that subsequent <em>WebPart</em>s in the pipeline can use it.</p>
-
-<p>The <code>JwtConfig</code> record abstracts the underlying audience from the validation logic so that it can be reused across multiple audiences.</p>
-
-<p>Now we have a functionality secure a web part. Let’s create an audience and leverage this</p>
-
-<p>Update the <em>Program.fs</em> file in the <strong>Audience1</strong> project as mentioned below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">jwtConfig</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">Issuer</span> <span class="o">=</span> <span class="s">&quot;http://localhost:8083/suave&quot;</span>
-</span><span class="line">    <span class="n">ClientId</span> <span class="o">=</span> <span class="s">&quot;7ff79ba3305c4e4f9d0ececeae70c78f&quot;</span>
-</span><span class="line">    <span class="n">SecurityKey</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">securityKey</span> <span class="o">(</span><span class="nn">Base64String</span><span class="p">.</span><span class="n">fromString</span> <span class="s">&quot;Op5EqjC70aLS2dx3gI0zADPIZGX2As6UEwjA4oyBjMo&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample1&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mkSimple</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8084</span><span class="o">]</span> <span class="o">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">sample1</span>
-</span><span class="line">  <span class="mi">0</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>I’ve asked you to keep a note of the <em>clientId</em> and the <em>securityKey</em> while doing the registration of <strong>Audience1</strong>. We are using them here in the <code>jwtConfig</code> record.</p>
-
-<p>Let’s see it in action</p>
-
-<p><img class="center" src="/images/suave_jwt/audience_sample1_success.png" /></p>
-
-<p>Hurray! We have made it. “/audience1/sample1” is a secured API now!</p>
-
-<p>What will happen if we mess with the access token? Well, we will get an HTTP error. Let’s change the character <code>Q</code> in the access token from upper case to lower case and here is the result of it.</p>
-
-<p><img class="center" src="/images/suave_jwt/audience_sample1_error.png" /></p>
-
-<p>Cool, Isn’t it?</p>
-
-<p>Let’s add authorization based on the claims that we have obtained from the JWT token</p>
-
-<p>Open <em>Secure.fs</em> and update the authorization functionality</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">AuthorizationResult</span> <span class="o">=</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Authorized</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">UnAuthorized</span> <span class="k">of</span> <span class="kt">string</span>
-</span><span class="line">
-</span><span class="line"><span class="k">let</span> <span class="nv">jwtAuthorize</span> <span class="n">jwtConfig</span> <span class="n">authorizeUser</span> <span class="n">webpart</span>  <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">getClaims</span> <span class="o">(</span><span class="n">ctx</span><span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">userState</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">userState</span>
-</span><span class="line">    <span class="k">if</span> <span class="n">userState</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="s">&quot;Claims&quot;</span><span class="o">)</span> <span class="k">then</span>
-</span><span class="line">      <span class="k">match</span> <span class="n">userState</span><span class="o">.</span><span class="n">Item</span> <span class="s">&quot;Claims&quot;</span> <span class="k">with</span>
-</span><span class="line">      <span class="o">|</span> <span class="o">:?</span> <span class="o">(</span><span class="n">Claim</span> <span class="n">seq</span><span class="o">)</span> <span class="k">as</span> <span class="n">claims</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">claims</span>
-</span><span class="line">      <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
-</span><span class="line">    <span class="k">else</span>
-</span><span class="line">        <span class="n">None</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">authorize</span> <span class="n">httpContext</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">getClaims</span> <span class="n">httpContext</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">claims</span> <span class="o">-&gt;</span>
-</span><span class="line">        <span class="n">async</span> <span class="o">{</span>
-</span><span class="line">          <span class="k">let!</span> <span class="nv">authorizationResult</span> <span class="o">=</span> <span class="n">authorizeUser</span> <span class="n">claims</span>
-</span><span class="line">          <span class="k">match</span> <span class="n">authorizationResult</span> <span class="k">with</span>
-</span><span class="line">          <span class="o">|</span> <span class="n">Authorized</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">webpart</span> <span class="n">httpContext</span>
-</span><span class="line">          <span class="o">|</span> <span class="n">UnAuthorized</span> <span class="n">err</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">FORBIDDEN</span> <span class="n">err</span> <span class="n">httpContext</span>
-</span><span class="line">        <span class="o">}</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">FORBIDDEN</span> <span class="s">&quot;Claims not found&quot;</span> <span class="n">httpContext</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="n">authorize</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>jwtConfig</code> function is very similar to the <code>jwtAuthenticate</code> function which provides authorization in addition to the authentication.</p>
-
-<p>The key here is the parameter <code>authorizeUser</code> which is a function that takes a sequence of claims and returns an <code>AuthorizationResult</code>.</p>
-
-<p>Like <code>jwtAuthenticate`` function, the</code>jwtConfig&#8220;` function is also abstracted from the underlying <em>Audience</em> so we can use it across multiple <em>Audience</em>s.</p>
-
-<p>Let’s use this in the <strong>Audience1</strong>.</p>
-
-<p><strong>Program.fs</strong></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// ... existing code ...</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// Claim Seq -&gt; Async&lt;AuthorizationResult&gt;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">authorizeAdmin</span> <span class="o">(</span><span class="n">claims</span> <span class="o">:</span> <span class="n">Claim</span> <span class="n">seq</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">claims</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">tryFind</span> <span class="o">(</span><span class="k">fun</span> <span class="n">c</span> <span class="o">-&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Role</span> <span class="o">&amp;&amp;</span> <span class="n">c</span><span class="o">.</span><span class="n">Value</span> <span class="o">=</span> <span class="s">&quot;Admin&quot;</span><span class="o">)</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">Authorized</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">UnAuthorized</span> <span class="s">&quot;User is not an admin&quot;</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample2&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span> <span class="n">authorizeAdmin</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">sample1</span><span class="o">;</span><span class="n">sample2</span><span class="o">]</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">app</span>
-</span><span class="line">  <span class="mi">0</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>jwtAuthroize</code> function in action</p>
-
-<p><img class="center" src="/images/suave_jwt/audience1_sample2_error.png" /></p>
-
-<p><em>Note: I’ve generated a new access token here to exercise this use case.</em></p>
-
-<p>That’s it we have successfully completed all the three steps mentioned at the beginning of this blog post.</p>
-
-<h2 id="a-supplement">A Supplement</h2>
-
-<p>One cool thing about the design of the <strong>SuaveJwt</strong> library is, it doesn’t have any assumption about the <em>Authorization Server</em> and the <em>Resource Server</em>. Because of it, we can easily extend it.</p>
-
-<p>Let’s prove it by updating the <em>Program.fs</em> file in the <strong>Audience2</strong> project.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">jwtConfig</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">Issuer</span> <span class="o">=</span> <span class="s">&quot;http://localhost:8083/suave&quot;</span>
-</span><span class="line">    <span class="n">ClientId</span> <span class="o">=</span> <span class="s">&quot;ada9263885c440869fb484fe354de13d&quot;</span>
-</span><span class="line">    <span class="n">SecurityKey</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">securityKey</span> <span class="o">(</span><span class="nn">Base64String</span><span class="p">.</span><span class="n">fromString</span> <span class="s">&quot;0RWyzyttDmJtiaYkG9rph5cqxCTI8YAOsR7stq-P_5o&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">authorizeSuperUser</span> <span class="o">(</span><span class="n">claims</span> <span class="o">:</span> <span class="n">Claim</span> <span class="n">seq</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">claims</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">tryFind</span> <span class="o">(</span><span class="k">fun</span> <span class="n">c</span> <span class="o">-&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Role</span> <span class="o">&amp;&amp;</span> <span class="n">c</span><span class="o">.</span><span class="n">Value</span> <span class="o">=</span> <span class="s">&quot;SuperUser&quot;</span><span class="o">)</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">Authorized</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">UnAuthorized</span> <span class="s">&quot;User is not a Super User&quot;</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">authorize</span> <span class="o">=</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample1&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample2&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">authorize</span> <span class="n">authorizeSuperUser</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mkSimple</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8085</span><span class="o">]</span> <span class="o">}</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">sample1</span><span class="o">;</span><span class="n">sample2</span><span class="o">]</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">app</span>
-</span><span class="line">  <span class="mi">0</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Note that the <code>jwtConfig</code> values are different from that of <strong>Audience1</strong> and it is obtained from calling the <strong>AuthorizationServer</strong>’s audience registration API for <strong>Audience2</strong>.</p>
-
-<h2 id="summary">Summary</h2>
-
-<p>Suave provides a simple and elegant way of extending its core functionality. In this blog post, we have seen how to bend it to support JWT based authorization and I believe we can do a lot of other cool things too!</p>
-
-<p>You can find the complete source code of the sample application used in this blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveJwtSampleApplication">blog-samples</a> GitHub repository.    </p>
 
 		
 		
