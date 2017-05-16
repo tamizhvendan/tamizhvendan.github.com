@@ -4,7 +4,7 @@
   <title><![CDATA[Category: devops | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/devops/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-05-01T23:13:07+05:30</updated>
+  <updated>2017-05-16T11:37:30+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -19,10 +19,10 @@
     <updated>2015-01-06T05:22:32+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/01/06/step-4-build-automation-using-fake</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 4 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 4 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the last three steps, we have seen how to build an web application in fsharp by leveraging <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web-Api</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor</a> and <a href="/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">SignalR</a>. In this step for a change we are going to take the <a href="http://en.wikipedia.org/wiki/DevOps">DevOps</a> side of the application and going to add the build automation capabilities for the application. Let’s get stated!</p>
+<p>In the last three steps, we have seen how to build an web application in fsharp by leveraging <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">Web-Api</a>, <a href="{% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}">Razor</a> and <a href="{% post_url 2015-01-02-step-3-phonecat-recommendation-system-using-f-number-agents %}">SignalR</a>. In this step for a change we are going to take the <a href="http://en.wikipedia.org/wiki/DevOps">DevOps</a> side of the application and going to add the build automation capabilities for the application. Let’s get stated!</p>
 
 <h2 id="fake---an-awesome-build-automation-library">Fake - An awesome build automation library</h2>
 

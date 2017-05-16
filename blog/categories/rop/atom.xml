@@ -4,7 +4,7 @@
   <title><![CDATA[Category: rop | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/rop/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-05-01T23:13:07+05:30</updated>
+  <updated>2017-05-16T11:37:30+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -19,10 +19,10 @@
     <updated>2015-03-02T12:30:33+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/03/02/step-7-validation-and-error-handling-using-rop</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 7 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 7 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">last blog post</a> we have seen how to register a new user using the Asp.Net Identity Management framework. Validating the incoming data before updating the backend datastore and handling error while saving are typical tasks in a web application. In this blog post we are going to see how to achieve these things in a web application written in fsharp. As mentioned in the last blog post we will be adding validation logic for new user registration using <a href="http://fsharpforfunandprofit.com/rop/">Railway oriented Programming</a> aka <em>ROP</em>.</p>
+<p>In the <a href="{% post_url 2015-02-04-step-6-authentication-using-owin-middleware-and-asp-dot-net-identity %}">last blog post</a> we have seen how to register a new user using the Asp.Net Identity Management framework. Validating the incoming data before updating the backend datastore and handling error while saving are typical tasks in a web application. In this blog post we are going to see how to achieve these things in a web application written in fsharp. As mentioned in the last blog post we will be adding validation logic for new user registration using <a href="http://fsharpforfunandprofit.com/rop/">Railway oriented Programming</a> aka <em>ROP</em>.</p>
 
 <h3 id="cleanup">Cleanup</h3>
 
@@ -174,7 +174,7 @@
 
 <p>There is a pattern in all the validation rules that we have seen so far. </p>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_7/validation_pattern.png" width="450" height="450"></p>
+<p>{% img center /images/fsharp_phonecat/step_7/validation_pattern.png 450 450 %}</p>
 
 <p>Let’s extract this pattern out of these validation rules and reduce the lines of code!</p>
 
@@ -305,7 +305,7 @@
 
 <p>Create a source file <code>UserValidation</code> and update it as below</p>
 
-<p><img src="/images/fsharp_phonecat/step_7/uservalidation_match.png"></p>
+<p>{% img /images/fsharp_phonecat/step_7/uservalidation_match.png %}</p>
 
 <p>Wait.. Wait.. I know how do you feel here.. It’s too much code! Can we do it in a better way? </p>
 
@@ -313,7 +313,7 @@
 
 <p>Thanks to ROP, we can make the mighty code smaller and more readable. I am going ahead with an assumption that you are aware of ROP. In case if you are not aware of it then watch this <a href="http://vimeo.com/97344498">excellent presentation</a> by <a href="https://twitter.com/ScottWlaschin">Scott Wlaschin</a></p>
 
-<p><img class="center" src="/images/fsharp_phonecat/step_7/bind_function.png" width="350" height="500"></p>
+<p>{% img center /images/fsharp_phonecat/step_7/bind_function.png 350 500 %}</p>
 
 <p>The crux of ROP is the bind function which composes two functions where the output type of one function is not matching with that of the input. If you want to know more this bind function, do visit this <a href="http://adit.io./posts/2013-04-17-functors,_applicatives,_and_monads_in_pictures.html">awesome blog post</a> by <a href="https://twitter.com/_egonschiele">Aditya</a>. In this blog post he explains about the bind function under the title <strong>Monads</strong></p>
 

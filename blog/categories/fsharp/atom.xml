@@ -4,7 +4,7 @@
   <title><![CDATA[Category: fsharp | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/fsharp/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-05-01T23:13:07+05:30</updated>
+  <updated>2017-05-16T11:37:30+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -46,27 +46,27 @@
 
 <p>We are going to build a tiny web appliaction that has an inbuilt user account with the username <code>foo</code> and the password <code>bar</code></p>
 
-<p><img class="center border" src="/images/suave_two_factor/Login.png" width="300" height="200"></p>
+<p>{% img center border /images/suave_two_factor/Login.png 300 200 %}</p>
 
 <p>After successful login, the user redirected to the <strong>Profile</strong> page where the user sees his name with a couple of buttons. One to enable <em>Two-factor authentication</em> and another one to <em>log out</em></p>
 
-<p><img class="center border" src="/images/suave_two_factor/Profile.png" width="350" height="200"></p>
+<p>{% img center border /images/suave_two_factor/Profile.png 350 200 %}</p>
 
 <p>Upon clicking the <em>Enable Two Factor Authentication</em> button, the user redirected to the <strong>Enable Two Factor Authentication</strong> page where the user has to scan the QR Code with the Google Authenticator App (For <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> or <a href="https://itunes.apple.com/in/app/google-authenticator/id388497605?mt=8">iPhone</a>). Then he needs to enter the verification code to enable Two-factor authentication for his account. </p>
 
-<p><img class="center border" src="/images/suave_two_factor/Enable_Two_Factor.png" width="450" height="250"></p>
+<p>{% img center border /images/suave_two_factor/Enable_Two_Factor.png 450 250 %}</p>
 
 <p><em>Google Authenticator App</em></p>
 
-<p><img class="center border" src="/images/suave_two_factor/Google_Authenticator.png" width="200" height="400"></p>
+<p>{% img center border /images/suave_two_factor/Google_Authenticator.png 200 400 %}</p>
 
 <p>If the verification code matches, the updated <strong>Profile</strong> page will look like </p>
 
-<p><img class="center border" src="/images/suave_two_factor/Profile_After_Two_Factor.png" width="350" height="200"></p>
+<p>{% img center border /images/suave_two_factor/Profile_After_Two_Factor.png 350 200 %}</p>
 
 <p>Now if the user logout and login again, he will be prompted to enter the verification code </p>
 
-<p><img class="center border" src="/images/suave_two_factor/Auth_Code_Prompt.png" width="250" height="150"></p>
+<p>{% img center border /images/suave_two_factor/Auth_Code_Prompt.png 250 150 %}</p>
 
 <p>After entering the verification code from the Google Authenticator, the user will be redirected to his <strong>Profile</strong> page. </p>
 
@@ -135,7 +135,7 @@ OtpSharp
 
 <p>Create a new directory with the name <em>views</em> in the <em>Suave.TwoFactorAuth</em> project and add a new liquid template <em>page.liquid</em>. This <em>page.liquid</em> is the master template for our application</p>
 
-<p><img class="center border" src="/images/suave_two_factor/page.png" width="300" height="300"></p>
+<p>{% img center border /images/suave_two_factor/page.png 300 300 %}</p>
 
 <p>After creating, change the ‘Copy to output’ property of the <em>page.liquid</em> file to ‘Copy if newer’ so that the view files copied to the build output directory. </p>
 
@@ -162,7 +162,7 @@ OtpSharp
 
 <p>Then create a new template file <em>login.liquid</em> in the <em>views</em> directory </p>
 
-<p><img class="center border" src="/images/suave_two_factor/login_view.png" width="500" height="300"></p>
+<p>{% img center border /images/suave_two_factor/login_view.png 500 300 %}</p>
 
 <p>The <em>login.liquid</em> view extends the <em>page.liquid</em> view and fill the placeholders for <code>head</code> and <code>content</code>.</p>
 
@@ -354,7 +354,7 @@ OtpSharp
 
 <p>After successful login, we need to redirect the user to his profile page. Let’s create a <code>profile.liquid</code> a view template for the Profile page</p>
 
-<p><img class="center border" src="/images/suave_two_factor/profile_view.png" width="600" height="450"></p>
+<p>{% img center border /images/suave_two_factor/profile_view.png 600 450 %}</p>
 
 <p>To render this profile page let’s add some code </p>
 
@@ -481,21 +481,21 @@ OtpSharp
 
 <p>The next step is to define a liquid view template for the <code>enable_two_factor</code> page.</p>
 
-<p><img class="center border" src="/images/suave_two_factor/enable_two_factor_view.png" width="600" height="450"></p>
+<p>{% img center border /images/suave_two_factor/enable_two_factor_view.png 600 450 %}</p>
 
 <p>While enabling the Two-factor authentication, we need to generate a secret key for the user that will be required for both, one-time verification code generation as well as its verification.</p>
 
 <p>So, in the <em>enable_two_factor.liquid</em> template we pass the generated <code>SecretKey</code> as a <code>hidden</code> input which will then be used for the verification of the code. </p>
 
 <div><div class="CodeRay">
-  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">hidden</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">SecretKey</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content"></span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="tag">&lt;input</span> <span class="attribute-name">type</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">hidden</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">name</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">SecretKey</span><span class="delimiter">&quot;</span></span> <span class="attribute-name">value</span>=<span class="string"><span class="delimiter">&quot;</span><span class="content">{{model.Key}}</span><span class="delimiter">&quot;</span></span><span class="tag">&gt;</span>
 </pre></div>
 </div>
 </div>
 
 <p>Now we need to render the <code>enable_two_factor</code> page in response to the <em>HTTP GET</em> request <code>/enable_two_factor</code></p>
 
-<p><img class="center border" src="/images/suave_two_factor/Enable_Two_Factor.png" width="450" height="250"></p>
+<p>{% img center border /images/suave_two_factor/Enable_Two_Factor.png 450 250 %}</p>
 
 <p>Let’s create a new module <code>GoogleAuthenticator</code> to put the Two-factor authentication related functions together</p>
 
@@ -577,7 +577,7 @@ OtpSharp
 
 <p>While enabling Two-factor authentication, the user has to scan the QR-Code from his <em>Google Authenticator</em> app and he will be getting a one-time verification code like this upon adding</p>
 
-<p><img class="center border" src="/images/suave_two_factor/Google_Authenticator.png" width="200" height="400"></p>
+<p>{% img center border /images/suave_two_factor/Google_Authenticator.png 200 400 %}</p>
 
 <p>Then he will be entering this in the <code>enable_two_factor</code> page and click <code>Enable</code>.</p>
 
@@ -637,7 +637,7 @@ OtpSharp
 
 <p>Let’s start by defining the liquid view template <code>auth_code.liquid</code> for getting the one-time verification code.</p>
 
-<p><img class="center border" src="/images/suave_two_factor/auth_code_view.png" width="450" height="350"></p>
+<p>{% img center border /images/suave_two_factor/auth_code_view.png 450 350 %}</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>// Suave.TwoFactorAuth/GoogleAuthenticator.fs
@@ -734,7 +734,7 @@ OtpSharp
 <h3 id="related-posts">Related Post(s)</h3>
 
 <ul>
-  <li><a href="/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/">Securing APIs in Suave using JSON Web Token</a></li>
+  <li><a href="{% post_url 2015-07-15-securing-apis-in-suave-using-json-web-token %}">Securing APIs in Suave using JSON Web Token</a></li>
 </ul>
 ]]></content>
   </entry>
@@ -799,7 +799,7 @@ OtpSharp
 </pre></div>
 </div>
 </div>
-<p>If I haven’t choosen to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in <a href="(/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/)">my last blog post</a> on using Suave in Azure Functions, I’ve used this same approach.</p>
+<p>If I haven’t choosen to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in <a href="({% post_url 2016-09-19-scale-up-azure-functions-in-f-number-using-suave%})">my last blog post</a> on using Suave in Azure Functions, I’ve used this same approach.</p>
 
 <p>While thinking regarding properties to assert the transformation, for the first time I came to know about the <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.languageprimitives-module-%5Bfsharp%5D">Language Primitives</a> module in F# and the <em>EnumToValue</em> function.</p>
 
@@ -938,7 +938,7 @@ FsCheck.Xunit.PropertyFailedException :
 
 <p>While looking at <code>Suave.Http</code> codebase to fix the unit test failures, this is what I saw in the code</p>
 
-<p><img class="center border" src="/images/leveraging_pbt/send_pr.png"></p>
+<p>{% img center border /images/leveraging_pbt/send_pr.png %}</p>
 
 <p>This is the beauty of open source, and I am glad <a href="https://github.com/SuaveIO/suave/pull/512">to do it</a></p>
 
@@ -974,7 +974,7 @@ FsCheck.Xunit.PropertyFailedException :
 
 <p>The <code>Run</code> function takes a <code>HttpRequestMessage</code> and returns the <code>HttpResponseMessage</code>. This signature is simple, but it has a limitation. The limitation has been showcased in the <a href="https://github.com/Azure/azure-webjobs-sdk-templates/tree/dev/Templates">templates</a> directory of Azure Webjobs SDK</p>
 
-<p><img class="center border" src="/images/AzureFunctionsSuave/Azure_Functions_CRUD.png" width="250" height="250"></p>
+<p>{% img center border /images/AzureFunctionsSuave/Azure_Functions_CRUD.png 250 250 %}</p>
 
 <p>My each <code>C</code>, <code>R</code>, <code>U</code>, <code>D</code> are in different functions. Well, there is nothing wrong here. These templates are suitable for getting started in Azure Functions. But what will you do if you have a requirement to expose <code>CRUD</code> of a resource as an Azure Functions?</p>
 
@@ -1000,7 +1000,7 @@ FsCheck.Xunit.PropertyFailedException :
 
 <p>Though this approach solves the problem, it comes with another set of <a href="http://stackoverflow.com/questions/126409/ways-to-eliminate-switch-in-code">challenges</a>. In Object Oriented  Programming, we typically use <a href="http://www.refactoring.com/catalog/replaceConditionalWithPolymorphism.html">Polymorphism</a> to replace the conditional logic.</p>
 
-<p><img class="center" src="http://scontent.cdninstagram.com/t51.2885-15/s480x480/e35/13391359_1083221395099569_1878773023_n.jpg?ig_cache_key=MTI3NTQ5MjQ4NzE4Mjk3MTIxOQ%3D%3D.2"></p>
+<p>{% img center http://scontent.cdninstagram.com/t51.2885-15/s480x480/e35/13391359_1083221395099569_1878773023_n.jpg?ig_cache_key=MTI3NTQ5MjQ4NzE4Mjk3MTIxOQ%3D%3D.2 %}</p>
 
 <h2 id="revisiting-function-signature">Revisiting Function Signature</h2>
 
@@ -1058,7 +1058,7 @@ FsCheck.Xunit.PropertyFailedException :
 </div>
 
 <blockquote>
-  <p>To learn more about the Suave combinators refer my blog post on <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">Building REST API in suave</a></p>
+  <p>To learn more about the Suave combinators refer my blog post on <a href="{% post_url 2015-06-11-building-rest-api-in-fsharp-using-suave  %}">Building REST API in suave</a></p>
 </blockquote>
 
 <p>If you notice the binding <code>app</code> itself is a <code>WebPart</code> (which in turn a function) with the signature <code>HttpContext -&gt; Async&lt;HttpContext option&gt;</code>. So, you can call this function in your application code and project the output of the function to any output medium that you wish.</p>
@@ -1073,7 +1073,7 @@ FsCheck.Xunit.PropertyFailedException :
 
 <p>So, to scale up Azure Functions using Suave, all we need is an adapter.</p>
 
-<p><img class="center" src="http://images.freeimages.com/images/previews/c0d/adapter-1420487.jpg"></p>
+<p>{% img center http://images.freeimages.com/images/previews/c0d/adapter-1420487.jpg %}</p>
 
 <p>The adapter does the following</p>
 
@@ -1294,7 +1294,7 @@ FsCheck.Xunit.PropertyFailedException :
 
 <p>Let’s make some HTTP requests to test our implementation.</p>
 
-<p><img class="center border" src="/images/AzureFunctionsSuave/HelloSuaveRequests.png" width="700" height="500"></p>
+<p>{% img center border /images/AzureFunctionsSuave/HelloSuaveRequests.png 700 500 %}</p>
 
 <p>Suave is rocking!</p>
 
@@ -1468,7 +1468,7 @@ GET /people/feafa5b5-304d-455e-b7e7-13a5b3293f77
 
 <p><strong>Serverless REST API in Action</strong></p>
 
-<p><img class="center border" src="/images/AzureFunctionsSuave/HelloRestRequests.jpeg"></p>
+<p>{% img center border /images/AzureFunctionsSuave/HelloRestRequests.jpeg %}</p>
 
 <blockquote>
   <p>This blog post is a proof of concept to use Suave in Azure Functions. There are a lot of improvements to be made to make it production ready. I am planning to publish this as a NuGet package based on the feedback from the community.</p>
@@ -1721,7 +1721,7 @@ GET /people/feafa5b5-304d-455e-b7e7-13a5b3293f77
 
 <h3 id="related-posts">Related Posts</h3>
 
-<p><a href="/blog/2015/04/02/step-10-refactoring-composition-root/">Refactoring Composition Root</a></p>
+<p><a href="{% post_url 2015-04-02-step-10-refactoring-composition-root %}">Refactoring Composition Root</a></p>
 ]]></content>
   </entry>
   
