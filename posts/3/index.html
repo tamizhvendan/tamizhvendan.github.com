@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Dec 29th, 2015 fsharp, rx, suave Comments Implementing API Gateway in F# Using Rx and Suave One of the impressive aspects of functional programming &hellip;">
+	<meta name="description" content="Feb 1st, 2016 craftsmanship Comments Keep It Simple Last week, I was working on a task which involves populating some PostgreSQL database tables &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -35,7 +35,6 @@
 	<!-- Start of Leadin Embed -->
   <script type="text/javascript" src="//js.leadin.com/js/v1/2177345.js" id="LeadinEmbed-2177345" crossorigin="use-credentials" async defer></script>
 <!-- End of Leadin Embed -->
-	<script data-codementor="tamizhvendan" data-style="button" data-theme="dark" src="https://cdn.codementor.io/assets/badge.js"></script>
 	
   
 	<script type="text/javascript">
@@ -129,6 +128,166 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-02-01T15:51:46+05:30" data-updated="true" itemprop="datePublished">Feb 1<sup>st</sup>, 2016</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2016/02/01/keep-it-simple/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2016/02/01/keep-it-simple/" itemprop="url">Keep It Simple</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Last week, I was working on a task which involves populating some PostgreSQL database tables from CSV files. Though this is a straight forward work, I’ve encountered an interesting approach while manipulating a CSV file to adhere some changes in the database schema. In this blog post, I will be sharing what it is and how it made me think better.</p>
+
+<p>Unlike my other blog posts, this post is more on the thought process behind my approach than the code.</p>
+
+<h3 id="the-story">The Story</h3>
+
+<p>The CSV file that we suppose to import to a database table has the following Structure with 1000 rows</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">code,value
+</span><span class="line">XAS,0.23
+</span><span class="line">SDR,3.21
+</span><span class="line">WFZ,1.87
+</span><span class="line">........
+</span><span class="line">........
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The column name <code>code</code> and <code>value</code> are just for illustration.</p>
+
+<p>The Proposed schema change is introduce a new column called <code>year</code> with a fixed value <code>2015</code> for all the rows. So, the expected CSV file would like</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">year,code,value
+</span><span class="line">2015,XAS,0.23
+</span><span class="line">2015,SDR,3.21
+</span><span class="line">2015,WFZ,1.87
+</span><span class="line">........
+</span><span class="line">........</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>A Very Simple Task</p>
+
+<p>Now, How can we solve it?</p>
+
+<h3 id="approach-1---dont-try-this-at-your-officehome">Approach 1 - Don’t try this at your office/home</h3>
+
+<p>Let me start with an approach number one</p>
+
+<blockquote>
+  <p>Edit all the rows manually</p>
+</blockquote>
+
+<p>It is something that you never wanted to see/do. So, let me move on to the next approach without wasting any time here</p>
+
+<h3 id="approach-2---leverage-your-programming-skill">Approach 2 - Leverage your programming skill</h3>
+
+<blockquote>
+  <p>Pick your favorite programming language and whack the CSV file  </p>
+</blockquote>
+
+<p>I believe this would be the approach that came to your mind when you read the problem statement. A typical programmer’s instinct!</p>
+
+<p>So, you picked your programming language ‘X’, what would be the next steps</p>
+
+<ul>
+  <li>Open the IDE/Editor - <em>Wait for it to load!</em></li>
+  <li>Create a Project - <em>if required and wait for it also to load!</em></li>
+  <li>Start typing - <em>and your phone rings</em></li>
+  <li>Refer library documentation - <em>or Refer Stackoverflow</em></li>
+  <li>Compile - <em>and wait for it</em> - <em>Ignore this step and wait for a run-time error if your programming language is dynamic</em></li>
+  <li>Execute - <em>A bug -&gt; Go to Google -&gt; Stack Overflow -&gt; Change the code -&gt; Start again</em></li>
+  <li>You are done!</li>
+</ul>
+
+<p><em>I’ve exaggerated some things here. If you don’t agree with any steps, just ignore that step</em></p>
+
+<p>After 2 to 15 minutes (based on your ability &amp; the ceremony of your programming language) you have solved the problem.</p>
+
+<p>Is it really worth? Well, It depends on the context.</p>
+
+<p>If there are lot of CSV files which require the same change or also few more like this will about to come in the near future, then this effort really makes sense</p>
+
+<p>But, here it is only one file which requires the change. So, I feel it is a complex response to a simple problem</p>
+
+<h3 id="approach-3---use-a-tool">Approach 3 - Use a tool</h3>
+
+<blockquote>
+  <p>Use a shiny CSV management tool to make the changes</p>
+</blockquote>
+
+<p>It is slightly better approach than the previous one but it also has its own downsides</p>
+
+<ul>
+  <li>Googling to find the tool</li>
+  <li>Download it - <em>Your office firewall is blocking that site! / Registration on the tool site / Requires Java x.x version</em></li>
+  <li>Open the CSV file.</li>
+  <li>Refer the tool’s documentation</li>
+  <li>Get the job done</li>
+</ul>
+
+<p>You can also Microsoft Excel to achieve this. But again a heavy solution to solve a simple problem!</p>
+
+<p>There should be a simple approach! That’s what we are going to see next.</p>
+
+<h3 id="approach-4---find-and-replace">Approach 4 - Find And Replace</h3>
+
+<blockquote>
+  <p>Just use Find and Replace in an advanced editor</p>
+</blockquote>
+
+<p>This approach involves just three steps</p>
+
+<ul>
+  <li>Open the CSV file in an advanced text editor (notepad++, atom, sublime text, etc.,)</li>
+  <li>Select all the text and press <code>tab</code></li>
+  <li>Open <code>Find and Replace</code>. Find for <code>tab</code> and replace it with <code>2015,</code></li>
+</ul>
+
+<p>That’s it!</p>
+
+<h3 id="summary">Summary</h3>
+
+<blockquote class="twitter-tweet" lang="en"><p lang="en" dir="ltr">The older I get, the more I realize the biggest problem to solve in tech is to get people to stop making things harder than they have to be.</p>&mdash; Chad Fowler (@chadfowler) <a href="https://twitter.com/chadfowler/status/646624348028190720">September 23, 2015</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1355,124 +1514,6 @@ the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
 <h2 id="summary">Summary</h2>
 
 <p>In this blog post we have seen a lean approach for setting up a development environment to work with React. In the next blog post we will be extending this example to implement the <a href="https://facebook.github.io/react/docs/flux-overview.html">flux</a> architecture using <a href="http://alt.js.org">Alt</a>. You can get the source code associated with this blog post can be found in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/react-hello-world">github repository</a>.</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-07-23T16:56:20+05:30" data-updated="true" itemprop="datePublished">Jul 23<sup>rd</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/suave/'>suave</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/07/23/creating-mock-api-server-in-fsharp-using-suave/" itemprop="url">Creating Mock API Server in Fsharp Using Suave</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>As part of the current assignment in my day job, I am working in a web application which integrates with an another web application via web APIs. The backend calls the exposed web APIs and does some business logic. Due to some technical limitations, we are not able to setup a development environment of the Web APIs so we have decided to create a mock API server during the development and replace it with the real one in the production.</p>
-
-<p>Since it’s just a mock API server, we don’t want to spend much time on it. Thanks to the awesome light-weight fsharp library <a href="http://suave.io/">Suave</a> we have made it in just 15 minutes!</p>
-
-<p>In this blog post, I will be sharing how we have achieved it. As a sample, we will mock the <a href="https://developer.GitHub.com/v3/">GitHub API</a>.</p>
-
-<h2 id="getting-started">Getting Started</h2>
-
-<p>Create a new fsharp console application project “GitHubMockApiServer” in Visual Studio and install the <a href="https://www.nuget.org/packages/Suave/">suave</a> nuget package.</p>
-
-<p>To keep it short we are going to mock only two GitHub APIs</p>
-
-<ul>
-  <li><a href="https://developer.GitHub.com/v3/users/#get-a-single-user">Get a single user</a> - <strong>/users/:username</strong></li>
-  <li><a href="https://developer.GitHub.com/v3/repos/#list-user-repositories">List user repositories</a> - <strong>/users/:username/repos</strong></li>
-</ul>
-
-<h2 id="creating-the-mock-apis">Creating the mock APIs</h2>
-
-<p>The first step is getting the sample response for these APIs and save them in separate JSON files. In this example, I’ve created these using my GitHub username and added to the project as below.</p>
-
-<p><img class="center" src="/images/suave_mock_api/project.png" /></p>
-
-<p>After adding, change the “Copy to Output Directory” property of the both the files to “Copy always”</p>
-
-<p>Open the <strong>Program.fs</strong> and update it as follows</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">Suave</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Operators</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Successful</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">Suave.Filters</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">System.IO</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">json</span> <span class="n">fileName</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">content</span> <span class="o">=</span> <span class="nn">File</span><span class="p">.</span><span class="n">ReadAllText</span> <span class="n">fileName</span>
-</span><span class="line">    <span class="n">content</span><span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="s">&quot;</span><span class="se">\r</span><span class="s">&quot;</span><span class="o">,</span> <span class="s">&quot;&quot;</span><span class="o">).</span><span class="n">Replace</span><span class="o">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">,</span><span class="s">&quot;&quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="n">OK</span> <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">user</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/users/%s&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;User.json&quot;</span> <span class="o">|&gt;</span> <span class="n">json</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">repos</span> <span class="o">=</span> <span class="n">pathScan</span> <span class="s">&quot;/users/%s/repos&quot;</span> <span class="o">(</span><span class="k">fun</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="s">&quot;Repos.json&quot;</span> <span class="o">|&gt;</span> <span class="n">json</span><span class="o">)</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">mockApi</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">repos</span><span class="o">;</span><span class="n">user</span><span class="o">]</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">mockApi</span>
-</span><span class="line">  <span class="mi">0</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Short and Sweet! Now you can hit this mock GitHub APIs without worrying about its <a href="https://developer.GitHub.com/v3/#rate-limiting">rate limits</a></p>
-
-<p>The <code>json</code> function reads the sample JSON file, then removes the line breaks and return the HTTP 200 response with the content type as  “application/json”</p>
-
-<p>The nice DSL in suave enabled us to configure the routes without giving much works to our hands :-)  </p>
-
-<h2 id="mock-apis-in-action">Mock APIs in action</h2>
-
-<p><img class="border center" src="/images/suave_mock_api/user_api.png" /></p>
-
-<p><img class="border center" src="/images/suave_mock_api/repos_api.png" /></p>
-
-<h2 id="summary">Summary</h2>
-
-<p>This work is inspired by Scott Wlaschin’s blog post series on <a href="http://fsharpforfunandprofit.com/series/low-risk-ways-to-use-fsharp-at-work.html">Low-risk ways to use F# at work</a>. I am glad to find one more low-risk way to use F# at work and I believe it would help you in future. You can find the sample code in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/GithubMockApiServer">blog-samples GitHub repository</a>.</p>
 
 		
 		

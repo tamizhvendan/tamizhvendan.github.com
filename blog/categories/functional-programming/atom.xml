@@ -4,7 +4,7 @@
   <title><![CDATA[Category: functional-programming | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/functional-programming/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-05-16T11:37:30+05:30</updated>
+  <updated>2017-06-25T01:29:23+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -73,7 +73,7 @@
 </pre></div>
 </div>
 </div>
-<p>If I haven’t choosen to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in <a href="({% post_url 2016-09-19-scale-up-azure-functions-in-f-number-using-suave%})">my last blog post</a> on using Suave in Azure Functions, I’ve used this same approach.</p>
+<p>If I haven’t choosen to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in <a href="(/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/)">my last blog post</a> on using Suave in Azure Functions, I’ve used this same approach.</p>
 
 <p>While thinking regarding properties to assert the transformation, for the first time I came to know about the <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.languageprimitives-module-%5Bfsharp%5D">Language Primitives</a> module in F# and the <em>EnumToValue</em> function.</p>
 
@@ -212,7 +212,7 @@ FsCheck.Xunit.PropertyFailedException :
 
 <p>While looking at <code>Suave.Http</code> codebase to fix the unit test failures, this is what I saw in the code</p>
 
-<p>{% img center border /images/leveraging_pbt/send_pr.png %}</p>
+<p><img class="center border" src="/images/leveraging_pbt/send_pr.png"></p>
 
 <p>This is the beauty of open source, and I am glad <a href="https://github.com/SuaveIO/suave/pull/512">to do it</a></p>
 
@@ -229,10 +229,10 @@ FsCheck.Xunit.PropertyFailedException :
     <updated>2015-04-25T15:09:02+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/04/25/my-takeaways</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is the concluding part of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is the concluding part of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">like this</a> before, so during this course, I was about to give up but the statement </p>
+<p>I would like to begin this blog post by thanking <a href="https://twitter.com/jsonmez">John Sonmez</a> for his inspirational video on <a href="http://simpleprogrammer.com/2014/01/09/importance-finishing-started/">the importance of finishing what you started</a>. I haven’t written any blog series <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">like this</a> before, so during this course, I was about to give up but the statement </p>
 
 <p style="text-align:center"> <strong> Finish what you started </strong> </p>
 
@@ -254,15 +254,15 @@ FsCheck.Xunit.PropertyFailedException :
 
 <p>In my perspective F# is a <em>pragmatic functional programming language</em>. In addition to lot of elegant features of the language, it works seamlessly with the existing .NET libraries. This one characteristic I would say is a blessing. You can say, ‘This feature is really cool’, but at the end of the day it should help you to get the job done. F# is not only cool, It can help you too!</p>
 
-<p>In the sample application we have leveraged the <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">Web Api 2</a>, <a href="{% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}">Razor Views</a>, <a href="{% post_url 2015-02-04-step-6-authentication-using-owin-middleware-and-asp-dot-net-identity %}">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code {% emoji smile %})</p>
+<p>In the sample application we have leveraged the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">Web Api 2</a>, <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">Razor Views</a>, <a href="/blog/2015/02/04/step-6-authentication-using-owin-middleware-and-asp-dot-net-identity/">Asp.Net Identity</a> and the Asp.Net framework itself. So, you can do whatever you are doing in C# in F#! ( With less lines of code <i class='emoji smile'></i>)</p>
 
 <h2 id="using-f-in-your-existing-c-codebase">Using F# in your existing C# Codebase</h2>
 
 <p>As F# is a <a href="http://en.wikipedia.org/wiki/List_of_CLI_languages#CLI_languages">CLI Language</a> it can be added to your existing C# solution. All you need to do just create a new F# project in the solution and this project can work seamlessly with the other projects in the solution. </p>
 
-<p>In the sample application, we have a <a href="{% post_url 2015-01-18-step-5-advanced-search-dsl-using-fparsec %}">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
+<p>In the sample application, we have a <a href="/blog/2015/01/18/step-5-advanced-search-dsl-using-fparsec/">created a parser</a> for a search criteria DSL using <a href="http://www.quanttec.com/fparsec/">FParsec</a>. Doing this in C# would be very hard. So we can easily wrap this F# implementation in a class library and use it from any C# codebase. </p>
 
-<p>In the <a href="{% post_url 2015-01-06-step-4-build-automation-using-fake %}">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
+<p>In the <a href="/blog/2015/01/06/step-4-build-automation-using-fake/">step-5</a> we have automated build process using <a href="http://fsharp.github.io/FAKE/">FAKE</a> which is <em>far</em> better than its counterpart verbose MSBuild xml files. This can be used in any .NET projects!</p>
 
 <h2 id="less-is-beautiful">Less is beautiful</h2>
 
@@ -286,10 +286,10 @@ FsCheck.Xunit.PropertyFailedException :
     <updated>2015-01-02T05:44:52+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 3 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 3 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the last two steps we have seen how to create a <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">web apis</a> and <a href="{% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
+<p>In the last two steps we have seen how to create a <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">web apis</a> and <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">static razor views</a> in fsharp. In this blog post we are going to see one of my favorite feature in fsharp <a href="http://fsharpforfunandprofit.com/posts/concurrency-actor-model/">“Message based approach to concurrency”</a>.</p>
 
 <h3 id="a-small-flashback">A Small Flashback</h3>
 <p>I’ve actually planned to put this blog post for the great fsharp community initiative <a href="https://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/">F# Advent Calender</a>. Unfortunately it was not able to get through as I’ve <a href="http://sergeytihon.wordpress.com/2014/11/24/f-advent-calendar-in-english-2014/#comment-4135">nominated myself</a> little late. I always believe there is an opportunity behind every adversity. I didn’t get hung up and I knew this is one of the great topic to blog about. When I decided to blog about it, I needed a sample web application. So, I was creating that sample application and it suddenly strikes! <em>How about a blog series on web application development in fsharp?</em> I’ve immediately started working on it and hence this blog series.</p>
@@ -298,10 +298,10 @@ FsCheck.Xunit.PropertyFailedException :
 <p>In this blog post we are going to build a recommendation system which keeps track of what phones that the user is viewing, and based on his navigation history, we will be recommending a phone that he might be interested in</p>
 
 <p style="text-align:center"> <strong> User visits "Motorola XOOM™" </strong> </p>
-<p>{% img /images/fsharp_phonecat/step_3/Phone_1.png %}</p>
+<p><img src="/images/fsharp_phonecat/step_3/Phone_1.png"></p>
 
 <p style="text-align:center"> <strong> User visits "Motorola XOOM™ with Wi-Fi" </strong> </p>
-<p>{% img /images/fsharp_phonecat/step_3/Phone_2.png %}</p>
+<p><img src="/images/fsharp_phonecat/step_3/Phone_2.png"></p>
 
 <p>Let us start the implementation by defining two high level tasks</p>
 
@@ -312,9 +312,9 @@ FsCheck.Xunit.PropertyFailedException :
 
 <h3 id="tracking-user-navigation">1. Tracking user navigation</h3>
 
-<p>{% img center /images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png 600 500 %}</p>
+<p><img class="center" src="/images/fsharp_phonecat/step_3/Phone_Visit_Workflow.png" width="600" height="500"></p>
 
-<p>The first two components has been already implemented as part of <a href="{% post_url 2014-12-23-step-2-fsharp-phonecat-views-using-razor %}">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
+<p>The first two components has been already implemented as part of <a href="/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor/">step-2</a>. So we just need to wire up the other two components. Let’s start from <code>PhoneViewTracker</code></p>
 
 <p>Create a source file in the <strong>Web</strong> project and name it as <code>PhoneViewTracker</code>. Add a function <code>observePhonesViewed</code> which will be invoked when you a user visits a phone.</p>
 
@@ -448,7 +448,7 @@ FsCheck.Xunit.PropertyFailedException :
 
 <p><strong>Workflow</strong></p>
 
-<p>{% img center /images/fsharp_phonecat/step_3/Phone_Recommendation_Workflow.png 600 500 %}</p>
+<p><img class="center" src="/images/fsharp_phonecat/step_3/Phone_Recommendation_Workflow.png" width="600" height="500"></p>
 
 <ol>
   <li>User initiates the recommendation request using SignalR</li>
@@ -671,13 +671,13 @@ FsCheck.Xunit.PropertyFailedException :
     <updated>2014-12-23T19:47:20+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2014/12/23/step-2-fsharp-phonecat-views-using-razor</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 2 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 2 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="{% post_url 2014-12-17-phonecat-backend-using-web-api-and-typeproviders %}">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
+<p>In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">last blog post</a> we have created web-api endpoints which serve the data for the home page and in this blog post we are going to create views of the phones and manufacturers using <a href="http://en.wikipedia.org/wiki/ASP.NET_Razor_view_engine">Razor</a>.</p>
 
 <h3 id="phone-view">Phone View</h3>
-<p>{% img /images/fsharp_phonecat/step_2/Phone.png %}</p>
+<p><img src="/images/fsharp_phonecat/step_2/Phone.png"></p>
 
 <p>As we did it in the step-1 we are going to start with the controller which serves the phone view. Let’s get started by creating a source file in <strong>Web</strong> project under the folders <em>Controllers</em> with the name <code>PhoneController</code></p>
 
@@ -911,7 +911,7 @@ FsCheck.Xunit.PropertyFailedException :
 <p>That’s it. Phone View is up and running! Click the Phone Links in the Home Page it will take you to the Phones View Page.</p>
 
 <h3 id="manufacturers-view">Manufacturers View</h3>
-<p>{% img /images/fsharp_phonecat/step_2/Manufacturer.png %}<br />
+<p><img src="/images/fsharp_phonecat/step_2/Manufacturer.png"><br />
 Manufactures View follows the similar steps that we have used to create the Phone View. It displays the Phones manufactured by a selected manufacturer in the home page.</p>
 
 <p>Let’s start from the controller. Create a controller in the <strong>Web</strong> project with the name <code>ManufacturerController</code></p>
@@ -1016,12 +1016,12 @@ Manufactures View follows the similar steps that we have used to create the Phon
     <updated>2014-12-17T17:31:44+05:30</updated>
     <id>http://blog.tamizhvendan.in/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders</id>
     <content type="html"><![CDATA[<blockquote>
-  <p>This is step 1 of my blog series on <a href="{% post_url 2014-12-10-web-application-development-in-fsharp-using-asp-dot-net-mvc %}">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+  <p>This is step 1 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
 </blockquote>
 
-<p>In the <a href="{% post_url 2014-12-10-step-0-setting-up-the-fsharp-phonecat-solution %}">last blog post</a> we have created the basic home page of phone cat with the placeholders and in this post we are going it wire the home page with the backend web apis.</p>
+<p>In the <a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/">last blog post</a> we have created the basic home page of phone cat with the placeholders and in this post we are going it wire the home page with the backend web apis.</p>
 
-<p>{% img /images/fsharp_phonecat/step_1/home_page.png %}</p>
+<p><img src="/images/fsharp_phonecat/step_1/home_page.png"></p>
 
 <p>As the above screenshot indicates we are going to develop three web api endpoints which serve the data to the front-end and we are going to use the existing json data available in <a href="https://github.com/angular/angular-phonecat/tree/master/app/phones">angular-phonecat</a> repository as our backend data store.</p>
 

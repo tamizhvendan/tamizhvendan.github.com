@@ -4,7 +4,7 @@
   <title><![CDATA[Category: golang | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/golang/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-05-16T11:37:13+05:30</updated>
+  <updated>2017-06-25T01:29:23+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,260 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Leveraging interfaces in golang - Part 1]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2017/06/24/leveraging-interfaces-in-golang-part-1/"/>
+    <updated>2017-06-24T13:38:16+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2017/06/24/leveraging-interfaces-in-golang-part-1</id>
+    <content type="html"><![CDATA[<p>In my previous blog post <a href="/blog/2017/05/01/using-golang-in-production-my-experiences/">on using golang in production</a>, I have mentioned that <a href="https://gobyexample.com/interfaces">interfaces</a> are my favorite feature in golang. </p>
+
+<p>As a follow-up of this comment, I would like to share how we are using (my current project is also in golang!) the interfaces to keep our code clean and consistent through a series of three blog posts</p>
+
+<p>This blog post series assumes that you are familiar with the basics of interfaces in golang. If would like to know what it brings to the table, I strongly recommend to check out <a href="https://hackernoon.com/why-i-like-gos-interfaces-2891adf2803c">this well-written article</a> by <a href="https://twitter.com/theburningmonk">Yan Cui</a>.</p>
+
+<p>Let me start the series with a solution that we have implemented a few days back. </p>
+
+<h2 id="some-context">Some Context</h2>
+
+<p>The product that we are building consists of a suite of web applications. To authenticate the users, these web applications talk to a centralized web application called “Identity Server”. </p>
+
+<p>Upon receiving valid login credentials, the Identity Server generates <a href="https://jwt.io/introduction/">a JSON Web Token</a>(JWT) with the corresponding user claims and signs it using a public/private key pair using RSA. </p>
+
+<p>The downstream web applications will then use this JWT to grant the access to their corresponding protected resources. </p>
+
+<p>Let’s assume a simple JWT claims payload</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>{
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span class="key"><span class="delimiter">&quot;</span><span class="content">sub</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">1234567890</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">John D</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  <span class="key"><span class="delimiter">&quot;</span><span class="content">admin</span><span class="delimiter">&quot;</span></span>: <span class="value">true</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>The above payload uses one of the <a href="https://tools.ietf.org/html/rfc7519#section-4.1">JWT standard claims</a>, <code>sub</code>, to communicate the unique identifier of the user in the product for all the web applications. The <code>name</code> and <code>admin</code> are the custom claims. </p>
+
+<p>As per the JWT spec, <a href="https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#subDef">the sub claim</a> is a case-sensitive string containing a StringOrURI value which is locally unique in the context of the issuer or be globally unique, but in our system, the unique identifier of a user is an unsigned integer(uint) type. </p>
+
+<p>As we will be sharing the JWT with other third party applications, we made a call to stick to the JWT spec and converted the uint to string type while generating the token and did the reverse while authenticating the user using this token.</p>
+
+<h2 id="unmarshalling-jwt---a-naive-approach">Unmarshalling JWT - A Naive Approach</h2>
+
+<p>Before witnessing the golang interface in action, let’s see a naive implementation how we can unmarshal the claim and use.</p>
+
+<p>The straightforward thing would be creating a struct matching the properties of the claim </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">type</span> UserJwt <span class="keyword">struct</span> {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  Sub    <span class="predefined-type">string</span> 
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Name   <span class="predefined-type">string</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Admin  <span class="predefined-type">bool</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>and unmarshalling using the <a href="https://golang.org/pkg/encoding/json/">json package</a> in golang </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>claims := <span class="shell"><span class="delimiter">`</span><span class="content"></span></span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="shell"><span class="content">{</span></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="shell"><span class="content">  &quot;sub&quot;: &quot;1234567890&quot;,</span></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="shell"><span class="content">  &quot;name&quot;: &quot;John D&quot;,</span></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span><span class="shell"><span class="content">  &quot;admin&quot;: true</span></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span><span class="shell"><span class="content">}</span><span class="delimiter">`</span></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span><span class="keyword">var</span> userJwt *UserJwt
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>err := json.Unmarshal([]<span class="predefined-type">byte</span>(claims), &amp;userJwt)
+</pre></div>
+</div>
+</div>
+
+<p>To convert the <code>sub</code> from <code>string</code> to <code>unit</code>, we can have a method <code>Id</code> on the <code>UserJwt</code> type.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">func</span> (u *UserJwt) Id() (<span class="predefined-type">uint</span>, <span class="predefined-type">error</span>) {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  v, err := strconv.ParseUint(u.Sub, <span class="integer">10</span>, strconv.IntSize)
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    <span class="keyword">return</span> <span class="integer">0</span>, err
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  }
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  <span class="keyword">return</span> <span class="predefined-type">uint</span>(v), <span class="predefined-constant">nil</span>
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>and use it after successful unmarshalling of the JWT claims. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>err := json.Unmarshal([]<span class="predefined-type">byte</span>(claims), &amp;userJwt)
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  <span class="keyword">return</span> err
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>}
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>id, err := userJwt.Id()
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span><span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  <span class="keyword">return</span> err
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span><span class="comment">// Do something with the id of type unit</span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>fmt.Println(id)
+</pre></div>
+</div>
+</div>
+
+<p>That’s great. But did you see any code smell here?</p>
+
+<p>Let me share what’s wrong with this approach,</p>
+
+<p>Let’s say that we have the following JSON claim with <code>sub</code> has the value <code>user/john</code> instead of a string representing the unsigned integer identifier of the user.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>claims := <span class="shell"><span class="delimiter">`</span><span class="content"></span></span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span><span class="shell"><span class="content">{</span></span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span><span class="shell"><span class="content">  &quot;sub&quot;: &quot;user/john&quot;,</span></span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span><span class="shell"><span class="content">  &quot;name&quot;: &quot;John D&quot;,</span></span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span><span class="shell"><span class="content">  &quot;admin&quot;: true</span></span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span><span class="shell"><span class="content">}</span><span class="delimiter">`</span></span>
+</pre></div>
+</div>
+</div>
+
+<p>Unmarshalling this claim will work, and it won’t return any error</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>err := json.Unmarshal([]<span class="predefined-type">byte</span>(claims), &amp;userJwt)
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span><span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  <span class="keyword">return</span> err
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>}
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>
+</pre></div>
+</div>
+</div>
+
+<p>We can share the unmarshalled <code>userJwt</code> with the rest of the code to carry the business logic. </p>
+
+<p>We will come to know that the claim has an invalid <code>sub</code> value only when we try to get the id of the user by calling the <code>Id</code> method</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>id, err := userJwt.Id()
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span><span class="comment">// This will return the following error</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span><span class="comment">// strconv.ParseUint: parsing &quot;name/john&quot;: invalid syntax</span>
+</pre></div>
+</div>
+</div>
+
+<p>If we didn’t call the <code>Id</code> method, this subtle bug slip silently into the product and someday will end up as a production issue! </p>
+
+<p>In a nutshell, this approach is not robust, and the resulting code is not clean.</p>
+
+<h2 id="using-interfaces---a-better-approach">Using Interfaces - A better approach</h2>
+
+<p>Ideally, we want the <code>json.Unmarshal</code> function should return an error if the <code>sub</code> doesn’t contain a <code>uint</code> value as string.</p>
+
+<p>To make it happen, we need to inform the <code>json.Unmarshal</code> function somehow to do the type conversion while unmarshalling and return an error if the conversion fails. </p>
+
+<p>How to make it happen? </p>
+
+<p>We can do this by using the <a href="https://golang.org/pkg/encoding/json/#Unmarshaler">Unmarshaler</a> interface. </p>
+
+<p>In our case, we can declare the <code>UnmarshalJSON</code> method with the <code>UserJwt</code> type and in the definition, we can do the type conversion. But that’d be an overkill as we need to do the unmarshalling of the other fields, <code>Name</code>, and <code>Admin</code>, which is already working well without any custom logic. </p>
+
+<p>In other words, the effective way would be overriding the JSON unmarshalling behavior of <code>Sub</code> field alone by having the <code>UnmarshalJSON</code> method with <code>unit</code> type. But according to golang’s spec we can’t do it</p>
+
+<blockquote>
+  <p>You can only declare a method with a receiver whose type is defined in the same package as the method. You cannot declare a method with a receiver whose type is defined in another package (which includes the built-in types such as int).</p>
+</blockquote>
+
+<p>To handle this kind of scenario, we can make use of the <a href="https://golang.org/ref/spec#Type_identity">named types</a> in golang and define a new type called <code>Sub</code> with an underlying type <code>unit</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">type</span> Sub <span class="predefined-type">uint</span>
+</pre></div>
+</div>
+</div>
+
+<p>Then we can declare the <code>UnmarshalJSON</code> method with this <code>Sub</code> type. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="keyword">func</span> (s *Sub) UnmarshalJSON(b []<span class="predefined-type">byte</span>) <span class="predefined-type">error</span> {
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  sub := strings.Replace(<span class="predefined-type">string</span>(b), <span class="shell"><span class="delimiter">`</span><span class="content">&quot;</span><span class="delimiter">`</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="delimiter">&quot;</span></span>, <span class="integer">2</span>)
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  v, err := strconv.ParseUint(sub, <span class="integer">10</span>, strconv.IntSize)
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    <span class="keyword">return</span> err
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  }
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  *s = Sub(<span class="predefined-type">uint</span>(v))
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  <span class="keyword">return</span> <span class="predefined-constant">nil</span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>Using the <code>Replace</code> function, we are getting rid of the double quotes in the actual JSON encoded value </p>
+</blockquote>
+
+<p>With this new <code>Sub</code> type in place, We can rewrite the <code>UserJwt</code> by replacing the <code>Sub</code> field with the <code>Id</code> field of type <code>Sub</code>.  </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">type</span> UserJwt <span class="keyword">struct</span> {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  Id    Sub <span class="shell"><span class="delimiter">`</span><span class="content">json:&quot;sub&quot;</span><span class="delimiter">`</span></span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Name  <span class="predefined-type">string</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Admin <span class="predefined-type">bool</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>}
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>The <code>json</code> tag with the value <code>"sub"</code> is required to map the <code>sub</code> key in the JSON claim with the Id. </p>
+</blockquote>
+
+<p>Now if we try to unmarshal the invalid claim, the <code>json.Unmarshal</code> function will return an error</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>claims := <span class="shell"><span class="delimiter">`</span><span class="content"></span></span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="shell"><span class="content">{</span></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="shell"><span class="content">  &quot;sub&quot;: &quot;user/john&quot;,</span></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="shell"><span class="content">  &quot;name&quot;: &quot;John D&quot;,</span></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span><span class="shell"><span class="content">  &quot;admin&quot;: true</span></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span><span class="shell"><span class="content">}</span><span class="delimiter">`</span></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span><span class="keyword">var</span> userJwt *UserJwt
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>err := json.Unmarshal([]<span class="predefined-type">byte</span>(claims), &amp;userJwt)
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span><span class="comment">// This will return the following error</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span><span class="comment">// strconv.ParseUint: parsing &quot;name/john&quot;: invalid syntax</span>
+</pre></div>
+</div>
+</div>
+
+<p>For a valid claim, we can now get the <code>Id</code> directly from the <code>UserJwt</code> <code>Id</code> field.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>claims := <span class="shell"><span class="delimiter">`</span><span class="content"></span></span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="shell"><span class="content">{</span></span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="shell"><span class="content">  &quot;sub&quot;: &quot;1234567890&quot;,</span></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="shell"><span class="content">  &quot;name&quot;: &quot;John D&quot;,</span></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span><span class="shell"><span class="content">  &quot;admin&quot;: true</span></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span><span class="shell"><span class="content">}</span><span class="delimiter">`</span></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span><span class="keyword">var</span> userJwt *UserJwt
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>err := json.Unmarshal([]<span class="predefined-type">byte</span>(claims), &amp;userJwt)
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span><span class="comment">// ...</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>fmt.Println(userJwt.Id)
+</pre></div>
+</div>
+</div>
+
+<p>That’s it! The code is in better shape now :)</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post, we have seen how we can write cleaner code by leveraging the interfaces. The source code is available in <a href="https://github.com/tamizhvendan/igo1">my GitHub repository</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Using Golang in Production - My Experiences]]></title>

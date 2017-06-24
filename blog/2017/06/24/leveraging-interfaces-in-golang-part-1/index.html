@@ -1,0 +1,504 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Leveraging interfaces in golang - Part 1 - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Leveraging Interfaces in Golang - Part 1 In my previous blog post on using golang in production, I have mentioned that interfaces are my favorite &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2017/06/24/leveraging-interfaces-in-golang-part-1/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+  <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+
+  </style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+	<!-- Start of Leadin Embed -->
+  <script type="text/javascript" src="//js.leadin.com/js/v1/2177345.js" id="LeadinEmbed-2177345" crossorigin="use-credentials" async defer></script>
+<!-- End of Leadin Embed -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><style>
+@media (max-width: 600px) {
+  #book-cover, #tag-cloud {
+    display: none;
+  }
+}
+</style>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a target="_blank" href="http://about.me/tamizhvendan">About Me</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <br/>
+    <li><a target="_blank" href="https://www.codementor.io/tamizhvendan?utm_source=github&utm_medium=button&utm_term=tamizhvendan&utm_campaign=github"><img src="https://cdn.codementor.io/badges/book_session_github.svg" alt="Book session on Codementor" style="max-width:100%" /></a>
+		</li>
+    <br/>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a target="_blank" class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a target="_blank" class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a target="_blank" class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a target="_blank" class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a target="_blank" class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<nav id="book-cover" style="margin-top:32px">
+	<a target="_blank" href="http://products.tamizhvendan.in/fsharp-applied">
+	<img class="center" src="/images/fsharp_applied_cover.jpg" width="160">
+</a>
+</nav>
+<nav id="tag-cloud">
+	<section>
+    <!-- <h3>Tag Cloud</h3>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
+</section>
+</nav>
+
+
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Leveraging Interfaces in Golang - Part 1</h1>
+	<div class="entry-content" itemprop="articleBody"><p>In my previous blog post <a href="/blog/2017/05/01/using-golang-in-production-my-experiences/">on using golang in production</a>, I have mentioned that <a href="https://gobyexample.com/interfaces">interfaces</a> are my favorite feature in golang. </p>
+
+<p>As a follow-up of this comment, I would like to share how we are using (my current project is also in golang!) the interfaces to keep our code clean and consistent through a series of three blog posts</p>
+
+<p>This blog post series assumes that you are familiar with the basics of interfaces in golang. If would like to know what it brings to the table, I strongly recommend to check out <a href="https://hackernoon.com/why-i-like-gos-interfaces-2891adf2803c">this well-written article</a> by <a href="https://twitter.com/theburningmonk">Yan Cui</a>.</p>
+
+<p>Let me start the series with a solution that we have implemented a few days back. </p>
+
+<h2 id="some-context">Some Context</h2>
+
+<p>The product that we are building consists of a suite of web applications. To authenticate the users, these web applications talk to a centralized web application called “Identity Server”. </p>
+
+<p>Upon receiving valid login credentials, the Identity Server generates <a href="https://jwt.io/introduction/">a JSON Web Token</a>(JWT) with the corresponding user claims and signs it using a public/private key pair using RSA. </p>
+
+<p>The downstream web applications will then use this JWT to grant the access to their corresponding protected resources. </p>
+
+<p>Let’s assume a simple JWT claims payload</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;1234567890&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;John D&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;admin&quot;</span><span class="p">:</span> <span class="kc">true</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The above payload uses one of the <a href="https://tools.ietf.org/html/rfc7519#section-4.1">JWT standard claims</a>, <code>sub</code>, to communicate the unique identifier of the user in the product for all the web applications. The <code>name</code> and <code>admin</code> are the custom claims. </p>
+
+<p>As per the JWT spec, <a href="https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#subDef">the sub claim</a> is a case-sensitive string containing a StringOrURI value which is locally unique in the context of the issuer or be globally unique, but in our system, the unique identifier of a user is an unsigned integer(uint) type. </p>
+
+<p>As we will be sharing the JWT with other third party applications, we made a call to stick to the JWT spec and converted the uint to string type while generating the token and did the reverse while authenticating the user using this token.</p>
+
+<h2 id="unmarshalling-jwt---a-naive-approach">Unmarshalling JWT - A Naive Approach</h2>
+
+<p>Before witnessing the golang interface in action, let’s see a naive implementation how we can unmarshal the claim and use.</p>
+
+<p>The straightforward thing would be creating a struct matching the properties of the claim </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">UserJwt</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Sub</span>    <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Name</span>   <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Admin</span>  <span class="kt">bool</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>and unmarshalling using the <a href="https://golang.org/pkg/encoding/json/">json package</a> in golang </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">claims</span> <span class="o">:=</span> <span class="s">`</span>
+</span><span class="line"><span class="s">{</span>
+</span><span class="line"><span class="s">  &quot;sub&quot;: &quot;1234567890&quot;,</span>
+</span><span class="line"><span class="s">  &quot;name&quot;: &quot;John D&quot;,</span>
+</span><span class="line"><span class="s">  &quot;admin&quot;: true</span>
+</span><span class="line"><span class="s">}`</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">var</span> <span class="nx">userJwt</span> <span class="o">*</span><span class="nx">UserJwt</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>To convert the <code>sub</code> from <code>string</code> to <code>unit</code>, we can have a method <code>Id</code> on the <code>UserJwt</code> type.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">UserJwt</span><span class="p">)</span> <span class="nx">Id</span><span class="p">()</span> <span class="p">(</span><span class="kt">uint</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">v</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseUint</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Sub</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">IntSize</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="nb">uint</span><span class="p">(</span><span class="nx">v</span><span class="p">),</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>and use it after successful unmarshalling of the JWT claims. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">id</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">userJwt</span><span class="p">.</span><span class="nx">Id</span><span class="p">()</span>
+</span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="c1">// Do something with the id of type unit</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That’s great. But did you see any code smell here?</p>
+
+<p>Let me share what’s wrong with this approach,</p>
+
+<p>Let’s say that we have the following JSON claim with <code>sub</code> has the value <code>user/john</code> instead of a string representing the unsigned integer identifier of the user.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">claims</span> <span class="o">:=</span> <span class="s">`</span>
+</span><span class="line"><span class="s">{</span>
+</span><span class="line"><span class="s">  &quot;sub&quot;: &quot;user/john&quot;,</span>
+</span><span class="line"><span class="s">  &quot;name&quot;: &quot;John D&quot;,</span>
+</span><span class="line"><span class="s">  &quot;admin&quot;: true</span>
+</span><span class="line"><span class="s">}`</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Unmarshalling this claim will work, and it won’t return any error</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We can share the unmarshalled <code>userJwt</code> with the rest of the code to carry the business logic. </p>
+
+<p>We will come to know that the claim has an invalid <code>sub</code> value only when we try to get the id of the user by calling the <code>Id</code> method</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="nx">id</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">userJwt</span><span class="p">.</span><span class="nx">Id</span><span class="p">()</span>
+</span><span class="line"><span class="c1">// This will return the following error</span>
+</span><span class="line"><span class="c1">// strconv.ParseUint: parsing &quot;name/john&quot;: invalid syntax</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>If we didn’t call the <code>Id</code> method, this subtle bug slip silently into the product and someday will end up as a production issue! </p>
+
+<p>In a nutshell, this approach is not robust, and the resulting code is not clean.</p>
+
+<h2 id="using-interfaces---a-better-approach">Using Interfaces - A better approach</h2>
+
+<p>Ideally, we want the <code>json.Unmarshal</code> function should return an error if the <code>sub</code> doesn’t contain a <code>uint</code> value as string.</p>
+
+<p>To make it happen, we need to inform the <code>json.Unmarshal</code> function somehow to do the type conversion while unmarshalling and return an error if the conversion fails. </p>
+
+<p>How to make it happen? </p>
+
+<p>We can do this by using the <a href="https://golang.org/pkg/encoding/json/#Unmarshaler">Unmarshaler</a> interface. </p>
+
+<p>In our case, we can declare the <code>UnmarshalJSON</code> method with the <code>UserJwt</code> type and in the definition, we can do the type conversion. But that’d be an overkill as we need to do the unmarshalling of the other fields, <code>Name</code>, and <code>Admin</code>, which is already working well without any custom logic. </p>
+
+<p>In other words, the effective way would be overriding the JSON unmarshalling behavior of <code>Sub</code> field alone by having the <code>UnmarshalJSON</code> method with <code>unit</code> type. But according to golang’s spec we can’t do it</p>
+
+<blockquote>
+  <p>You can only declare a method with a receiver whose type is defined in the same package as the method. You cannot declare a method with a receiver whose type is defined in another package (which includes the built-in types such as int).</p>
+</blockquote>
+
+<p>To handle this kind of scenario, we can make use of the <a href="https://golang.org/ref/spec#Type_identity">named types</a> in golang and define a new type called <code>Sub</code> with an underlying type <code>unit</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">Sub</span> <span class="kt">uint</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then we can declare the <code>UnmarshalJSON</code> method with this <code>Sub</code> type. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Sub</span><span class="p">)</span> <span class="nx">UnmarshalJSON</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">sub</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Replace</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="s">`&quot;`</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line">  <span class="nx">v</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseUint</span><span class="p">(</span><span class="nx">sub</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">IntSize</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="o">*</span><span class="nx">s</span> <span class="p">=</span> <span class="nx">Sub</span><span class="p">(</span><span class="nb">uint</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+</span><span class="line">  <span class="k">return</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>Using the <code>Replace</code> function, we are getting rid of the double quotes in the actual JSON encoded value </p>
+</blockquote>
+
+<p>With this new <code>Sub</code> type in place, We can rewrite the <code>UserJwt</code> by replacing the <code>Sub</code> field with the <code>Id</code> field of type <code>Sub</code>.  </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">UserJwt</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Id</span>    <span class="nx">Sub</span> <span class="s">`json:&quot;sub&quot;`</span>
+</span><span class="line">  <span class="nx">Name</span>  <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Admin</span> <span class="kt">bool</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>The <code>json</code> tag with the value <code>"sub"</code> is required to map the <code>sub</code> key in the JSON claim with the Id. </p>
+</blockquote>
+
+<p>Now if we try to unmarshal the invalid claim, the <code>json.Unmarshal</code> function will return an error</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">claims</span> <span class="o">:=</span> <span class="s">`</span>
+</span><span class="line"><span class="s">{</span>
+</span><span class="line"><span class="s">  &quot;sub&quot;: &quot;user/john&quot;,</span>
+</span><span class="line"><span class="s">  &quot;name&quot;: &quot;John D&quot;,</span>
+</span><span class="line"><span class="s">  &quot;admin&quot;: true</span>
+</span><span class="line"><span class="s">}`</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">userJwt</span> <span class="o">*</span><span class="nx">UserJwt</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span><span class="line"><span class="c1">// This will return the following error</span>
+</span><span class="line"><span class="c1">// strconv.ParseUint: parsing &quot;name/john&quot;: invalid syntax</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>For a valid claim, we can now get the <code>Id</code> directly from the <code>UserJwt</code> <code>Id</code> field.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">claims</span> <span class="o">:=</span> <span class="s">`</span>
+</span><span class="line"><span class="s">{</span>
+</span><span class="line"><span class="s">  &quot;sub&quot;: &quot;1234567890&quot;,</span>
+</span><span class="line"><span class="s">  &quot;name&quot;: &quot;John D&quot;,</span>
+</span><span class="line"><span class="s">  &quot;admin&quot;: true</span>
+</span><span class="line"><span class="s">}`</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">userJwt</span> <span class="o">*</span><span class="nx">UserJwt</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">userJwt</span><span class="p">.</span><span class="nx">Id</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That’s it! The code is in better shape now :)</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post, we have seen how we can write cleaner code by leveraging the interfaces. The source code is available in <a href="https://github.com/tamizhvendan/igo1">my GitHub repository</a>.</p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2017
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2017/06/24/leveraging-interfaces-in-golang-part-1/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2017/06/24/leveraging-interfaces-in-golang-part-1/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>
