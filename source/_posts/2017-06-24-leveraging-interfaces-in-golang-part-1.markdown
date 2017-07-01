@@ -68,7 +68,7 @@ var userJwt *UserJwt
 err := json.Unmarshal([]byte(claims), &userJwt)
 ```
 
-To convert the `sub` from `string` to `unit`, we can have a method `Id` on the `UserJwt` type.
+To convert the `sub` from `string` to `uint`, we can have a method `Id` on the `UserJwt` type.
 
 ```go
 func (u *UserJwt) Id() (uint, error) {
@@ -92,7 +92,7 @@ id, err := userJwt.Id()
 if err != nil {
   return err
 }
-// Do something with the id of type unit
+// Do something with the id of type uint
 fmt.Println(id)
 ```
 
@@ -149,11 +149,11 @@ We can do this by using the [Unmarshaler](https://golang.org/pkg/encoding/json/#
 
 In our case, we can declare the `UnmarshalJSON` method with the `UserJwt` type and in the definition, we can do the type conversion. But that'd be an overkill as we need to do the unmarshalling of the other fields, `Name`, and `Admin`, which is already working well without any custom logic. 
 
-In other words, the effective way would be overriding the JSON unmarshalling behavior of `Sub` field alone by having the `UnmarshalJSON` method with `unit` type. But according to golang's spec we can't do it
+In other words, the effective way would be overriding the JSON unmarshalling behavior of `Sub` field alone by having the `UnmarshalJSON` method with `uint` type. But according to golang's spec we can't do it
 
 > You can only declare a method with a receiver whose type is defined in the same package as the method. You cannot declare a method with a receiver whose type is defined in another package (which includes the built-in types such as int).
 
-To handle this kind of scenario, we can make use of the [named types](https://golang.org/ref/spec#Type_identity) in golang and define a new type called `Sub` with an underlying type `unit`
+To handle this kind of scenario, we can make use of the [named types](https://golang.org/ref/spec#Type_identity) in golang and define a new type called `Sub` with an underlying type `uint`
 
 ```go
 type Sub uint
