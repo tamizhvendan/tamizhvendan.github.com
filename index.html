@@ -234,7 +234,7 @@
 </span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>To convert the <code>sub</code> from <code>string</code> to <code>unit</code>, we can have a method <code>Id</code> on the <code>UserJwt</code> type.</p>
+<p>To convert the <code>sub</code> from <code>string</code> to <code>uint</code>, we can have a method <code>Id</code> on the <code>UserJwt</code> type.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -274,7 +274,7 @@
 </span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
 </span><span class="line">  <span class="k">return</span> <span class="nx">err</span>
 </span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="c1">// Do something with the id of type unit</span>
+</span><span class="line"><span class="c1">// Do something with the id of type uint</span>
 </span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
@@ -342,13 +342,13 @@
 
 <p>In our case, we can declare the <code>UnmarshalJSON</code> method with the <code>UserJwt</code> type and in the definition, we can do the type conversion. But that’d be an overkill as we need to do the unmarshalling of the other fields, <code>Name</code>, and <code>Admin</code>, which is already working well without any custom logic. </p>
 
-<p>In other words, the effective way would be overriding the JSON unmarshalling behavior of <code>Sub</code> field alone by having the <code>UnmarshalJSON</code> method with <code>unit</code> type. But according to golang’s spec we can’t do it</p>
+<p>In other words, the effective way would be overriding the JSON unmarshalling behavior of <code>Sub</code> field alone by having the <code>UnmarshalJSON</code> method with <code>uint</code> type. But according to golang’s spec we can’t do it</p>
 
 <blockquote>
   <p>You can only declare a method with a receiver whose type is defined in the same package as the method. You cannot declare a method with a receiver whose type is defined in another package (which includes the built-in types such as int).</p>
 </blockquote>
 
-<p>To handle this kind of scenario, we can make use of the <a href="https://golang.org/ref/spec#Type_identity">named types</a> in golang and define a new type called <code>Sub</code> with an underlying type <code>unit</code></p>
+<p>To handle this kind of scenario, we can make use of the <a href="https://golang.org/ref/spec#Type_identity">named types</a> in golang and define a new type called <code>Sub</code> with an underlying type <code>uint</code></p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 </pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">Sub</span> <span class="kt">uint</span>

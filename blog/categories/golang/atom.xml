@@ -4,7 +4,7 @@
   <title><![CDATA[Category: golang | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/golang/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-06-25T01:29:23+05:30</updated>
+  <updated>2017-07-01T17:01:52+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -84,7 +84,7 @@
 </div>
 </div>
 
-<p>To convert the <code>sub</code> from <code>string</code> to <code>unit</code>, we can have a method <code>Id</code> on the <code>UserJwt</code> type.</p>
+<p>To convert the <code>sub</code> from <code>string</code> to <code>uint</code>, we can have a method <code>Id</code> on the <code>UserJwt</code> type.</p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">func</span> (u *UserJwt) Id() (<span class="predefined-type">uint</span>, <span class="predefined-type">error</span>) {
@@ -110,7 +110,7 @@
 <span class="line-numbers"> <a href="#n7" name="n7">7</a></span><span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
 <span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  <span class="keyword">return</span> err
 <span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
-<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span><span class="comment">// Do something with the id of type unit</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span><span class="comment">// Do something with the id of type uint</span>
 <span class="line-numbers"><a href="#n11" name="n11">11</a></span>fmt.Println(id)
 </pre></div>
 </div>
@@ -175,13 +175,13 @@
 
 <p>In our case, we can declare the <code>UnmarshalJSON</code> method with the <code>UserJwt</code> type and in the definition, we can do the type conversion. But that’d be an overkill as we need to do the unmarshalling of the other fields, <code>Name</code>, and <code>Admin</code>, which is already working well without any custom logic. </p>
 
-<p>In other words, the effective way would be overriding the JSON unmarshalling behavior of <code>Sub</code> field alone by having the <code>UnmarshalJSON</code> method with <code>unit</code> type. But according to golang’s spec we can’t do it</p>
+<p>In other words, the effective way would be overriding the JSON unmarshalling behavior of <code>Sub</code> field alone by having the <code>UnmarshalJSON</code> method with <code>uint</code> type. But according to golang’s spec we can’t do it</p>
 
 <blockquote>
   <p>You can only declare a method with a receiver whose type is defined in the same package as the method. You cannot declare a method with a receiver whose type is defined in another package (which includes the built-in types such as int).</p>
 </blockquote>
 
-<p>To handle this kind of scenario, we can make use of the <a href="https://golang.org/ref/spec#Type_identity">named types</a> in golang and define a new type called <code>Sub</code> with an underlying type <code>unit</code></p>
+<p>To handle this kind of scenario, we can make use of the <a href="https://golang.org/ref/spec#Type_identity">named types</a> in golang and define a new type called <code>Sub</code> with an underlying type <code>uint</code></p>
 
 <div><div class="CodeRay">
   <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">type</span> Sub <span class="predefined-type">uint</span>
