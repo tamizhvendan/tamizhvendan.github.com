@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Feb 1st, 2016 craftsmanship Comments Keep It Simple Last week, I was working on a task which involves populating some PostgreSQL database tables &hellip;">
+	<meta name="description" content="Apr 28th, 2016 cleancode, craftsmanship, fsharp Comments Expressing Business Logic With F#&#8217;s Partial Active Patterns Checking the state of the &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -128,6 +128,331 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-04-28T20:16:14+05:30" data-updated="true" itemprop="datePublished">Apr 28<sup>th</sup>, 2016</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/cleancode/'>cleancode</a>, <a class='category' href='/blog/categories/craftsmanship/'>craftsmanship</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2016/04/28/expressing-business-logic-with-f-number-s-partial-active-patterns/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2016/04/28/expressing-business-logic-with-f-number-s-partial-active-patterns/" itemprop="url">Expressing Business Logic With F#&#8217;s Partial Active Patterns</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>Checking the state of the system and performing a requested action only if certain conditions met, is an indispensable requirement in most of the software we write. Though it is a straightforward thing to do, things will get complex/messier when we need to check multiple conditions.</p>
+
+<p>Recently I encountered such a situation while developing a sample application for <a href="https://twitter.com/tamizhvendan/status/713365205871235072">my fsharp book</a>. Initially, I solved it with a typical nested <code>if else</code> and then I improved it by applying fsharp’s <a href="http://www.developerfusion.com/article/133772/pattern-matching-in-f-part-2-active-patterns/">Partial Active Patterns</a>.</p>
+
+<p>In this blog post , I will be sharing what exactly I did and how it can help you to write an elegant code in fsharp.</p>
+
+<h2 id="business-domain">Business Domain</h2>
+
+<p>Let’s start with a description of the problem domain that we are going to solve.</p>
+
+<p>When an individual visits a restaurant, he can place an order, specifying the list of foods he wants. The foods he ordered will be prepared by the chef and then it will be served.</p>
+
+<p>Preparing a food should satisfy the following conditions</p>
+
+<ul>
+  <li>The Food should be a part of the order</li>
+  <li>It should not be prepared already</li>
+  <li>It should not be served already</li>
+</ul>
+
+<p>Serving a food should satisfy the following conditions</p>
+
+<ul>
+  <li>The Food should be a part of the order</li>
+  <li>It should be prepared already</li>
+  <li>It should not be served already</li>
+</ul>
+
+<p>If serving a food completes the order, we should tell that the order is served otherwise we should tell that there are some other foods to be served.</p>
+
+<h2 id="starting-with-the-types">Starting with the types</h2>
+
+<p>Let’s start with the types that are needed to solve our problem. If you would like to know why we need to start with the types do check out <a href="http://tomasp.net/blog/type-first-development.aspx/">this wonderful blog post</a> by <a href="https://twitter.com/tomaspetricek">Tomas Petricek</a>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Food</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">MenuNumber</span> <span class="o">:</span> <span class="n">int</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">Order</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Foods</span> <span class="o">:</span> <span class="n">Food</span> <span class="kt">list</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">InProgressOrder</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">PlacedOrder</span> <span class="o">:</span> <span class="n">Order</span>
+</span><span class="line">  <span class="n">PreparedFoods</span> <span class="o">:</span> <span class="n">Food</span> <span class="kt">list</span>
+</span><span class="line">  <span class="n">ServedFoods</span> <span class="o">:</span> <span class="n">Food</span> <span class="kt">list</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The names of the types and its properties clearly describe what they represent, so let’s get to the crux of the problem straight</p>
+
+<h2 id="prepare-food">Prepare Food</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">prepareFood</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">if</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span><span class="o">.</span><span class="n">Foods</span>  <span class="k">then</span>
+</span><span class="line">    <span class="k">if</span> <span class="ow">not</span> <span class="o">(</span><span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">if</span> <span class="ow">not</span> <span class="o">(</span><span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">          <span class="n">printfn</span> <span class="s">&quot;Prepare Food&quot;</span>
+</span><span class="line">      <span class="k">else</span>
+</span><span class="line">        <span class="n">printfn</span> <span class="s">&quot;Can not prepare already served food&quot;</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">printfn</span> <span class="s">&quot;Can not prepare already prepared food&quot;</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not prepare non ordered food&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>if else</code> conditions represent the criteria mentioned in the business domain and for the sake of simplicity we are just writing the action in the console.</p>
+
+<h2 id="serve-food">Serve Food</h2>
+
+<p>Let’s move on to serving food</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">isServingFoodCompletesOrder</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">nonServedFoods</span> <span class="o">=</span>
+</span><span class="line">    <span class="nn">List</span><span class="p">.</span><span class="n">except</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span><span class="o">.</span><span class="n">Foods</span>
+</span><span class="line">  <span class="n">nonServedFoods</span> <span class="o">=</span> <span class="o">[</span><span class="n">food</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">serveFood</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">if</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span><span class="o">.</span><span class="n">Foods</span>  <span class="k">then</span>
+</span><span class="line">    <span class="k">if</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">if</span> <span class="ow">not</span> <span class="o">(</span><span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">        <span class="k">if</span> <span class="n">isServingFoodCompletesOrder</span> <span class="n">food</span> <span class="n">ipo</span> <span class="k">then</span>
+</span><span class="line">          <span class="n">printfn</span> <span class="s">&quot;Order Served&quot;</span>
+</span><span class="line">        <span class="k">else</span>
+</span><span class="line">          <span class="n">printfn</span> <span class="s">&quot;Still some food(s) to serve&quot;</span>
+</span><span class="line">      <span class="k">else</span>
+</span><span class="line">        <span class="n">printfn</span> <span class="s">&quot;Can not serve already served food&quot;</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">printfn</span> <span class="s">&quot;Can not serve unprepared food&quot;</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not serve non ordered food&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This is called <a href="http://c2.com/cgi/wiki?ArrowAntiPattern">Arrow Anti Pattern</a> and it is obvious that this code is hard to understand and maintain.</p>
+
+<p>It can be improved by using the techniques mentioned <a href="http://programmers.stackexchange.com/questions/47789/how-would-you-refactor-nested-if-statements">in this StackExchange’s answers</a> and also by using the <a href="https://en.wikipedia.org/wiki/Specification_pattern">specification pattern</a> from the OO World.</p>
+
+<p>Though the specification pattern solves the problem, it has a lot of code! No offense here but it can be done in a better way.</p>
+
+<h2 id="f-active-patterns">F# Active Patterns</h2>
+
+<blockquote>
+  <p>Active Patterns allow programmers to wrap arbitrary values in a union-like data structure for easy pattern matching. For example, its possible wrap objects with an active pattern, so that you can use objects in pattern matching as easily as any other union type. - <a href="https://en.wikibooks.org/wiki/F_Sharp_Programming/Active_Patterns">F# Programming Wiki</a></p>
+</blockquote>
+
+<p>Let’s begin by defining a partial active pattern for <code>NonOrderedFood</code> and <code>UnPreparedFood</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">NonOrderedFood</span><span class="o">|_|)</span> <span class="n">order</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">order</span><span class="o">.</span><span class="n">Foods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">UnPreparedFood</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then for <code>AlreadyPreparedFood</code> and <code>AlreadyServedFood</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">AlreadyPreparedFood</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">AlreadyServedFood</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Finally,</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">CompletesOrder</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">nonServedFoods</span> <span class="o">=</span>
+</span><span class="line">    <span class="nn">List</span><span class="p">.</span><span class="n">except</span> <span class="n">ipo</span><span class="o">.</span><span class="n">ServedFoods</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span><span class="o">.</span><span class="n">Foods</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">nonServedFoods</span> <span class="o">=</span> <span class="o">[</span><span class="n">food</span><span class="o">]</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>With this in place we can rewrite <code>serveFood</code> function as</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">serveFood</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">food</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">NonOrderedFood</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not serve non ordered food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">UnPreparedFood</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not serve unprepared food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">AlreadyServedFood</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not serve already served food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">CompletesOrder</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Order Served&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">printfn</span> <span class="s">&quot;Still some food(s) to serve&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>The goal is to have code that scrolls vertically a lot… but not so much horizontally. - <a href="http://blog.codinghorror.com/flattening-arrow-code/">Jeff Atwood</a></p>
+</blockquote>
+
+<p>Now the code expressing the business logic more clearly</p>
+
+<p>To refactor <code>prepareFood</code> to use the parial active patterns we need one more. So, let’s define it</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="o">(|</span><span class="n">PreparedFood</span><span class="o">|_|)</span> <span class="n">ipo</span> <span class="n">food</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">food</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PreparedFoods</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">food</span>
+</span><span class="line">  <span class="o">|</span> <span class="k">false</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now we all set to refactor <code>prepareFood</code> and here we go</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">prepareFood</span> <span class="n">food</span> <span class="n">ipo</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">match</span> <span class="n">food</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">NonOrderedFood</span> <span class="n">ipo</span><span class="o">.</span><span class="n">PlacedOrder</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not prepare non ordered food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">PreparedFood</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not prepare already prepared food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">AlreadyServedFood</span> <span class="n">ipo</span> <span class="o">_</span> <span class="o">-&gt;</span>
+</span><span class="line">    <span class="n">printfn</span> <span class="s">&quot;Can not prepare already served food&quot;</span>
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">printfn</span> <span class="s">&quot;Prepare Food&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Awesome!</p>
+
+<p>You can get the complete code in <a href="https://github.com/tamizhvendan/blog-samples/tree/master/RefactoringIfElse/src">my github repository</a></p>
+
+<h2 id="summary">Summary</h2>
+
+<blockquote>
+  <p>F# is excellent at concisely expressing business and domain logic - <a href="https://www.thoughtworks.com/radar/languages-and-frameworks/f">ThoughtWorks Tech Radar 2012</a></p>
+</blockquote>
+
+<h3 id="related-posts">Related Posts</h3>
+
+<p><a href="/blog/2015/04/02/step-10-refactoring-composition-root/">Refactoring Composition Root</a></p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1107,413 +1432,6 @@
 <p>The above quote summarizes the gist of this blog post. Functional Programming will help you think better. You can get the source code associated with the blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/RxFsharp">blog-samples GitHub repository</a></p>
 
 <p>Wish you a happy and prosperous new year</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-11-23T16:12:30+05:30" data-updated="true" itemprop="datePublished">Nov 23<sup>rd</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/javascript/'>javascript</a>, <a class='category' href='/blog/categories/react/'>react</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/11/23/a-beginner-guide-to-setup-react-dot-js-environment-using-babel-6-and-webpack/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/11/23/a-beginner-guide-to-setup-react-dot-js-environment-using-babel-6-and-webpack/" itemprop="url">A Beginner&#8217;s Guide to Setup React.js Environment Using Npm, Babel 6 and Webpack</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>Facebook has really changed the way we think about front-end UI development with the introduction of <a href="https://facebook.github.io/react">React</a>. One of the main advantages of this component based approach is, it is easy to reason about as the view is just a function of props and state.</p>
-
-<p>Though, the learning curve of React is smaller compared to that of its counterparts, one intimidating aspect for the beginners is the tools (<a href="http://babeljs.io">Babel</a>, <a href="https://webpack.github.io">Webpack</a>) and libraries around it.</p>
-
-<p>In fact, these tools are not required to use React and but in order to get the most out of the features of <a href="https://github.com/lukehoban/es6features">ES6</a>, <a href="https://facebook.github.io/react/docs/jsx-in-depth.html">JSX</a> and bundling, we need them. In this blog post we are going to see how to setup a React development environment without being sidetracked by the tools.</p>
-
-<p>A Disclaimer: The approach that I am going to share is just for beginners to understand on how to get started with React as going by this lean way has helped a lot when I started learning React.</p>
-
-<h2 id="lets-start-from-scratch">Let’s start from scratch</h2>
-
-<p>Create a new folder ‘react-hello-world’ and initialize it with npm.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">mkdir react-hello-world
-</span><span class="line">cd react-hello-world
-</span><span class="line">npm init</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Accept the default for all the prompts</p>
-
-<h2 id="installing-and-configuring-webpack">Installing and Configuring Webpack</h2>
-
-<p><a href="https://webpack.github.io">Webpack</a> is a module bundler which takes modules with dependencies and generates static assets by bundling them together based on some configuration.</p>
-
-<p>The support of <a href="http://webpack.github.io/docs/loaders.html">loaders</a> in Webpack makes it a perfect fit for using it along with React and we will discuss it later in this post with more details.</p>
-
-<p>Let’s start with installing webpack using npm</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">npm i webpack -S</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Webpack requires some configuration settings to carry out its work and the best practice is doing it via a config file called <em>webpack.config.js</em>.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">touch webpack.config.js</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Update the config file as follows</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="kd">var</span> <span class="nx">webpack</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;webpack&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
-</span><span class="line">
-</span><span class="line"><span class="kd">var</span> <span class="nx">BUILD_DIR</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;src/client/public&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="kd">var</span> <span class="nx">APP_DIR</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;src/client/app&#39;</span><span class="p">);</span>
-</span><span class="line">
-</span><span class="line"><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">entry</span><span class="o">:</span> <span class="nx">APP_DIR</span> <span class="o">+</span> <span class="s1">&#39;/index.jsx&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="nx">output</span><span class="o">:</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">path</span><span class="o">:</span> <span class="nx">BUILD_DIR</span><span class="p">,</span>
-</span><span class="line">    <span class="nx">filename</span><span class="o">:</span> <span class="s1">&#39;bundle.js&#39;</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line"><span class="p">};</span>
-</span><span class="line">
-</span><span class="line"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">config</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The minimalist requirement of a Webpack config file is the presence of entry and output properties.</p>
-
-<p>The <code>APP_DIR</code> holds the directory path of the React application’s codebase and the <code>BUILD_DIR</code> represents the directory path of the bundle file output.</p>
-
-<p>As the name suggests <em>entry</em> specifies the entry file using which the bundling process starts. If you are coming from C# or Java, it’s similar to the class that contains <em>main</em> method. Webpack supports multiple entry points too. Here the <em>index.jsx</em> in the <em>src/client/app</em> directory is the starting point of the application</p>
-
-<p>The <em>output</em> instructs Webpack what to do after the bundling process has been completed. Here, we are instructing it to use the <em>src/client/public</em> directory to output the bundled file with the name <em>bundle.js</em></p>
-
-<p>Let’s create the <em>index.jsx</em> file in the <em>./src/client/app</em> and add the following code to verify this configuration.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Hello World!&#39;</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Now in the terminal run the following command</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="p">.</span><span class="o">/</span><span class="nx">node_modules</span><span class="o">/</span><span class="p">.</span><span class="nx">bin</span><span class="o">/</span><span class="nx">webpack</span> <span class="o">-</span><span class="nx">d</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The above command runs the webpack in the development mode and generates the <em>bundle.js</em> file and its associated map file <em>bundle.js.map</em> in the <em>src/client/public</em> directory.</p>
-
-<p>To make it more interactive, create an <em>index.html</em> file in the <em>src/client</em> directory and modify it to use this <em>bundle.js</em> file</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="html"><span class="line"><span class="nt">&lt;html&gt;</span>
-</span><span class="line">  <span class="nt">&lt;head&gt;</span>
-</span><span class="line">    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">&quot;utf-8&quot;</span><span class="nt">&gt;</span>
-</span><span class="line">    <span class="nt">&lt;title&gt;</span>React.js using NPM, Babel6 and Webpack<span class="nt">&lt;/title&gt;</span>
-</span><span class="line">  <span class="nt">&lt;/head&gt;</span>
-</span><span class="line">  <span class="nt">&lt;body&gt;</span>
-</span><span class="line">    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;app&quot;</span> <span class="nt">/&gt;</span>
-</span><span class="line">    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;public/bundle.js&quot;</span> <span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
-</span><span class="line">  <span class="nt">&lt;/body&gt;</span>
-</span><span class="line"><span class="nt">&lt;/html&gt;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Now if you open the browser, you can see the <em>Hello World!</em> in the console log.</p>
-
-<p>Note: There is a webpack loader called <a href="https://github.com/webpack/html-loader">html-loader</a> which automatically creates this html file with the correct location of <em>bundle.js</em>.   </p>
-
-<h2 id="setting-up-babel-loader">Setting Up Babel-Loader</h2>
-
-<p>As we have seen in the beginning, by using JSX and ES6 we can be more productive while working with React. But the JSX syntax and ES6, are not supported in all the browsers.</p>
-
-<p>Hence, if we are using them in the React code, we need to use a tool which translates them to the format that has been supported by the browsers. It’s where <a href="http://babeljs.io">babel</a> comes into the picture.</p>
-
-<p>While installing Webpack we touched a little on loaders. Webpack uses loaders to translate the file before bundling them</p>
-
-<p><img class="center" src="/images/react-hello-world/babel-loader.png" /></p>
-
-<p>To setup install the following npm packages</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="html"><span class="line">npm i babel-loader babel-preset-es2015 babel-preset-react -S
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>The <em>babel-preset-es2015</em> and <em>babel-preset-react</em> are plugins being used by the <em>babel-loader</em> to translate ES6 and JSX syntax respectively.</p>
-
-<p>As we did for Webpack, <em>babel-loader</em> also requires some configuration. Here we need to tell it to use the ES6 and JSX plugins.</p>
-
-<p>Create a .babelrc file and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="html"><span class="line">touch .babelrc
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="p">{</span>
-</span><span class="line">  <span class="s2">&quot;presets&quot;</span> <span class="o">:</span> <span class="p">[</span><span class="s2">&quot;es2015&quot;</span><span class="p">,</span> <span class="s2">&quot;react&quot;</span><span class="p">]</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The next step is telling Webpack to use the babel-loader while bundling the files</p>
-
-<p>open <em>webpack.config.js</em> file and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="c1">// Existing Code ....</span>
-</span><span class="line"><span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class="line">  <span class="c1">// Existing Code ....</span>
-</span><span class="line">  <span class="nx">module</span> <span class="o">:</span> <span class="p">{</span>
-</span><span class="line">    <span class="nx">loaders</span> <span class="o">:</span> <span class="p">[</span>
-</span><span class="line">      <span class="p">{</span>
-</span><span class="line">        <span class="nx">test</span> <span class="o">:</span> <span class="sr">/\.jsx?/</span><span class="p">,</span>
-</span><span class="line">        <span class="nx">include</span> <span class="o">:</span> <span class="nx">APP_DIR</span><span class="p">,</span>
-</span><span class="line">        <span class="nx">loader</span> <span class="o">:</span> <span class="s1">&#39;babel&#39;</span>
-</span><span class="line">      <span class="p">}</span>
-</span><span class="line">    <span class="p">]</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <em>loaders</em> property takes array of loaders, here we are just using <em>babel-loader</em>. Each <em>loader</em> property should specify what are the file extension it has to process via the <em>test</em> property. Here we have configured it to process both <em>.js</em> and <em>.jsx</em> files using the regular expression. The <em>include</em> property specifies what is the directory to be used to look for these file extensions. The <em>loader</em> property represents the name of the loader.</p>
-
-<p>Now we all the setup done. Let’s write some code in React.</p>
-
-<h2 id="hello-react">Hello React</h2>
-
-<p>Use npm to install react and react-dom</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="nx">npm</span> <span class="nx">i</span> <span class="nx">react</span> <span class="nx">react</span><span class="o">-</span><span class="nx">dom</span> <span class="o">-</span><span class="nx">S</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Replace the existing console.log statement in the <em>index.jsx</em> with the following content</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="kr">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s1">&#39;react&#39;</span><span class="p">;</span>
-</span><span class="line"><span class="kr">import</span> <span class="p">{</span><span class="nx">render</span><span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;react-dom&#39;</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line"><span class="kr">class</span> <span class="nx">App</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">render</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class="line">    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span> <span class="nx">Hello</span> <span class="nx">React</span><span class="o">!&lt;</span><span class="err">/p&gt;;</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="nx">render</span><span class="p">(</span><span class="o">&lt;</span><span class="nx">App</span><span class="o">/&gt;</span><span class="p">,</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;app&#39;</span><span class="p">));</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Then run the following command to update the bundle file with the new changes</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="p">.</span><span class="o">/</span><span class="nx">node_modules</span><span class="o">/</span><span class="p">.</span><span class="nx">bin</span><span class="o">/</span><span class="nx">webpack</span> <span class="o">-</span><span class="nx">d</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Now, if you open the <em>index.html</em> in the browser you can see <em>Hello React</em></p>
-
-<h2 id="adding-some-complexity">Adding Some Complexity</h2>
-
-<h3 id="making-webpack-to-watch-the-changes">Making Webpack to watch the changes</h3>
-
-<p>Running the webpack command on every time when you change the file is not a productive work. We can easily change this behavior by using the following command</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="p">.</span><span class="o">/</span><span class="nx">node_modules</span><span class="o">/</span><span class="p">.</span><span class="nx">bin</span><span class="o">/</span><span class="nx">webpack</span> <span class="o">-</span><span class="nx">d</span> <span class="o">--</span><span class="nx">watch</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Now Webpack is running in the watch mode, which will automatically bundle the file whenever there is a change detected. To test it, change <em>Hello React</em> to something else and refresh the <em>index.html</em> in the browser. You can see your new changes.</p>
-
-<p>If you don’t like refreshing the browser to see the changes you can use <a href="http://gaearon.github.io/react-hot-loader/getstarted/">react-hot-loader</a>!</p>
-
-<h3 id="using-npm-as-a-tool-runner">Using npm as a tool runner</h3>
-
-<p>The command <code>./node_modules/.bin/webpack</code> can be made even simpler by leveraging npm.</p>
-
-<p>Update the packages.json as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="p">{</span>
-</span><span class="line">  <span class="c1">// ...</span>
-</span><span class="line">  <span class="s2">&quot;scripts&quot;</span><span class="o">:</span> <span class="p">{</span>
-</span><span class="line">    <span class="s2">&quot;dev&quot;</span><span class="o">:</span> <span class="s2">&quot;webpack -d --watch&quot;</span><span class="p">,</span>
-</span><span class="line">    <span class="s2">&quot;build&quot;</span> <span class="o">:</span> <span class="s2">&quot;webpack -p&quot;</span>
-</span><span class="line">  <span class="p">},</span>
-</span><span class="line">  <span class="c1">// ...</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Now the command <code>npm run build</code> runs Webpack in production mode, which minimizes the bundle file automatically and<br />
-the command <code>npm run dev</code> runs the Webpack in the watch mode.</p>
-
-<h3 id="adding-some-files">Adding some files</h3>
-
-<p>In the sample we have seen only one Component called <em>App</em>. Let’s add some more to test the bundling setup.</p>
-
-<p>Create a new file <em>AwesomeComponent.jsx</em> and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="kr">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s1">&#39;react&#39;</span><span class="p">;</span>
-</span><span class="line">
-</span><span class="line"><span class="kr">class</span> <span class="nx">AwesomeComponent</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
-</span><span class="line">
-</span><span class="line">  <span class="nx">constructor</span><span class="p">(</span><span class="nx">props</span><span class="p">)</span> <span class="p">{</span>
-</span><span class="line">    <span class="kr">super</span><span class="p">(</span><span class="nx">props</span><span class="p">);</span>
-</span><span class="line">    <span class="k">this</span><span class="p">.</span><span class="nx">state</span> <span class="o">=</span> <span class="p">{</span><span class="nx">likesCount</span> <span class="o">:</span> <span class="mi">0</span><span class="p">};</span>
-</span><span class="line">    <span class="k">this</span><span class="p">.</span><span class="nx">onLike</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">onLike</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="nx">onLike</span> <span class="p">()</span> <span class="p">{</span>
-</span><span class="line">    <span class="kd">let</span> <span class="nx">newLikesCount</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">likesCount</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
-</span><span class="line">    <span class="k">this</span><span class="p">.</span><span class="nx">setState</span><span class="p">({</span><span class="nx">likesCount</span><span class="o">:</span> <span class="nx">newLikesCount</span><span class="p">});</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">    <span class="k">return</span> <span class="p">(</span>
-</span><span class="line">      <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-</span><span class="line">        <span class="nx">Likes</span> <span class="o">:</span> <span class="o">&lt;</span><span class="nx">span</span><span class="o">&gt;</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">likesCount</span><span class="p">}</span><span class="o">&lt;</span><span class="err">/span&gt;</span>
-</span><span class="line">        <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;&lt;</span><span class="nx">button</span> <span class="nx">onClick</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">onLike</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">Like</span> <span class="nx">Me</span><span class="o">&lt;</span><span class="err">/button&gt;&lt;/div&gt;</span>
-</span><span class="line">      <span class="o">&lt;</span><span class="err">/div&gt;</span>
-</span><span class="line">    <span class="p">);</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="kr">export</span> <span class="k">default</span> <span class="nx">AwesomeComponent</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Then include it in the <em>index.jsx</em> file</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="js"><span class="line"><span class="c1">// ...</span>
-</span><span class="line"><span class="kr">import</span> <span class="nx">AwesomeComponent</span> <span class="nx">from</span> <span class="s1">&#39;./AwesomeComponent.jsx&#39;</span><span class="p">;</span>
-</span><span class="line"><span class="c1">// ...</span>
-</span><span class="line"><span class="kr">class</span> <span class="nx">App</span> <span class="kr">extends</span> <span class="nx">React</span><span class="p">.</span><span class="nx">Component</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">render</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">    <span class="k">return</span> <span class="p">(</span>
-</span><span class="line">        <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
-</span><span class="line">          <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span> <span class="nx">Hello</span> <span class="nx">React</span><span class="o">!&lt;</span><span class="err">/p&gt;</span>
-</span><span class="line">          <span class="o">&lt;</span><span class="nx">AwesomeComponent</span> <span class="o">/&gt;</span>
-</span><span class="line">        <span class="o">&lt;</span><span class="err">/div&gt;</span>
-</span><span class="line">    <span class="p">);</span>
-</span><span class="line">  <span class="p">}</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="c1">// ...</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>`</p>
-
-<p>If your Webpack is already running in watch mode then refresh the browser to see the AwesomeComponent in action!</p>
-
-<p><img class="center" src="/images/react-hello-world/Output.png" /></p>
-
-<h2 id="summary">Summary</h2>
-
-<p>In this blog post we have seen a lean approach for setting up a development environment to work with React. In the next blog post we will be extending this example to implement the <a href="https://facebook.github.io/react/docs/flux-overview.html">flux</a> architecture using <a href="http://alt.js.org">Alt</a>. You can get the source code associated with this blog post can be found in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/react-hello-world">github repository</a>.</p>
 
 		
 		

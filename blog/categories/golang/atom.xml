@@ -4,7 +4,7 @@
   <title><![CDATA[Category: golang | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/golang/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-07-01T17:01:52+05:30</updated>
+  <updated>2017-07-08T17:28:35+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,309 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Leveraging interfaces in golang - Part 2]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2017/07/03/leveraging-interfaces-in-golang-part-2/"/>
+    <updated>2017-07-03T19:44:33+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2017/07/03/leveraging-interfaces-in-golang-part-2</id>
+    <content type="html"><![CDATA[<p>In my previous <a href="/blog/2017/06/24/leveraging-interfaces-in-golang-part-1/">blog post</a>, we have seen how interfaces in golang can help us to come up with a cleaner design. In this blog post, we are going to see an another interesting use case of applying golang’s interfaces in creating adapters!</p>
+
+<h2 id="some-context">Some Context</h2>
+
+<p>In my current project, we are using <a href="https://www.postgresql.org/">Postgres</a> for persisting the application data. To make our life easier, we are using <a href="http://jinzhu.me/gorm/">gorm</a> to talk to Postgres from our golang code. Things were going well and we started rolling out new features without any challenges. One beautiful day, we came across an interesting requirement which gave us a run for the money.   </p>
+
+<p>The requirement is to store and retrieve an array of strings from Postgres!</p>
+
+<p><img class="center" src="/images/igo2/slice-to-array-conversion.png"></p>
+
+<p>It sounds simple on paper but while implementing it we found that it is not straightforward. Let me explain what the challenge was and how we solved it through a <strong>Task list</strong> example</p>
+
+<h2 id="the-database-side">The Database Side</h2>
+
+<p>Let’s assume that we have database <code>mytasks</code> with a table <code>tasks</code> to keep track of the tasks. </p>
+
+<p>The <code>tasks</code> table has the following schema </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="class">CREATE</span> <span class="type">TABLE</span> tasks (
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  id SERIAL <span class="directive">PRIMARY</span> <span class="type">KEY</span>,
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  name <span class="predefined-type">TEXT</span> <span class="keyword">NOT</span> <span class="predefined-constant">NULL</span>,
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  is_completed <span class="predefined-type">BOOL</span> <span class="keyword">NOT</span> <span class="predefined-constant">NULL</span>,
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  tags <span class="predefined-type">VARCHAR</span>(<span class="integer">10</span>)[]
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>)
+</pre></div>
+</div>
+</div>
+
+<p>An important thing to note over here is that each <code>task</code> has an array of <code>tags</code> of type <code>varchar(10)</code>.</p>
+
+<h2 id="the-golang-side">The Golang Side</h2>
+
+<p>The equivalent <a href="http://jinzhu.me/gorm/models.html#model-definition">model definition</a> of the <code>tasks</code> table would look like the following in <em>Golang</em></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">type</span> Task <span class="keyword">struct</span> {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  Id          <span class="predefined-type">uint</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Name        <span class="predefined-type">string</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  IsCompleted <span class="predefined-type">bool</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  Tags        []<span class="predefined-type">string</span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>}
+</pre></div>
+</div>
+</div>
+
+<h2 id="the-challenge">The Challenge</h2>
+
+<p>Everything is set to test drive the task creation. </p>
+
+<p>Let’s see what happens when we try to create a new task!</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="keyword">package</span> main
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">import</span> (
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  <span class="string"><span class="delimiter">&quot;</span><span class="content">fmt</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  <span class="string"><span class="delimiter">&quot;</span><span class="content">github.com/jinzhu/gorm</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  _ <span class="string"><span class="delimiter">&quot;</span><span class="content">github.com/jinzhu/gorm/dialects/postgres</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span><span class="keyword">func</span> panicOnError(err <span class="predefined-type">error</span>) {
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    <span class="predefined">panic</span>(err)
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  }
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span><span class="keyword">func</span> CreateTask(db *gorm.DB, name <span class="predefined-type">string</span>, tags []<span class="predefined-type">string</span>) (<span class="predefined-type">uint</span>, <span class="predefined-type">error</span>) {
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  newTask := &amp;Task{Name: name, Tags: tags}
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  result := db.Create(newTask)
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>  <span class="keyword">if</span> result.Error != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>    <span class="keyword">return</span> <span class="integer">0</span>, result.Error
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>  }
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  <span class="keyword">return</span> newTask.Id, <span class="predefined-constant">nil</span>
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>}
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span><span class="keyword">func</span> main() {
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  db, err := gorm.Open(<span class="string"><span class="delimiter">&quot;</span><span class="content">postgres</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>    <span class="shell"><span class="delimiter">`</span><span class="content">host=localhost </span></span>
+<span class="line-numbers"><a href="#n27" name="n27">27</a></span><span class="shell"><span class="content">      user=postgres password=test</span></span>
+<span class="line-numbers"><a href="#n28" name="n28">28</a></span><span class="shell"><span class="content">      dbname=mytasks </span></span>
+<span class="line-numbers"><a href="#n29" name="n29">29</a></span><span class="shell"><span class="content">      sslmode=disable</span><span class="delimiter">`</span></span>)
+<span class="line-numbers"><strong><a href="#n30" name="n30">30</a></strong></span>  panicOnError(err)
+<span class="line-numbers"><a href="#n31" name="n31">31</a></span>  <span class="keyword">defer</span> db.Close()
+<span class="line-numbers"><a href="#n32" name="n32">32</a></span>
+<span class="line-numbers"><a href="#n33" name="n33">33</a></span>  id, err := CreateTask(db, <span class="string"><span class="delimiter">&quot;</span><span class="content">test 123</span><span class="delimiter">&quot;</span></span>, []<span class="predefined-type">string</span>{<span class="string"><span class="delimiter">&quot;</span><span class="content">personal</span><span class="delimiter">&quot;</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">test</span><span class="delimiter">&quot;</span></span>})
+<span class="line-numbers"><a href="#n34" name="n34">34</a></span>  panicOnError(err)
+<span class="line-numbers"><a href="#n35" name="n35">35</a></span>  fmt.Printf(<span class="string"><span class="delimiter">&quot;</span><span class="content">Task %d has been created</span><span class="char">\n</span><span class="delimiter">&quot;</span></span>, id)
+<span class="line-numbers"><a href="#n36" name="n36">36</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>When we run this program, it will panic with the following error message </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>panic: sql: converting Exec argument $3 type: unsupported type []string, a slice of string
+</pre></div>
+</div>
+</div>
+
+<p>As the error message says, the SQL driver doesn’t support <code>[]string</code>. From <a href="https://golang.org/pkg/database/sql/driver/#Value">the documentation</a>, we can found that the <em>SQL drivers</em> only support the following values</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>int64
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>float64
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>bool
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>[]byte
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>string
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>time.Time
+</pre></div>
+</div>
+</div>
+
+<p>So, we can’t persist the <code>task</code> with the <code>tags</code> using this approach. </p>
+
+<h2 id="golangs-interface-in-action">Golang’s interface in Action</h2>
+
+<p>As a first step towards the solution, let’s see how the plain SQL <code>insert</code> query provides the value for arrays in <em>Postgres</em></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="class">INSERT</span> <span class="class">INTO</span> tasks(name,is_completed,tags) <span class="keyword">VALUES</span>(<span class="string"><span class="delimiter">'</span><span class="content">buy milk</span><span class="delimiter">'</span></span>,<span class="predefined-constant">false</span>,<span class="string"><span class="delimiter">'</span><span class="content">{&quot;home&quot;,&quot;delegate&quot;}</span><span class="delimiter">'</span></span>);
+</pre></div>
+</div>
+</div>
+
+<p>The clue here is the plain SQL expects the value for array as a string with the following format</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>'{ val1 delim val2 delim ... }'
+</pre></div>
+</div>
+</div>
+
+<blockquote>
+  <p>double quotes around element values if they are empty strings, contain curly braces, delimiter characters, double quotes, backslashes, or white space, or match the word NULL. Double quotes and backslashes embedded in element values will be backslash-escaped. - <a href="https://www.postgresql.org/docs/9.6/static/arrays.html">Postgres Documentation</a></p>
+</blockquote>
+
+<p>That’s great! All we need to do is convert the <code>[]string</code> to <code>string</code> which follows the format specified above. </p>
+
+<p>An easier approach would be changing the <code>Tags</code> field of the <code>Task</code> <strong>struct</strong> to <code>string</code> and do this conversion somewhere in the application code before persisting the task. </p>
+
+<p>But it’s not a cleaner approach as the resulting code is not semantically correct!</p>
+
+<p>Golang provides a neat solution to this problem through the <a href="https://golang.org/pkg/database/sql/driver/#Valuer">Valuer</a> interface</p>
+
+<blockquote>
+  <p>Types implementing Valuer interface are able to convert themselves to a driver Value.</p>
+</blockquote>
+
+<p>That is we need to have a type representing the <code>[]string</code> type and implement this interface to do the type conversion. </p>
+
+<p>Like we did in the <a href="/blog/2017/06/24/leveraging-interfaces-in-golang-part-1/">part-1</a> of this series, let’s make use of <a href="https://golang.org/ref/spec#Type_identity">named types</a> by creating a new type called <code>StringSlice</code></p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">type</span> StringSlice []<span class="predefined-type">string</span>
+</pre></div>
+</div>
+</div>
+
+<p>Then we need to do the type conversion in the <code>Value</code> method</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">func</span> (stringSlice StringSlice) Value() (driver.Value, <span class="predefined-type">error</span>) {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span class="keyword">var</span> quotedStrings []<span class="predefined-type">string</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="keyword">for</span> _, str := <span class="keyword">range</span> stringSlice {
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    quotedStrings = <span class="predefined">append</span>(quotedStrings, strconv.Quote(str))
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  }
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  value := fmt.Sprintf(<span class="string"><span class="delimiter">&quot;</span><span class="content">{ %s }</span><span class="delimiter">&quot;</span></span>, strings.Join(quotedStrings, <span class="string"><span class="delimiter">&quot;</span><span class="content">,</span><span class="delimiter">&quot;</span></span>))
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  <span class="keyword">return</span> value, <span class="predefined-constant">nil</span>
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Great! </p>
+
+<p>With this new type in place, we can change the datatype of <code>Tags</code> field from <code>[]string</code> to <code>StringSlice</code> in the <code>Task</code> struct. </p>
+
+<p>If we rerun the program, it will work as expected!!</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Task 1 has been created
+</pre></div>
+</div>
+</div>
+
+<h2 id="filter-by-tag">Filter by tag</h2>
+
+<p>Let’s move to the query side of the problem. </p>
+
+<p>We would like to get a list of tasks associated with a particular tag. </p>
+
+<p>It’d be a straightforward function that uses the <a href="http://jinzhu.me/gorm/crud.html#query">find method</a> in gorm.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">func</span> GetTasksByTag(db *gorm.DB, tag <span class="predefined-type">string</span>) ([]Task, <span class="predefined-type">error</span>) {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  tasks := []Task{}
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  result := db.Find(&amp;tasks, <span class="string"><span class="delimiter">&quot;</span><span class="content">? = any(tags)</span><span class="delimiter">&quot;</span></span>, tag)
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  <span class="keyword">if</span> result.Error != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>    <span class="keyword">return</span> <span class="predefined-constant">nil</span>, result.Error
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  }
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>  <span class="keyword">return</span> tasks, <span class="predefined-constant">nil</span>
+<span class="line-numbers"><a href="#n8" name="n8">8</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Then we need to call it from our main function </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span><span class="keyword">func</span> main() {
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  tasks, err := GetTasksByTag(db, <span class="string"><span class="delimiter">&quot;</span><span class="content">project-x</span><span class="delimiter">&quot;</span></span>)
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  panicOnError(err)
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  fmt.Println(tasks)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Unfortunately, if we run the program, it will panic with the following error message</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>panic: sql: Scan error on column index 3: unsupported Scan, storing driver.Value type []uint8 into 
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>type *main.StringSlice; sql: Scan error on column index 3: unsupported Scan, 
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>storing driver.Value type []uint8 into type *main.StringSlice
+</pre></div>
+</div>
+</div>
+
+<p>As the error message says, the SQL driver unable to scan (unmarshal) the data type byte slice (<code>[]uint8</code>) into our custom type <code>StringSlice</code>. </p>
+
+<p>To fix this, we need to provide a mechanism to convert <code>[]uint8</code> to <code>StringSlice</code> which in turn will be used by the SQL driver while scanning. </p>
+
+<p>Like the <code>Valuer</code> interface, <em>Golang</em> provides <a href="https://golang.org/pkg/database/sql/#Scanner">Scanner</a> interface to do the data type conversion while scanning. </p>
+
+<p>The signature of the <em>Scanner</em> interface returns an error and not the converted value. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">type</span> Scanner <span class="keyword">interface</span> {  
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  Scan(src <span class="keyword">interface</span>{}) <span class="predefined-type">error</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>}
+</pre></div>
+</div>
+</div>
+<p>So, it implies the implementor of this interface should have a pointer receiver (<code>*StringSlice</code>) which will mutate its value upon successful conversion.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">func</span> (stringSlice *StringSlice) Scan(src <span class="keyword">interface</span>{}) <span class="predefined-type">error</span> { 
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>In the implementation of this interface, we just need to convert the byte slice into a string slice by converting it to a <code>string</code> (Postgres representation of array value) first, and then to <code>StringSlice</code></p>
+
+<pre><code>[]uint8 --&gt; {home,delegate} --&gt; []string{"home", "delegate"} 
+</code></pre>
+
+<p>After successful conversion, we need to assign the converted value to the receiver (<code>*stringSlice</code>)</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="keyword">func</span> (stringSlice *StringSlice) Scan(src <span class="keyword">interface</span>{}) <span class="predefined-type">error</span> { 
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  val, ok := src.([]<span class="predefined-type">byte</span>)
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  <span class="keyword">if</span> !ok {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    <span class="keyword">return</span> fmt.Errorf(<span class="string"><span class="delimiter">&quot;</span><span class="content">unable to scan</span><span class="delimiter">&quot;</span></span>)
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  }
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  value := strings.TrimPrefix(<span class="predefined-type">string</span>(val), <span class="string"><span class="delimiter">&quot;</span><span class="content">{</span><span class="delimiter">&quot;</span></span>)
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  value = strings.TrimSuffix(value, <span class="string"><span class="delimiter">&quot;</span><span class="content">}</span><span class="delimiter">&quot;</span></span>)
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  *stringSlice = strings.Split(value, <span class="string"><span class="delimiter">&quot;</span><span class="content">,</span><span class="delimiter">&quot;</span></span>)
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  <span class="keyword">return</span> <span class="predefined-constant">nil</span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>That’s it. If we run the program now, we can see the output as expected. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>[{2 schedule meeting with the team false [project-x]} 
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  {3 prepare for client demo false [slides project-x]}]
+</pre></div>
+</div>
+</div>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post, we have seen how we can make use of <code>Valuer</code> and <code>Scanner</code> interfaces in golang to marshal and unmarshal our custom data type from the database. </p>
+
+<p>The source code can be found in <a href="https://github.com/tamizhvendan/igo2">my GitHub repository</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Leveraging interfaces in golang - Part 1]]></title>

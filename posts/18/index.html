@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Feb 10th, 2011 jquery Comments DropDownList Manipulation Using jQuery In this blog post we are going to see how can we manipulate a dropdownlist &hellip;">
+	<meta name="description" content="Feb 23rd, 2011 asp.net Comments Ajax Update Master Page From Content Page In this blog post we are going to see how can we update the master page &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -128,6 +128,107 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-23T00:00:00+05:30" data-updated="true" itemprop="datePublished">Feb 23<sup>rd</sup>, 2011</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net/'>asp.net</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2011/02/23/ajax-update-master-page-from-content/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2011/02/23/ajax-update-master-page-from-content/" itemprop="url">Ajax Update Master Page From Content Page</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<div class='post'>
+    <div>
+        <p>
+            In this blog post we are going to see how can we update the master page from content page using ajax updatepanel in <a href="http://www.amazon.com/Beginning-ASP-NET-VB-Wrox-Programmer/dp/0470502215?ie=UTF8&amp;tag=bor0b-20&amp;link_code=btl&amp;camp=213689&amp;creative=392969" target="_blank">ASP.NET</a>.
+            The sample website we are going to build will have a content page which allows to change the header of the website(which is present in master page) via Ajax.
+        </p>
+        <img src="http://codeasp.net/Assets/Uploaded-CMS-Files/c15554a1-7e4e-498b-9c5e-a1365cf4643aAjaxifyMasterPage1.PNG" width="358px" /><img src="http://codeasp.net/Assets/Uploaded-CMS-Files/8feb0ea9-adf4-4bc6-99ae-4c9b28ed1cc1AjaxifyMasterPage2.PNG" />
+        <p>The tasks involved in creating this website are as follows: </p>
+
+        <ul>
+            <li>Create an updatepanel in masterpage which holds the website header.</li>
+            <li>Create a method in MasterPage codebehind which changes the website header.</li>
+            <li>Create the content page with master page reference and an update panel which holds controls to triggers the header change.</li>
+            <li>Call the MasterPage method from content page.</li>
+        </ul>
+        <h3>1. Create an updatepanel in masterpage which holds the website header.</h3>
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.aspx'></script>
+<noscript><pre><code>&lt;div class=&quot;title&quot;&gt;
+    &lt;h1&gt;
+        &lt;asp:UpdatePanel ID=&quot;UpdatePanelWebsiteHeader&quot; runat=&quot;server&quot;ChildrenAsTriggers=&quot;false&quot; UpdateMode=&quot;Conditional&quot;&gt;
+            &lt;ContentTemplate&gt;
+                &lt;asp:Label ID=&quot;lblWebsiteHeader&quot; runat=&quot;server&quot; Text=&quot;Label&quot;&gt;My ASP.NET Application&lt;/asp:Label&gt;
+            &lt;/ContentTemplate&gt;
+        &lt;/asp:UpdatePanel&gt;                    
+    &lt;/h1&gt;
+&lt;/div&gt;</code></pre></noscript></div>
+	
+            <p>Make Sure the two properties of UpdatePanel <strong>&#8220;ChildrenAsTriggers&#8221;</strong> is set to false and <strong>&#8220;UpdateMode&#8221;</strong> is set to conditional, to prevent the unneccessary updation of updatepanel from its child controls.</p>
+
+        <h3>2. Create a method in MasterPage codebehind which changes the website header.</h3>
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=updatePanel.cs'></script>
+<noscript><pre><code>public void ChangeWebsiteHeader(string newHeader)
+{
+    lblWebsiteHeader.Text = newHeader;
+    //Calling the Update method of UpdatePanel will trigger the Updatepanel
+    UpdatePanelWebsiteHeader.Update();
+}</code></pre></noscript></div>
+
+
+            <h3>3. Create the content page with master page reference and an update panel which holds controls to triggers the header change.</h3>
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=masterPage.aspx'></script>
+<noscript><pre><code>&lt;%@ Page Title=&quot;Home Page&quot; Language=&quot;C#&quot; MasterPageFile=&quot;~/Site.master&quot; AutoEventWireup=&quot;true&quot;CodeFile=&quot;Default.aspx.cs&quot; Inherits=&quot;_Default&quot; %&gt;
+&lt;%@ MasterType VirtualPath=&quot;~/Site.master&quot; %&gt;</code></pre></noscript></div>
+
+            <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=changeHandler.cs'></script>
+<noscript><pre><code>protected void btnChangeHeader_Click(object sender, EventArgs e)
+{   
+    Master.ChangeWebsiteHeader(Server.HtmlEncode(txtHeader.Text));
+}</code></pre></noscript></div>
+
+
+            <h3>4. Call the MasterPage method from content page.</h3>
+        <div><script src='https://gist.github.com/6f81102e5150de2491bb.js?file=contentTemplate.aspx'></script>
+<noscript><pre><code>&lt;asp:UpdatePanel ID=&quot;UpdatePanelChangeHeader&quot; runat=&quot;server&quot; UpdateMode=&quot;Conditional&quot;&gt;
+    &lt;ContentTemplate&gt;
+        &lt;p&gt;Enter the Website Header: &lt;asp:TextBox ID=&quot;txtHeader&quot; runat=&quot;server&quot; /&gt; &lt;/p&gt;
+        &lt;asp:Button ID=&quot;btnChangeHeader&quot; runat=&quot;server&quot; Text=&quot;Change Header&quot; onclick=&quot;btnChangeHeader_Click&quot; /&gt;
+    &lt;/ContentTemplate&gt;
+&lt;/asp:UpdatePanel&gt;</code></pre></noscript></div>
+
+
+            <h3>Summary:</h3>
+        <p>In this blog we have seen how can we update the master page from the content page using ajax update panel. You can download the source code from <a href="http://www.box.net/shared/gpa9dlo668">here</a></p>
+    </div>
+</div>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -499,190 +600,6 @@ $(&quot;#btnAus&quot;).click(function () {
         <h5>Summary:</h5>
         To keep the blog post simple, I didn’t implement the persistence of the widget positions. So widgets should not retain its positions when you refresh the page. You can see the source code of this blog post <a href="https://gist.github.com/3632472">here</a>
     </div>
-</div>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-01-07T00:00:00+05:30" data-updated="true" itemprop="datePublished">Jan 7<sup>th</sup>, 2011</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/programming/'>programming</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2011/01/07/programmatic-solution-for-real-time/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2011/01/07/programmatic-solution-for-real-time/" itemprop="url">Programmatic Solution for a Real Time Numerology Belief</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class='post'>
-<div>
-  
-  <p>Three years back, I got a call from one of my friend. During the call he conveyed that he bought a new motor bike and asked my help to get the registration number for his motorbike. You may ponder how I am going to help to him in this regard.</p>
-
-  <p>Actually he was looking for an exclusive four digit registration number for his motor vehicle based on numerology with the following conditions.</p>
-  <ol>
-  <li>The recursive sum of all the four digits should be 1.</li>
-  <li>Four digits of the number should be in ascending order. i.e., First number should be less than second, second less than third and third less than fourth.</li>
-  </ol>
-
-    <p>To be honest, I was puzzled when he stated the above conditions. I asked him to give some time to find out those exclusive numbers. When I thought of this problem, I felt why didn’t automate this task by writing a program!! Hence this blog post!!</p>
-    <p>I usually do coding by divide and conquer approach. i.e., Split the entire problem into small logical units, and then integrate those small logical units to create the final one. Here in this case the following are the logical units.
-    </p>
-    <ol>
-    <li>Unit to find those exclusive vehicle registration numbers.</li>
-    <li>Unit to find the recursive sum of a number.</li>
-    <li>Unit to check whether the digits of the given number are in ascending order are not.</li>
-  </ol>
-
-    <p>When you look sharper at the logical unit 2, it can be divided further into a small logical unit.</p>
-    <ol>
-    <li>Unit to find those exclusive vehicle registration numbers.</li>
-    <li>Unit to find the recursive sum of digits of a number</li>
-    <li>Unit to find the sum of digits of a number</li>
-    <li>Unit to check whether the digits of the given number are in ascending order are not.</li>
-  </ol>
-
-    <p>That’s it. All things were nicely setup to create a program which solves my friend’s vehicle registration number numerology problem. Still one thing is missing the logical flow of program. Before sitting in front of the system and start coding, It is highly recommended to manually work out the program logic in a paper. If you follow this approach, you can develop the program with free of bugs :P So What is the logic to solve this problem ??</p>
-
-    <p>Here is the logic!!</p>
-    <ol>
-    <li>Traverse from 1000 to 9999</li>
-    <li>For each no check whether the digits are in ascending order.If the digits are in ascending order, then check whether the recursive sum of the digits of the number is 1 or not. If the recursive sum is 1, My friend got the solution for his problem.</li>
-  <div><script src='https://gist.github.com/4f1344a3c43e2b9fbd93.js'></script>
-<noscript><pre><code>using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace VehicleRegNo
-{
-    class Program
-    {
-        private static int[] GetExclusiveVehicleRegNos()
-        {
-            List exclusiveVehicleRegNosList = new List();
-
-            // Range of all four digit numbers is 1000 to 9999
-            int count = 0;
-            for (int i = 1000; i &lt; 9999; i++)
-            {
-                if (IsDigitsInAscendingOrder(i))
-                {
-                    if (FindRecursiveSumOfDigits(i) == 1)
-                    {
-                        exclusiveVehicleRegNosList.Add(i);
-                        count++;
-                    }
-
-                }
-            }
-
-            return exclusiveVehicleRegNosList.ToArray();
-        }
-
-        private static int FindRecursiveSumOfDigits(int number)
-        {
-            // Find recursive sum till the sum become a single digit.
-            // Eg:- 9999 =&gt; 9 + 9 + 9 + 9 = 36 =&gt; 3 + 6 = 9
-            int sum = FindSumOfDigits(number);
-            while (sum &gt; 9)
-            {
-                sum = FindSumOfDigits(sum);
-            }
-            return sum;
-        }
-
-        private static int FindSumOfDigits(int number)
-        {
-            int sum = 0;
-            while (number &gt; 0)
-            {
-                sum += (number % 10);
-                number /= 10;
-            }
-            return sum;
-        }
-
-        private static bool IsDigitsInAscendingOrder(int number)
-        {
-            bool isDigitsInAscendingOrder = false;
-
-            // Getting the first digit
-            int firstDigit = number / 1000;
-
-            // Getting the second digit
-            number %= 1000;
-            int secondDigit = number / 100;
-
-            // Getting the third digit
-            number %= 100;
-            int thirdDigit = number / 10;
-
-            int fourthDigit = number % 10;
-
-            if (firstDigit &lt; secondDigit &amp;&amp; secondDigit &lt; thirdDigit 
-                                            &amp;&amp; thirdDigit &lt; fourthDigit)
-            {
-                isDigitsInAscendingOrder = true;
-            }
-
-            return isDigitsInAscendingOrder;
-        }
-
-        static void Main(string[] args)
-        {
-            int[] exclusiveVehicleRegNos = GetExclusiveVehicleRegNos();
-            string t = &quot;&quot;;
-            for (int i = 0; i &lt; exclusiveVehicleRegNos.Length; i++)
-            {
-                // Printing those exclusive nos                
-                Console.WriteLine(exclusiveVehicleRegNos[i]);
-            }
-
-            /********** Output *********************
-            1234
-            1279
-            1369
-            1378
-            1459
-            1468
-            1567
-            2359
-            2368
-            2458
-            2467
-            3457
-            4789
-            5689
-            ****************************************/
-        }
-
-    }
-}</code></pre></noscript></div>
-
-</div>
 </div>
 
 		
