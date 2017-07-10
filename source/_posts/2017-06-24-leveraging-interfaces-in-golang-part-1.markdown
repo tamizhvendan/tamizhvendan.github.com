@@ -39,6 +39,8 @@ As per the JWT spec, [the sub claim](https://self-issued.info/docs/draft-ietf-oa
 
 As we will be sharing the JWT with other third party applications, we made a call to stick to the JWT spec and converted the uint to string type while generating the token and did the reverse while authenticating the user using this token.
 
+> *Update* - After writing this blog post, I came to know from [the comment](http://disq.us/p/1kcwwkh) that the use case of this blog post, unmarshalling a JSON string to `uint` type can be done by adding `string` to the `json` tag. Being said that, if you'd like to know about how to use an interface to solve it, the rest of the post would help. 
+
 
 ## Unmarshalling JWT - A Naive Approach
 
@@ -216,8 +218,6 @@ err := json.Unmarshal([]byte(claims), &userJwt)
 // ...
 fmt.Println(userJwt.Id)
 ```
-
-
 
 That's it! The code is in better shape now :)
 
