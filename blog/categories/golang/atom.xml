@@ -4,7 +4,7 @@
   <title><![CDATA[Category: golang | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/golang/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-07-08T17:28:35+05:30</updated>
+  <updated>2017-07-10T20:18:55+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -354,6 +354,10 @@
 <p>As per the JWT spec, <a href="https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#subDef">the sub claim</a> is a case-sensitive string containing a StringOrURI value which is locally unique in the context of the issuer or be globally unique, but in our system, the unique identifier of a user is an unsigned integer(uint) type. </p>
 
 <p>As we will be sharing the JWT with other third party applications, we made a call to stick to the JWT spec and converted the uint to string type while generating the token and did the reverse while authenticating the user using this token.</p>
+
+<blockquote>
+  <p><em>Update</em> - After writing this blog post, I came to know from <a href="http://disq.us/p/1kcwwkh">the comment</a> that the use case of this blog post, unmarshalling a JSON string to <code>uint</code> type can be done by adding <code>string</code> to the <code>json</code> tag. Being said that, if you’d like to know about how to use an interface to solve it, the rest of the post would help. </p>
+</blockquote>
 
 <h2 id="unmarshalling-jwt---a-naive-approach">Unmarshalling JWT - A Naive Approach</h2>
 
