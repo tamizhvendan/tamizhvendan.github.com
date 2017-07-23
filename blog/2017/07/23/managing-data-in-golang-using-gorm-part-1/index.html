@@ -1,0 +1,892 @@
+
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>Managing Data in golang using gorm - Part 1 - P3 Programmer</title>
+	<meta name="author" content="Tamizhvendan S">
+
+	
+	<meta name="description" content="Managing Data in Golang Using Gorm - Part 1 We have been using gorm as a primary tool to interact with PostgreSQL from golang for almost a year now &hellip;">
+	
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="http://feeds.feedburner.com/tamizhvendan-blog" rel="alternate" title="P3 Programmer" type="application/atom+xml">
+	
+	<link rel="canonical" href="http://blog.tamizhvendan.in/blog/2017/07/23/managing-data-in-golang-using-gorm-part-1/">
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link href="/favicon.png" rel="shortcut icon">
+  <link href='/stylesheets/fonts.css' rel='stylesheet' type='text/css'>
+	<link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+	<!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+	<link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Nunito:400,300,700' rel='stylesheet' type='text/css'>
+  <style type="text/css">
+
+  </style>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+	<!-- Start of Leadin Embed -->
+  <script type="text/javascript" src="//js.leadin.com/js/v1/2177345.js" id="LeadinEmbed-2177345" crossorigin="use-credentials" async defer></script>
+<!-- End of Leadin Embed -->
+	
+  
+	<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-43004255-1']);
+		_gaq.push(['_trackPageview']);
+
+		(function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+	</script>
+
+
+</head>
+
+
+<body>
+	<div class="container">
+		<div class="left-col">
+			<div class="intrude-less">
+			<header id="header" class="inner"><style>
+@media (max-width: 600px) {
+  #book-cover, #tag-cloud {
+    display: none;
+  }
+}
+</style>
+
+<nav id="main-nav"><ul class="main">
+    <li><a href="/">Blog</a></li>
+    <li><a target="_blank" href="http://about.me/tamizhvendan">About Me</a></li>
+    <li><a href="/blog/archives">Archives</a></li>
+    <br/>
+    <li><a target="_blank" href="https://www.codementor.io/tamizhvendan?utm_source=github&utm_medium=button&utm_term=tamizhvendan&utm_campaign=github"><img src="https://cdn.codementor.io/badges/book_session_github.svg" alt="Book session on Codementor" style="max-width:100%" /></a>
+		</li>
+    <br/>
+</ul>
+</nav>
+<nav id="sub-nav">
+	<div class="social">
+		
+			<a target="_blank" class="email" href="mailto:tamizh88@gmail.com" title="Email">Email</a>
+		
+		
+		
+		
+			<a target="_blank" class="twitter" href="http://twitter.com/tamizhvendan" title="Twitter">Twitter</a>
+		
+		
+			<a target="_blank" class="github" href="https://github.com/tamizhvendan" title="GitHub">GitHub</a>
+		
+		
+			<a target="_blank" class="coderwall" href="https://coderwall.com/tamizhvendan" title="Coderwall">Coderwall</a>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+    	
+    	
+			<a target="_blank" class="rss" href="http://feeds.feedburner.com/tamizhvendan-blog" title="RSS">RSS</a>
+		
+	</div>
+</nav>
+<nav id="book-cover" style="margin-top:32px">
+	<a target="_blank" href="http://products.tamizhvendan.in/fsharp-applied">
+	<img class="center" src="/images/fsharp_applied_cover.jpg" width="160">
+</a>
+</nav>
+<nav id="tag-cloud">
+	<section>
+    <!-- <h3>Tag Cloud</h3>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/golang' style='font-size: 110.0%'>golang</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
+</section>
+</nav>
+
+
+</header>				
+			</div>
+		</div>	
+		<div class="mid-col">
+			
+				
+			
+			<div class="mid-col-container">
+				<div id="content" class="inner"><article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+	<h1 class="title" itemprop="name">Managing Data in Golang Using Gorm - Part 1</h1>
+	<div class="entry-content" itemprop="articleBody"><p><a href="www.ajira.tech">We</a> have been using <a href="jinzhu.me/gorm/">gorm</a> as a primary tool to interact with <a href="https://www.PostgreSQL.org">PostgreSQL</a> from <a href="https://golang.org">golang</a> for almost a year now. </p>
+
+<p>Gorm does an excellent job as an <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORM</a> library, and we enjoyed using it in our projects. </p>
+
+<p>Through this blog post series, I will be sharing our experiences on how we leveraged gorm to solve our client’s needs.</p>
+
+<h2 id="the-domain">The Domain</h2>
+
+<p>In this blog post series, we will be implementing the data persistence side of a blogging platform similar to <a href="https://medium.com">medium</a>, called <strong>gomidway</strong>.  </p>
+
+<h2 id="part-1-introduction">Part-1 Introduction</h2>
+
+<p>In this blog post, we will be working on defining the backend for signing up a new user and providing a provision for user login.</p>
+
+<h2 id="the-user-model">The User Model</h2>
+
+<p>Let’s start our modeling from the User table. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">users</span><span class="p">(</span>
+</span><span class="line">  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+</span><span class="line">  <span class="n">username</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="k">UNIQUE</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class="line">  <span class="n">email</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="k">UNIQUE</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class="line">  <span class="n">password_hash</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span>
+</span><span class="line"><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then define an equivalent model in golang.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">ID</span>           <span class="kt">uint</span> <span class="s">`gorm:&quot;primary_key&quot;`</span>
+</span><span class="line">  <span class="nx">Username</span>     <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Email</span>        <span class="kt">string</span>
+</span><span class="line">  <span class="nx">PasswordHash</span> <span class="kt">string</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Before taking the next steps, let me spend some time on explaining where to put this <code>User</code> <em>struct</em></p>
+
+<h3 id="the-folder-structure">The Folder Structure</h3>
+
+<p>There are two common ways to organize the models in golang. </p>
+
+<p>One approach is defining a folder called <code>models</code> and put all the models here</p>
+
+<p><img class="center" src="/images/gomidway/part1/models.png" /></p>
+
+<p>The another approach is an invert of this structure. In this design, we will have a separate folder for each model. </p>
+
+<p><img class="center" src="/images/gomidway/part1/domain.png" /></p>
+
+<p>Both the approaches have pros and cons. Choosing one over the other is entirely opinionated, and my preference is the second one.</p>
+
+<p>IMHO, the folder structure has <a href="https://8thlight.com/blog/uncle-bob/2011/09/30/Screaming-Architecture.html">to represent the domain</a> and the code associated a domain model should coexist with proper separation of concern. </p>
+
+<p><img class="center" src="/images/gomidway/part1/folder_structure.png" /></p>
+
+<blockquote>
+  <p>Software architectures are structures that support the use cases of the system - <a href="https://www.amazon.com/Object-Oriented-Software-Engineering-Driven-Approach/dp/0201403471">Ivar Jacobson</a></p>
+</blockquote>
+
+<p>In this gorm blog post series, I will be following the <code>domain</code> based folder structure. </p>
+
+<h2 id="use-case-1---user-signup">Use Case #1 - User Signup</h2>
+
+<p>The Signup use case of a user is defined as </p>
+
+<ul>
+  <li>A user should sign up himself by providing his email, username, and password</li>
+  <li>If the username or the email already exists, we need to let him now </li>
+  <li>We also need to let him know if there is any error while persisting his signup details</li>
+  <li>If signup succeeds, he should be getting a unique identifier in the system</li>
+</ul>
+
+<p>To keep things simple and the focus of this series is on the data persistence side, we are not going to discuss/implement the HTTP portion of the application. Instead, we will be driving our implementation with some hard code values during the application bootstrap. </p>
+
+<h3 id="defining-the-signup-handler">Defining the Signup handler</h3>
+
+<p>Like many terms in software engineering, the term <strong>handler</strong> has different meanings. So, let me start by explaining what I mean by a handler here. </p>
+
+<p>A handler is a function that represents an use-case. It takes its dependency(ies) and its input(s) as parameters and returns the outcome of the use case. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/signup/handler.go</span>
+</span><span class="line"><span class="kn">package</span> <span class="nx">signup</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">Request</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Username</span> <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Email</span>    <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Password</span> <span class="kt">string</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">Response</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Id</span> <span class="kt">uint</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">Signup</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>One important thing to notice here is, the <code>Request</code> and the <code>Response</code> are golang structs. How the request is being populated from user’s request (JSON Post / HTML form Post / command from a message queue) and how the response communicated to the user (JSON response / HTML view / event in the message queue) are left up to the application boundary. </p>
+
+<p>In the Signup function, as a first step, we need to create the hash for the password using <a href="https://godoc.org/golang.org/x/crypto/bcrypt">bcrypt</a> and then create the new user. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">Signup</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">passwordHash</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">bcrypt</span><span class="p">.</span><span class="nx">GenerateFromPassword</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">Password</span><span class="p">),</span> <span class="nx">bcrypt</span><span class="p">.</span><span class="nx">DefaultCost</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="nx">newUser</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">.</span><span class="nx">User</span><span class="p">{</span>
+</span><span class="line">    <span class="nx">Username</span><span class="p">:</span>     <span class="nx">req</span><span class="p">.</span><span class="nx">Username</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">Email</span><span class="p">:</span>        <span class="nx">req</span><span class="p">.</span><span class="nx">Email</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">PasswordHash</span><span class="p">:</span> <span class="nb">string</span><span class="p">(</span><span class="nx">passwordHash</span><span class="p">),</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="c1">// ????</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The next step is persisting this newly created user</p>
+
+<h3 id="adding-user-create-function">Adding User Create function</h3>
+
+<p>The create user function is straight forward. We just need to call the <a href="https://godoc.org/github.com/jinzhu/gorm#DB.Create">Create</a> method in gorm</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/create.go</span>
+</span><span class="line"><span class="kn">package</span> <span class="nx">user</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">Create</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">user</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="p">(</span><span class="kt">uint</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">user</span><span class="p">).</span><span class="nx">Error</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">user</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>But the work is not done yet!</p>
+
+<p>As per our use case, We need to let the handler to know if the username or the email already exists. </p>
+
+<p>We already have unique constraints in place in the <code>users</code> table. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">gomidway</span><span class="o">=</span><span class="c"># \d users</span>
+</span><span class="line">                                    Table <span class="s2">&quot;public.users&quot;</span>
+</span><span class="line">    Column     <span class="p">|</span>          Type          <span class="p">|</span>                     Modifiers
+</span><span class="line">---------------+------------------------+----------------------------------------------------
+</span><span class="line"> id            <span class="p">|</span> integer                <span class="p">|</span> not null default nextval<span class="o">(</span><span class="s1">&#39;users_id_seq&#39;</span>::regclass<span class="o">)</span>
+</span><span class="line"> username      <span class="p">|</span> character varying<span class="o">(</span>50<span class="o">)</span>  <span class="p">|</span> not null
+</span><span class="line"> email         <span class="p">|</span> character varying<span class="o">(</span>255<span class="o">)</span> <span class="p">|</span> not null
+</span><span class="line"> password_hash <span class="p">|</span> text                   <span class="p">|</span> not null
+</span><span class="line">Indexes:
+</span><span class="line">    <span class="s2">&quot;users_pkey&quot;</span> PRIMARY KEY, btree <span class="o">(</span>id<span class="o">)</span>
+</span><span class="line">    <span class="s2">&quot;users_email_key&quot;</span> UNIQUE CONSTRAINT, btree <span class="o">(</span>email<span class="o">)</span>
+</span><span class="line">    <span class="s2">&quot;users_username_key&quot;</span> UNIQUE CONSTRAINT, btree <span class="o">(</span>username<span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>So, the <code>Create</code> method in gorm would return an error of type <a href="http://godoc.org/github.com/lib/pq#Error">pq Error</a> with the <a href="http://godoc.org/github.com/lib/pq#ErrorCode">ErrorCode</a> as <code>"23505"</code> for <code>unique_violation</code>, and the <code>Constraint</code> field will be having the unique constraint key name <code>users_email_key</code> and <code>users_username_key</code> for email and username duplicate error respectively. </p>
+
+<p>Though this error does communicate what we wanted, it is very generic and what we want is something concrete to our use case. </p>
+
+<p>To make it happen, let’s create a new folder <code>postgres</code> (aka package) and write a utility function <code>IsUniqueConstraintError</code> which checks whether the given error is a unique constraint error or not.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// postgres/pq.go</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">IsUniqueConstraintError</span><span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">,</span> <span class="nx">constraintName</span> <span class="kt">string</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">pqErr</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">err</span><span class="p">.(</span><span class="o">*</span><span class="nx">pq</span><span class="p">.</span><span class="nx">Error</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="nx">pqErr</span><span class="p">.</span><span class="nx">Code</span> <span class="o">==</span> <span class="s">&quot;23505&quot;</span> <span class="o">&amp;&amp;</span> <span class="nx">pqErr</span><span class="p">.</span><span class="nx">Constraint</span> <span class="o">==</span> <span class="nx">constraintName</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="kc">false</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>and then in the <code>model.go</code>, where we have the User model, add the constraint names as constants.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/model.go</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">const</span> <span class="p">(</span>
+</span><span class="line">  <span class="nx">UniqueConstraintUsername</span> <span class="p">=</span> <span class="s">&quot;users_username_key&quot;</span>
+</span><span class="line">  <span class="nx">UniqueConstraintEmail</span>    <span class="p">=</span> <span class="s">&quot;users_email_key&quot;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Finally, define the custom error types</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/model.go</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">type</span> <span class="nx">UsernameDuplicateError</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Username</span> <span class="kt">string</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">UsernameDuplicateError</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;Username &#39;%s&#39; already exists&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Username</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">EmailDuplicateError</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Email</span> <span class="kt">string</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">EmailDuplicateError</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;Email &#39;%s&#39; already exists&quot;</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Email</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>With this new helper function, constants and types in places, we can complete the create user function as follows.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/create.go</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">Create</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">user</span> <span class="o">*</span><span class="nx">User</span><span class="p">)</span> <span class="p">(</span><span class="kt">uint</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">err</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">user</span><span class="p">).</span><span class="nx">Error</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">if</span> <span class="nx">postgres</span><span class="p">.</span><span class="nx">IsUniqueConstraintError</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">UniqueConstraintUsername</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">      <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">UsernameDuplicateError</span><span class="p">{</span><span class="nx">Username</span><span class="p">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">Username</span><span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="k">if</span> <span class="nx">postgres</span><span class="p">.</span><span class="nx">IsUniqueConstraintError</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="nx">UniqueConstraintEmail</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">      <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">EmailDuplicateError</span><span class="p">{</span><span class="nx">Email</span><span class="p">:</span> <span class="nx">user</span><span class="p">.</span><span class="nx">Email</span><span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">user</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>On the handler side, we just pass the outcome of this create function to the outside(application boundary) layer</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/signup/handler.go</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">Signup</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="nx">id</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">newUser</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Response</span><span class="p">{</span><span class="nx">Id</span><span class="p">:</span> <span class="nx">id</span><span class="p">},</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="test-driving-user-signup">Test Driving User Signup</h3>
+
+<p>As we discussed earlier, let’s test drive the implementation from the application bootstrap. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// main.go</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">panicOnError</span><span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">db</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">gorm</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="s">&quot;postgres&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="s">`host=localhost </span>
+</span><span class="line"><span class="s">      user=postgres password=test</span>
+</span><span class="line"><span class="s">      dbname=gomidway </span>
+</span><span class="line"><span class="s">      sslmode=disable`</span><span class="p">)</span>
+</span><span class="line">  <span class="nx">panicOnError</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span><span class="line">  <span class="k">defer</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="nx">signupUser</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// main.go</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">signupUser</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">signup</span><span class="p">.</span><span class="nx">Signup</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">signup</span><span class="p">.</span><span class="nx">Request</span><span class="p">{</span>
+</span><span class="line">    <span class="nx">Email</span><span class="p">:</span>    <span class="s">&quot;foo@bar.com&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">Username</span><span class="p">:</span> <span class="s">&quot;foo&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">Password</span><span class="p">:</span> <span class="s">&quot;foobar&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="p">})</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">switch</span> <span class="nx">err</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">case</span> <span class="o">*</span><span class="nx">user</span><span class="p">.</span><span class="nx">UsernameDuplicateError</span><span class="p">:</span>
+</span><span class="line">      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Bad Request: &quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+</span><span class="line">      <span class="k">return</span>
+</span><span class="line">    <span class="k">case</span> <span class="o">*</span><span class="nx">user</span><span class="p">.</span><span class="nx">EmailDuplicateError</span><span class="p">:</span>
+</span><span class="line">      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Bad Request: &quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+</span><span class="line">      <span class="k">return</span>
+</span><span class="line">    <span class="k">default</span><span class="p">:</span>
+</span><span class="line">      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Internal Server Error: &quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+</span><span class="line">      <span class="k">return</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Created: &quot;</span><span class="p">,</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Id</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>if we run the program for the first time after setting up the PostgreSQL database <code>gomidway</code> with the <code>users</code> table, we will get the following output</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">Created:  1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>if we rerun the program again, we’ll see the bad request error</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">Bad Request:  Username <span class="s1">&#39;foo&#39;</span> already exists
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>if we modify the username from <code>foo</code> to <code>bar</code> and run the program, we’ll again get a bad request error for the email address</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">Bad Request:  Email <span class="s1">&#39;foo@bar.com&#39;</span> already exists
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That’s it! We have completed the first use case of <strong>gomidway</strong>!!</p>
+
+<h2 id="use-case-2---user-login">Use Case #2 - User Login</h2>
+
+<p>The next use case that we are going to implement is user login. The requirement for login has been defined as</p>
+
+<ul>
+  <li>
+    <p>if the user logs in with a different email address or with a different password, we need to show him appropriate errors</p>
+  </li>
+  <li>
+    <p>if the email and the password matches, let the user know that he has logged in</p>
+  </li>
+</ul>
+
+<h3 id="defining-the-login-handler">Defining the Login handler</h3>
+
+<p>As we did for the signup, let’s start our implementation from defining the handler for login</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/login/handler.go</span>
+</span><span class="line"><span class="kd">type</span> <span class="nx">Request</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Email</span>    <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Password</span> <span class="kt">string</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">Response</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">User</span> <span class="o">*</span><span class="nx">user</span><span class="p">.</span><span class="nx">User</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">Login</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>To implement login, we need some help from the persistence. In other words, we have to find whether the user with the given email address exists in our application.</p>
+
+<h3 id="adding-user-findbyemail-function">Adding User FindByEmail function</h3>
+
+<p>Let’s create a new file <code>find.go</code> in the <code>user</code> folder and define the <code>FindByEmail</code> function</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/find.go</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">FindByEmail</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">email</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">User</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="kd">var</span> <span class="nx">user</span> <span class="nx">User</span>
+</span><span class="line">  <span class="nx">res</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Email</span><span class="p">:</span> <span class="nx">email</span><span class="p">})</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">,</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Error</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That’s great. But how are we going to find if the email didn’t exist in the first place?</p>
+
+<p>Thankfully, We don’t need to anything extra other than calling the <a href="https://godoc.org/github.com/jinzhu/gorm#DB.RecordNotFound">RecordNotFound</a> to figure this out!</p>
+
+<p>Let’s define a custom error type <code>EmailNotExistsError</code> and return it if no records found.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/find.go</span>
+</span><span class="line"><span class="kd">type</span> <span class="nx">EmailNotExistsError</span> <span class="kd">struct</span><span class="p">{}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="o">*</span><span class="nx">EmailNotExistsError</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="s">&quot;email not exists&quot;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">FindByEmail</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">email</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">User</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="kd">var</span> <span class="nx">user</span> <span class="nx">User</span>
+</span><span class="line">  <span class="nx">res</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Find</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">user</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">User</span><span class="p">{</span><span class="nx">Email</span><span class="p">:</span> <span class="nx">email</span><span class="p">})</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">res</span><span class="p">.</span><span class="nx">RecordNotFound</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">EmailNotExistsError</span><span class="p">{}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">,</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now its time to turn our attention to Login handler to wire up the login functionality. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/login/handler.go</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">Login</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">user</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">user</span><span class="p">.</span><span class="nx">FindByEmail</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">Email</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The next scenario that we need to handle is, compare the password in the request with the password hash. As we need to let the user know in case of password mismatch, let’s create a <code>PasswordMismatchError</code> in the login handler and return it during the mismatch.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// user/login/handler.go</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">type</span> <span class="nx">PasswordMismatchError</span> <span class="kd">struct</span><span class="p">{}</span>
+</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">PasswordMismatchError</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="s">&quot;password didn&#39;t match&quot;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">Login</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="nx">err</span> <span class="p">=</span> <span class="nx">bcrypt</span><span class="p">.</span><span class="nx">CompareHashAndPassword</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">PasswordHash</span><span class="p">),</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">req</span><span class="p">.</span><span class="nx">Password</span><span class="p">))</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">PasswordMismatchError</span><span class="p">{}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Response</span><span class="p">{</span><span class="nx">User</span><span class="p">:</span> <span class="nx">user</span><span class="p">},</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>With this, we are done with login handler implementation. Let’s test drive it!</p>
+
+<h3 id="test-driving-user-login">Test Driving User Login</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// main.go</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="nx">loginUser</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">loginUser</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">login</span><span class="p">.</span><span class="nx">Login</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">login</span><span class="p">.</span><span class="nx">Request</span><span class="p">{</span>
+</span><span class="line">    <span class="nx">Email</span><span class="p">:</span> <span class="s">&quot;foo@bar.com&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">Password</span><span class="p">:</span> <span class="s">&quot;foobar&quot;</span><span class="p">})</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">switch</span> <span class="nx">err</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">case</span> <span class="o">*</span><span class="nx">user</span><span class="p">.</span><span class="nx">EmailNotExistsError</span><span class="p">:</span>
+</span><span class="line">      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Bad Request: &quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+</span><span class="line">      <span class="k">return</span>
+</span><span class="line">    <span class="k">case</span> <span class="o">*</span><span class="nx">login</span><span class="p">.</span><span class="nx">PasswordMismatchError</span><span class="p">:</span>
+</span><span class="line">      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Bad Request: &quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+</span><span class="line">      <span class="k">return</span>
+</span><span class="line">    <span class="k">default</span><span class="p">:</span>
+</span><span class="line">      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Internal Server Error: &quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+</span><span class="line">      <span class="k">return</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;Ok: User &#39;%s&#39; logged in&quot;</span><span class="p">,</span> <span class="nx">res</span><span class="p">.</span><span class="nx">User</span><span class="p">.</span><span class="nx">Username</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post, we have seen how we can use the create and find function in gorm along with the use case driven approach. The source code can be found in <a href="https://github.com/tamizhvendan/gomidway/tree/part-1">my GitHub repository</a>. </p>
+</div>
+
+</article>
+
+	<div class="share">
+	<div class="addthis_toolbox addthis_default_style ">
+	
+	<a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+	
+	
+	
+	<a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+	
+	<a class="addthis_counter addthis_pill_style"></a>
+	</div>
+  <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#pubid="></script>
+</div>
+
+
+
+<section id="comment">
+    <h1 class="title">Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+</section>
+</div>
+			</div>
+			<footer id="footer" class="inner">Copyright &copy; 2017
+
+    Tamizhvendan S
+
+
+Design credit: <a href="http://shashankmehta.in/archive/2012/greyshade.html">Shashank Mehta</a></footer>
+		</div>
+	</div>
+	
+
+<script type="text/javascript">
+      var disqus_shortname = 'tamizhvendan-blog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.tamizhvendan.in/blog/2017/07/23/managing-data-in-golang-using-gorm-part-1/';
+        var disqus_url = 'http://blog.tamizhvendan.in/blog/2017/07/23/managing-data-in-golang-using-gorm-part-1/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+
+
+
+</body>
+</html>

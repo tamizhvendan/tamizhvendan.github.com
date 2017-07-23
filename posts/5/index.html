@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Jun 11th, 2015 fsharp, suave Comments Building REST Api in Fsharp Using Suave In the last one month lot of great things happening in fsharp world &hellip;">
+	<meta name="description" content="Jul 15th, 2015 fsharp, suave Comments Securing APIs in Suave Using JSON Web Token In the last blog post, we have seen how we can combine small &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -113,7 +113,7 @@
 <nav id="tag-cloud">
 	<section>
     <!-- <h3>Tag Cloud</h3>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/golang' style='font-size: 110.0%'>golang</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
 </section>
 </nav>
 
@@ -128,6 +128,985 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-07-15T12:04:12+05:30" data-updated="true" itemprop="datePublished">Jul 15<sup>th</sup>, 2015</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/suave/'>suave</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/" itemprop="url">Securing APIs in Suave Using JSON Web Token</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>In the <a href="/blog/2015/06/11/building-rest-api-in-fsharp-using-suave/">last blog post</a>, we have seen how we can combine small functions to create a REST API in Suave and in this blog post we are going to see how can we secure the APIs using JSON web tokens(JWT).</p>
+
+<p>This blog post is based on <a href="http://bitoftech.net/">Taiseer’s</a> blog post on <a href="http://bitoftech.net/2014/10/27/json-web-token-asp-net-web-api-2-jwt-owin-authorization-server/">JSON Web Token in ASP.NET Web API 2 using Owin</a> and I will be covering how to implement the same in <a href="http://suave.io">Suave</a>. If you are interested in the theoretical background of JWT, kindly read his blog post before reading this.</p>
+
+<h2 id="workflow">Workflow</h2>
+
+<p>The typical workflow of JWT based application would look like this</p>
+
+<ol>
+  <li>New Audience (Resource Server) gets registered with Authorization Server.</li>
+  <li>Get the JWT access token from Authorization Server by passing Client Id of the resource server and login credentials</li>
+  <li>Use the access token obtained above to get access to the secured resources in the resource server</li>
+</ol>
+
+<p>We are going to see how to implement all these three steps in this blog post</p>
+
+<h2 id="project-setup">Project Setup</h2>
+
+<p>Create an empty visual studio solution and add new projects with the following name</p>
+
+<ul>
+  <li>SuaveJwt - A fsharp library project which contains all the JWT related things</li>
+  <li>SuaveJwt.AuthServerHost - A fsharp console application which is going to host the authorization server</li>
+  <li>Audience1 - A fsharp console application representing the resource server 1   </li>
+  <li>Audience2 - A fsharp console application representing the resource server 2   </li>
+</ul>
+
+<p>After creating, install the following NuGet packages</p>
+
+<ul>
+  <li><a href="https://www.nuget.org/packages/Suave/">Suave</a> in all the four projects</li>
+  <li><a href="https://www.nuget.org/packages/Newtonsoft.Json/">Newtonsoft.Json</a> and <a href="https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt/">JSON Web Token Handler</a> in <em>SuaveJwt</em></li>
+</ul>
+
+<p>Then add reference the .NET framework library <strong>System.IdentityModel</strong> in all the four projects from GAC and then add a reference to the <strong>SuaveJwt</strong> project library in all the other three projects.</p>
+
+<p><img class="center" src="/images/suave_jwt/project_structure.png" /></p>
+
+<h2 id="new-audience-registration">New Audience Registration</h2>
+
+<p>As we have seen in the workflow, the first step is to enable an audience to register itself with the authorization server. Let’s begin by defining the business logic.</p>
+
+<p>Add a new source file <em>JwtToken.fs</em> in the <strong>SuaveJwt</strong> project and update it as follows</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Audience</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Secret</span> <span class="o">:</span> <span class="n">Base64String</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// string -&gt; Audience</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">createAudience</span> <span class="n">audienceName</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">clientId</span> <span class="o">=</span> <span class="nn">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="bp">()</span><span class="o">.</span><span class="n">ToString</span><span class="o">(</span><span class="s">&quot;N&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">data</span> <span class="o">=</span> <span class="nn">Array</span><span class="p">.</span><span class="n">zeroCreate</span> <span class="mi">32</span>
+</span><span class="line">  <span class="nn">RNGCryptoServiceProvider</span><span class="p">.</span><span class="n">Create</span><span class="bp">()</span><span class="o">.</span><span class="n">GetBytes</span><span class="o">(</span><span class="n">data</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">secret</span> <span class="o">=</span> <span class="n">data</span> <span class="o">|&gt;</span> <span class="nn">Base64String</span><span class="p">.</span><span class="n">create</span>
+</span><span class="line">  <span class="o">{</span><span class="n">ClientId</span> <span class="o">=</span> <span class="n">clientId</span><span class="o">;</span> <span class="n">Secret</span> <span class="o">=</span> <span class="n">secret</span><span class="o">;</span> <span class="n">Name</span> <span class="o">=</span>  <span class="n">audienceName</span><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The above snippet creates an audience record with a random client id and secret key. The secret key is of type <a href="https://en.wikipedia.org/wiki/Base64#URL_applications">base64 URL encoded</a> string. This type doesn’t exist, so let’s create it.</p>
+
+<p>Add a new source file <em>Encodings.fs</em> in the <strong>SuaveJwt</strong> project and add this type</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">Base64String</span> <span class="o">=</span> <span class="k">private</span> <span class="n">Base64String</span> <span class="k">of</span> <span class="kt">string</span> <span class="k">with</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">static</span> <span class="k">member</span> <span class="n">decode</span> <span class="o">(</span><span class="n">base64String</span> <span class="o">:</span> <span class="n">Base64String</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="o">(</span><span class="n">Base64String</span> <span class="n">text</span><span class="o">)</span> <span class="o">=</span> <span class="n">base64String</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">pad</span> <span class="n">text</span> <span class="o">=</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">padding</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">-</span> <span class="o">((</span><span class="nn">String</span><span class="p">.</span><span class="n">length</span> <span class="n">text</span> <span class="o">+</span> <span class="mi">3</span><span class="o">)</span> <span class="o">%</span> <span class="mi">4</span><span class="o">)</span>
+</span><span class="line">      <span class="k">if</span> <span class="n">padding</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">then</span> <span class="n">text</span> <span class="k">else</span> <span class="o">(</span><span class="n">text</span> <span class="o">+</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="sc">&#39;=&#39;</span><span class="o">,</span> <span class="n">padding</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line">    <span class="nn">Convert</span><span class="p">.</span><span class="n">FromBase64String</span><span class="o">(</span><span class="n">pad</span><span class="o">(</span><span class="n">text</span><span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="sc">&#39;-&#39;</span><span class="o">,</span> <span class="sc">&#39;+&#39;</span><span class="o">).</span><span class="n">Replace</span><span class="o">(</span><span class="sc">&#39;_&#39;</span><span class="o">,</span> <span class="sc">&#39;/&#39;</span><span class="o">)))</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">static</span> <span class="k">member</span> <span class="n">create</span> <span class="n">data</span> <span class="o">=</span>
+</span><span class="line">    <span class="nn">Convert</span><span class="p">.</span><span class="n">ToBase64String</span><span class="o">(</span><span class="n">data</span><span class="o">)</span>
+</span><span class="line">      <span class="o">.</span><span class="n">TrimEnd</span><span class="o">(</span><span class="sc">&#39;=&#39;</span><span class="o">)</span>
+</span><span class="line">      <span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="sc">&#39;+&#39;</span><span class="o">,</span> <span class="sc">&#39;-&#39;</span><span class="o">)</span>
+</span><span class="line">      <span class="o">.</span><span class="n">Replace</span><span class="o">(</span><span class="sc">&#39;/&#39;</span><span class="o">,</span> <span class="sc">&#39;_&#39;</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="n">Base64String</span><span class="o">;</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line">  <span class="k">static</span> <span class="k">member</span> <span class="n">fromString</span> <span class="o">=</span> <span class="n">Base64String</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">override</span> <span class="n">this</span><span class="p">.</span><span class="nf">ToString</span><span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="o">(</span><span class="n">Base64String</span> <span class="n">str</span><span class="o">)</span> <span class="o">=</span> <span class="n">this</span>
+</span><span class="line">    <span class="n">str</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>To keep things simple, I haven’t added any validations here. The next step is to create a Suave <em>WebPart</em> to expose the audience create functionality.</p>
+
+<p>Add a new source file <em>AuthServer.fs</em> in the <strong>SuaveJwt</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">AudienceCreateRequest</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">AudienceCreateResponse</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Base64Secret</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Name</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">Config</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">AddAudienceUrlPath</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">SaveAudience</span> <span class="o">:</span> <span class="n">Audience</span> <span class="o">-&gt;</span> <span class="n">Async</span><span class="o">&lt;</span><span class="n">Audience</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">audienceWebPart</span> <span class="n">config</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">toAudienceCreateResponse</span> <span class="o">(</span><span class="n">audience</span> <span class="o">:</span> <span class="n">Audience</span><span class="o">)</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">Base64Secret</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="n">Secret</span><span class="o">.</span><span class="n">ToString</span><span class="bp">()</span>
+</span><span class="line">    <span class="n">ClientId</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="n">ClientId</span>
+</span><span class="line">    <span class="n">Name</span> <span class="o">=</span> <span class="n">audience</span><span class="o">.</span><span class="n">Name</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">tryCreateAudience</span> <span class="o">(</span><span class="n">ctx</span><span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">mapJsonPayload</span><span class="o">&lt;</span><span class="n">AudienceCreateRequest</span><span class="o">&gt;</span> <span class="n">ctx</span><span class="o">.</span><span class="n">request</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">audienceCreateRequest</span> <span class="o">-&gt;</span>
+</span><span class="line">        <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">          <span class="k">let!</span> <span class="nv">audience</span> <span class="o">=</span>
+</span><span class="line">            <span class="n">audienceCreateRequest</span><span class="o">.</span><span class="n">Name</span> <span class="o">|&gt;</span> <span class="n">createAudience</span> <span class="o">|&gt;</span> <span class="n">config</span><span class="o">.</span><span class="n">SaveAudience</span>
+</span><span class="line">          <span class="k">let</span> <span class="nv">audienceCreateResponse</span> <span class="o">=</span> <span class="n">toAudienceCreateResponse</span> <span class="n">audience</span>
+</span><span class="line">          <span class="k">return</span><span class="o">!</span> <span class="n">JSON</span> <span class="n">audienceCreateResponse</span> <span class="n">ctx</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Audience Create Request&quot;</span> <span class="n">ctx</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateAudience</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>audienceWebPart</code> function retrieves the <code>AudienceCreateRequest</code> from the JSON request payload and creates a new audience.<br />
+To make it independent of the host, we have externalized the hosting functionality using the <code>Config</code> record type.</p>
+
+<p>The <code>mapJsonPayload</code> and <code>JSON</code> functions serialize and deserialize JSON objects across the wire respectively. These functions are not part of Suave, so let’s add them</p>
+
+<p>Add a new source file <em>SuaveJson.fs</em> in the <strong>SuaveJwt</strong> project and add these functions</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">JSON</span> <span class="n">v</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">jsonSerializerSettings</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JsonSerializerSettings</span><span class="bp">()</span>
+</span><span class="line">  <span class="n">jsonSerializerSettings</span><span class="o">.</span><span class="n">ContractResolver</span> <span class="o">&lt;-</span> <span class="k">new</span> <span class="n">CamelCasePropertyNamesContractResolver</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">SerializeObject</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">jsonSerializerSettings</span><span class="o">)</span>
+</span><span class="line">  <span class="o">|&gt;</span> <span class="n">OK</span>
+</span><span class="line">  <span class="o">&gt;=&gt;</span> <span class="nn">Writers</span><span class="p">.</span><span class="n">setMimeType</span> <span class="s">&quot;application/json; charset=utf-8&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">mapJsonPayload</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;</span> <span class="o">(</span><span class="n">req</span> <span class="o">:</span> <span class="n">HttpRequest</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">fromJson</span> <span class="n">json</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">try</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">obj</span> <span class="o">=</span> <span class="nn">JsonConvert</span><span class="p">.</span><span class="n">DeserializeObject</span><span class="o">(</span><span class="n">json</span><span class="o">,</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="k">&#39;</span><span class="n">a</span><span class="o">&gt;)</span> <span class="o">:?&gt;</span> <span class="k">&#39;</span><span class="n">a</span>
+</span><span class="line">      <span class="n">Some</span> <span class="kt">obj</span>
+</span><span class="line">    <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">getString</span> <span class="n">rawForm</span> <span class="o">=</span>
+</span><span class="line">    <span class="nn">System</span><span class="p">.</span><span class="nn">Text</span><span class="p">.</span><span class="nn">Encoding</span><span class="p">.</span><span class="nn">UTF8</span><span class="p">.</span><span class="n">GetString</span><span class="o">(</span><span class="n">rawForm</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">req</span><span class="o">.</span><span class="n">rawForm</span> <span class="o">|&gt;</span> <span class="n">getString</span> <span class="o">|&gt;</span> <span class="n">fromJson</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The next step is hosting this audience web part.</p>
+
+<p>Open the <em>Program.fs</em> file in the <strong>SuaveJwt.AuthServerHost</strong> project and update it as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">authorizationServerConfig</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">AddAudienceUrlPath</span> <span class="o">=</span> <span class="s">&quot;/api/audience&quot;</span>
+</span><span class="line">  <span class="n">SaveAudience</span> <span class="o">=</span> <span class="nn">AudienceStorage</span><span class="p">.</span><span class="n">saveAudience</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">audienceWebPart</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">audienceWebPart</span> <span class="n">authorizationServerConfig</span>
+</span><span class="line"><span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">audienceWebPart&#39;</span>
+</span><span class="line"><span class="mi">0</span> <span class="c1">// return an integer exit code</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>It is a straight forward self-host suave server program which exposes the audience web part.</p>
+
+<p>The <em>AudienceStorage</em> is responsible for storing the created audiences and to add it create a new source file <em>AudienceStorage.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project and add these functions</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">AudienceStorage</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">private</span> <span class="n">audienceStorage</span>
+</span><span class="line">  <span class="o">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="n">Audience</span><span class="o">&gt;</span><span class="bp">()</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">saveAudience</span> <span class="o">(</span><span class="n">audience</span> <span class="o">:</span> <span class="n">Audience</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="n">audienceStorage</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">audience</span><span class="o">.</span><span class="n">ClientId</span><span class="o">,</span> <span class="n">audience</span><span class="o">)</span>
+</span><span class="line">    <span class="n">audience</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>To keep this simple, we are using in-memory dictionary here and it can be easily replaced with any data store</p>
+
+<p>Now we have everything to create a new audience. So, let’s run the <strong>SuaveJwt.AuthServerHost</strong> application and verify</p>
+
+<p><img class="center" src="/images/suave_jwt/audience_create.png" /></p>
+
+<p>Keep a note of this <em>clientId</em> and <em>base64Secret</em> as we will be using them while defining the resource server (“Audience1” in this case).</p>
+
+<h2 id="generating-access-token">Generating Access Token</h2>
+
+<p>After registering an audience with the authorization server, the next step is to get the access token to access the resources in the given resource server.</p>
+
+<p>Let’s begin by defining the business logic to create an access token.</p>
+
+<p><img class="center" src="/images/suave_jwt/createToken.png" /></p>
+
+<p>Open <em>JwtToken.fs</em> and add the following types</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">TokenCreateRequest</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Issuer</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">UserName</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Password</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">TokenTimeSpan</span> <span class="o">:</span> <span class="n">TimeSpan</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">IdentityStore</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">getClaims</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">Async</span><span class="o">&lt;</span><span class="n">Claim</span> <span class="n">seq</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="n">isValidCredentials</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">Async</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="n">getSecurityKey</span> <span class="o">:</span> <span class="n">Base64String</span> <span class="o">-&gt;</span> <span class="n">SecurityKey</span>
+</span><span class="line">  <span class="n">getSigningCredentials</span> <span class="o">:</span> <span class="n">SecurityKey</span> <span class="o">-&gt;</span> <span class="n">SigningCredentials</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">Token</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">AccessToken</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">ExpiresIn</span> <span class="o">:</span> <span class="kt">float</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>These types are generic abstractions which decouple the token creation part from the underlying host.</p>
+
+<p>The <code>TokenCreateRequest</code> models the underlying issuer and token lifetime.</p>
+
+<p>The <code>IdentityStore</code> represents a generic data store in which the identity information has been stored and it also provides the security key and the signing credentials to protect the access token from misuse.</p>
+
+<p>With these types in place let’s add the <code>createToken</code> function in the <em>SuaveJwt.fs</em> file</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">createToken</span> <span class="n">tokenCreateRequest</span> <span class="n">identityStore</span> <span class="n">audience</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">let!</span> <span class="nv">isValidCredentials</span> <span class="o">=</span>
+</span><span class="line">      <span class="n">identityStore</span><span class="o">.</span><span class="n">isValidCredentials</span> <span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">UserName</span> <span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">Password</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">isValidCredentials</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">signingCredentials</span> <span class="o">=</span>
+</span><span class="line">        <span class="o">(</span><span class="n">identityStore</span><span class="o">.</span><span class="n">getSecurityKey</span> <span class="o">&gt;&gt;</span> <span class="n">identityStore</span><span class="o">.</span><span class="n">getSigningCredentials</span><span class="o">)</span> <span class="n">audience</span><span class="o">.</span><span class="n">Secret</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">issuedOn</span> <span class="o">=</span> <span class="n">Nullable</span> <span class="nn">DateTime</span><span class="p">.</span><span class="n">UtcNow</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">expiresBy</span> <span class="o">=</span> <span class="n">Nullable</span> <span class="o">(</span><span class="nn">DateTime</span><span class="p">.</span><span class="nn">UtcNow</span><span class="p">.</span><span class="n">Add</span><span class="o">(</span><span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">TokenTimeSpan</span><span class="o">))</span>
+</span><span class="line">      <span class="k">let!</span> <span class="nv">claims</span> <span class="o">=</span>  <span class="n">identityStore</span><span class="o">.</span><span class="n">getClaims</span> <span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">UserName</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">jwtSecurityToken</span> <span class="o">=</span>
+</span><span class="line">        <span class="k">new</span> <span class="n">JwtSecurityToken</span><span class="o">(</span><span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">Issuer</span><span class="o">,</span> <span class="n">audience</span><span class="o">.</span><span class="n">ClientId</span><span class="o">,</span> <span class="n">claims</span><span class="o">,</span> <span class="n">issuedOn</span><span class="o">,</span> <span class="n">expiresBy</span><span class="o">,</span> <span class="n">signingCredentials</span><span class="o">)</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">handler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JwtSecurityTokenHandler</span><span class="bp">()</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">accessToken</span> <span class="o">=</span> <span class="n">handler</span><span class="o">.</span><span class="n">WriteToken</span><span class="o">(</span><span class="n">jwtSecurityToken</span><span class="o">)</span>
+</span><span class="line">      <span class="k">return</span> <span class="n">Some</span> <span class="o">{</span><span class="n">AccessToken</span> <span class="o">=</span> <span class="n">accessToken</span><span class="o">;</span> <span class="n">ExpiresIn</span> <span class="o">=</span> <span class="n">tokenCreateRequest</span><span class="o">.</span><span class="n">TokenTimeSpan</span><span class="o">.</span><span class="n">TotalSeconds</span><span class="o">}</span>
+</span><span class="line">    <span class="k">else</span> <span class="k">return</span> <span class="n">None</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>createToken</code> function checks the validness of the login credentials. If it is valid, then it get the claims associated with the given username and creates a <em>JwtToken</em> using the <a href="https://www.nuget.org/packages/System.IdentityModel.Tokens.Jwt/">JSON Web Token Handler</a> library, else it returns <code>None</code></p>
+
+<p>Now we have got the backend business logic ready, let’s expose it as a suave <em>WebPart</em></p>
+
+<p>Open <em>AuthServer.fs</em> and add a new record type for the incoming token create request and update <code>Config</code> and <code>audienceWebPart</code> as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">TokenCreateCredentials</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">UserName</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">Password</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">type</span> <span class="nc">Config</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="c1">// ... existing fields ...</span>
+</span><span class="line">  <span class="n">CreateTokenUrlPath</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">GetAudience</span> <span class="o">:</span> <span class="kt">string</span> <span class="o">-&gt;</span> <span class="n">Async</span><span class="o">&lt;</span><span class="n">Audience</span> <span class="n">option</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="n">Issuer</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">TokenTimeSpan</span> <span class="o">:</span> <span class="n">TimeSpan</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">audienceWebPart</span> <span class="n">config</span> <span class="n">identityStore</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">// ... existing functions ...</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">tryCreateToken</span> <span class="o">(</span><span class="n">ctx</span><span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">mapJsonPayload</span><span class="o">&lt;</span><span class="n">TokenCreateCredentials</span><span class="o">&gt;</span> <span class="n">ctx</span><span class="o">.</span><span class="n">request</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">tokenCreateCredentials</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">let!</span> <span class="nv">audience</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">GetAudience</span> <span class="n">tokenCreateCredentials</span><span class="o">.</span><span class="n">ClientId</span>
+</span><span class="line">        <span class="k">match</span> <span class="n">audience</span> <span class="k">with</span>
+</span><span class="line">        <span class="o">|</span> <span class="n">Some</span> <span class="n">audience</span> <span class="o">-&gt;</span>
+</span><span class="line">            <span class="k">let</span> <span class="nv">tokenCreateRequest</span> <span class="o">:</span> <span class="n">TokenCreateRequest</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">              <span class="n">Issuer</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">Issuer</span>
+</span><span class="line">              <span class="n">UserName</span> <span class="o">=</span> <span class="n">tokenCreateCredentials</span><span class="o">.</span><span class="n">UserName</span>
+</span><span class="line">              <span class="n">Password</span> <span class="o">=</span> <span class="n">tokenCreateCredentials</span><span class="o">.</span><span class="n">Password</span>
+</span><span class="line">              <span class="n">TokenTimeSpan</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">TokenTimeSpan</span>
+</span><span class="line">            <span class="o">}</span>
+</span><span class="line">            <span class="k">let!</span> <span class="nv">token</span> <span class="o">=</span> <span class="n">createToken</span> <span class="n">tokenCreateRequest</span> <span class="n">identityStore</span> <span class="n">audience</span>
+</span><span class="line">            <span class="k">match</span> <span class="n">token</span> <span class="k">with</span>
+</span><span class="line">            <span class="o">|</span> <span class="n">Some</span> <span class="n">token</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">JSON</span> <span class="n">token</span> <span class="n">ctx</span>
+</span><span class="line">            <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Login Credentials&quot;</span> <span class="n">ctx</span>
+</span><span class="line">
+</span><span class="line">        <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Client Id&quot;</span> <span class="n">ctx</span>
+</span><span class="line">      <span class="o">}</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Token Create Request&quot;</span> <span class="n">ctx</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">choose</span> <span class="o">[</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">AddAudienceUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateAudience</span>
+</span><span class="line">    <span class="n">path</span> <span class="n">config</span><span class="o">.</span><span class="n">CreateTokenUrlPath</span> <span class="o">&gt;=&gt;</span> <span class="n">POST</span> <span class="o">&gt;=&gt;</span> <span class="n">tryCreateToken</span>
+</span><span class="line">  <span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>tryCreateToken</code> function checks whether the <code>ClientId</code> is a registered audience or not, if it exists, then this function creates a token using the <code>createToken</code> function defined above otherwise it returns the <code>BAD_REQUST</code> <em>WebPart</em> with the appropriate error message.</p>
+
+<p>The final change is modifying the <em>Program.fs</em> and <em>AudienceStorage.fs</em> files in the <strong>SuaveJwt.AuthServerHost</strong> to expose this <em>WebPart</em>.</p>
+
+<p><strong>Program.fs</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">authorizationServerConfig</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">AddAudienceUrlPath</span> <span class="o">=</span> <span class="s">&quot;/api/audience&quot;</span>
+</span><span class="line">  <span class="n">CreateTokenUrlPath</span> <span class="o">=</span> <span class="s">&quot;/oauth2/token&quot;</span>
+</span><span class="line">  <span class="n">SaveAudience</span> <span class="o">=</span> <span class="nn">AudienceStorage</span><span class="p">.</span><span class="n">saveAudience</span>
+</span><span class="line">  <span class="n">GetAudience</span> <span class="o">=</span> <span class="nn">AudienceStorage</span><span class="p">.</span><span class="n">getAudience</span>
+</span><span class="line">  <span class="n">Issuer</span> <span class="o">=</span> <span class="s">&quot;http://localhost:8083/suave&quot;</span>
+</span><span class="line">  <span class="n">TokenTimeSpan</span> <span class="o">=</span> <span class="nn">TimeSpan</span><span class="p">.</span><span class="n">FromMinutes</span><span class="o">(</span><span class="mi">1</span><span class="o">.)</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">identityStore</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">getClaims</span> <span class="o">=</span> <span class="nn">IdentityStore</span><span class="p">.</span><span class="n">getClaims</span>
+</span><span class="line">  <span class="n">isValidCredentials</span> <span class="o">=</span> <span class="nn">IdentityStore</span><span class="p">.</span><span class="n">isValidCredentials</span>
+</span><span class="line">  <span class="n">getSecurityKey</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">securityKey</span>
+</span><span class="line">  <span class="n">getSigningCredentials</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">hmacSha256</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">audienceWebPart</span><span class="k">&#39;</span> <span class="o">=</span> <span class="n">audienceWebPart</span> <span class="n">authorizationServerConfig</span> <span class="n">identityStore</span>
+</span><span class="line">
+</span><span class="line"><span class="n">startWebServer</span> <span class="n">defaultConfig</span> <span class="n">audienceWebPart&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><strong>AudienceStorage.fs</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">getAudience</span> <span class="n">clientId</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">if</span> <span class="n">audienceStorage</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">clientId</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">    <span class="n">Some</span> <span class="n">audienceStorage</span><span class="o">.[</span><span class="n">clientId</span><span class="o">]</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
+</span><span class="line">  <span class="k">else</span>
+</span><span class="line">    <span class="n">None</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <em>KeyStore</em> and <em>IdentityStore</em> do not exists, so let’s add them</p>
+
+<p>Add <em>KeyStore.fs</em> in the <strong>SuaveJwt</strong> project and it provide the in-memory symmetric security key based on <a href="https://en.wikipedia.org/wiki/Hash-based_message_authentication_code">HMAC</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">KeyStore</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.IdentityModel.Tokens</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">Encodings</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">securityKey</span> <span class="n">sharedKey</span> <span class="o">:</span> <span class="n">SecurityKey</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">symmetricKey</span> <span class="o">=</span> <span class="n">sharedKey</span> <span class="o">|&gt;</span> <span class="nn">Base64String</span><span class="p">.</span><span class="n">decode</span>
+</span><span class="line">  <span class="k">new</span> <span class="n">InMemorySymmetricSecurityKey</span><span class="o">(</span><span class="n">symmetricKey</span><span class="o">)</span> <span class="o">:&gt;</span> <span class="n">SecurityKey</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">hmacSha256</span> <span class="n">secretKey</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">new</span> <span class="n">SigningCredentials</span><span class="o">(</span><span class="n">secretKey</span><span class="o">,</span><span class="nn">SecurityAlgorithms</span><span class="p">.</span><span class="n">HmacSha256Signature</span><span class="o">,</span> <span class="nn">SecurityAlgorithms</span><span class="p">.</span><span class="n">Sha256Digest</span><span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then add <em>IdentityStore.fs</em> in the <strong>SuaveJwt.AuthServerHost</strong> project.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">IdentityStore</span>
+</span><span class="line"><span class="k">open</span> <span class="nn">System.Security.Claims</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">getClaims</span> <span class="n">userName</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">seq</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">yield</span> <span class="o">(</span><span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Name</span><span class="o">,</span> <span class="n">userName</span><span class="o">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">userName</span> <span class="o">=</span> <span class="s">&quot;Admin&quot;</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">yield</span> <span class="o">(</span><span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Role</span><span class="o">,</span> <span class="s">&quot;Admin&quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">userName</span> <span class="o">=</span> <span class="s">&quot;Foo&quot;</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">yield</span> <span class="o">(</span><span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Role</span><span class="o">,</span> <span class="s">&quot;SuperUser&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="o">}</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="o">(</span><span class="k">fun</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">Claim</span><span class="o">(</span><span class="n">fst</span> <span class="n">x</span><span class="o">,</span> <span class="n">snd</span> <span class="n">x</span><span class="o">))</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">isValidCredentials</span> <span class="n">username</span> <span class="n">password</span> <span class="o">=</span>
+</span><span class="line">  <span class="n">username</span> <span class="o">=</span> <span class="n">password</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>To keep this simple, I am just hardcoding the credentials and claims here and it can be replaced with any backend. In this case, I am just going with accepting all the credentials as valid if the username and password are same.</p>
+
+<p>Let’s run the <strong>SuaveJwt.AuthServerHost</strong> and verify the token</p>
+
+<p><img class="center" src="/images/suave_jwt/audience_admin_token.png" /></p>
+
+<h2 id="securing-the-resources">Securing the resources</h2>
+
+<p>Now we have come to the interesting part of securing the resources using the <em>access token</em> created in the above step</p>
+
+<p>The first step to achieving this to validate the incoming access token. Let’s add this validation logic in the <em>JwtToken.fs</em> file.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">TokenValidationRequest</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">Issuer</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">SecurityKey</span> <span class="o">:</span> <span class="n">SecurityKey</span>
+</span><span class="line">  <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">  <span class="n">AccessToken</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">validate</span> <span class="n">tokenValidationRequest</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">tokenValidationParameters</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">validationParams</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TokenValidationParameters</span><span class="bp">()</span>
+</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">ValidAudience</span> <span class="o">&lt;-</span> <span class="n">tokenValidationRequest</span><span class="o">.</span><span class="n">ClientId</span>
+</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">ValidIssuer</span> <span class="o">&lt;-</span> <span class="n">tokenValidationRequest</span><span class="o">.</span><span class="n">Issuer</span>
+</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">ValidateLifetime</span> <span class="o">&lt;-</span> <span class="k">true</span>
+</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">ValidateIssuerSigningKey</span> <span class="o">&lt;-</span> <span class="k">true</span>
+</span><span class="line">    <span class="n">validationParams</span><span class="o">.</span><span class="n">IssuerSigningKey</span> <span class="o">&lt;-</span>  <span class="n">tokenValidationRequest</span><span class="o">.</span><span class="n">SecurityKey</span>
+</span><span class="line">    <span class="n">validationParams</span>
+</span><span class="line">  <span class="k">try</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">handler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JwtSecurityTokenHandler</span><span class="bp">()</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">principal</span> <span class="o">=</span>
+</span><span class="line">      <span class="n">handler</span><span class="o">.</span><span class="n">ValidateToken</span><span class="o">(</span><span class="n">tokenValidationRequest</span><span class="o">.</span><span class="n">AccessToken</span><span class="o">,</span> <span class="n">tokenValidationParameters</span><span class="o">,</span> <span class="n">ref</span> <span class="k">null</span><span class="o">)</span>
+</span><span class="line">    <span class="n">principal</span><span class="o">.</span><span class="n">Claims</span> <span class="o">|&gt;</span> <span class="n">Choice1Of2</span>
+</span><span class="line">  <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">ex</span> <span class="o">-&gt;</span> <span class="n">ex</span><span class="o">.</span><span class="n">Message</span> <span class="o">|&gt;</span> <span class="n">Choice2Of2</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>validate</code> function returns a <code>Choice</code> type which contains either a sequence of <a href="https://msdn.microsoft.com/en-us/library/system.security.claims(v=vs.110).aspx">Claims</a> present in the token if the access token is valid or an error message describing what’s wrong with the access token</p>
+
+<p>The next step is using this function to secure a Suave <em>WebPart</em></p>
+
+<p>Create a new source file <em>Secure.fs</em> in the <strong>SuaveJwt</strong> project and add the following code</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">JwtConfig</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">Issuer</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line">    <span class="n">SecurityKey</span> <span class="o">:</span> <span class="n">SecurityKey</span>
+</span><span class="line">    <span class="n">ClientId</span> <span class="o">:</span> <span class="kt">string</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="n">webpart</span> <span class="o">(</span><span class="n">ctx</span><span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">updateContextWithClaims</span> <span class="n">claims</span> <span class="o">=</span>
+</span><span class="line">    <span class="o">{</span> <span class="n">ctx</span> <span class="k">with</span> <span class="n">userState</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">userState</span><span class="o">.</span><span class="n">Remove</span><span class="o">(</span><span class="s">&quot;Claims&quot;</span><span class="o">).</span><span class="n">Add</span><span class="o">(</span><span class="s">&quot;Claims&quot;</span><span class="o">,</span> <span class="n">claims</span><span class="o">)</span> <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">match</span> <span class="n">ctx</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">header</span> <span class="s">&quot;token&quot;</span> <span class="k">with</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Choice1Of2</span> <span class="n">accessToken</span> <span class="o">-&gt;</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">tokenValidationRequest</span> <span class="o">=</span>  <span class="o">{</span>
+</span><span class="line">        <span class="n">Issuer</span> <span class="o">=</span> <span class="n">jwtConfig</span><span class="o">.</span><span class="n">Issuer</span>
+</span><span class="line">        <span class="n">SecurityKey</span> <span class="o">=</span> <span class="n">jwtConfig</span><span class="o">.</span><span class="n">SecurityKey</span>
+</span><span class="line">        <span class="n">ClientId</span> <span class="o">=</span> <span class="n">jwtConfig</span><span class="o">.</span><span class="n">ClientId</span>
+</span><span class="line">        <span class="n">AccessToken</span> <span class="o">=</span> <span class="n">accessToken</span>
+</span><span class="line">      <span class="o">}</span>
+</span><span class="line">      <span class="k">let</span> <span class="nv">validationResult</span> <span class="o">=</span> <span class="n">validate</span> <span class="n">tokenValidationRequest</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">validationResult</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="n">Choice1Of2</span> <span class="n">claims</span> <span class="o">-&gt;</span> <span class="n">webpart</span> <span class="o">(</span><span class="n">updateContextWithClaims</span> <span class="n">claims</span><span class="o">)</span>
+</span><span class="line">      <span class="o">|</span> <span class="n">Choice2Of2</span> <span class="n">err</span> <span class="o">-&gt;</span> <span class="n">FORBIDDEN</span> <span class="n">err</span> <span class="n">ctx</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">BAD_REQUEST</span> <span class="s">&quot;Invalid Request. Provide both clientid and token&quot;</span> <span class="n">ctx</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>jwtAuthenticate</code> function validates the access token present in the request header and invokes the given <em>WebPart</em> if it is valid. In case of invalid or absence of access token, it returns an HTTP error response instead of executing the <em>WebPart</em>.</p>
+
+<p>Upon successful access token validation, the <code>jwtAuthenticate</code> function puts the claims in the <code>userState</code> map of incoming <code>HttpContext</code> so that subsequent <em>WebPart</em>s in the pipeline can use it.</p>
+
+<p>The <code>JwtConfig</code> record abstracts the underlying audience from the validation logic so that it can be reused across multiple audiences.</p>
+
+<p>Now we have a functionality secure a web part. Let’s create an audience and leverage this</p>
+
+<p>Update the <em>Program.fs</em> file in the <strong>Audience1</strong> project as mentioned below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">jwtConfig</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">Issuer</span> <span class="o">=</span> <span class="s">&quot;http://localhost:8083/suave&quot;</span>
+</span><span class="line">    <span class="n">ClientId</span> <span class="o">=</span> <span class="s">&quot;7ff79ba3305c4e4f9d0ececeae70c78f&quot;</span>
+</span><span class="line">    <span class="n">SecurityKey</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">securityKey</span> <span class="o">(</span><span class="nn">Base64String</span><span class="p">.</span><span class="n">fromString</span> <span class="s">&quot;Op5EqjC70aLS2dx3gI0zADPIZGX2As6UEwjA4oyBjMo&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample1&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mkSimple</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8084</span><span class="o">]</span> <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">sample1</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>I’ve asked you to keep a note of the <em>clientId</em> and the <em>securityKey</em> while doing the registration of <strong>Audience1</strong>. We are using them here in the <code>jwtConfig</code> record.</p>
+
+<p>Let’s see it in action</p>
+
+<p><img class="center" src="/images/suave_jwt/audience_sample1_success.png" /></p>
+
+<p>Hurray! We have made it. “/audience1/sample1” is a secured API now!</p>
+
+<p>What will happen if we mess with the access token? Well, we will get an HTTP error. Let’s change the character <code>Q</code> in the access token from upper case to lower case and here is the result of it.</p>
+
+<p><img class="center" src="/images/suave_jwt/audience_sample1_error.png" /></p>
+
+<p>Cool, Isn’t it?</p>
+
+<p>Let’s add authorization based on the claims that we have obtained from the JWT token</p>
+
+<p>Open <em>Secure.fs</em> and update the authorization functionality</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">AuthorizationResult</span> <span class="o">=</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">Authorized</span>
+</span><span class="line">  <span class="o">|</span> <span class="n">UnAuthorized</span> <span class="k">of</span> <span class="kt">string</span>
+</span><span class="line">
+</span><span class="line"><span class="k">let</span> <span class="nv">jwtAuthorize</span> <span class="n">jwtConfig</span> <span class="n">authorizeUser</span> <span class="n">webpart</span>  <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">getClaims</span> <span class="o">(</span><span class="n">ctx</span><span class="o">:</span> <span class="n">HttpContext</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">let</span> <span class="nv">userState</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">userState</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">userState</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="s">&quot;Claims&quot;</span><span class="o">)</span> <span class="k">then</span>
+</span><span class="line">      <span class="k">match</span> <span class="n">userState</span><span class="o">.</span><span class="n">Item</span> <span class="s">&quot;Claims&quot;</span> <span class="k">with</span>
+</span><span class="line">      <span class="o">|</span> <span class="o">:?</span> <span class="o">(</span><span class="n">Claim</span> <span class="n">seq</span><span class="o">)</span> <span class="k">as</span> <span class="n">claims</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">claims</span>
+</span><span class="line">      <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">        <span class="n">None</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">authorize</span> <span class="n">httpContext</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">getClaims</span> <span class="n">httpContext</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="n">claims</span> <span class="o">-&gt;</span>
+</span><span class="line">        <span class="n">async</span> <span class="o">{</span>
+</span><span class="line">          <span class="k">let!</span> <span class="nv">authorizationResult</span> <span class="o">=</span> <span class="n">authorizeUser</span> <span class="n">claims</span>
+</span><span class="line">          <span class="k">match</span> <span class="n">authorizationResult</span> <span class="k">with</span>
+</span><span class="line">          <span class="o">|</span> <span class="n">Authorized</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">webpart</span> <span class="n">httpContext</span>
+</span><span class="line">          <span class="o">|</span> <span class="n">UnAuthorized</span> <span class="n">err</span> <span class="o">-&gt;</span> <span class="k">return</span><span class="o">!</span> <span class="n">FORBIDDEN</span> <span class="n">err</span> <span class="n">httpContext</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">FORBIDDEN</span> <span class="s">&quot;Claims not found&quot;</span> <span class="n">httpContext</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">jwtAuthenticate</span> <span class="n">jwtConfig</span> <span class="n">authorize</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>jwtConfig</code> function is very similar to the <code>jwtAuthenticate</code> function which provides authorization in addition to the authentication.</p>
+
+<p>The key here is the parameter <code>authorizeUser</code> which is a function that takes a sequence of claims and returns an <code>AuthorizationResult</code>.</p>
+
+<p>Like <code>jwtAuthenticate`` function, the</code>jwtConfig&#8220;` function is also abstracted from the underlying <em>Audience</em> so we can use it across multiple <em>Audience</em>s.</p>
+
+<p>Let’s use this in the <strong>Audience1</strong>.</p>
+
+<p><strong>Program.fs</strong></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">// ... existing code ...</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">// Claim Seq -&gt; Async&lt;AuthorizationResult&gt;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">authorizeAdmin</span> <span class="o">(</span><span class="n">claims</span> <span class="o">:</span> <span class="n">Claim</span> <span class="n">seq</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">claims</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">tryFind</span> <span class="o">(</span><span class="k">fun</span> <span class="n">c</span> <span class="o">-&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Role</span> <span class="o">&amp;&amp;</span> <span class="n">c</span><span class="o">.</span><span class="n">Value</span> <span class="o">=</span> <span class="s">&quot;Admin&quot;</span><span class="o">)</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">Authorized</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">UnAuthorized</span> <span class="s">&quot;User is not an admin&quot;</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience1/sample2&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span> <span class="n">authorizeAdmin</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">sample1</span><span class="o">;</span><span class="n">sample2</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">app</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>jwtAuthroize</code> function in action</p>
+
+<p><img class="center" src="/images/suave_jwt/audience1_sample2_error.png" /></p>
+
+<p><em>Note: I’ve generated a new access token here to exercise this use case.</em></p>
+
+<p>That’s it we have successfully completed all the three steps mentioned at the beginning of this blog post.</p>
+
+<h2 id="a-supplement">A Supplement</h2>
+
+<p>One cool thing about the design of the <strong>SuaveJwt</strong> library is, it doesn’t have any assumption about the <em>Authorization Server</em> and the <em>Resource Server</em>. Because of it, we can easily extend it.</p>
+
+<p>Let’s prove it by updating the <em>Program.fs</em> file in the <strong>Audience2</strong> project.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">EntryPoint</span><span class="o">&gt;]</span>
+</span><span class="line"><span class="k">let</span> <span class="nv">main</span> <span class="n">argv</span> <span class="o">=</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">jwtConfig</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">Issuer</span> <span class="o">=</span> <span class="s">&quot;http://localhost:8083/suave&quot;</span>
+</span><span class="line">    <span class="n">ClientId</span> <span class="o">=</span> <span class="s">&quot;ada9263885c440869fb484fe354de13d&quot;</span>
+</span><span class="line">    <span class="n">SecurityKey</span> <span class="o">=</span> <span class="nn">KeyStore</span><span class="p">.</span><span class="n">securityKey</span> <span class="o">(</span><span class="nn">Base64String</span><span class="p">.</span><span class="n">fromString</span> <span class="s">&quot;0RWyzyttDmJtiaYkG9rph5cqxCTI8YAOsR7stq-P_5o&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">authorizeSuperUser</span> <span class="o">(</span><span class="n">claims</span> <span class="o">:</span> <span class="n">Claim</span> <span class="n">seq</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">match</span> <span class="n">claims</span> <span class="o">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">tryFind</span> <span class="o">(</span><span class="k">fun</span> <span class="n">c</span> <span class="o">-&gt;</span> <span class="n">c</span><span class="o">.</span><span class="n">Type</span> <span class="o">=</span> <span class="nn">ClaimTypes</span><span class="p">.</span><span class="n">Role</span> <span class="o">&amp;&amp;</span> <span class="n">c</span><span class="o">.</span><span class="n">Value</span> <span class="o">=</span> <span class="s">&quot;SuperUser&quot;</span><span class="o">)</span> <span class="k">with</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">Some</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">Authorized</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
+</span><span class="line">    <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="n">UnAuthorized</span> <span class="s">&quot;User is not a Super User&quot;</span> <span class="o">|&gt;</span> <span class="n">async</span><span class="o">.</span><span class="n">Return</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">let</span> <span class="nv">authorize</span> <span class="o">=</span> <span class="n">jwtAuthorize</span> <span class="n">jwtConfig</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample1</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample1&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">OK</span> <span class="s">&quot;Sample 1&quot;</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">sample2</span> <span class="o">=</span> <span class="n">path</span> <span class="s">&quot;/audience2/sample2&quot;</span> <span class="o">&gt;=&gt;</span> <span class="n">authorize</span> <span class="n">authorizeSuperUser</span> <span class="o">(</span><span class="n">OK</span> <span class="s">&quot;Sample 2&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">config</span> <span class="o">=</span> <span class="o">{</span> <span class="n">defaultConfig</span> <span class="k">with</span> <span class="n">bindings</span> <span class="o">=</span> <span class="o">[</span><span class="nn">HttpBinding</span><span class="p">.</span><span class="n">mkSimple</span> <span class="n">HTTP</span> <span class="s">&quot;127.0.0.1&quot;</span> <span class="mi">8085</span><span class="o">]</span> <span class="o">}</span>
+</span><span class="line">  <span class="k">let</span> <span class="nv">app</span> <span class="o">=</span> <span class="n">choose</span> <span class="o">[</span><span class="n">sample1</span><span class="o">;</span><span class="n">sample2</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">startWebServer</span> <span class="n">config</span> <span class="n">app</span>
+</span><span class="line">  <span class="mi">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Note that the <code>jwtConfig</code> values are different from that of <strong>Audience1</strong> and it is obtained from calling the <strong>AuthorizationServer</strong>’s audience registration API for <strong>Audience2</strong>.</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>Suave provides a simple and elegant way of extending its core functionality. In this blog post, we have seen how to bend it to support JWT based authorization and I believe we can do a lot of other cool things too!</p>
+
+<p>You can find the complete source code of the sample application used in this blog post in my <a href="https://github.com/tamizhvendan/blog-samples/tree/master/SuaveJwtSampleApplication">blog-samples</a> GitHub repository.    </p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1145,99 +2124,6 @@
 <h2 id="summary">Summary</h2>
 
 <p>Though the problem that we have seen is so trivial, the great features in fsharp make it very pleasant to write expressive code to solve it. The complete code snippet is available in <a href="http://fssnip.net/qZ">fssnipnet</a>.</p>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-04-30T11:19:53+05:30" data-updated="true" itemprop="datePublished">Apr 30<sup>th</sup>, 2015</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2015/04/30/some-tips-for-using-c-number-libraries-in-f-number/" itemprop="url">Some Tips for Using C# Libraries in F#</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p>In my <a href="/blog/2015/04/25/my-takeaways/">last blog post</a> on what I’ve learned while developing a complete web application in fsharp, I’ve mentioned that we can leverage all the libraries that were written for csharp in fsharp. </p>
-
-<p>Fsharp is a hybrid programming language which supports both functional programming and object oriented programming. Though you can write an application completely in a functional way, when you need to integrate with other .NET languages, you may need to use some OO features.</p>
-
-<p>As both the languages has its own design and principles (immutable types, not allowing null, etc.,), the integration of these is not straightforward in certain scenarios. In this blog post you are going to learn how to handle these tricky scenarios. </p>
-
-<h2 id="allownullliteral-attribute">AllowNullLiteral Attribute</h2>
-
-<p>When you <a href="http://fsharpforfunandprofit.com/posts/classes/">create a class in F#</a>, by default, we can’t explicitly assign a null value to an instance of the class unlike C#. You will get a compiler error when you do it. It’s a great feature and it helps in getting rid of Null Reference exceptions. </p>
-
-<p><img class="center" src="/images/fs_cs_interop/NullError.png" /></p>
-
-<p>But in certain cases, we may need to assign a null value to a class. For example, let us take the <a href="https://msdn.microsoft.com/en-us/library/dn497475(v=vs.108).aspx">Find method</a> in the Asp.Net identity framework. It returns a user with the specified username and password or null if there is a no match. </p>
-
-<p>When you try to use this in a fsharp code, you will be getting a compiler error</p>
-
-<p><img class="center" src="/images/fs_cs_interop/UserNullError.png" /></p>
-
-<p>It’s where <a href="https://msdn.microsoft.com/en-us/library/ee353608.aspx?f=255&amp;MSPPError=-2147217396">AllowNullLiteral attribute</a> comes into the picture. If you want to make a class type to allow null literal as one of its value, you need to decorate that class with the AllowNullLiteral attribute.</p>
-
-<p><img class="center" src="/images/fs_cs_interop/AllowNullAttr.png" /></p>
-
-<h2 id="climutable-attribute">CLIMutable Attribute</h2>
-
-<p>When a fsharp Record type is compiled, it has been translated to a Common Language Infrastructure (CLI) representation of a typical <a href="http://blog.pluralsight.com/domain-driven-design-in-csharp-implementing-immutable-value-objects">value object declaration</a> in C#.</p>
-
-<p><img class="center border" src="/images/fs_cs_interop/Record_Type_Compilation.png" /></p>
-
-<p>The important thing to notice here is there is no default constructor! </p>
-
-<p>Certain libraries and frameworks requires a class to contain default constructor. For example, the <a href="http://www.asp.net/web-api/overview/formats-and-model-binding/parameter-binding-in-aspnet-web-api">model binding</a> feature in Asp.Net framework expects the class with a default constructor to bind the incoming request to a parameter in the action method. You will get a run-time error if the class doesn’t contain default constructor.</p>
-
-<p>So, if we need to have a default constructor for a fsharp record type when it get compiled, we need to decorate the record type with the <a href="https://msdn.microsoft.com/en-us/library/hh289724.aspx">CLIMutable attribute</a></p>
-
-<p>The Ppesence of this attribute enables the compiler to generate the default constructor and the property setters when the code gets compiled to IL</p>
-
-<p><img class="center border" src="/images/fs_cs_interop/Record_Type_Attr_Compilation.png" /></p>
-
-<h2 id="using-dynamic-types">Using Dynamic Types</h2>
-
-<p>In C#, we can create a <a href="https://msdn.microsoft.com/en-IN/library/dd264736.aspx">dynamic type</a> which bypasses static type checking and helps to hold the data together without declaring any types. </p>
-
-<p>The <a href="http://stackoverflow.com/questions/14896013/how-viewbag-in-asp-net-mvc-works">ViewBag feature</a> in Asp.Net MVC is a one of the best examples of using dynamic types. It allows you to put any arbitary data in it and use them in the razor views.</p>
-
-<p>There is no straightforward way to access the dynamic types in fsharp.</p>
-
-<p><img class="center border" src="/images/fs_cs_interop/ViewBagError.png" /></p>
-
-<p>If we would like to access dynamic types in fsharp we need to use the <a href="https://www.nuget.org/packages/ImpromptuInterface.FSharp/">ImpromptuInterface.FSharp</a> nuget package.</p>
-
-<p>This package defines the <code>?</code> operator, which provides the implementation for accessing dynamic types.</p>
-
-<p><img class="center border" src="/images/fs_cs_interop/Dynamic_Operator.png" /></p>
-
-<h2 id="summary">Summary</h2>
-
-<p>In this blog post we have seen three tips which can help us while using C# libraries in F#. If you know any other interoperability tips, kindly leave a comment below. </p>
 
 		
 		

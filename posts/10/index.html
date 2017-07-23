@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="Dec 10th, 2014 asp.net mvc, fsharp, functional-programming Comments Web Application Development in Fsharp Using ASP.NET MVC Introduction Fsharp is &hellip;">
+	<meta name="description" content="Dec 10th, 2014 asp.net mvc, fsharp, functional-programming Comments Step 0 - Setting Up the Fsharp-phonecat Solution This is step 0 of my blog &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -113,7 +113,7 @@
 <nav id="tag-cloud">
 	<section>
     <!-- <h3>Tag Cloud</h3>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/golang' style='font-size: 110.0%'>golang</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
 </section>
 </nav>
 
@@ -128,6 +128,115 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-12-10T22:15:50+05:30" data-updated="true" itemprop="datePublished">Dec 10<sup>th</sup>, 2014</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/asp-dot-net-mvc/'>asp.net mvc</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/functional-programming/'>functional-programming</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2014/12/10/step-0-setting-up-the-fsharp-phonecat-solution/" itemprop="url">Step 0 - Setting Up the Fsharp-phonecat Solution</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<blockquote>
+  <p>This is step 0 of my blog series on <a href="/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
+</blockquote>
+
+<p>In this blog post, we are going to set up the visual studio solution and create the high level project structure for the <em>fsharp-phonecat</em> application. </p>
+
+<p><strong>Let’s get started!</strong></p>
+
+<h4 id="setting-up-visual-studio-solution">Setting Up Visual Studio Solution</h4>
+
+<p>The first step is to create an blank visual studio solution and name it as <strong>PhoneCat</strong></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/BlankSolution.png" width="700" height="700" /></p>
+
+<p>After creating the blank solution create two fsharp class libraries and name it as <strong>Domain</strong> and <strong>DataAccess</strong> respectively.</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/ClassLibrary.png" width="700" height="700" /></p>
+
+<p>Do delete the sample fsharp files Domain1.fs, DataAccess1.fs and Script.fsx that are created by default while creating the class libraries</p>
+
+<p>Then create a ASP.NET MVC web project using <a href="https://visualstudiogallery.msdn.microsoft.com/39ae8dec-d11a-4ac9-974e-be0fdadec71b">F# MVC 5 template</a> and name it as <em>Web</em></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/WebProject.png" width="700" height="700" /></p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/MVC5.png" /></p>
+
+<p>We are going to use TDD, so create test projects for each of the above projects created and name it as <strong>Domain.Tests</strong>, <strong>DataAccess.Tests</strong> and <strong>Web.Tests</strong> respectively.</p>
+
+<p>The final project structure would look like</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/ProjectStructure.png" /></p>
+
+<p>F# MVC 5 template comes with a default Bootstrap theme and we are going to extend it by using e-commerce theme from <a href="http://startbootstrap.com/template-overviews/shop-homepage/">Start Bootstrap</a>. Download the theme and add <em>shop-homepage.css</em> to the Content directory of <strong>Web</strong> project. After adding it update <em>Global.asax.fs</em> to include this css file while bundling.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>BundleConfig after adding shop-homepage.css</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">BundleConfig</span><span class="bp">()</span> <span class="o">=</span>
+</span><span class="line">    <span class="k">static</span> <span class="k">member</span> <span class="n">RegisterBundles</span> <span class="o">(</span><span class="n">bundles</span><span class="o">:</span><span class="n">BundleCollection</span><span class="o">)</span> <span class="o">=</span>
+</span><span class="line">        <span class="n">bundles</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">ScriptBundle</span><span class="o">(</span><span class="s">&quot;~/bundles/jquery&quot;</span><span class="o">)</span>
+</span><span class="line">            <span class="o">.</span><span class="n">Include</span><span class="o">([|</span><span class="s">&quot;~/Scripts/jquery-{version}.js&quot;</span><span class="o">|]))</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">bundles</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">ScriptBundle</span><span class="o">(</span><span class="s">&quot;~/bundles/modernizr&quot;</span><span class="o">)</span>
+</span><span class="line">            <span class="o">.</span><span class="n">Include</span><span class="o">([|</span><span class="s">&quot;~/Scripts/modernizr-*&quot;</span><span class="o">|]))</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">bundles</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">ScriptBundle</span><span class="o">(</span><span class="s">&quot;~/bundles/bootstrap&quot;</span><span class="o">)</span>
+</span><span class="line">            <span class="o">.</span><span class="n">Include</span><span class="o">(</span><span class="s">&quot;~/Scripts/bootstrap.js&quot;</span><span class="o">,</span>
+</span><span class="line">                        <span class="s">&quot;~/Scripts/respond.js&quot;</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">bundles</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">StyleBundle</span><span class="o">(</span><span class="s">&quot;~/Content/css&quot;</span><span class="o">)</span>
+</span><span class="line">            <span class="o">.</span><span class="n">Include</span><span class="o">(</span><span class="s">&quot;~/Content/bootstrap.css&quot;</span><span class="o">,</span>
+</span><span class="line">                        <span class="s">&quot;~/Content/site.css&quot;</span><span class="o">,</span>
+</span><span class="line">                        <span class="s">&quot;~/Content/shop-homepage.css&quot;</span><span class="o">))</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now the stage is set for awesomeness. Update <strong>_Layout.cshtml</strong> and <strong>Index.cshtml</strong> as mentioned in the bootstrap theme and run the web project.</p>
+
+<p><img class="center" src="/images/fsharp_phonecat/step_0/HomePage.png" width="800" height="800" /></p>
+
+<p>You can checkout the code <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/0">here</a>. In the <a href="/blog/2014/12/17/phonecat-backend-using-web-api-and-typeproviders/">next-post</a> we will be wiring up the backend. Stay tuned !</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -380,145 +489,6 @@
 
 <p>Verbs(functions) are not silver bullets and they are not the replacement of Nouns(objects). But by choosing our abstraction wisely we can achieve great things with lesser lines of code and in turn release the code with lesser bugs <i class="emoji smile"></i> </p>
 
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-08-08T11:39:00+05:30" data-updated="true" itemprop="datePublished">Aug 8<sup>th</sup>, 2013</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/fsharp/'>fsharp</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2013/08/08/if-your-fsharp-code-compiles-it-usually-works/" itemprop="url">If Your Fsharp Code Compiles It Usually Works</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<div class="post">
-
-  <p>
-    When I first started learning fsharp, one of the astounding fact that hit my mind was <em>&#8220;If the code compiles it usually works!&#8221;</em> For a guy who is coming from c# and java Programming background it was bit weird! After delving deep into f# I have found it very useful and inspired by its awesomeness. In this blog-post I&#8217;ll be covering some of my experiences that I come across while learning this great feature!  
-  </p>
-
-  <h3>Fever Diagnosis Program</h3>
-  <p>
-    Let us consider a simple fever diagnosis program. If your temperature is greater than 37.5 Celsius or 99.0 Fahrenheit then you are suffering from fever else you are all right.  
-  </p>
-
-  <h3>Defining Temperature Types</h3>
-  <p>One of the cool feature that I like about f# is its less verbosity. You can do lot of magic things with less lines of code! Consider our fever diagnosis program, A temperature can be either in Celsius or in Fahrenheit. Here is the equivalent type defined in f#</p>
-
-    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Temperature.fs'></script>
-<noscript><pre><code>type Temperature = 
-  | Celsius of double
-  | Fahrenheit of double</code></pre></noscript></div>
-
-
-  <p>Just 3 lines of code!</p>
-  <p>The type Temperature has been defined as a <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Discriminated_Unions">discriminated union.</a> In brief, Discriminated union represent data that can take on one of a few different types of results.</p> <p>Also in this 3 lines we have described the strongly typed alias for temperature in both Celsius and in Fahrenheit. With this code in place if you want to describe a temperature in Celsius or in Fahrenheit all you need to use the following syntax</p>
-
-    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Declaration.fs'></script>
-<noscript><pre><code>let tempInCelsius = Celsius 10.8
-let tempInFahernheit = Fahrenheit 10.6</code></pre></noscript></div>
-
-
-  <p>By defining strongly typed cases like this we can make our code cleaner and preventing ourselves from various logic errors that we usually do when we interpret the values of these types. Though we can achieve the same in c# by the following code, it is very elegant to do in f# </p>
-
-    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=Temperature.cs'></script>
-<noscript><pre><code>public abstract class Temperature 
-{
-  public double Value { get; private set; }
-
-  protected Temperature(double value) 
-  {
-    Value = value;
-  }
-}
-
-public class Celsius : Temperature
-{
-  public Celsius (double value) : base(value)
-  {
-
-  }
-}
-
-public class Fahrenheit : Temperature
-{
-  public Fahrenheit (double value) : base(value)
-  {
-    
-  }
-} 
-
-public class Program 
-{
-  public static void Main() 
-  {
-    Temperature tempInCelsius = new Celsius(10.8);
-    Temperature tempInFahernheit = new Fahrenheit(10.6);
-  }  
-}</code></pre></noscript></div>
-
-
-<p>34 lines of code to achieve the same!!</p>
-
-<h3>Let&#8217;s diagnosis fever</h3>
-<p>With the types for the two representation of temperature in place, our next step is to check the values and find out whether the concerned person is having fever or not. You can do this in f# by using <a href="http://en.wikibooks.org/wiki/F_Sharp_Programming/Pattern_Matching_Basics">pattern matching</a></p>
-<div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=HasFever.fs'></script>
-<noscript><pre><code>let hasFever temperature =
-  match temperature with 
-  | Celsius value -&gt; (value &gt; 37.5)
-  | Fahrenheit value -&gt; (value &gt; 99.0)</code></pre></noscript></div>
-
-
-<p>f# automatically takes care of decomposing our data into appropriate data structure and all we need to concentrate on our business logic. For a beginner the syntax might look intimidating at first sight but if we use it quite some time you will fell in love with f#</p> 
-
-<h4>How can I call this function?</h4>
-<div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=CallingHasFever.fs'></script>
-<noscript><pre><code>hasFever (Celsius 10.5)
-hasFever (Fahrenheit 22.5)</code></pre></noscript></div>
-
-
-<p>Based on the type we are passing in the hasFever function, the corresponding pattern will be matched then the value is decomposed and verified with their respective numbers. Code is prettier, isn&#8217;t it ?</p>
-
-<h3>What&#8217;s the big deal in it?</h3>
-<p>You might think apart from reducing the lines of code what else f# adds ?. Great! I was exactly like you when I first come across it. Later I&#8217;ve found out it how it can help us to save some hairs ;-) </p>
-
-<p>Let us assume that we forget to handle Fahrenheit in hasFever function</p>
-    <div><script src='https://gist.github.com/268f405f64ce99b19548.js?file=CompilerError.fs'></script>
-<noscript><pre><code>let hasFever temperature =
-  match temperature with 
-  | Celsius value -&gt; (value &gt; 37.5)</code></pre></noscript></div>
-
-<p>Typically in C# if we missed to handle one of the cases like this we won&#8217;t be getting any compiler error and It&#8217;d crash the application in the runtime. But in f#, the above code would result in following compiler error</p>
-<pre>warning FS0025: Incomplete pattern matches on this expression, For example, the value 'Fahrenheit (_)' may indicate a case not covered by the pattern(s)</pre>
-<p>So, if you make any logical error like this is your f# code, compiler will show compile time errors and prevents you from building buggy code!</p>
-
-<h3>Summary</h3>
-<p>If you follow the idioms of f#, it will let you write a better code and even if do some logical error the compiler will come as a rescue!. You can check the source code live in <a href="http://www.tryfsharp.org/create/tamizhvendan/fever_diagnosis.fsx">tryfsharp</a> </p>
-</div>
 		
 		
 	</div>

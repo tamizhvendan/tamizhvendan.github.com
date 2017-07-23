@@ -3,6 +3,12 @@
   
   
   <url>
+    <loc>http://blog.tamizhvendan.in/blog/2017/07/23/managing-data-in-golang-using-gorm-part-1/</loc>
+    <lastmod>2017-07-23T07:55:59+05:30</lastmod>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
     <loc>http://blog.tamizhvendan.in/blog/2017/07/03/leveraging-interfaces-in-golang-part-2/</loc>
     <lastmod>2017-07-03T19:44:33+05:30</lastmod>
     <priority>0.8</priority>
@@ -341,28 +347,28 @@
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/archives/</loc>
-    <lastmod>2017-07-10T20:18:55+05:30</lastmod>
+    <lastmod>2017-07-23T13:57:20+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/</loc>
-    <lastmod>2017-07-10T20:18:55+05:30</lastmod>
+    <lastmod>2017-07-23T13:57:20+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/blog/categories/</loc>
-    <lastmod>2017-07-10T20:18:55+05:30</lastmod>
+    <lastmod>2017-07-23T13:57:20+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   
   <url>
     <loc>http://blog.tamizhvendan.in/open-source-contributions/</loc>
-    <lastmod>2017-07-10T20:18:55+05:30</lastmod>
+    <lastmod>2017-07-23T13:57:20+05:30</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>

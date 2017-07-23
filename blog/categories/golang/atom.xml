@@ -4,7 +4,7 @@
   <title><![CDATA[Category: golang | P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/blog/categories/golang/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-07-10T20:18:55+05:30</updated>
+  <updated>2017-07-23T13:57:20+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,516 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Managing Data in golang using gorm - Part 1]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2017/07/23/managing-data-in-golang-using-gorm-part-1/"/>
+    <updated>2017-07-23T07:55:59+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2017/07/23/managing-data-in-golang-using-gorm-part-1</id>
+    <content type="html"><![CDATA[<p><a href="www.ajira.tech">We</a> have been using <a href="jinzhu.me/gorm/">gorm</a> as a primary tool to interact with <a href="https://www.PostgreSQL.org">PostgreSQL</a> from <a href="https://golang.org">golang</a> for almost a year now. </p>
+
+<p>Gorm does an excellent job as an <a href="https://en.wikipedia.org/wiki/Object-relational_mapping">ORM</a> library, and we enjoyed using it in our projects. </p>
+
+<p>Through this blog post series, I will be sharing our experiences on how we leveraged gorm to solve our client’s needs.</p>
+
+<h2 id="the-domain">The Domain</h2>
+
+<p>In this blog post series, we will be implementing the data persistence side of a blogging platform similar to <a href="https://medium.com">medium</a>, called <strong>gomidway</strong>.  </p>
+
+<h2 id="part-1-introduction">Part-1 Introduction</h2>
+
+<p>In this blog post, we will be working on defining the backend for signing up a new user and providing a provision for user login.</p>
+
+<h2 id="the-user-model">The User Model</h2>
+
+<p>Let’s start our modeling from the User table. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="class">CREATE</span> <span class="type">TABLE</span> users(
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  id SERIAL <span class="directive">PRIMARY</span> <span class="type">KEY</span>,
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  username <span class="predefined-type">VARCHAR</span>(<span class="integer">50</span>) <span class="directive">UNIQUE</span> <span class="keyword">NOT</span> <span class="predefined-constant">NULL</span>,
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  email <span class="predefined-type">VARCHAR</span>(<span class="integer">255</span>) <span class="directive">UNIQUE</span> <span class="keyword">NOT</span> <span class="predefined-constant">NULL</span>,
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  password_hash <span class="predefined-type">TEXT</span> <span class="keyword">NOT</span> <span class="predefined-constant">NULL</span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>);
+</pre></div>
+</div>
+</div>
+
+<p>Then define an equivalent model in golang.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="keyword">type</span> User <span class="keyword">struct</span> {
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span>  ID           <span class="predefined-type">uint</span> <span class="shell"><span class="delimiter">`</span><span class="content">gorm:&quot;primary_key&quot;</span><span class="delimiter">`</span></span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  Username     <span class="predefined-type">string</span>
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  Email        <span class="predefined-type">string</span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  PasswordHash <span class="predefined-type">string</span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Before taking the next steps, let me spend some time on explaining where to put this <code>User</code> <em>struct</em></p>
+
+<h3 id="the-folder-structure">The Folder Structure</h3>
+
+<p>There are two common ways to organize the models in golang. </p>
+
+<p>One approach is defining a folder called <code>models</code> and put all the models here</p>
+
+<p><img class="center" src="/images/gomidway/part1/models.png"></p>
+
+<p>The another approach is an invert of this structure. In this design, we will have a separate folder for each model. </p>
+
+<p><img class="center" src="/images/gomidway/part1/domain.png"></p>
+
+<p>Both the approaches have pros and cons. Choosing one over the other is entirely opinionated, and my preference is the second one.</p>
+
+<p>IMHO, the folder structure has <a href="https://8thlight.com/blog/uncle-bob/2011/09/30/Screaming-Architecture.html">to represent the domain</a> and the code associated a domain model should coexist with proper separation of concern. </p>
+
+<p><img class="center" src="/images/gomidway/part1/folder_structure.png"></p>
+
+<blockquote>
+  <p>Software architectures are structures that support the use cases of the system - <a href="https://www.amazon.com/Object-Oriented-Software-Engineering-Driven-Approach/dp/0201403471">Ivar Jacobson</a></p>
+</blockquote>
+
+<p>In this gorm blog post series, I will be following the <code>domain</code> based folder structure. </p>
+
+<h2 id="use-case-1---user-signup">Use Case #1 - User Signup</h2>
+
+<p>The Signup use case of a user is defined as </p>
+
+<ul>
+  <li>A user should sign up himself by providing his email, username, and password</li>
+  <li>If the username or the email already exists, we need to let him now </li>
+  <li>We also need to let him know if there is any error while persisting his signup details</li>
+  <li>If signup succeeds, he should be getting a unique identifier in the system</li>
+</ul>
+
+<p>To keep things simple and the focus of this series is on the data persistence side, we are not going to discuss/implement the HTTP portion of the application. Instead, we will be driving our implementation with some hard code values during the application bootstrap. </p>
+
+<h3 id="defining-the-signup-handler">Defining the Signup handler</h3>
+
+<p>Like many terms in software engineering, the term <strong>handler</strong> has different meanings. So, let me start by explaining what I mean by a handler here. </p>
+
+<p>A handler is a function that represents an use-case. It takes its dependency(ies) and its input(s) as parameters and returns the outcome of the use case. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// user/signup/handler.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">package</span> signup
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="keyword">type</span> Request <span class="keyword">struct</span> {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  Username <span class="predefined-type">string</span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  Email    <span class="predefined-type">string</span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  Password <span class="predefined-type">string</span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>}
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span><span class="keyword">type</span> Response <span class="keyword">struct</span> {
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  Id <span class="predefined-type">uint</span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>}
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span><span class="keyword">func</span> Signup(db *gorm.DB, req *Request) (*Response, <span class="predefined-type">error</span>) { 
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>One important thing to notice here is, the <code>Request</code> and the <code>Response</code> are golang structs. How the request is being populated from user’s request (JSON Post / HTML form Post / command from a message queue) and how the response communicated to the user (JSON response / HTML view / event in the message queue) are left up to the application boundary. </p>
+
+<p>In the Signup function, as a first step, we need to create the hash for the password using <a href="https://godoc.org/golang.org/x/crypto/bcrypt">bcrypt</a> and then create the new user. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="keyword">func</span> Signup(db *gorm.DB, req *Request) (*Response, <span class="predefined-type">error</span>) {
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>  passwordHash, err := bcrypt.GenerateFromPassword([]<span class="predefined-type">byte</span>(req.Password), bcrypt.DefaultCost)
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    <span class="keyword">return</span> <span class="predefined-constant">nil</span>, err
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  }
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  newUser := &amp;user.User{
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    Username:     req.Username,
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    Email:        req.Email,
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>    PasswordHash: <span class="predefined-type">string</span>(passwordHash),
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  }
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  <span class="comment">// ????</span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>The next step is persisting this newly created user</p>
+
+<h3 id="adding-user-create-function">Adding User Create function</h3>
+
+<p>The create user function is straight forward. We just need to call the <a href="https://godoc.org/github.com/jinzhu/gorm#DB.Create">Create</a> method in gorm</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// user/create.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">package</span> user
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="keyword">func</span> Create(db *gorm.DB, user *User) (<span class="predefined-type">uint</span>, <span class="predefined-type">error</span>) {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  err := db.Create(user).Error
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    <span class="keyword">return</span> <span class="integer">0</span>, err
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  }
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  <span class="keyword">return</span> user.ID, <span class="predefined-constant">nil</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>}
+</pre></div>
+</div>
+</div>
+
+<p>But the work is not done yet!</p>
+
+<p>As per our use case, We need to let the handler to know if the username or the email already exists. </p>
+
+<p>We already have unique constraints in place in the <code>users</code> table. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span>gomidway=# \d users
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span>                                    Table &quot;public.users&quot;
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>    Column     |          Type          |                     Modifiers
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>---------------+------------------------+----------------------------------------------------
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span> id            | integer                | not null default nextval('users_id_seq'::regclass)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span> username      | character varying(50)  | not null
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span> email         | character varying(255) | not null
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span> password_hash | text                   | not null
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>Indexes:
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    &quot;users_pkey&quot; PRIMARY KEY, btree (id)
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    &quot;users_email_key&quot; UNIQUE CONSTRAINT, btree (email)
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    &quot;users_username_key&quot; UNIQUE CONSTRAINT, btree (username)
+</pre></div>
+</div>
+</div>
+
+<p>So, the <code>Create</code> method in gorm would return an error of type <a href="http://godoc.org/github.com/lib/pq#Error">pq Error</a> with the <a href="http://godoc.org/github.com/lib/pq#ErrorCode">ErrorCode</a> as <code>"23505"</code> for <code>unique_violation</code>, and the <code>Constraint</code> field will be having the unique constraint key name <code>users_email_key</code> and <code>users_username_key</code> for email and username duplicate error respectively. </p>
+
+<p>Though this error does communicate what we wanted, it is very generic and what we want is something concrete to our use case. </p>
+
+<p>To make it happen, let’s create a new folder <code>postgres</code> (aka package) and write a utility function <code>IsUniqueConstraintError</code> which checks whether the given error is a unique constraint error or not.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="comment">// postgres/pq.go</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span><span class="keyword">func</span> IsUniqueConstraintError(err <span class="predefined-type">error</span>, constraintName <span class="predefined-type">string</span>) <span class="predefined-type">bool</span> {
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="keyword">if</span> pqErr, ok := err.(*pq.Error); ok {
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>    <span class="keyword">return</span> pqErr.Code == <span class="string"><span class="delimiter">&quot;</span><span class="content">23505</span><span class="delimiter">&quot;</span></span> &amp;&amp; pqErr.Constraint == constraintName
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  }
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>  <span class="keyword">return</span> <span class="predefined-constant">false</span>
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>and then in the <code>model.go</code>, where we have the User model, add the constraint names as constants.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="comment">// user/model.go</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span><span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span><span class="keyword">const</span> (
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  UniqueConstraintUsername = <span class="string"><span class="delimiter">&quot;</span><span class="content">users_username_key</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  UniqueConstraintEmail    = <span class="string"><span class="delimiter">&quot;</span><span class="content">users_email_key</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>)
+<span class="line-numbers"><a href="#n7" name="n7">7</a></span><span class="comment">// ...</span>
+</pre></div>
+</div>
+</div>
+
+<p>Finally, define the custom error types</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// user/model.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="keyword">type</span> UsernameDuplicateError <span class="keyword">struct</span> {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Username <span class="predefined-type">string</span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>}
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span><span class="keyword">func</span> (e *UsernameDuplicateError) Error() <span class="predefined-type">string</span> {
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  <span class="keyword">return</span> fmt.Sprintf(<span class="string"><span class="delimiter">&quot;</span><span class="content">Username '%s' already exists</span><span class="delimiter">&quot;</span></span>, e.Username)
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span><span class="keyword">type</span> EmailDuplicateError <span class="keyword">struct</span> {
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  Email <span class="predefined-type">string</span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span><span class="keyword">func</span> (e *EmailDuplicateError) Error() <span class="predefined-type">string</span> {
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>  <span class="keyword">return</span> fmt.Sprintf(<span class="string"><span class="delimiter">&quot;</span><span class="content">Email '%s' already exists</span><span class="delimiter">&quot;</span></span>, e.Email)
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>With this new helper function, constants and types in places, we can complete the create user function as follows.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// user/create.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">func</span> Create(db *gorm.DB, user *User) (<span class="predefined-type">uint</span>, <span class="predefined-type">error</span>) {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  err := db.Create(user).Error
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    <span class="keyword">if</span> postgres.IsUniqueConstraintError(err, UniqueConstraintUsername) {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>      <span class="keyword">return</span> <span class="integer">0</span>, &amp;UsernameDuplicateError{Username: user.Username}
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    }
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>    <span class="keyword">if</span> postgres.IsUniqueConstraintError(err, UniqueConstraintEmail) {
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>      <span class="keyword">return</span> <span class="integer">0</span>, &amp;EmailDuplicateError{Email: user.Email}
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    }
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    <span class="keyword">return</span> <span class="integer">0</span>, err
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  }
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  <span class="keyword">return</span> user.ID, <span class="predefined-constant">nil</span>
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>On the handler side, we just pass the outcome of this create function to the outside(application boundary) layer</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// user/signup/handler.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="keyword">func</span> Signup(db *gorm.DB, req *Request) (*Response, <span class="predefined-type">error</span>) {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  id, err := user.Create(db, newUser)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    <span class="keyword">return</span> <span class="predefined-constant">nil</span>, err
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  }
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  <span class="keyword">return</span> &amp;Response{Id: id}, err
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>}
+</pre></div>
+</div>
+</div>
+
+<h3 id="test-driving-user-signup">Test Driving User Signup</h3>
+
+<p>As we discussed earlier, let’s test drive the implementation from the application bootstrap. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// main.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">func</span> panicOnError(err <span class="predefined-type">error</span>) {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>    <span class="predefined">panic</span>(err)
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  }
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>}
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span><span class="keyword">func</span> main() {
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  db, err := gorm.Open(<span class="string"><span class="delimiter">&quot;</span><span class="content">postgres</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    <span class="shell"><span class="delimiter">`</span><span class="content">host=localhost </span></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span><span class="shell"><span class="content">      user=postgres password=test</span></span>
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span><span class="shell"><span class="content">      dbname=gomidway </span></span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span><span class="shell"><span class="content">      sslmode=disable</span><span class="delimiter">`</span></span>)
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  panicOnError(err)
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>  <span class="keyword">defer</span> db.Close()
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>  signupUser(db)
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>}
+</pre></div>
+</div>
+</div>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// main.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="keyword">func</span> signupUser(db *gorm.DB) {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  res, err := signup.Signup(db, &amp;signup.Request{
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>    Email:    <span class="string"><span class="delimiter">&quot;</span><span class="content">foo@bar.com</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    Username: <span class="string"><span class="delimiter">&quot;</span><span class="content">foo</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>    Password: <span class="string"><span class="delimiter">&quot;</span><span class="content">foobar</span><span class="delimiter">&quot;</span></span>,
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  })
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    <span class="keyword">switch</span> err.(<span class="keyword">type</span>) {
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    <span class="keyword">case</span> *user.UsernameDuplicateError:
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>      fmt.Println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Bad Request: </span><span class="delimiter">&quot;</span></span>, err.Error())
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>      <span class="keyword">return</span>
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    <span class="keyword">case</span> *user.EmailDuplicateError:
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      fmt.Println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Bad Request: </span><span class="delimiter">&quot;</span></span>, err.Error())
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>      <span class="keyword">return</span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    <span class="keyword">default</span>:
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>      fmt.Println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Internal Server Error: </span><span class="delimiter">&quot;</span></span>, err.Error())
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      <span class="keyword">return</span>
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    }
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>  }
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>  fmt.Println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Created: </span><span class="delimiter">&quot;</span></span>, res.Id)
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>if we run the program for the first time after setting up the PostgreSQL database <code>gomidway</code> with the <code>users</code> table, we will get the following output</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Created:  1
+</pre></div>
+</div>
+</div>
+
+<p>if we rerun the program again, we’ll see the bad request error</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Bad Request:  Username 'foo' already exists
+</pre></div>
+</div>
+</div>
+
+<p>if we modify the username from <code>foo</code> to <code>bar</code> and run the program, we’ll again get a bad request error for the email address</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span>Bad Request:  Email 'foo@bar.com' already exists
+</pre></div>
+</div>
+</div>
+
+<p>That’s it! We have completed the first use case of <strong>gomidway</strong>!!</p>
+
+<h2 id="use-case-2---user-login">Use Case #2 - User Login</h2>
+
+<p>The next use case that we are going to implement is user login. The requirement for login has been defined as</p>
+
+<ul>
+  <li>
+    <p>if the user logs in with a different email address or with a different password, we need to show him appropriate errors</p>
+  </li>
+  <li>
+    <p>if the email and the password matches, let the user know that he has logged in</p>
+  </li>
+</ul>
+
+<h3 id="defining-the-login-handler">Defining the Login handler</h3>
+
+<p>As we did for the signup, let’s start our implementation from defining the handler for login</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// user/login/handler.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">type</span> Request <span class="keyword">struct</span> {
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>  Email    <span class="predefined-type">string</span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  Password <span class="predefined-type">string</span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>}
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span><span class="keyword">type</span> Response <span class="keyword">struct</span> {
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  User *user.User
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span><span class="keyword">func</span> Login(db *gorm.DB, req *Request) (*Response, <span class="predefined-type">error</span>) { 
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>To implement login, we need some help from the persistence. In other words, we have to find whether the user with the given email address exists in our application.</p>
+
+<h3 id="adding-user-findbyemail-function">Adding User FindByEmail function</h3>
+
+<p>Let’s create a new file <code>find.go</code> in the <code>user</code> folder and define the <code>FindByEmail</code> function</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"><a href="#n1" name="n1">1</a></span><span class="comment">// user/find.go</span>
+<span class="line-numbers"><a href="#n2" name="n2">2</a></span><span class="keyword">func</span> FindByEmail(db *gorm.DB, email <span class="predefined-type">string</span>) (*User, <span class="predefined-type">error</span>) {
+<span class="line-numbers"><a href="#n3" name="n3">3</a></span>  <span class="keyword">var</span> user User
+<span class="line-numbers"><a href="#n4" name="n4">4</a></span>  res := db.Find(&amp;user, &amp;User{Email: email})
+<span class="line-numbers"><a href="#n5" name="n5">5</a></span>  <span class="keyword">return</span> &amp;user, res.Error
+<span class="line-numbers"><a href="#n6" name="n6">6</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>That’s great. But how are we going to find if the email didn’t exist in the first place?</p>
+
+<p>Thankfully, We don’t need to anything extra other than calling the <a href="https://godoc.org/github.com/jinzhu/gorm#DB.RecordNotFound">RecordNotFound</a> to figure this out!</p>
+
+<p>Let’s define a custom error type <code>EmailNotExistsError</code> and return it if no records found.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// user/find.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="keyword">type</span> EmailNotExistsError <span class="keyword">struct</span>{}
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span>
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="keyword">func</span> (*EmailNotExistsError) Error() <span class="predefined-type">string</span> {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">email not exists</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>}
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span><span class="keyword">func</span> FindByEmail(db *gorm.DB, email <span class="predefined-type">string</span>) (*User, <span class="predefined-type">error</span>) {
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  <span class="keyword">var</span> user User
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  res := db.Find(&amp;user, &amp;User{Email: email})
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  <span class="keyword">if</span> res.RecordNotFound() {
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    <span class="keyword">return</span> <span class="predefined-constant">nil</span>, &amp;EmailNotExistsError{}
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  }
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  <span class="keyword">return</span> &amp;user, <span class="predefined-constant">nil</span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>Now its time to turn our attention to Login handler to wire up the login functionality. </p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// user/login/handler.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="keyword">func</span> Login(db *gorm.DB, req *Request) (*Response, <span class="predefined-type">error</span>) {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  user, err := user.FindByEmail(db, req.Email)
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>    <span class="keyword">return</span> <span class="predefined-constant">nil</span>, err
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>  }
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>The next scenario that we need to handle is, compare the password in the request with the password hash. As we need to let the user know in case of password mismatch, let’s create a <code>PasswordMismatchError</code> in the login handler and return it during the mismatch.</p>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// user/login/handler.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="keyword">type</span> PasswordMismatchError <span class="keyword">struct</span>{}
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span><span class="keyword">func</span> (e *PasswordMismatchError) Error() <span class="predefined-type">string</span> {
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  <span class="keyword">return</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">password didn't match</span><span class="delimiter">&quot;</span></span>
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>}
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span><span class="keyword">func</span> Login(db *gorm.DB, req *Request) (*Response, <span class="predefined-type">error</span>) {
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>  err = bcrypt.CompareHashAndPassword([]<span class="predefined-type">byte</span>(user.PasswordHash), []<span class="predefined-type">byte</span>(req.Password))
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>    <span class="keyword">return</span> <span class="predefined-constant">nil</span>, &amp;PasswordMismatchError{}
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>  }
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>  <span class="keyword">return</span> &amp;Response{User: user}, <span class="predefined-constant">nil</span>
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>}
+</pre></div>
+</div>
+</div>
+
+<p>With this, we are done with login handler implementation. Let’s test drive it!</p>
+
+<h3 id="test-driving-user-login">Test Driving User Login</h3>
+
+<div><div class="CodeRay">
+  <div class="code"><pre><span class="line-numbers"> <a href="#n1" name="n1">1</a></span><span class="comment">// main.go</span>
+<span class="line-numbers"> <a href="#n2" name="n2">2</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n3" name="n3">3</a></span><span class="keyword">func</span> main() {
+<span class="line-numbers"> <a href="#n4" name="n4">4</a></span>  <span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n5" name="n5">5</a></span>  loginUser(db)
+<span class="line-numbers"> <a href="#n6" name="n6">6</a></span>}
+<span class="line-numbers"> <a href="#n7" name="n7">7</a></span><span class="comment">// ...</span>
+<span class="line-numbers"> <a href="#n8" name="n8">8</a></span><span class="keyword">func</span> loginUser(db *gorm.DB) {
+<span class="line-numbers"> <a href="#n9" name="n9">9</a></span>  res, err := login.Login(db, &amp;login.Request{
+<span class="line-numbers"><strong><a href="#n10" name="n10">10</a></strong></span>    Email: <span class="string"><span class="delimiter">&quot;</span><span class="content">foo@bar.com</span><span class="delimiter">&quot;</span></span>, 
+<span class="line-numbers"><a href="#n11" name="n11">11</a></span>    Password: <span class="string"><span class="delimiter">&quot;</span><span class="content">foobar</span><span class="delimiter">&quot;</span></span>})
+<span class="line-numbers"><a href="#n12" name="n12">12</a></span>  <span class="keyword">if</span> err != <span class="predefined-constant">nil</span> {
+<span class="line-numbers"><a href="#n13" name="n13">13</a></span>    <span class="keyword">switch</span> err.(<span class="keyword">type</span>) {
+<span class="line-numbers"><a href="#n14" name="n14">14</a></span>    <span class="keyword">case</span> *user.EmailNotExistsError:
+<span class="line-numbers"><a href="#n15" name="n15">15</a></span>      fmt.Println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Bad Request: </span><span class="delimiter">&quot;</span></span>, err.Error())
+<span class="line-numbers"><a href="#n16" name="n16">16</a></span>      <span class="keyword">return</span>
+<span class="line-numbers"><a href="#n17" name="n17">17</a></span>    <span class="keyword">case</span> *login.PasswordMismatchError:
+<span class="line-numbers"><a href="#n18" name="n18">18</a></span>      fmt.Println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Bad Request: </span><span class="delimiter">&quot;</span></span>, err.Error())
+<span class="line-numbers"><a href="#n19" name="n19">19</a></span>      <span class="keyword">return</span>
+<span class="line-numbers"><strong><a href="#n20" name="n20">20</a></strong></span>    <span class="keyword">default</span>:
+<span class="line-numbers"><a href="#n21" name="n21">21</a></span>      fmt.Println(<span class="string"><span class="delimiter">&quot;</span><span class="content">Internal Server Error: </span><span class="delimiter">&quot;</span></span>, err.Error())
+<span class="line-numbers"><a href="#n22" name="n22">22</a></span>      <span class="keyword">return</span>
+<span class="line-numbers"><a href="#n23" name="n23">23</a></span>    }
+<span class="line-numbers"><a href="#n24" name="n24">24</a></span>  }
+<span class="line-numbers"><a href="#n25" name="n25">25</a></span>  fmt.Printf(<span class="string"><span class="delimiter">&quot;</span><span class="content">Ok: User '%s' logged in</span><span class="delimiter">&quot;</span></span>, res.User.Username)
+<span class="line-numbers"><a href="#n26" name="n26">26</a></span>}
+</pre></div>
+</div>
+</div>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post, we have seen how we can use the create and find function in gorm along with the use case driven approach. The source code can be found in <a href="https://github.com/tamizhvendan/gomidway/tree/part-1">my GitHub repository</a>. </p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Leveraging interfaces in golang - Part 2]]></title>
