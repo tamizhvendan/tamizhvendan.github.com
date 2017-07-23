@@ -5,6 +5,7 @@ date: 2017-07-03 19:44:33 +0530
 comments: true
 categories: 
   - golang
+  - gorm
 ---
 
 In my previous [blog post]({% post_url 2017-06-24-leveraging-interfaces-in-golang-part-1%}), we have seen how interfaces in golang can help us to come up with a cleaner design. In this blog post, we are going to see an another interesting use case of applying golang's interfaces in creating adapters!
