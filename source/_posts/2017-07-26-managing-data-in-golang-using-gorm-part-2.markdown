@@ -12,13 +12,15 @@ In my previous [blog post]({% post_url 2017-07-23-managing-data-in-golang-using-
 
 ## Use Case #3 - Publishing a new blog post
 
-Publishing a new blog post use case invovles the following
+Publishing a new blog post use case involves the following
 
 * A user can publish a new blog post by providing a title, body of the post and a set of tags.
-* If the title already exists we need to let the user to know about it.
-* We also need to let him know, if publish went well. 
 
-Though the requirement looks simple on paper, there are some complexities in terms of organizing the code and orchastrating the entire operation. 
+* If the title already exists we need to let the user know about it.
+
+* We also need to let him know if publish went well. 
+
+Though the requirement looks simple on paper, there are some complexities regarding organizing the code and orchestrating the entire operation. 
 
 Let's dig up and see how we can solve it!
 
@@ -34,7 +36,7 @@ CREATE TABLE posts(
   title VARCHAR(50) UNIQUE NOT NULL,
   body TEXT NOT NULL,
   published_at TIMESTAMP NOT NULL,
-  author_id INTEGER REFERENCES users(id)
+  author_id INTEGER NOT NULL REFERENCES users(id)
 );
 ```
 
@@ -47,7 +49,7 @@ CREATE TABLE tags(
 );
 ```
 
-And finally a bridge table to associate `posts` and `tags`
+And finally, a bridge table to associate `posts` and `tags`
 
 ```sql
 CREATE TABLE posts_tags(
@@ -56,7 +58,7 @@ CREATE TABLE posts_tags(
 );
 ```
 
-*Note: a blog post can have multiple tags and a tag can have multiple blog posts associated with it*
+*Note: a blog post can have multiple tags, and a tag can have multiple blog posts associated with it*
 
 ## Model Definitions - Post and Tag 
 
@@ -122,11 +124,11 @@ The `Tags` field has a [golang struct tag](https://golang.org/ref/spec#Tag) `gor
 
 ## Implementing new blog post use case
 
-Now we have all the models required to enable publishing a new blog post and it's time to have to go at its implementation.
+Now we have all the models required to enable publishing a new blog post, and it's time to have to go at its implementation.
 
 Let's start by creating a new folder `publish` under `post` and add the scaffolding for the handler 
 
-*As we have seen earlier, the folder structure represent the use case and the handler orchastrate the use case*
+*As we have seen earlier, the folder structure represent the use case, and the handler orchestrate the use case*
 
 ```go
 // post/publish/handler.go
@@ -139,7 +141,7 @@ import (
 type Request struct {
   Title    string
   Body     string
-  AuthorId uint
+  AuthorID uint
   Tags     []string
 }
 
@@ -160,23 +162,23 @@ The implementation of publishing a new post involves the following steps
 
 3. Finally, we need to associate the `Tags` with the newly created `Post` via the bridge table. 
 
-Since it involves multiple inserts on the database side all the three steps should happen inside a transaction.
+Since it involves multiple inserts on the database side, all the three steps should happen inside a transaction.
 
-*First two steps can be executed in any order as they are independent of each other*
+*The first two steps can be executed in any order as they are independent of each other*
 
-### Code Organization (aka Responsibility Seperation)
+### Code Organization (aka Responsibility Separation)
 
-We discussed a little bit about code organization in the [last blog post]({% post_url 2017-07-23-managing-data-in-golang-using-gorm-part-1 %}). One important thing which can help us in the long run is having proper separation of concern in the code base. 
+We discussed a little bit about code organization in the [last blog post]({% post_url 2017-07-23-managing-data-in-golang-using-gorm-part-1 %}). One important thing which can help us, in the long run is having proper separation of concern in the code base. 
 
 There are multiple ways we can separate the concern. In our case, we are organizing by use cases with `handler` driving the implementation. The handler may access the `data` layer if the use case requires. 
 
-To keep things simple, we are not discussing about dependency injection in `handler` and `data` layer interaction here. I am planning to cover this in my future blog posts.
+To keep things simple, we are not discussing dependency injection in `handler` and `data` layer interaction here. I am planning to cover this in my future blog posts.
 
 Back to our business, the data access logic of the three steps will be in their respective packages and the `publish` handler coordinate the entire use case logic. 
 
 {% img center /images/gomidway/part2/code_org.png %}
 
-#### Step 1 : Create a Tag if not exists
+#### Step 1: Create a Tag if not exists
 
 The first step is creating a tag if it is not there in the database. For the both new tags and the existing tags we need to get its `id` from the database to associate it with the `posts`.
 
@@ -198,10 +200,10 @@ func CreateIfNotExists(db *gorm.DB, tagName string) (*Tag, error) {
 }
 ```
 
-The `Id` field of the tag that we are returning will be populated by the *FirstOrCreate* method.
+The *FirstOrCreate* method populates the `Id` field of the tag.
 
 
-#### Step 2 : Creating a new Post 
+#### Step 2: Creating a new Post 
 
 It is similar to creating a new user that we saw in the last blog post
 
@@ -226,7 +228,7 @@ func Create(db *gorm.DB, post *Post) (uint, error) {
 }
 ```
 
-#### Step 3 : Associating Tag with Post
+#### Step 3: Associating Tag with Post
 
 The final step is associating the tag with the post in the database. Gorm has a decent support for [Associations](http://jinzhu.me/gorm/associations.html). The one that we needed from gorm to carry out the current step is its [Append](https://godoc.org/github.com/jinzhu/gorm#Association.Append) method.
 
@@ -261,9 +263,9 @@ func AddTag(db *gorm.DB, post *Post, tag *tag.Tag) error {
 
 ### Publishing New Blog Post
 
-Now we have all the individual database layer functions ready for all the three steps and it's time to focus on the implementation of publishing a new blog post.
+Now we have all the individual database layer functions ready for all the three steps, and it's time to focus on the implementation of publishing a new blog post.
 
-We already have the scaffholding in place
+We already have the scaffolding in place
 
 ```go
 // publish/handler.go
@@ -325,7 +327,7 @@ func NewPost(db *gorm.DB, req *Request) (*Response, error) {
 }
 ```
 
-A thing to note here is we are rolling back the transaction using the [RollBack](https://godoc.org/github.com/jinzhu/gorm#DB.Rollback) method in case of an error. 
+A thing to note here is we are rolling back the transaction using the [RollBack](https://godoc.org/github.com/jinzhu/gorm#DB.Rollback) method in case of error. 
 
 The final step is committing the transaction and returning the newly created post id as response
 
@@ -342,7 +344,7 @@ func NewPost(db *gorm.DB, req *Request) (*Response, error) {
 
 ### Test Driving Publish New Blog Post
 
-Let's test drive our implementation from the `main` function with some hardcoded value
+Let's test drive our implementation from the `main` function with some hard coded value
 
 ```go
 // main.go
@@ -351,7 +353,7 @@ package main
 import (
   // ...
   "github.com/tamizhvendan/gomidway/post"
-	"github.com/tamizhvendan/gomidway/post/publish"
+  "github.com/tamizhvendan/gomidway/post/publish"
 )
 // ...
 func main() {
@@ -375,14 +377,14 @@ func publishPost(db *gorm.DB) {
     fmt.Println("Internal Server Error: ", err.Error())
     return
   }
-  fmt.Println("Created : ", res.PostId)
+  fmt.Println("Created: ", res.PostId)
 }
 ```
 
 if we run the program with these hard coded values, we will get the following output
 
 ```bash
-Created : 1
+Created: 1
 ```
 
 if we rerun the program without changing anything, we will get the bad request error as expected
@@ -393,4 +395,4 @@ Bad Request: title already exists
 
 ## Summary
 
-In this blog post we have seen how to perform create operation of an model having many to many relationship using gorm. The source code can be found in my [GitHub repository](https://github.com/tamizhvendan/gomidway/tree/part-2). 
+In this blog post, we have seen how to perform, create operation of a model having many to many relationship using gorm. The source code is available in my [GitHub repository](https://github.com/tamizhvendan/gomidway/tree/part-2). 
