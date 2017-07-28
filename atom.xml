@@ -4,7 +4,7 @@
   <title><![CDATA[P3 Programmer]]></title>
   <link href="http://blog.tamizhvendan.in/atom.xml" rel="self"/>
   <link href="http://blog.tamizhvendan.in/"/>
-  <updated>2017-07-23T13:57:20+05:30</updated>
+  <updated>2017-07-28T08:29:53+05:30</updated>
   <id>http://blog.tamizhvendan.in/</id>
   <author>
     <name><![CDATA[Tamizhvendan S]]></name>
@@ -12,6 +12,603 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Managing Data in Golang Using Gorm - Part 2]]></title>
+    <link href="http://blog.tamizhvendan.in/blog/2017/07/26/managing-data-in-golang-using-gorm-part-2/"/>
+    <updated>2017-07-26T07:09:17+05:30</updated>
+    <id>http://blog.tamizhvendan.in/blog/2017/07/26/managing-data-in-golang-using-gorm-part-2</id>
+    <content type="html"><![CDATA[<p>In my previous <a href="http://blog.tamizhvendan.in/blog/2017/07/23/managing-data-in-golang-using-gorm-part-1/">blog post</a>, we have seen how to use the create and find function in gorm along with use-case driven approach. In this blog post, we will be extending our blogging platform <strong>gomidway</strong> by implementing an another interesting use case. </p>
+
+<h2 id="use-case-3---publishing-a-new-blog-post">Use Case #3 - Publishing a new blog post</h2>
+
+<p>Publishing a new blog post use case involves the following</p>
+
+<ul>
+  <li>
+    <p>A user can publish a new blog post by providing a title, body of the post and a set of tags.</p>
+  </li>
+  <li>
+    <p>If the title already exists we need to let the user know about it.</p>
+  </li>
+  <li>
+    <p>We also need to let him know if publish went well. </p>
+  </li>
+</ul>
+
+<p>Though the requirement looks simple on paper, there are some complexities regarding organizing the code and orchestrating the entire operation. </p>
+
+<p>Let’s dig up and see how we can solve it!</p>
+
+<h2 id="the-database-schema">The Database Schema</h2>
+
+<p>As a first step, let’s add some new tables to our existing schema which has only the <code>users</code> table.</p>
+
+<p>The first one is the <code>posts</code> table</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">posts</span><span class="p">(</span>
+</span><span class="line">  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+</span><span class="line">  <span class="n">title</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="k">UNIQUE</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class="line">  <span class="n">body</span> <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class="line">  <span class="n">published_at</span> <span class="k">TIMESTAMP</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class="line">  <span class="n">author_id</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">REFERENCES</span> <span class="n">users</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+</span><span class="line"><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then we need to have an another table for <code>tags</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">tags</span><span class="p">(</span>
+</span><span class="line">  <span class="n">id</span> <span class="nb">SERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+</span><span class="line">  <span class="n">name</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span>
+</span><span class="line"><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>And finally, a bridge table to associate <code>posts</code> and <code>tags</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">posts_tags</span><span class="p">(</span>
+</span><span class="line">  <span class="n">tag_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">tags</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+</span><span class="line">  <span class="n">post_id</span> <span class="nb">INTEGER</span> <span class="k">REFERENCES</span> <span class="n">posts</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+</span><span class="line"><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><em>Note: a blog post can have multiple tags, and a tag can have multiple blog posts associated with it</em></p>
+
+<h2 id="model-definitions---post-and-tag">Model Definitions - Post and Tag</h2>
+
+<p>The next step is defining equivalent models for <code>Post</code> and <code>Tag</code> in golang. </p>
+
+<p>Let’s create a new folder called <code>tag</code> and define the <code>Tag</code> model.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// tag/model.go</span>
+</span><span class="line"><span class="kn">package</span> <span class="nx">tag</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">Tag</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">ID</span>   <span class="kt">uint</span>
+</span><span class="line">  <span class="nx">Name</span> <span class="kt">string</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then define the <code>Post</code> model in an another new folder <code>post</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// post/model.go</span>
+</span><span class="line"><span class="kn">package</span> <span class="nx">post</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="p">(</span>
+</span><span class="line">  <span class="s">&quot;time&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="s">&quot;github.com/tamizhvendan/gomidway/tag&quot;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">const</span> <span class="p">(</span>
+</span><span class="line">  <span class="nx">UniqueConstraintTitle</span> <span class="p">=</span> <span class="s">&quot;posts_title_key&quot;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">Post</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">ID</span>          <span class="kt">uint</span>
+</span><span class="line">  <span class="nx">Title</span>       <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Body</span>        <span class="kt">string</span>
+</span><span class="line">  <span class="nx">AuthorID</span>    <span class="kt">uint</span>
+</span><span class="line">  <span class="nx">Tags</span>        <span class="p">[]</span><span class="nx">tag</span><span class="p">.</span><span class="nx">Tag</span> <span class="s">`gorm:&quot;many2many:posts_tags;&quot;`</span>
+</span><span class="line">  <span class="nx">PublishedAt</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">TitleDuplicateError</span> <span class="kd">struct</span><span class="p">{}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">TitleDuplicateError</span><span class="p">)</span> <span class="nx">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="s">&quot;title already exists&quot;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>As we have seen in <a href="https://github.com/tamizhvendan/gomidway/blob/part-1/user/create.go#L11-#L16">the previous blog post</a>, the constant <code>UniqueConstraintTitle</code> and the <code>TitleDuplicateError</code> are required for doing unique constraint violation error check on the <code>title</code> column and to communicate it to the application respectively. </p>
+
+<p>The important thing to notice in this model definition is the <code>Tags</code> field</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">Post</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="nx">Tags</span>        <span class="p">[]</span><span class="nx">tag</span><span class="p">.</span><span class="nx">Tag</span> <span class="s">`gorm:&quot;many2many:posts_tags;&quot;`</span>
+</span><span class="line">  <span class="c1">// ..</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>Tags</code> field has a <a href="https://golang.org/ref/spec#Tag">golang struct tag</a> <code>gorm</code> defining the association type <code>many2many</code> and the name of the bridge table <code>posts_tags</code>.</p>
+
+<h2 id="implementing-new-blog-post-use-case">Implementing new blog post use case</h2>
+
+<p>Now we have all the models required to enable publishing a new blog post, and it’s time to have to go at its implementation.</p>
+
+<p>Let’s start by creating a new folder <code>publish</code> under <code>post</code> and add the scaffolding for the handler </p>
+
+<p><em>As we have seen earlier, the folder structure represent the use case, and the handler orchestrate the use case</em></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// post/publish/handler.go</span>
+</span><span class="line"><span class="kn">package</span> <span class="nx">publish</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="p">(</span>
+</span><span class="line">  <span class="s">&quot;github.com/jinzhu/gorm&quot;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">Request</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Title</span>    <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Body</span>     <span class="kt">string</span>
+</span><span class="line">  <span class="nx">AuthorID</span> <span class="kt">uint</span>
+</span><span class="line">  <span class="nx">Tags</span>     <span class="p">[]</span><span class="kt">string</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">Response</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">PostId</span> <span class="kt">uint</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">NewPost</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// TODO</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The implementation of publishing a new post involves the following steps</p>
+
+<ol>
+  <li>
+    <p>For all the <code>Tags</code> that are part of the request, we need to create an entry in the <code>tags</code> table. If it is already there, we don’t need to create.</p>
+  </li>
+  <li>
+    <p>The next step is creating a new entry in the <code>posts</code> table with the given details. </p>
+  </li>
+  <li>
+    <p>Finally, we need to associate the <code>Tags</code> with the newly created <code>Post</code> via the bridge table. </p>
+  </li>
+</ol>
+
+<p>Since it involves multiple inserts on the database side, all the three steps should happen inside a transaction.</p>
+
+<p><em>The first two steps can be executed in any order as they are independent of each other</em></p>
+
+<h3 id="code-organization-aka-responsibility-separation">Code Organization (aka Responsibility Separation)</h3>
+
+<p>We discussed a little bit about code organization in the <a href="http://blog.tamizhvendan.in/blog/2017/07/23/managing-data-in-golang-using-gorm-part-1/">last blog post</a>. One important thing which can help us, in the long run is having proper separation of concern in the code base. </p>
+
+<p>There are multiple ways we can separate the concern. In our case, we are organizing by use cases with <code>handler</code> driving the implementation. The handler may access the <code>data</code> layer if the use case requires. </p>
+
+<p>To keep things simple, we are not discussing dependency injection in <code>handler</code> and <code>data</code> layer interaction here. I am planning to cover this in my future blog posts.</p>
+
+<p>Back to our business, the data access logic of the three steps will be in their respective packages and the <code>publish</code> handler coordinate the entire use case logic. </p>
+
+<p><img class="center" src="http://blog.tamizhvendan.in/images/gomidway/part2/code_org.png" /></p>
+
+<h4 id="step-1-create-a-tag-if-not-exists">Step 1: Create a Tag if not exists</h4>
+
+<p>The first step is creating a tag if it is not there in the database. For the both new tags and the existing tags we need to get its <code>id</code> from the database to associate it with the <code>posts</code>.</p>
+
+<p>Gorm has a method called <a href="https://godoc.org/github.com/jinzhu/gorm#DB.FirstOrCreate">FirstOrCreate</a> to help us to implement this step. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// tag/create.go</span>
+</span><span class="line"><span class="kn">package</span> <span class="nx">tag</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="s">&quot;github.com/jinzhu/gorm&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">CreateIfNotExists</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">tagName</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Tag</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="kd">var</span> <span class="nx">tag</span> <span class="nx">Tag</span>
+</span><span class="line">  <span class="nx">res</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">FirstOrCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">tag</span><span class="p">,</span> <span class="nx">Tag</span><span class="p">{</span><span class="nx">Name</span><span class="p">:</span> <span class="nx">tagName</span><span class="p">})</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Error</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Error</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">tag</span><span class="p">,</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <em>FirstOrCreate</em> method populates the <code>Id</code> field of the tag.</p>
+
+<h4 id="step-2-creating-a-new-post">Step 2: Creating a new Post</h4>
+
+<p>It is similar to creating a new user that we saw in the last blog post</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// post/create.go</span>
+</span><span class="line"><span class="kn">package</span> <span class="nx">post</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="p">(</span>
+</span><span class="line">  <span class="s">&quot;github.com/jinzhu/gorm&quot;</span>
+</span><span class="line">  <span class="s">&quot;github.com/tamizhvendan/gomidway/postgres&quot;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">Create</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">post</span> <span class="o">*</span><span class="nx">Post</span><span class="p">)</span> <span class="p">(</span><span class="kt">uint</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">res</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">post</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Error</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">if</span> <span class="nx">postgres</span><span class="p">.</span><span class="nx">IsUniqueConstraintError</span><span class="p">(</span><span class="nx">res</span><span class="p">.</span><span class="nx">Error</span><span class="p">,</span> <span class="nx">UniqueConstraintTitle</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">      <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">TitleDuplicateError</span><span class="p">{}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Error</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">post</span><span class="p">.</span><span class="nx">ID</span><span class="p">,</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="step-3-associating-tag-with-post">Step 3: Associating Tag with Post</h4>
+
+<p>The final step is associating the tag with the post in the database. Gorm has a decent support for <a href="http://jinzhu.me/gorm/associations.html">Associations</a>. The one that we needed from gorm to carry out the current step is its <a href="https://godoc.org/github.com/jinzhu/gorm#Association.Append">Append</a> method.</p>
+
+<p>Let’s define a <code>constant</code> in <code>Post</code> model which holds the AssociationTag</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// post/model.go</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">const</span> <span class="p">(</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="nx">AssociationTags</span> <span class="p">=</span> <span class="s">&quot;Tags&quot;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then add a new file <em>tag.go</em> in the <em>post</em> folder and implement the third step as below</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// post/tag.go</span>
+</span><span class="line"><span class="kn">package</span> <span class="nx">post</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="p">(</span>
+</span><span class="line">	<span class="s">&quot;github.com/jinzhu/gorm&quot;</span>
+</span><span class="line">	<span class="s">&quot;github.com/tamizhvendan/gomidway/tag&quot;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">AddTag</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">post</span> <span class="o">*</span><span class="nx">Post</span><span class="p">,</span> <span class="nx">tag</span> <span class="o">*</span><span class="nx">tag</span><span class="p">.</span><span class="nx">Tag</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">res</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Model</span><span class="p">(</span><span class="nx">post</span><span class="p">).</span><span class="nx">Association</span><span class="p">(</span><span class="nx">AssociationTags</span><span class="p">).</span><span class="nx">Append</span><span class="p">(</span><span class="nx">tag</span><span class="p">)</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Error</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="publishing-new-blog-post">Publishing New Blog Post</h3>
+
+<p>Now we have all the individual database layer functions ready for all the three steps, and it’s time to focus on the implementation of publishing a new blog post.</p>
+
+<p>We already have the scaffolding in place</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// publish/handler.go</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">NewPost</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// TODO</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>As a first step, let’s begin a new transaction using gorm’s <a href="https://godoc.org/github.com/jinzhu/gorm#DB.Begin">Begin</a> method. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">NewPost</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">tx</span> <span class="o">:=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">Begin</span><span class="p">()</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">tx</span><span class="p">.</span><span class="nx">Error</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">tx</span><span class="p">.</span><span class="nx">Error</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="c1">// TODO</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then call the <code>Create</code> function in <code>post</code> package to create a new blog post</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">NewPost</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="nx">newPost</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">post</span><span class="p">.</span><span class="nx">Post</span><span class="p">{</span>
+</span><span class="line">    <span class="nx">AuthorID</span><span class="p">:</span>    <span class="nx">req</span><span class="p">.</span><span class="nx">AuthorId</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">Title</span><span class="p">:</span>       <span class="nx">req</span><span class="p">.</span><span class="nx">Title</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">Body</span><span class="p">:</span>        <span class="nx">req</span><span class="p">.</span><span class="nx">Body</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">PublishedAt</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">().</span><span class="nx">UTC</span><span class="p">(),</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">post</span><span class="p">.</span><span class="nx">Create</span><span class="p">(</span><span class="nx">tx</span><span class="p">,</span> <span class="nx">newPost</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="c1">// TODO</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then for all the tags in the request, call the <code>CreateIfNotExists</code> function in <code>tag</code> package to get its respective <em>Ids</em> and associate it with the newly created post using the <code>AddTag</code> function in the <code>post</code> package.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">NewPost</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">tagName</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">req</span><span class="p">.</span><span class="nx">Tags</span> <span class="p">{</span>
+</span><span class="line">    <span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">CreateIfNotExists</span><span class="p">(</span><span class="nx">tx</span><span class="p">,</span> <span class="nx">tagName</span><span class="p">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">      <span class="nx">tx</span><span class="p">.</span><span class="nx">Rollback</span><span class="p">()</span>
+</span><span class="line">      <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="nx">err</span> <span class="p">=</span> <span class="nx">post</span><span class="p">.</span><span class="nx">AddTag</span><span class="p">(</span><span class="nx">tx</span><span class="p">,</span> <span class="nx">newPost</span><span class="p">,</span> <span class="nx">t</span><span class="p">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">      <span class="nx">tx</span><span class="p">.</span><span class="nx">Rollback</span><span class="p">()</span>
+</span><span class="line">      <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="c1">// TODO</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>A thing to note here is we are rolling back the transaction using the <a href="https://godoc.org/github.com/jinzhu/gorm#DB.Rollback">RollBack</a> method in case of error. </p>
+
+<p>The final step is committing the transaction and returning the newly created post id as response</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">NewPost</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Response</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="nx">res</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nx">Commit</span><span class="p">()</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Error</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">res</span><span class="p">.</span><span class="nx">Error</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Response</span><span class="p">{</span><span class="nx">PostId</span><span class="p">:</span> <span class="nx">newPost</span><span class="p">.</span><span class="nx">ID</span><span class="p">},</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="test-driving-publish-new-blog-post">Test Driving Publish New Blog Post</h3>
+
+<p>Let’s test drive our implementation from the <code>main</code> function with some hard coded value</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// main.go</span>
+</span><span class="line"><span class="kn">package</span> <span class="nx">main</span>
+</span><span class="line">
+</span><span class="line"><span class="kn">import</span> <span class="p">(</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="s">&quot;github.com/tamizhvendan/gomidway/post&quot;</span>
+</span><span class="line">  <span class="s">&quot;github.com/tamizhvendan/gomidway/post/publish&quot;</span>
+</span><span class="line"><span class="p">)</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">  <span class="c1">// ...</span>
+</span><span class="line">  <span class="nx">publishPost</span><span class="p">(</span><span class="nx">db</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="nx">publishPost</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">gorm</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">publish</span><span class="p">.</span><span class="nx">NewPost</span><span class="p">(</span><span class="nx">db</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">publish</span><span class="p">.</span><span class="nx">Request</span><span class="p">{</span>
+</span><span class="line">    <span class="nx">AuthorId</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">Body</span><span class="p">:</span>     <span class="s">&quot;Golang rocks!&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">Title</span><span class="p">:</span>    <span class="s">&quot;My first gomidway post&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="nx">Tags</span><span class="p">:</span>     <span class="p">[]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;intro&quot;</span><span class="p">,</span> <span class="s">&quot;golang&quot;</span><span class="p">},</span>
+</span><span class="line">  <span class="p">})</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">if</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">err</span><span class="p">.(</span><span class="o">*</span><span class="nx">post</span><span class="p">.</span><span class="nx">TitleDuplicateError</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+</span><span class="line">      <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Bad Request: &quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+</span><span class="line">      <span class="k">return</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Internal Server Error: &quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">.</span><span class="nx">Error</span><span class="p">())</span>
+</span><span class="line">    <span class="k">return</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Created: &quot;</span><span class="p">,</span> <span class="nx">res</span><span class="p">.</span><span class="nx">PostId</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>if we run the program with these hard coded values, we will get the following output</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">Created: 1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>if we rerun the program without changing anything, we will get the bad request error as expected</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">Bad Request: title already exists
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post, we have seen how to perform, create operation of a model having many to many relationship using gorm. The source code is available in my <a href="https://github.com/tamizhvendan/gomidway/tree/part-2">GitHub repository</a>. </p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Managing Data in golang using gorm - Part 1]]></title>
@@ -7730,199 +8327,6 @@ To make it independent of the host, we have externalized the hosting functionali
 <p>You can find the source code of this step in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/9">fsharp-phonecat github repository</a></p>
 
 <p>Thanks for reading!</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Step-8 Adding Shopping Cart]]></title>
-    <link href="http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart/"/>
-    <updated>2015-03-20T11:49:35+05:30</updated>
-    <id>http://blog.tamizhvendan.in/blog/2015/03/20/step-8-adding-shopping-cart</id>
-    <content type="html"><![CDATA[<blockquote>
-  <p>This is step 8 of my blog series on <a href="http://blog.tamizhvendan.in/blog/2014/12/10/web-application-development-in-fsharp-using-asp-dot-net-mvc/">Web Application Development in Fsharp using ASP.NET MVC</a></p>
-</blockquote>
-
-<p>In the <a href="http://blog.tamizhvendan.in/blog/2015/03/02/step-7-validation-and-error-handling-using-rop/">last blog post</a> we have seen how to do validation and error handling in fsharp and in this blog post we are going to add shopping cart feature to the phone-cat application that we are developing in this blog series. To keep this blog post simple, we are going to see only adding an item to shopping cart. Remvoing an item from shopping cart is a straightforward implementation and I leave it to you as an exercise</p>
-
-<p><img src="http://blog.tamizhvendan.in/images/fsharp_phonecat/step_8/cart_intro.png" /></p>
-
-<h3 id="the-shopping-cart-domain">The Shopping Cart Domain</h3>
-
-<p>Let’s start with defining the domain model for handling shopping cart. Create a source file <code>ShoppingCart</code> in the <strong>Domain</strong> project and add the following code</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">ShoppingCart</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">ProductId</span> <span class="o">=</span> <span class="kt">string</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">type</span> <span class="nc">Cart</span> <span class="o">=</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Empty</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Active</span> <span class="k">of</span> <span class="n">ProductId</span> <span class="n">List</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">addItem</span> <span class="n">cart</span> <span class="n">productId</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">cart</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Empty</span> <span class="o">-&gt;</span> <span class="n">Active</span> <span class="o">[</span><span class="n">productId</span><span class="o">]</span>
-</span><span class="line">    <span class="o">|</span> <span class="n">Active</span> <span class="n">items</span> <span class="o">-&gt;</span> <span class="n">Active</span> <span class="o">(</span><span class="n">productId</span> <span class="o">::</span> <span class="n">items</span><span class="o">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>ProductId</code> is an alias of <code>string</code> type represents the id of the phone.</p>
-
-<p>The <code>Cart</code> is a <code>Sum</code> type represents the two possible states of Shopping Cart. The <code>Cart</code> would be either empty or contain product ids that has been added to the cart.</p>
-
-<p>We have added a function which adds a product id to the cart. It just checks the state of the cart and based on the state it either creates the cart with <code>Active</code> state or appends the product id to the existing list.</p>
-
-<p>Thanks to the strong fsharp type system, we have modeled the domain with less lines of code.</p>
-
-<h3 id="persisting-shopping-cart">Persisting Shopping Cart</h3>
-
-<p>Now we have the domain logic to represent the shopping cart and adding items to it. The next step is persisting the cart. We can persist it anywhere as the domain model is persistent ignorant. To keep things simple, we will be persisting it in-memory. </p>
-
-<p>As we did during the <a href="http://blog.tamizhvendan.in/blog/2015/01/02/step-3-phonecat-recommendation-system-using-f-number-agents/">recommendation step</a> we will be using a dictionary to store the cart with Asp.Net’s <a href="http://msdn.microsoft.com/en-us/library/system.web.httprequest.anonymousid%28v=vs.110%29.aspx">anonymousId</a> as the key. </p>
-
-<p>Create a source file <code>CartStorage</code> in the <strong>DataAccess</strong> project and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">module</span> <span class="nn">CartStorage</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">private</span> <span class="n">inMemoryStorage</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">new</span> <span class="n">Dictionary</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">,</span> <span class="n">Cart</span><span class="o">&gt;</span><span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">create</span> <span class="n">anonymousId</span> <span class="n">cart</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">Add</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">,</span> <span class="n">cart</span><span class="o">)</span>
-</span><span class="line">    <span class="n">cart</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">update</span> <span class="n">anonymousId</span> <span class="n">cart</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">Remove</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="o">|&gt;</span> <span class="n">ignore</span>
-</span><span class="line">    <span class="n">create</span> <span class="n">anonymousId</span> <span class="n">cart</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">let</span> <span class="nv">get</span> <span class="n">anonymousId</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">match</span> <span class="n">inMemoryStorage</span><span class="o">.</span><span class="n">ContainsKey</span><span class="o">(</span><span class="n">anonymousId</span><span class="o">)</span> <span class="k">with</span>
-</span><span class="line">    <span class="o">|</span> <span class="k">true</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">inMemoryStorage</span><span class="o">.[</span><span class="n">anonymousId</span><span class="o">]</span>
-</span><span class="line">    <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The code is very straight forward to understand. It contains typical CRUD operations of a shopping cart using an in-memory dictionary object.</p>
-
-<h3 id="shopping-cart-api">Shopping Cart Api</h3>
-
-<p>It’s time to code the api for the shopping cart. Let’s add a source file <code>ShoppingCartController</code> in the <strong>Web</strong> project and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">RoutePrefix</span><span class="o">(</span><span class="s">&quot;api/cart&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line"><span class="k">type</span> <span class="nc">ShoppingCartController</span>
-</span><span class="line">  <span class="o">(</span>
-</span><span class="line">    <span class="n">cart</span> <span class="o">:</span> <span class="n">Cart</span><span class="o">,</span>
-</span><span class="line">    <span class="n">updateCart</span> <span class="o">:</span> <span class="n">Cart</span> <span class="o">-&gt;</span> <span class="n">Cart</span>
-</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">inherit</span> <span class="n">ApiController</span> <span class="bp">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Get</span><span class="bp">()</span> <span class="o">=</span> <span class="n">cart</span>
-</span><span class="line">
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">HttpPost</span><span class="o">&gt;]</span>
-</span><span class="line">  <span class="o">[&lt;</span><span class="n">Route</span><span class="o">(</span><span class="s">&quot;add&quot;</span><span class="o">)&gt;]</span>
-</span><span class="line">  <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">AddItem</span><span class="o">([&lt;</span><span class="n">FromBody</span><span class="o">&gt;]</span><span class="n">productId</span> <span class="o">:</span> <span class="kt">string</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="n">addItem</span> <span class="n">cart</span> <span class="n">productId</span> <span class="o">|&gt;</span> <span class="n">updateCart</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>ShoppingCartController</code> has two dependencies.<br />
-  1. <code>Cart</code> - Cart associated with the current session<br />
-  2. <code>updateCart</code> - a function to update the cart</p>
-
-<p>To keep it simple, I haven’t added error handling or validation here. The action method <code>Get</code> returns the cart and the action method <code>AddItem</code> adds the item to the cart and then update the cart in the storage.</p>
-
-<h3 id="wiring-things-up">Wiring things up</h3>
-
-<p>Now we have all the pieces to add shopping cart to our application and the final step is tying them together. As we did it in other steps we need to do it in the composition root. Open <code>Infrastructure</code> in the <strong>Web</strong> project and update it as below</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">type</span> <span class="nc">CompositionRoot</span>
-</span><span class="line">  <span class="o">(</span>
-</span><span class="line">    <span class="c1">// ... Exisitng Code ...</span>
-</span><span class="line">  <span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">interface</span> <span class="n">IHttpControllerActivator</span> <span class="k">with</span>
-</span><span class="line">    <span class="k">member</span> <span class="n">this</span><span class="p">.</span><span class="nf">Create</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">controllerDescriptor</span><span class="o">,</span> <span class="n">controllerType</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">      <span class="c1">// ... Exisiting Code ...</span>
-</span><span class="line">      <span class="k">else</span> <span class="k">if</span> <span class="n">controllerType</span> <span class="o">=</span> <span class="n">typeof</span><span class="o">&lt;</span><span class="n">ShoppingCartController</span><span class="o">&gt;</span> <span class="k">then</span>
-</span><span class="line">        <span class="k">let</span> <span class="nv">anonymousID</span> <span class="o">=</span> <span class="nn">HttpContext</span><span class="p">.</span><span class="nn">Current</span><span class="p">.</span><span class="nn">Request</span><span class="p">.</span><span class="n">AnonymousID</span>
-</span><span class="line">        <span class="k">let</span> <span class="nv">shoppingCart</span> <span class="o">=</span>
-</span><span class="line">          <span class="k">match</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">get</span> <span class="n">anonymousID</span> <span class="k">with</span>
-</span><span class="line">          <span class="o">|</span> <span class="n">Some</span> <span class="n">cart</span> <span class="o">-&gt;</span> <span class="n">cart</span>
-</span><span class="line">          <span class="o">|</span> <span class="n">None</span> <span class="o">-&gt;</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">create</span> <span class="n">anonymousID</span> <span class="nn">ShoppingCart</span><span class="p">.</span><span class="n">Empty</span>
-</span><span class="line">
-</span><span class="line">        <span class="k">let</span> <span class="nv">shoppingCartController</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ShoppingCartController</span><span class="o">(</span><span class="n">shoppingCart</span><span class="o">,</span> <span class="nn">CartStorage</span><span class="p">.</span><span class="n">update</span> <span class="n">anonymousID</span><span class="o">)</span>
-</span><span class="line">        <span class="n">shoppingCartController</span> <span class="o">:&gt;</span> <span class="n">IHttpController</span>
-</span><span class="line">      <span class="c1">// ... Existing Code ...</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Here before the creating an instance of <code>ShoppingCartController</code> we retrieve the anonymous id from the incoming request and get the cart associated with the anonymous id from the storage. In case if the cart is not available, we are creating one. For the <code>update</code> function, we pass the partially applied <code>update</code> function of <code>CartStorage</code>.</p>
-
-<p>That’s it!!</p>
-
-<h3 id="the-front-end-code">The front-end code</h3>
-
-<p>In the front end, we just call the <code>ShoppingCartController</code> action methods using plain jQuery ajax methods and update the UI. Since it is out of the scope of this blog post I haven’t covered it here and you can find <a href="https://github.com/tamizhvendan/fsharp-phonecat/blob/8/Web/Scripts/site.js">the code here</a>.</p>
-
-<h3 id="summary">Summary</h3>
-
-<p>In this blog post we have seen how to implement shopping cart in a web application written in fsharp. I leave some exercises for you to extend it to use some other storage and also to add validation and error handling. You can find the source code in the <a href="https://github.com/tamizhvendan/fsharp-phonecat/tree/8">github phonecat repository</a>.</p>
 ]]></content>
   </entry>
   

@@ -9,7 +9,7 @@
 	<meta name="author" content="Tamizhvendan S">
 
 	
-	<meta name="description" content="May 1st, 2017 experiences, golang Comments Using Golang in Production - My Experiences For the last one year, I was working with the development &hellip;">
+	<meta name="description" content="Jun 24th, 2017 golang Comments Leveraging Interfaces in Golang - Part 1 In my previous blog post on using golang in production, I have mentioned &hellip;">
 	
 
   <!-- http://t.co/dKP3o1e -->
@@ -69,8 +69,11 @@
     <li><a href="/">Blog</a></li>
     <li><a target="_blank" href="http://about.me/tamizhvendan">About Me</a></li>
     <li><a href="/blog/archives">Archives</a></li>
+    <li><a target="_blank" href="https://www.udemy.com/learn-suave/?couponCode=TAMIZH_BLOG">My FSharpTV Course</a>
+		</li>
     <br/>
-    <li><a target="_blank" href="https://www.codementor.io/tamizhvendan?utm_source=github&utm_medium=button&utm_term=tamizhvendan&utm_campaign=github"><img src="https://cdn.codementor.io/badges/book_session_github.svg" alt="Book session on Codementor" style="max-width:100%" /></a>
+    <li>
+      <a target="_blank" href="https://www.codementor.io/tamizhvendan?utm_source=github&utm_medium=button&utm_term=tamizhvendan&utm_campaign=github"><img src="https://cdn.codementor.io/badges/book_session_github.svg" alt="Book session on Codementor" style="max-width:100%" /></a>
 		</li>
     <br/>
 </ul>
@@ -113,7 +116,7 @@
 <nav id="tag-cloud">
 	<section>
     <!-- <h3>Tag Cloud</h3>
-    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/golang' style='font-size: 110.0%'>golang</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc' style='font-size: 140.0%'>asp.net mvc</a> <a href='/blog/categories/c-number' style='font-size: 110.0%'>c#</a> <a href='/blog/categories/craftsmanship' style='font-size: 115.0%'>craftsmanship</a> <a href='/blog/categories/entity-framework' style='font-size: 112.5%'>entity framework</a> <a href='/blog/categories/fsharp' style='font-size: 160.0%'>fsharp</a> <a href='/blog/categories/functional-programming' style='font-size: 120.0%'>functional-programming</a> <a href='/blog/categories/golang' style='font-size: 112.5%'>golang</a> <a href='/blog/categories/javascript' style='font-size: 110.0%'>javascript</a> <a href='/blog/categories/programming' style='font-size: 115.0%'>programming</a> <a href='/blog/categories/suave' style='font-size: 115.0%'>suave</a> <a href='/blog/categories/unit-testing' style='font-size: 112.5%'>unit testing</a> </span> -->
 </section>
 </nav>
 
@@ -128,6 +131,339 @@
 			<div class="mid-col-container">
 				<div id="content" class="inner">
 <div itemscope itemtype="http://schema.org/Blog">
+
+
+    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
+	<div class="meta">
+		<div class="date">
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2017-06-24T13:38:16+05:30" data-updated="true" itemprop="datePublished">Jun 24<sup>th</sup>, 2017</time></div>
+		<div class="tags">
+
+
+	<a class='category' href='/blog/categories/golang/'>golang</a>
+
+
+</div>
+		
+			<span class="comments"><a href="/blog/2017/06/24/leveraging-interfaces-in-golang-part-1/#disqus_thread">Comments</a></span>
+		
+	</div>
+	<h1 class="title" itemprop="name"><a href="/blog/2017/06/24/leveraging-interfaces-in-golang-part-1/" itemprop="url">Leveraging Interfaces in Golang - Part 1</a></h1>
+	<div class="entry-content" itemprop="articleBody">
+		<p>In my previous blog post <a href="/blog/2017/05/01/using-golang-in-production-my-experiences/">on using golang in production</a>, I have mentioned that <a href="https://gobyexample.com/interfaces">interfaces</a> are my favorite feature in golang. </p>
+
+<p>As a follow-up of this comment, I would like to share how we are using (my current project is also in golang!) the interfaces to keep our code clean and consistent through a series of three blog posts</p>
+
+<p>This blog post series assumes that you are familiar with the basics of interfaces in golang. If would like to know what it brings to the table, I strongly recommend to check out <a href="https://hackernoon.com/why-i-like-gos-interfaces-2891adf2803c">this well-written article</a> by <a href="https://twitter.com/theburningmonk">Yan Cui</a>.</p>
+
+<p>Let me start the series with a solution that we have implemented a few days back. </p>
+
+<h2 id="some-context">Some Context</h2>
+
+<p>The product that we are building consists of a suite of web applications. To authenticate the users, these web applications talk to a centralized web application called “Identity Server”. </p>
+
+<p>Upon receiving valid login credentials, the Identity Server generates <a href="https://jwt.io/introduction/">a JSON Web Token</a>(JWT) with the corresponding user claims and signs it using a public/private key pair using RSA. </p>
+
+<p>The downstream web applications will then use this JWT to grant the access to their corresponding protected resources. </p>
+
+<p>Let’s assume a simple JWT claims payload</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;sub&quot;</span><span class="p">:</span> <span class="s2">&quot;1234567890&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;John D&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;admin&quot;</span><span class="p">:</span> <span class="kc">true</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The above payload uses one of the <a href="https://tools.ietf.org/html/rfc7519#section-4.1">JWT standard claims</a>, <code>sub</code>, to communicate the unique identifier of the user in the product for all the web applications. The <code>name</code> and <code>admin</code> are the custom claims. </p>
+
+<p>As per the JWT spec, <a href="https://self-issued.info/docs/draft-ietf-oauth-json-web-token.html#subDef">the sub claim</a> is a case-sensitive string containing a StringOrURI value which is locally unique in the context of the issuer or be globally unique, but in our system, the unique identifier of a user is an unsigned integer(uint) type. </p>
+
+<p>As we will be sharing the JWT with other third party applications, we made a call to stick to the JWT spec and converted the uint to string type while generating the token and did the reverse while authenticating the user using this token.</p>
+
+<blockquote>
+  <p><em>Update</em> - After writing this blog post, I came to know from <a href="http://disq.us/p/1kcwwkh">the comment</a> that the use case of this blog post, unmarshalling a JSON string to <code>uint</code> type can be done by adding <code>string</code> to the <code>json</code> tag. Being said that, if you’d like to know about how to use an interface to solve it, the rest of the post would help. </p>
+</blockquote>
+
+<h2 id="unmarshalling-jwt---a-naive-approach">Unmarshalling JWT - A Naive Approach</h2>
+
+<p>Before witnessing the golang interface in action, let’s see a naive implementation how we can unmarshal the claim and use.</p>
+
+<p>The straightforward thing would be creating a struct matching the properties of the claim </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">UserJwt</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Sub</span>    <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Name</span>   <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Admin</span>  <span class="kt">bool</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>and unmarshalling using the <a href="https://golang.org/pkg/encoding/json/">json package</a> in golang </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">claims</span> <span class="o">:=</span> <span class="s">`</span>
+</span><span class="line"><span class="s">{</span>
+</span><span class="line"><span class="s">  &quot;sub&quot;: &quot;1234567890&quot;,</span>
+</span><span class="line"><span class="s">  &quot;name&quot;: &quot;John D&quot;,</span>
+</span><span class="line"><span class="s">  &quot;admin&quot;: true</span>
+</span><span class="line"><span class="s">}`</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">var</span> <span class="nx">userJwt</span> <span class="o">*</span><span class="nx">UserJwt</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>To convert the <code>sub</code> from <code>string</code> to <code>uint</code>, we can have a method <code>Id</code> on the <code>UserJwt</code> type.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">u</span> <span class="o">*</span><span class="nx">UserJwt</span><span class="p">)</span> <span class="nx">Id</span><span class="p">()</span> <span class="p">(</span><span class="kt">uint</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">v</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseUint</span><span class="p">(</span><span class="nx">u</span><span class="p">.</span><span class="nx">Sub</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">IntSize</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="k">return</span> <span class="nb">uint</span><span class="p">(</span><span class="nx">v</span><span class="p">),</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>and use it after successful unmarshalling of the JWT claims. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">id</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">userJwt</span><span class="p">.</span><span class="nx">Id</span><span class="p">()</span>
+</span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="c1">// Do something with the id of type uint</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That’s great. But did you see any code smell here?</p>
+
+<p>Let me share what’s wrong with this approach,</p>
+
+<p>Let’s say that we have the following JSON claim with <code>sub</code> has the value <code>user/john</code> instead of a string representing the unsigned integer identifier of the user.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">claims</span> <span class="o">:=</span> <span class="s">`</span>
+</span><span class="line"><span class="s">{</span>
+</span><span class="line"><span class="s">  &quot;sub&quot;: &quot;user/john&quot;,</span>
+</span><span class="line"><span class="s">  &quot;name&quot;: &quot;John D&quot;,</span>
+</span><span class="line"><span class="s">  &quot;admin&quot;: true</span>
+</span><span class="line"><span class="s">}`</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Unmarshalling this claim will work, and it won’t return any error</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span><span class="line"><span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>We can share the unmarshalled <code>userJwt</code> with the rest of the code to carry the business logic. </p>
+
+<p>We will come to know that the claim has an invalid <code>sub</code> value only when we try to get the id of the user by calling the <code>Id</code> method</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="nx">id</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">userJwt</span><span class="p">.</span><span class="nx">Id</span><span class="p">()</span>
+</span><span class="line"><span class="c1">// This will return the following error</span>
+</span><span class="line"><span class="c1">// strconv.ParseUint: parsing &quot;name/john&quot;: invalid syntax</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>If we didn’t call the <code>Id</code> method, this subtle bug slip silently into the product and someday will end up as a production issue! </p>
+
+<p>In a nutshell, this approach is not robust, and the resulting code is not clean.</p>
+
+<h2 id="using-interfaces---a-better-approach">Using Interfaces - A better approach</h2>
+
+<p>Ideally, we want the <code>json.Unmarshal</code> function should return an error if the <code>sub</code> doesn’t contain a <code>uint</code> value as string.</p>
+
+<p>To make it happen, we need to inform the <code>json.Unmarshal</code> function somehow to do the type conversion while unmarshalling and return an error if the conversion fails. </p>
+
+<p>How to make it happen? </p>
+
+<p>We can do this by using the <a href="https://golang.org/pkg/encoding/json/#Unmarshaler">Unmarshaler</a> interface. </p>
+
+<p>In our case, we can declare the <code>UnmarshalJSON</code> method with the <code>UserJwt</code> type and in the definition, we can do the type conversion. But that’d be an overkill as we need to do the unmarshalling of the other fields, <code>Name</code>, and <code>Admin</code>, which is already working well without any custom logic. </p>
+
+<p>In other words, the effective way would be overriding the JSON unmarshalling behavior of <code>Sub</code> field alone by having the <code>UnmarshalJSON</code> method with <code>uint</code> type. But according to golang’s spec we can’t do it</p>
+
+<blockquote>
+  <p>You can only declare a method with a receiver whose type is defined in the same package as the method. You cannot declare a method with a receiver whose type is defined in another package (which includes the built-in types such as int).</p>
+</blockquote>
+
+<p>To handle this kind of scenario, we can make use of the <a href="https://golang.org/ref/spec#Type_identity">named types</a> in golang and define a new type called <code>Sub</code> with an underlying type <code>uint</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">Sub</span> <span class="kt">uint</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Then we can declare the <code>UnmarshalJSON</code> method with this <code>Sub</code> type. </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Sub</span><span class="p">)</span> <span class="nx">UnmarshalJSON</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">sub</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nx">Replace</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">),</span> <span class="s">`&quot;`</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line">  <span class="nx">v</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseUint</span><span class="p">(</span><span class="nx">sub</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">IntSize</span><span class="p">)</span>
+</span><span class="line">  <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="nx">err</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="o">*</span><span class="nx">s</span> <span class="p">=</span> <span class="nx">Sub</span><span class="p">(</span><span class="nb">uint</span><span class="p">(</span><span class="nx">v</span><span class="p">))</span>
+</span><span class="line">  <span class="k">return</span> <span class="kc">nil</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>Using the <code>Replace</code> function, we are getting rid of the double quotes in the actual JSON encoded value </p>
+</blockquote>
+
+<p>With this new <code>Sub</code> type in place, We can rewrite the <code>UserJwt</code> by replacing the <code>Sub</code> field with the <code>Id</code> field of type <code>Sub</code>.  </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">UserJwt</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Id</span>    <span class="nx">Sub</span> <span class="s">`json:&quot;sub&quot;`</span>
+</span><span class="line">  <span class="nx">Name</span>  <span class="kt">string</span>
+</span><span class="line">  <span class="nx">Admin</span> <span class="kt">bool</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote>
+  <p>The <code>json</code> tag with the value <code>"sub"</code> is required to map the <code>sub</code> key in the JSON claim with the Id. </p>
+</blockquote>
+
+<p>Now if we try to unmarshal the invalid claim, the <code>json.Unmarshal</code> function will return an error</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">claims</span> <span class="o">:=</span> <span class="s">`</span>
+</span><span class="line"><span class="s">{</span>
+</span><span class="line"><span class="s">  &quot;sub&quot;: &quot;user/john&quot;,</span>
+</span><span class="line"><span class="s">  &quot;name&quot;: &quot;John D&quot;,</span>
+</span><span class="line"><span class="s">  &quot;admin&quot;: true</span>
+</span><span class="line"><span class="s">}`</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">userJwt</span> <span class="o">*</span><span class="nx">UserJwt</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span><span class="line"><span class="c1">// This will return the following error</span>
+</span><span class="line"><span class="c1">// strconv.ParseUint: parsing &quot;name/john&quot;: invalid syntax</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>For a valid claim, we can now get the <code>Id</code> directly from the <code>UserJwt</code> <code>Id</code> field.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">claims</span> <span class="o">:=</span> <span class="s">`</span>
+</span><span class="line"><span class="s">{</span>
+</span><span class="line"><span class="s">  &quot;sub&quot;: &quot;1234567890&quot;,</span>
+</span><span class="line"><span class="s">  &quot;name&quot;: &quot;John D&quot;,</span>
+</span><span class="line"><span class="s">  &quot;admin&quot;: true</span>
+</span><span class="line"><span class="s">}`</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">userJwt</span> <span class="o">*</span><span class="nx">UserJwt</span>
+</span><span class="line"><span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">claims</span><span class="p">),</span> <span class="o">&amp;</span><span class="nx">userJwt</span><span class="p">)</span>
+</span><span class="line"><span class="c1">// ...</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">userJwt</span><span class="p">.</span><span class="nx">Id</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>That’s it! The code is in better shape now :)</p>
+
+<h2 id="summary">Summary</h2>
+
+<p>In this blog post, we have seen how we can write cleaner code by leveraging the interfaces. The source code is available in <a href="https://github.com/tamizhvendan/igo1">my GitHub repository</a>.</p>
+
+		
+		
+	</div>
+
+</article>
 
 
     <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
@@ -1424,278 +1760,6 @@
 <ul>
   <li><a href="/blog/2015/07/15/securing-apis-in-suave-using-json-web-token/">Securing APIs in Suave using JSON Web Token</a></li>
 </ul>
-
-		
-		
-	</div>
-
-</article>
-
-
-    <article class="post" itemprop="blogPost" itemscope itemtype="http://schema.org/BlogPosting">
-	<div class="meta">
-		<div class="date">
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-09-30T09:06:15+05:30" data-updated="true" itemprop="datePublished">Sep 30<sup>th</sup>, 2016</time></div>
-		<div class="tags">
-
-
-	<a class='category' href='/blog/categories/fscheck/'>fscheck</a>, <a class='category' href='/blog/categories/fsharp/'>fsharp</a>, <a class='category' href='/blog/categories/functional-programming/'>functional-programming</a>, <a class='category' href='/blog/categories/property-based-testing/'>property-based-testing</a>
-
-
-</div>
-		
-			<span class="comments"><a href="/blog/2016/09/30/leveraging-property-based-testing/#disqus_thread">Comments</a></span>
-		
-	</div>
-	<h1 class="title" itemprop="name"><a href="/blog/2016/09/30/leveraging-property-based-testing/" itemprop="url">Leveraging Property Based Testing</a></h1>
-	<div class="entry-content" itemprop="articleBody">
-		<p><a href="http://fsharpforfunandprofit.com/posts/property-based-testing/">Property-based testing</a> is one of the powerful technique to unit test the code. Unlike the example-based testing (where we <em>Arrange</em> a set of example inputs to <em>Assert</em> the system under test), Property based testing enable us to focus on what we wanted to test and liberate us from doing mundane work on coming up with sample inputs.</p>
-
-<p>Recently, I got a chance to use Property based testing in <a href="https://github.com/tamizhvendan/Suave.Azure.Functions">an open source library</a> that I am developing to use <a href="https://suave.io">Suave</a> in <a href="https://azure.microsoft.com/en-in/services/functions/">Azure Functions</a>. I felt very productive and it was a such a joy to write the unit tests.  </p>
-
-<p>In this blog post, you are going to learn how Property-based testing has helped me and why you need to consider using(or learning) it</p>
-
-<h2 id="use-case">Use Case</h2>
-
-<p>Let me start with the use case that I wanted to test. The library that I am working is an adapter between two HTTP protocol abstractions, <a href="https://msdn.microsoft.com/en-us/library/system.net.http.aspx">System.Net.Http</a> and <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs">Suave.Http</a></p>
-
-<p>The first task is to map <a href="https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode.aspx">HttpStatusCode</a> of <em>System.Net</em> to the <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L64-L71">HttpCode</a> of <em>Suave.Http</em> and the next task is doing the vice-versa.</p>
-
-<blockquote>
-  <p><em>HttpStatusCode</em> is an enum type and <em>HttpCode</em> is a discriminated union type. Refer this <a href="https://fsharpforfunandprofit.com/posts/enum-types/">blog post</a> to know more about this difference.</p>
-</blockquote>
-
-<h2 id="identifying-the-property">Identifying the Property</h2>
-
-<p>The first step is Property-based testing is identifying the property. In other words, it forces to think about the relationship between the <em>input</em> and the <em>output</em>.</p>
-
-<p>I believe this <em>thinking</em> will make a huge difference in the quality of the software that we deliver.</p>
-
-<p>In the first task that we are about to implement, the relationship is the <em>integer</em> representation of the HTTP status code is both <em>HttpStatusCode</em> and <em>HttpCode</em>.</p>
-
-<p>Programmatically, this can be asserted like</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// boolean condition</span>
-</span><span class="line"><span class="c1">// In F# (=) operator represents the equality checking</span>
-</span><span class="line"><span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span> <span class="o">=</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">code</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<blockquote>
-  <p>The <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/languageprimitives.enumtovalue%5B'enum,'t%5D-function-%5Bfsharp%5D">EnumToValue</a> returns the integer value associated with the enum, which is nothing but the integer representation of the HTTP status code it represents. The <code>code</code> is <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L73-L85">a member of</a> <em>HttpCode</em> that represents the same integer.</p>
-</blockquote>
-
-<p>If this property holds true for given set of inputs, then we can assert that the function that does the transformation is working correctly.</p>
-
-<h2 id="implementing-the-mapping-function-httpstatuscode">Implementing the mapping function <code>httpStatusCode</code></h2>
-
-<p>The initial implementation that I had in my mind was</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">NetStatusCode</span> <span class="o">=</span> <span class="k">function</span>
-</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_200</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">OK</span>
-</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_201</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">Created</span>
-</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_400</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">BadRequest</span>
-</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_404</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">NotFound</span>
-</span><span class="line"><span class="o">|</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">HTTP_202</span> <span class="o">-&gt;</span> <span class="nn">HttpStatusCode</span><span class="p">.</span><span class="n">Accepted</span>
-</span><span class="line"><span class="o">|</span> <span class="c1">// ...</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>If I haven’t choosen to use Property based testing, I might have ended up with this line by line mapping for all the HTTP status codes. As a matter of fact, in <a href="(/blog/2016/09/19/scale-up-azure-functions-in-f-number-using-suave/)">my last blog post</a> on using Suave in Azure Functions, I’ve used this same approach.</p>
-
-<p>While thinking regarding properties to assert the transformation, for the first time I came to know about the <a href="https://msdn.microsoft.com/en-us/visualfsharpdocs/conceptual/core.languageprimitives-module-%5Bfsharp%5D">Language Primitives</a> module in F# and the <em>EnumToValue</em> function.</p>
-
-<p>There should be an another function <em>EnumOfValue</em> right?</p>
-
-<p>Yes!</p>
-
-<p>Let’s use this in the <code>httpStatusCode</code> function implementation</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">httpStatusCode</span> <span class="o">(</span><span class="n">httpCode</span> <span class="o">:</span> <span class="n">HttpCode</span><span class="o">)</span> <span class="o">:</span> <span class="n">HttpStatusCode</span> <span class="o">=</span>
-</span><span class="line">  <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumOfValue</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">code</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>Short and Sweet!</p>
-
-<p>Property-based testing made my day and helped me <a href="http://keysleft.com/">to save</a> a lot of keystrokes!</p>
-
-<h2 id="writing-our-first-property-based-unit-test">Writing Our First Property based Unit Test</h2>
-
-<p>In F# we can use the <a href="https://fscheck.github.io/FsCheck/">FsCheck</a> library to write the Property based unit tests. For this implementation, we will be using <em>FsCheck.Xunit</em> to run Property tests in <a href="http://xunit.github.io/">XUnit</a></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">open</span> <span class="nn">Suave.Http</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">System.Net</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">FsCheck</span>
-</span><span class="line"><span class="k">open</span> <span class="nn">FsCheck.Xunit</span>
-</span><span class="line">
-</span><span class="line"><span class="o">[&lt;</span><span class="n">Property</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">let</span> <span class="o">``</span><span class="n">httpStatusCode</span> <span class="n">maps</span> <span class="n">Suave&#39;s</span> <span class="n">HttpCode</span> <span class="k">to</span> <span class="nn">System</span><span class="p">.</span><span class="n">Net&#39;s</span> <span class="n">HttpStatusCode</span> <span class="o">``</span>
-</span><span class="line">  <span class="o">(</span><span class="n">httpCode</span> <span class="o">:</span> <span class="n">HttpCode</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">let</span> <span class="nv">httpStatusCode</span> <span class="o">=</span> <span class="nn">Response</span><span class="p">.</span><span class="n">httpStatusCode</span> <span class="n">httpCode</span>
-</span><span class="line">    <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span> <span class="o">=</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">code</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The magic here is the <code>Property</code> attribute. It makes our life easier by auto-populating the parameter <code>httpCode</code> with the all the possible values and runs the unit test against each value.</p>
-
-<p>As a convention, we need to return boolean by validating the property that we wanted to assert.</p>
-
-<blockquote>
-  <p>There is no Arrange step to setup the input parameter and FsCheck does that for you with 100% test coverage :-)</p>
-</blockquote>
-
-<h2 id="mapping-httpcode-to-httpstatuscode">Mapping HttpCode to HttpStatusCode</h2>
-
-<p>The next task in the use case is doing the reverse, mapping <em>HttpStatusCode</em> to <em>HttpCode</em>.</p>
-
-<p>Let’s start with the test first.</p>
-
-<p>The integer representation of HTTP status code property that we used on the previous task holds true for this mapping also.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="o">[&lt;</span><span class="n">Property</span><span class="o">&gt;]</span>
-</span><span class="line"><span class="k">let</span> <span class="o">``</span><span class="n">suaveHttpCode</span> <span class="n">maps</span> <span class="nn">System</span><span class="p">.</span><span class="n">Net&#39;s</span> <span class="n">HttpStatusCode</span> <span class="k">to</span> <span class="n">Suave&#39;s</span> <span class="n">HttpCode</span> <span class="k">if</span> <span class="n">exists</span><span class="o">``</span>
-</span><span class="line">  <span class="o">(</span><span class="n">httpStatusCode</span> <span class="o">:</span> <span class="n">HttpStatusCode</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">httpCode</span> <span class="o">=</span> <span class="n">suaveHttpCode</span> <span class="n">httpStatusCode</span>
-</span><span class="line">    <span class="k">let</span> <span class="nv">code</span> <span class="o">=</span> <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span>
-</span><span class="line">
-</span><span class="line">    <span class="nn">Option</span><span class="p">.</span><span class="n">isSome</span> <span class="n">httpCode</span> <span class="o">&amp;&amp;</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">Value</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The <code>suaveHttpCode</code> function returns an <a href="http://fsharpforfunandprofit.com/posts/the-option-type/">Option type</a> as Suave.Http.HttpCode’s <code>tryParse</code> function <a href="https://github.com/SuaveIO/suave/blob/v1.1.3/src/Suave/Http.fs#L184-L194">parses the integer HTTP status code</a> and returns the corresponding <code>HttpCode</code> if the parsing succeeds.</p>
-
-<p>The implementation of <code>suaveHttpCode</code> function is</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">suaveHttpCode</span> <span class="o">(</span><span class="n">httpStatusCode</span> <span class="o">:</span> <span class="n">HttpStatusCode</span><span class="o">)</span> <span class="o">=</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">code</span> <span class="o">=</span>
-</span><span class="line">    <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span>
-</span><span class="line">    <span class="o">|&gt;</span> <span class="nn">HttpCode</span><span class="p">.</span><span class="n">tryParse</span>
-</span><span class="line">  <span class="k">match</span> <span class="n">code</span> <span class="k">with</span>
-</span><span class="line">  <span class="o">|</span> <span class="n">Choice1Of2</span> <span class="n">httpCode</span> <span class="o">-&gt;</span> <span class="n">Some</span> <span class="n">httpCode</span>
-</span><span class="line">  <span class="o">|</span> <span class="o">_</span> <span class="o">-&gt;</span> <span class="n">None</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Now if we run the unit tests, You will be getting the following error (if you are using Suave NuGet package version &lt;= 1.1.3)</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="nn">Suave</span><span class="p">.</span><span class="nn">Azure</span><span class="p">.</span><span class="nn">Functions</span><span class="p">.</span><span class="nn">Tests</span><span class="p">.</span><span class="n">suaveHttpCode</span> <span class="n">maps</span> <span class="nn">System</span><span class="p">.</span><span class="n">Net&#39;s</span> <span class="n">HttpStatusCode</span> <span class="k">to</span> <span class="n">Suave&#39;s</span> <span class="n">HttpCode</span> <span class="o">[</span><span class="n">FAIL</span><span class="o">]</span>
-</span><span class="line"><span class="nn">FsCheck</span><span class="p">.</span><span class="nn">Xunit</span><span class="p">.</span><span class="n">PropertyFailedException</span> <span class="o">:</span>
-</span><span class="line">     <span class="n">Falsifiable</span><span class="o">,</span> <span class="n">after</span> <span class="mi">7</span> <span class="n">tests</span> <span class="o">(</span><span class="mi">0</span> <span class="n">shrinks</span><span class="o">)</span> <span class="o">(</span><span class="n">StdGen</span> <span class="o">(</span><span class="mi">1629668181</span><span class="o">,</span><span class="mi">296211181</span><span class="o">)):</span>
-</span><span class="line">     <span class="n">Original</span><span class="o">:</span>
-</span><span class="line">     <span class="n">Unused</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>The reason for this failure is Suave (up to v1.1.3) doesn’t have the HTTP status code <em>306 (UnUsed)</em>. The unit test that we wrote was exercised by the <em>FsCheck</em> for the all possible values of the <code>HttpStatusCode</code> enum till it encountered this failure case.</p>
-
-<p>Let’s patch our unit test to fix this failure.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="k">let</span> <span class="nv">httpCode</span> <span class="o">=</span> <span class="nn">Response</span><span class="p">.</span><span class="n">suaveHttpCode</span> <span class="n">httpStatusCode</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">code</span> <span class="o">=</span> <span class="nn">LanguagePrimitives</span><span class="p">.</span><span class="n">EnumToValue</span> <span class="n">httpStatusCode</span>
-</span><span class="line">  <span class="k">let</span> <span class="nv">unSupportedSuaveHttpCodes</span> <span class="o">=</span> <span class="o">[</span><span class="mi">306</span><span class="o">]</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">if</span> <span class="nn">List</span><span class="p">.</span><span class="n">contains</span> <span class="n">code</span> <span class="n">unSupportedSuaveHttpCodes</span> <span class="k">then</span>
-</span><span class="line">    <span class="nn">Option</span><span class="p">.</span><span class="n">isNone</span> <span class="n">httpCode</span>
-</span><span class="line">  <span class="k">else</span>
-</span><span class="line">    <span class="nn">Option</span><span class="p">.</span><span class="n">isSome</span> <span class="n">httpCode</span> <span class="o">&amp;&amp;</span> <span class="n">httpCode</span><span class="o">.</span><span class="n">Value</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>If you run the unit test after this, you will get an another failure</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="nn">Suave</span><span class="p">.</span><span class="nn">Azure</span><span class="p">.</span><span class="nn">Functions</span><span class="p">.</span><span class="nn">Tests</span><span class="p">.</span><span class="n">suaveHttpCode</span> <span class="n">maps</span> <span class="nn">System</span><span class="p">.</span><span class="n">Net&#39;s</span> <span class="n">HttpStatusCode</span> <span class="k">to</span> <span class="n">Suave&#39;s</span> <span class="n">HttpCode</span> <span class="o">[</span><span class="n">FAIL</span><span class="o">]</span>
-</span><span class="line"><span class="nn">FsCheck</span><span class="p">.</span><span class="nn">Xunit</span><span class="p">.</span><span class="n">PropertyFailedException</span> <span class="o">:</span>
-</span><span class="line">  <span class="n">Falsifiable</span><span class="o">,</span> <span class="n">after</span> <span class="mi">10</span> <span class="n">tests</span> <span class="o">(</span><span class="mi">0</span> <span class="n">shrinks</span><span class="o">)</span> <span class="o">(</span><span class="n">StdGen</span> <span class="o">(</span><span class="mi">507658935</span><span class="o">,</span><span class="mi">296211184</span><span class="o">)):</span>
-</span><span class="line">  <span class="n">Original</span><span class="o">:</span>
-</span><span class="line">  <span class="n">UpgradeRequired</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>Again, The reason is HTTP Status Code <code>426 (UpgradeRequired)</code> is not supported is Suave at this point of writing. Let’s patch this too by adding this to the list <code>unSupportedSuaveHttpCodes</code>.</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="fsharp"><span class="line"><span class="c1">// ...</span>
-</span><span class="line"><span class="k">let</span> <span class="nv">unSupportedSuaveHttpCodes</span> <span class="o">=</span> <span class="o">[</span><span class="mi">306</span><span class="o">;</span><span class="mi">426</span><span class="o">]</span>
-</span><span class="line"><span class="c1">// ...</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>After this FsCheck is happy and we too.</p>
-
-<blockquote>
-  <p>If I haven’t used Property based testing, for sure, I might have missed these two unsupported HTTP status codes.</p>
-</blockquote>
-
-<h2 id="the-spirit-of-open-source">The Spirit of Open Source</h2>
-
-<p>While looking at <code>Suave.Http</code> codebase to fix the unit test failures, this is what I saw in the code</p>
-
-<p><img class="center border" src="/images/leveraging_pbt/send_pr.png" /></p>
-
-<p>This is the beauty of open source, and I am glad <a href="https://github.com/SuaveIO/suave/pull/512">to do it</a></p>
-
-<h2 id="summary">Summary</h2>
-
-<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">Writing tests first forces you to think about the problem you&#39;re solving. Writing property-based tests forces you to think way harder.</p>&mdash; Jessica Kerr (@jessitron) <a href="https://twitter.com/jessitron/status/327480330900611072">April 25, 2013</a></blockquote>
-
 
 		
 		
