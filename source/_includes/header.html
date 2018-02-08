@@ -1,6 +1,6 @@
 <style>
 @media (max-width: 600px) {
-  #book-cover, #tag-cloud {
+  .book-cover, #tag-cloud {
     display: none;
   }
 }
@@ -59,9 +59,14 @@
 		{% endif %}
 	</div>
 </nav>
-<nav id="book-cover" style="margin-top:32px">
-	<a target="_blank" href="http://products.tamizhvendan.in/fsharp-applied">
+<nav class="book-cover" style="margin-top:32px">
+	<a target="_blank" href="https://www.demystifyfp.com/FsApplied">
 	{% img center /images/fsharp_applied_cover.jpg 160 %}
+</a>
+</nav>
+<nav class="book-cover" style="margin-top:32px">
+	<a target="_blank" href="https://www.demystifyfp.com/FsApplied2">
+	{% img center /images/fsharp_applied2_cover.jpg 160 %}
 </a>
 </nav>
 <nav id="tag-cloud">
