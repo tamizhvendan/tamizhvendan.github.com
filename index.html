@@ -59,17 +59,18 @@
 			<div class="intrude-less">
 			<header id="header" class="inner"><style>
 @media (max-width: 600px) {
-  #book-cover, #tag-cloud {
+  .book-cover, #tag-cloud {
     display: none;
   }
 }
 </style>
 
 <nav id="main-nav"><ul class="main">
-    <li><a href="/">Blog</a></li>
+    <li><a target="_blank" href="https://www.demystifyfp.com">My FP Blog</a>
+    <li><a target="_blank" href="https://www.udemy.com/learn-suave/?couponCode=TAMIZH_BLOG">My FSharpTV Course</a>
     <li><a target="_blank" href="http://about.me/tamizhvendan">About Me</a></li>
     <li><a href="/blog/archives">Archives</a></li>
-    <li><a target="_blank" href="https://www.udemy.com/learn-suave/?couponCode=TAMIZH_BLOG">My FSharpTV Course</a>
+    
 		</li>
     <br/>
     <li>
@@ -108,9 +109,14 @@
 		
 	</div>
 </nav>
-<nav id="book-cover" style="margin-top:32px">
+<nav class="book-cover" style="margin-top:32px">
 	<a target="_blank" href="http://products.tamizhvendan.in/fsharp-applied">
 	<img class="center" src="/images/fsharp_applied_cover.jpg" width="160">
+</a>
+</nav>
+<nav class="book-cover" style="margin-top:32px">
+	<a target="_blank" href="https://www.demystifyfp.com/FsApplied2">
+	{% img center /images/fsharp_applied2_cover.jpg 160 %}
 </a>
 </nav>
 <nav id="tag-cloud">
